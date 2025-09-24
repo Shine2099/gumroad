@@ -49,7 +49,6 @@ export type WishlistProps = {
   checkout_enabled: boolean;
   items: WishlistItem[];
   isDiscover?: boolean;
-  topLevel?: boolean;
   pagination: {
     count: number;
     items: number;
