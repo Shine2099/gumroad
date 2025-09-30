@@ -5,7 +5,7 @@ import { register } from "$app/utils/serverComponentUtil";
 
 import { useAppDomain } from "$app/components/DomainSettings";
 import { useLoggedInUser } from "$app/components/LoggedInUser";
-import { Nav as NavFramework, NavLink, InertiaNavLink, NavLinkDropdownItem, UnbecomeDropdownItem } from "$app/components/Nav/Base";
+import { Nav as NavFramework, NavLink, NavLinkDropdownItem, UnbecomeDropdownItem } from "$app/components/Nav/Base";
 import { Popover } from "$app/components/Popover";
 
 type ImpersonatedUser = {
@@ -55,43 +55,37 @@ export const Nav = ({ title, current_user }: Props) => {
       }
     >
       <section>
-        <InertiaNavLink
+        <NavLink
           text="Suspend users"
           icon="shield-exclamation"
           href={Routes.admin_suspend_users_url(routeParams)}
-          prefetch
+          dataTurbo
         />
-        <InertiaNavLink
+        <NavLink
           text="Block emails"
           icon="envelope-fill"
           href={Routes.admin_block_email_domains_url(routeParams)}
-          prefetch
+          dataTurbo
         />
-        <InertiaNavLink
+        <NavLink
           text="Unblock emails"
           icon="envelope-open-fill"
           href={Routes.admin_unblock_email_domains_url(routeParams)}
-          prefetch
+          dataTurbo
         />
+        <NavLink text="Sidekiq" icon="lighting-fill" href={Routes.admin_sidekiq_web_url(routeParams)} />
+        <NavLink text="Features" icon="solid-flag" href={Routes.admin_flipper_ui_url(routeParams)} />
         <NavLink
-          text="Sidekiq"
-          icon="lighting-fill"
-          href={Routes.admin_sidekiq_web_url(routeParams)}
-        />
-        <NavLink
-          text="Features"
-          icon="solid-flag"
-          href={Routes.admin_flipper_ui_url(routeParams)}
-        />
-        <InertiaNavLink
           text="Refund queue"
           icon="solid-currency-dollar"
           href={Routes.admin_refund_queue_url(routeParams)}
+          dataTurbo
         />
-        <InertiaNavLink
+        <NavLink
           text="Sales reports"
           icon="bar-chart-fill"
           href={Routes.admin_sales_reports_url(routeParams)}
+          dataTurbo
         />
       </section>
     </NavFramework>
