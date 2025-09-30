@@ -11,7 +11,7 @@ class Admin::Users::Products::TosViolationFlagsController < Admin::Users::Produc
       }
     else
       render json: {
-        tos_violation_flags: @product.comments.with_type_flagged.includes(:author).as_json(
+        tos_violation_flags: @product.comments.with_type_flagged.as_json(
           only: %i[id content]
         )
       }

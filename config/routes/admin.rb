@@ -98,11 +98,8 @@ namespace :admin do
   resources :products, controller: "links", only: [:destroy] do
     member do
       get "/file/:product_file_id/access", to: "links#access_product_file", as: :admin_access_product_file
-      get :views_count
-      get :sales_stats
       post :restore
     end
-    resource :staff_picked, only: [:create], controller: "products/staff_picked"
 
     scope module: :products do
       concerns :commentable
@@ -111,6 +108,8 @@ namespace :admin do
       resource :info, only: [:show]
       resource :staff_picked, controller: "staff_picked", only: [:create]
       resources :purchases, only: [:index]
+      resources :sales_stats, only: [:index]
+      resource :views_count, controller: "views_count", only: [:show]
     end
   end
 

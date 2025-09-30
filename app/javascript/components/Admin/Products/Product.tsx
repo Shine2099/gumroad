@@ -61,7 +61,7 @@ const AdminUsersProductsProduct = ({ product, is_affiliate_user }: AdminUsersPro
 
   return (
     <article className="card" data-product-id={product.unique_permalink}>
-      <AdminProductHeader product={product} isCurrentUrl={isCurrentUrl} />
+      <AdminProductHeader product={product} user={user} isCurrentUrl={isCurrentUrl} />
       <AdminProductDescription product={product} />
       <AdminProductDetails product={product} />
       <AdminProductInfo product={product} />

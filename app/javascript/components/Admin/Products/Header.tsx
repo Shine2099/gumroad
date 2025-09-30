@@ -1,17 +1,23 @@
 import React from "react";
 import { Link } from "@inertiajs/react";
 import { type Product } from "$app/components/Admin/Products/Product";
+import { type User } from "$app/components/Admin/Users/User";
 import { WithTooltip } from "$app/components/WithTooltip";
 import { formatDistanceToNow } from "date-fns";
 import { formatDate } from "$app/utils/date";
 import AdminProductStats from "$app/components/Admin/Products/Stats";
 
 type Props = {
+  user: User;
   product: Product;
   isCurrentUrl: boolean;
 };
 
-const AdminUsersProductsHeader = ({ product, isCurrentUrl }: Props) => {
+const AdminUsersProductsHeader = ({
+  product,
+  user,
+  isCurrentUrl
+}: Props) => {
   const createdAt = new Date(product.created_at);
 
   return (
@@ -36,9 +42,9 @@ const AdminUsersProductsHeader = ({ product, isCurrentUrl }: Props) => {
           <div>
             <ul className="inline">
               <li><WithTooltip tip={formatDistanceToNow(createdAt)}>{formatDate(createdAt)}</WithTooltip></li>
-              <li><Link href={Routes.admin_user_path(product.user_id)}>{product.user_name}</Link></li>
+              <li><Link href={Routes.admin_user_path(user.id)}>{user.name}</Link></li>
+              <AdminProductStats product_id={product.id} />
             </ul>
-            <AdminProductStats product_id={product.id} />
           </div>
         </div>
       </div>

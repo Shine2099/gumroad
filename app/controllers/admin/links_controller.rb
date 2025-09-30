@@ -61,14 +61,6 @@ class Admin::LinksController < Admin::BaseController
     render json: { success: @product.update_attribute(:deleted_at, nil) }
   end
 
-  def views_count
-    render layout: false
-  end
-
-  def sales_stats
-    render layout: false
-  end
-
   def join_discord
     integration = @product.get_integration(DiscordIntegration.name)
     return render plain: "No Discord integration found for this product." if integration.nil?
