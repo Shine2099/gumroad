@@ -345,11 +345,11 @@ describe Product::Stats do
     end
   end
 
-  describe "#number_of_views" do
+  describe "#views_count" do
     it "returns the views total", :sidekiq_inline, :elasticsearch_wait_for_refresh do
       product = create(:product)
       2.times { add_page_view(product) }
-      expect(product.number_of_views).to eq(2)
+      expect(product.views_count).to eq(2)
     end
   end
 end

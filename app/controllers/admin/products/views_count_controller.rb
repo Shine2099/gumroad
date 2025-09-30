@@ -2,6 +2,6 @@
 
 class Admin::Products::ViewsCountController < Admin::Products::BaseController
   def show
-    render json: { review_count: @product.number_of_views }
+    render json: { views_count: @product.views_count }
   end
 end

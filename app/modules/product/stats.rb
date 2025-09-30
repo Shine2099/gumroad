@@ -124,7 +124,7 @@ module Product::Stats
     search_result.aggregations.fee_cents_total.value - search_result.aggregations.fee_refunded_cents_total.value
   end
 
-  def number_of_views
+  def views_count
     EsClient.count(index: ProductPageView.index_name, body: { query: { term: { product_id: id } } })["count"]
   end
 

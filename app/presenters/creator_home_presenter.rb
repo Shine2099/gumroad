@@ -49,7 +49,7 @@ class CreatorHomePresenter
         "thumbnail" => product.thumbnail_alive&.url,
         "sales" => product.successful_sales_count,
         "revenue" => product.total_usd_cents,
-        "visits" => product.number_of_views,
+        "visits" => product.views_count,
         "today" => analytics[:by_date][:totals][product.unique_permalink]&.last || 0,
         "last_7" => analytics[:by_date][:totals][product.unique_permalink]&.last(7)&.sum || 0,
         "last_30" => analytics[:by_date][:totals][product.unique_permalink]&.sum || 0,
