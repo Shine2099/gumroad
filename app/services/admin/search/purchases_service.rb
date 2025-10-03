@@ -39,21 +39,17 @@ class Admin::Search::PurchasesService < Admin::Search::BaseService
           ) via_gifts_and_purchases
         SQL
         purchases = purchases.where("purchases.id IN (#{union_sql})")
+      end
 
-        if purchase_status.present?
-          case purchase_status
-          when "successful"
-            purchases = purchases.where(purchase_state: "successful")
-          when "failed"
-            purchases = purchases.where(purchase_state: "failed")
-          when "not_charged"
-            purchases = purchases.where(purchase_state: "not_charged")
-          when "chargeback"
-            purchases = purchases.where.not(chargeback_date: nil)
-              .where("purchases.flags & ? = 0", Purchase.flag_mapping["flags"][:chargeback_reversed])
-          when "refunded"
-            purchases = purchases.where(stripe_refunded: true)
-          end
+      if purchase_status.present?
+        case purchase_status
+        when "successful", "failed", "not_charged"
+          purchases = purchases.where(purchase_state: purchase_status)
+        when "chargeback"
+          purchases = purchases.where.not(chargeback_date: nil)
+            .where("purchases.flags & ? = 0", Purchase.flag_mapping["flags"][:chargeback_reversed])
+        when "refunded"
+          purchases = purchases.where(stripe_refunded: true)
         end
       end
 

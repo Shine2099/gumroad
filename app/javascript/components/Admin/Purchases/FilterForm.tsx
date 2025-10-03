@@ -14,7 +14,7 @@ const AdminPurchasesFilterForm = ({
   purchase_status,
   endpoint,
 }: Props) => {
-  const { data, setData } = useForm({
+  const { data, setData, get } = useForm({
     ...Object.fromEntries(new URLSearchParams(window.location.search)),
     query: query || "",
     product_title_query: product_title_query || "",
@@ -29,8 +29,15 @@ const AdminPurchasesFilterForm = ({
     setData("purchase_status", e.target.value);
   };
 
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    get(endpoint(), {
+      only: ["purchases", "pagination", "query", "product_title_query", "purchase_status"],
+    });
+  };
+
   return (
-    <form action={endpoint()} method="get" className="input-with-button mb-4">
+    <form action={endpoint()} className="input-with-button mb-4" onSubmit={onSubmit}>
       <input type="hidden" name="query" value={data.query} />
 
       <div className="input">
@@ -60,7 +67,13 @@ const AdminPurchasesFilterForm = ({
 
       {
         (data.product_title_query || data.purchase_status) && (
-          <Link href={Routes.admin_search_purchases_path({ query: data.query })} className="button secondary">Clear</Link>
+          <Link
+            href={Routes.admin_search_purchases_path({ query: data.query })}
+            className="button secondary"
+            preserveScroll
+          >
+            Clear
+          </Link>
         )
       }
     </form>

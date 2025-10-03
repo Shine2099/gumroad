@@ -38,7 +38,7 @@ const AdminPurchases = ({
     params.set("page", page.toString());
     router.visit(endpoint(), {
       data: Object.fromEntries(params),
-      only: ["purchases", "pagination"],
+      only: ["purchases"],
     });
   };
 

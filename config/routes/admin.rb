@@ -12,7 +12,7 @@ namespace :admin do
   get "helper_actions/impersonate/:user_id", to: "helper_actions#impersonate", as: :impersonate_helper_action
   get "helper_actions/stripe_dashboard/:user_id", to: "helper_actions#stripe_dashboard", as: :stripe_dashboard_helper_action
 
-  get "action_call_dashboard", to: "action_call_dashboard#index"
+  resource :action_call_dashboard, controller: "action_call_dashboard", only: [:show]
 
   resources :users, only: [:show, :destroy], defaults: { format: "html" } do
     scope module: :users do
