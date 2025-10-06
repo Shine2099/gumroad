@@ -15,7 +15,7 @@ type CardType = {
   name: string;
 };
 
-type GlobalProps = {
+export type GlobalProps = {
   design_settings: DesignSettings;
   domain_settings: DomainSettings;
   user_agent_info: {
