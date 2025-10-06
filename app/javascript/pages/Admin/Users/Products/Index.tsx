@@ -1,9 +1,9 @@
-import { usePage, WhenVisible } from "@inertiajs/react";
+import { usePage } from "@inertiajs/react";
 import React from "react";
 
 import { type Pagination } from "$app/hooks/useLazyFetch";
 
-import Loading from "$app/components/Admin/Loading";
+import PaginatedLoader from "$app/components/Admin/PaginatedLoader";
 import AdminUsersProductsProduct, { type Product as ProductType } from "$app/components/Admin/Products/Product";
 import AdminUserAndProductsTabs from "$app/components/Admin/UserAndProductsTabs";
 import { type User as UserType } from "$app/components/Admin/Users/User";
@@ -49,25 +49,11 @@ type AdminUsersProductsProps = {
 const AdminUsersProducts = ({ is_affiliate_user = false }: Props) => {
   const { user, products, pagination } = usePage<AdminUsersProductsProps>().props;
 
-  const productsLengthFromCurrentPage = products.length / pagination.page;
-
-  const RenderNextProductsWhenVisible = () => {
-    if (productsLengthFromCurrentPage >= pagination.limit) {
-      const params = {
-        data: { page: pagination.page + 1 },
-        only: ["products", "pagination"],
-        preserveScroll: true,
-      };
-
-      return <WhenVisible fallback={<Loading />} params={params} children />;
-    }
-  };
-
   return (
     <div className="paragraphs">
       <AdminUserAndProductsTabs selectedTab="products" user={user} />
       <AdminUsersProductsContent products={products} is_affiliate_user={is_affiliate_user} pagination={pagination} />
-      <RenderNextProductsWhenVisible />
+      <PaginatedLoader itemsLength={products.length} pagination={pagination} only={["products", "pagination"]} />
     </div>
   );
 };
