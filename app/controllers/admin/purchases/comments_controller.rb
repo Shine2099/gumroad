@@ -6,7 +6,6 @@ class Admin::Purchases::CommentsController < Admin::Purchases::BaseController
   before_action :fetch_purchase
 
   private
-
     def commentable
       @purchase
     end

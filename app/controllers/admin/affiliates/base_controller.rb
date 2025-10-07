@@ -6,7 +6,6 @@ class Admin::Affiliates::BaseController < Admin::BaseController
   layout "admin_inertia"
 
   protected
-
     def affiliate_param
       params[:affiliate_id]
     end

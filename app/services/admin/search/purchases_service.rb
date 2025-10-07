@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # fron# frozen_string_literal: true
 
 class Admin::Search::PurchasesService < Admin::Search::BaseService
@@ -19,7 +21,6 @@ class Admin::Search::PurchasesService < Admin::Search::BaseService
   end
 
   private
-
     def search
       purchases = Purchase.order(created_at: :desc)
 
@@ -89,5 +90,4 @@ class Admin::Search::PurchasesService < Admin::Search::BaseService
 
       purchases.limit(limit)
     end
-
 end

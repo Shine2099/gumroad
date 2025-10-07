@@ -6,7 +6,6 @@ class Admin::Affiliates::ProductsController < Admin::Affiliates::BaseController
   before_action :fetch_affiliate_user
 
   private
-
     def page_title
       "#{user.display_name} on Gumroad"
     end

@@ -794,9 +794,9 @@ describe Purchase::Blockable do
 
       @buyer = create(:user)
       @purchase = create(:purchase_in_progress,
-                        email: "sam@example.com",
-                        error_code: PurchaseErrorCode::CARD_DECLINED_FRAUDULENT,
-                        purchaser: @buyer)
+                         email: "sam@example.com",
+                         error_code: PurchaseErrorCode::CARD_DECLINED_FRAUDULENT,
+                         purchaser: @buyer)
     end
 
     context "when the error code is not CARD_DECLINED_FRAUDULENT" do

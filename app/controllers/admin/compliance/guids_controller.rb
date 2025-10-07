@@ -14,7 +14,6 @@ class Admin::Compliance::GuidsController < Admin::BaseController
   end
 
   private
-
     def user_param
       params[:user_id]
     end

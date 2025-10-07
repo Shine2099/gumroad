@@ -8,7 +8,7 @@ module Admin::ListPaginatedUsers
   RECORDS_PER_PAGE = 25
 
   included do
-    layout 'admin_inertia'
+    layout "admin_inertia"
   end
 
   def index
@@ -28,27 +28,26 @@ module Admin::ListPaginatedUsers
     else
       render inertia: inertia_template,
              props: {
-               users: InertiaRails.merge {
+               users: InertiaRails.merge do
                  users.map do |user|
                    user.as_json(admin: true, impersonatable: policy([:admin, :impersonators, user]).create?)
-                end
-               },
+                 end
+               end,
                pagination:
              }
     end
   end
 
   private
-
     def page_title
-      raise NotImplementedError, 'must be overriden in subclass'
+      raise NotImplementedError, "must be overriden in subclass"
     end
 
     def users_scope
-      raise NotImplementedError, 'must be overriden in subclass'
+      raise NotImplementedError, "must be overriden in subclass"
     end
 
     def inertia_template
-      raise NotImplementedError, 'must be overriden in subclass'
+      raise NotImplementedError, "must be overriden in subclass"
     end
 end

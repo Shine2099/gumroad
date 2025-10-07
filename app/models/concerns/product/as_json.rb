@@ -39,7 +39,6 @@ module Product::AsJson
   end
 
   private
-
     def as_json_for_admin_multiple_matches(**options)
       as_json(
         original: true,
@@ -115,11 +114,11 @@ module Product::AsJson
             end.map do
               ppp_factors.blank? ? _1 :
                 _1.merge({
-                          purchasing_power_parity_prices: _1[:price_difference].present? ? compute_ppp_prices(_1[:price_difference] + cached_default_price_cents, ppp_factors, currency) : nil,
-                          recurrence_prices: _1[:recurrence_prices]&.transform_values do |v|
-                                                v.merge({ purchasing_power_parity_prices: compute_ppp_prices(v[:price_cents], ppp_factors, currency) })
-                                              end,
-                        })
+                           purchasing_power_parity_prices: _1[:price_difference].present? ? compute_ppp_prices(_1[:price_difference] + cached_default_price_cents, ppp_factors, currency) : nil,
+                           recurrence_prices: _1[:recurrence_prices]&.transform_values do |v|
+                             v.merge({ purchasing_power_parity_prices: compute_ppp_prices(v[:price_cents], ppp_factors, currency) })
+                           end,
+                         })
             end
           }
         end

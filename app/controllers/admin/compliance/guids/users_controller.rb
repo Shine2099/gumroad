@@ -4,7 +4,6 @@ class Admin::Compliance::Guids::Usersontroller < Admin::Compliance::Guids::BaseC
   include Admin::ListPaginatedUsers
 
   private
-
     def page_title
       guid
     end
@@ -16,6 +15,4 @@ class Admin::Compliance::Guids::Usersontroller < Admin::Compliance::Guids::BaseC
     def inertia_template
       "Admin/Compliance/Guids/Users/Index"
     end
-  end
 end
-

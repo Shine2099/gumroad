@@ -1265,7 +1265,6 @@ class Link < ApplicationRecord
     end
 
   private
-
     def release_custom_permalink_if_possible
       deleted_product = user.links.deleted.find_by(custom_permalink:)
       deleted_product&.update(custom_permalink: nil)

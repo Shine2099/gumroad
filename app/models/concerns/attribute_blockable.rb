@@ -133,9 +133,8 @@ module AttributeBlockable
   end
 
   private
-
-  def blocked_object_for_value(method_name, value)
-    scope = BLOCKED_OBJECT_TYPES.fetch(method_name.to_sym, :all)
-    BlockedObject.send(scope).find_active_object(value)
-  end
+    def blocked_object_for_value(method_name, value)
+      scope = BLOCKED_OBJECT_TYPES.fetch(method_name.to_sym, :all)
+      BlockedObject.send(scope).find_active_object(value)
+    end
 end

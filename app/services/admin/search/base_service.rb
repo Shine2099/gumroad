@@ -19,7 +19,6 @@ class Admin::Search::BaseService
   end
 
   protected
-
     def search
       raise NotImplementedError, "must be overriden in subclass"
     end
@@ -32,7 +31,6 @@ class Admin::Search::BaseService
     end
 
   private
-
     def validate_transaction_date_format
       return if transaction_date.blank?
 

@@ -2,7 +2,6 @@
 
 module Admin::FetchPurchase
   private
-
     def fetch_purchase
       @purchase = purchases_scope.find_by(id: purchase_param) if purchase_param.to_i.to_s == purchase_param
       @purchase ||= purchases_scope.find_by_external_id(purchase_param)

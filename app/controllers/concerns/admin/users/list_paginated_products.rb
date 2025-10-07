@@ -17,8 +17,8 @@ module Admin::Users::ListPaginatedProducts
     )
 
     render inertia: inertia_template, props: {
-      user:     user.as_json(admin: true, impersonatable: policy([:admin, :impersonators, user]).create?),
-      products: InertiaRails.merge {
+      user: user.as_json(admin: true, impersonatable: policy([:admin, :impersonators, user]).create?),
+      products: InertiaRails.merge do
                   products.includes(:alive_product_files, :active_integrations).map do |product|
                     product.as_json(
                       admin: true,
@@ -26,24 +26,23 @@ module Admin::Users::ListPaginatedProducts
                       admins_can_unmark_as_staff_picked: ->(product) { policy([:admin, :products, :staff_picked, product]).destroy? }
                     )
                   end
-                },
+                end,
       pagination:
     }
   end
 
   private
-
     def page_title
       "#{user.display_name} on Gumroad"
     end
 
     def user
-      raise NotImplementedError, 'missing @user instance variable in subclass' unless instance_variable_defined?(:@user)
+      raise NotImplementedError, "missing @user instance variable in subclass" unless instance_variable_defined?(:@user)
 
       @user
     end
 
     def inertia_template
-      raise NotImplementedError, 'must be overriden in subclass'
+      raise NotImplementedError, "must be overriden in subclass"
     end
 end

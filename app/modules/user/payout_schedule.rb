@@ -50,7 +50,6 @@ module User::PayoutSchedule
     end
   end
 
-
   def upcoming_payout_amounts
     upcoming_payout_date = next_payout_date
     upcoming_amounts = {}

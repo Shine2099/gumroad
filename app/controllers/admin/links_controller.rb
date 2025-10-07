@@ -108,7 +108,6 @@ class Admin::LinksController < Admin::BaseController
   end
 
   private
-
     def product_param
       params[:id]
     end

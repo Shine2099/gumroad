@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # fron
 
 class Admin::Search::PurchasesController < Admin::Search::BaseController
@@ -12,7 +14,6 @@ class Admin::Search::PurchasesController < Admin::Search::BaseController
   end
 
   private
-
     def page_title
       params[:query].present? ? "Purchase results for #{params[:query].strip}" : "Purchase results"
     end
@@ -28,5 +29,4 @@ class Admin::Search::PurchasesController < Admin::Search::BaseController
     def inertia_template
       "Admin/Search/Purchases/Index"
     end
-
 end

@@ -5,7 +5,6 @@ class Admin::Users::CommentsController < Admin::Users::BaseController
   before_action :fetch_user
 
   private
-
     def commentable
       @user
     end

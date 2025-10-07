@@ -38,7 +38,6 @@ class Admin::Users::Products::TosViolationFlagsController < Admin::Users::Produc
   end
 
   private
-
     def suspend_tos_params
       params.require(:suspend_tos).permit(:reason)
     end

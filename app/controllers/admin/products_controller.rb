@@ -20,7 +20,6 @@ class Admin::ProductsController < Admin::BaseController
   end
 
   private
-
     def product_param
       params[:id]
     end

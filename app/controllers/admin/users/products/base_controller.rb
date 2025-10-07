@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Admin::Users::Products::BaseController < Admin::Users::BaseController
   include Admin::FetchProduct
 

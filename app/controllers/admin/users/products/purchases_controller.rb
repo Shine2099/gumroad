@@ -18,8 +18,7 @@ class Admin::Users::Products::PurchasesController < Admin::Users::Products::Base
 
 
   private
-
-  def affiliate_user?
-    ActiveRecord::Type::Boolean.new.cast(params[:is_affiliate_user])
-  end
+    def affiliate_user?
+      ActiveRecord::Type::Boolean.new.cast(params[:is_affiliate_user])
+    end
 end

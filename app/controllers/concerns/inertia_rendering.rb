@@ -11,7 +11,6 @@ module InertiaRendering
   end
 
   private
-
     def inertia_flash_props
       return if (flash_message = flash[:alert] || flash[:warning] || flash[:notice]).blank?
 

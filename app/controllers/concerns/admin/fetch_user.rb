@@ -2,7 +2,6 @@
 
 module Admin::FetchUser
   private
-
     def fetch_user
       @user = if user_param.include?("@")
         User.find_by(email: user_param)

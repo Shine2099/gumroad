@@ -6,7 +6,6 @@ class Admin::Users::ProductsController < Admin::Users::BaseController
   before_action :fetch_user
 
   private
-
     def inertia_template
       "Admin/Users/Products/Index"
     end

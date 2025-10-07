@@ -4,7 +4,7 @@ class Admin::BaseController < ApplicationController
   include ActionView::Helpers::DateHelper, ActionView::Helpers::NumberHelper, AdminActionTracker, Impersonate, AdminHelper
 
   # layout "admin"
-  layout 'admin_inertia', only: :index
+  layout "admin_inertia", only: :index
 
   inertia_share do
     RenderingExtension.custom_context(view_context).merge(

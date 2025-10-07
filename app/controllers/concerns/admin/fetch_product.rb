@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 module Admin::FetchProduct
   private
-
     def fetch_product
       @product = Link.where(id: product_param).or(Link.where(unique_permalink: product_param)).first
       @product || e404
@@ -15,9 +16,9 @@ module Admin::FetchProduct
       if product_matches.many?
         @title = "Multiple products matched"
         render inertia: "Admin/Products/MultipleMatches",
-                 props: inertia_props(
-                   product_matches: product_matches.as_json(admin_multiple_matches: true)
-                 )
+               props: inertia_props(
+                 product_matches: product_matches.as_json(admin_multiple_matches: true)
+               )
         return
       else
         @product = product_matches.first || e404

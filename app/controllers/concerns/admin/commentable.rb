@@ -30,7 +30,6 @@ module Admin::Commentable
   end
 
   private
-
     def commentable
       raise NotImplementedError, "Subclass must implement commentable"
     end

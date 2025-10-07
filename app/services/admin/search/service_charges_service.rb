@@ -20,7 +20,6 @@ class Admin::Search::ServiceChargesService < Admin::Search::BaseService
   end
 
   private
-
     def search
       service_charges = ServiceCharge.order(created_at: :desc)
 

@@ -19,19 +19,18 @@ class Admin::Compliance::CardsController < Admin::BaseController
   end
 
   private
+    def page_title
+      params[:query].present? ? "Transaction results for #{params[:query].strip}" : "Transaction results"
+    end
 
-  def page_title
-    params[:query].present? ? "Transaction results for #{params[:query].strip}" : "Transaction results"
-  end
+    def search_params
+      params.permit(:transaction_date, :last_4, :card_type, :price, :expiry_date)
+            .merge(limit: MAX_RESULT_LIMIT)
+            .to_hash
+            .symbolize_keys
+    end
 
-  def search_params
-    params.permit(:transaction_date, :last_4, :card_type, :price, :expiry_date)
-          .merge(limit: MAX_RESULT_LIMIT)
-          .to_hash
-          .symbolize_keys
-  end
-
-  def inertia_template
-    "Admin/Compliance/Cards/Index"
-  end
+    def inertia_template
+      "Admin/Compliance/Cards/Index"
+    end
 end

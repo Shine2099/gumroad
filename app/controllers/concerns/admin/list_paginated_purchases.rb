@@ -8,7 +8,7 @@ module Admin::ListPaginatedPurchases
   RECORDS_PER_PAGE = 25
 
   included do
-    layout 'admin_inertia'
+    layout "admin_inertia"
   end
 
   def index
@@ -31,34 +31,33 @@ module Admin::ListPaginatedPurchases
 
     yield [pagination, purchases] if block_given?
 
-    render inertia: 'Admin/Search/Purchases/Index',
-            props: {
-              purchases: purchases.includes(
-                :price,
-                :purchase_refund_policy,
-                :seller,
-                :subscription,
-                :variant_attributes,
-                link: [:product_refund_policy, :user]
-              ).as_json(admin: true),
-              pagination:,
-              query: params[:query],
-              product_title_query: params[:product_title_query],
-              purchase_status: params[:purchase_status]
+    render inertia: "Admin/Search/Purchases/Index",
+           props: {
+             purchases: purchases.includes(
+               :price,
+               :purchase_refund_policy,
+               :seller,
+               :subscription,
+               :variant_attributes,
+               link: [:product_refund_policy, :user]
+             ).as_json(admin: true),
+             pagination:,
+             query: params[:query],
+             product_title_query: params[:product_title_query],
+             purchase_status: params[:purchase_status]
            }
   end
 
   private
-
     def page_title
-      raise NotImplementedError, 'must be overriden in subclass'
+      raise NotImplementedError, "must be overriden in subclass"
     end
 
     def search_params
-      raise NotImplementedError, 'must be overriden in subclass'
+      raise NotImplementedError, "must be overriden in subclass"
     end
 
     def inertia_template
-      raise NotImplementedError, 'must be overriden in subclass'
+      raise NotImplementedError, "must be overriden in subclass"
     end
 end

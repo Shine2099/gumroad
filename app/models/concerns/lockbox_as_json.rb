@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module LockboxAsJson
   def as_json(options = {})
     options[:except] ||= []
