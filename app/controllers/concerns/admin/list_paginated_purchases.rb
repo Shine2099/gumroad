@@ -27,7 +27,7 @@ module Admin::ListPaginatedPurchases
 
     yield [pagination, purchases] if block_given?
 
-    render inertia: "Admin/Search/Purchases/Index",
+    render inertia: inertia_template,
            props: {
              purchases: purchases.includes(
                :price,
