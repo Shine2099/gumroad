@@ -19,7 +19,8 @@ describe Admin::BlockEmailDomainsController do
       get :show
 
       expect(response).to be_successful
-      expect(response).to render_template(:show)
+      expect(response.body).to include("data-page")
+      expect(response.body).to include("Admin/BlockEmailDomains/Show")
     end
   end
 
