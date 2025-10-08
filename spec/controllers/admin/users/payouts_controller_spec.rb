@@ -6,46 +6,42 @@ require "shared_examples/admin_base_controller_concern"
 describe Admin::Users::PayoutsController do
   it_behaves_like "inherits from Admin::BaseController"
 
-  let(:payout_period_end_date) { Date.today - 1 }
+  render_views
 
-  before do
-    @admin_user = create(:admin_user)
-    @admin_user_with_payout_privileges = create(:admin_user)
-    @params = {
-      payout_period_end_date: payout_period_end_date.to_s,
-      passphrase: "1234"
-    }
-  end
+  let(:admin_user) { create(:admin_user) }
+  let(:admin_user_with_payout_privileges) { create(:admin_user) }
 
   describe "GET 'index'" do
-    render_views
-
-    before do
-      @admin_user = create(:admin_user)
-      @user = create(:user)
-      @payout_1 = create(:payment_completed, user: @user)
-      @payout_2 = create(:payment_failed, user: @user)
-      @other_user_payout = create(:payment_failed)
-    end
+    let(:user) { create(:user) }
+    let!(:payout_1) { create(:payment_completed, user:) }
+    let!(:payout_2) { create(:payment_failed, user:) }
+    let(:ordered_payouts) { [payout_2, payout_1] }
+    let!(:other_user_payout) { create(:payment_failed) }
 
     it "lists all the payouts for a user" do
-      sign_in @admin_user
-      get :index, params: { user_id: @user.id }
+      sign_in admin_user
+      get :index, params: { user_id: user.id }
 
-      payouts = assigns(:payouts)
-      expect(payouts.count).to eq(@user.payments.count)
-      expect(payouts.exclude?(@other_user_payout)).to be(true)
-      expect(payouts.first).to eq(@payout_2)
+      expect(response).to be_successful
+      expect(response.body).to include("data-page")
+      expect(response.body).to include("Admin/Users/Payouts/Index")
 
-      expect(response.body).to include("Payouts")
-      expect(response.body).to include(admin_payout_path(@payout_1))
+      data_page = response.body.match(/data-page="([^"]+)"/)[1]
+      json_object = JSON.parse(CGI.unescapeHTML(data_page))
+      props = json_object["props"]
+
+      expect(props["title"]).to eq("Payouts")
+      expect(props["user"]).to eq(user.as_json(original: true, only: %i[id]))
+      expect(props["payouts"]).to eq(ordered_payouts.as_json(admin: true))
+      expect(props["pagination"]).to be_present
     end
   end
 
   describe "POST 'pause'" do
     let!(:seller) { create(:user) }
+
     before do
-      sign_in @admin_user_with_payout_privileges
+      sign_in admin_user_with_payout_privileges
     end
 
     it "pauses payouts for seller, sets the pause source as admin, and saves the provided reason" do
@@ -58,7 +54,7 @@ describe Admin::Users::PayoutsController do
       end.to change { seller.comments.with_type_payouts_paused.count }.by(1)
 
       expect(seller.reload.payouts_paused_internally?).to be true
-      expect(seller.payouts_paused_by).to eq(@admin_user_with_payout_privileges.id)
+      expect(seller.payouts_paused_by).to eq(admin_user_with_payout_privileges.id)
       expect(seller.payouts_paused_by_source).to eq(User::PAYOUT_PAUSE_SOURCE_ADMIN)
       expect(seller.payouts_paused_for_reason).to eq("Chargeback rate too high.")
     end
@@ -73,7 +69,7 @@ describe Admin::Users::PayoutsController do
       end.not_to change { seller.comments.with_type_payouts_paused.count }
 
       expect(seller.reload.payouts_paused_internally?).to be true
-      expect(seller.payouts_paused_by).to eq(@admin_user_with_payout_privileges.id)
+      expect(seller.payouts_paused_by).to eq(admin_user_with_payout_privileges.id)
       expect(seller.payouts_paused_by_source).to eq(User::PAYOUT_PAUSE_SOURCE_ADMIN)
       expect(seller.payouts_paused_for_reason).to be nil
     end
@@ -83,7 +79,7 @@ describe Admin::Users::PayoutsController do
     let!(:seller) { create(:user) }
     before do
       seller.update!(payouts_paused_internally: true)
-      sign_in @admin_user_with_payout_privileges
+      sign_in admin_user_with_payout_privileges
     end
 
     it "resumes payouts for seller and clears the payout pause source if payouts are paused by admin" do
