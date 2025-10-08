@@ -10,7 +10,7 @@ describe Admin::Users::Products::PurchasesController do
 
   let(:admin_user) { create(:admin_user) }
   let(:product) { create(:product) }
-  let(:purchase_state) { 'successful'}
+  let(:purchase_state) { "successful" }
   let(:affiliate) { create(:direct_affiliate) }
   let(:affiliate_user) { affiliate.affiliate_user }
   let(:purchases) { create_list(:purchase, 2, link: product, purchase_state:, affiliate:) }

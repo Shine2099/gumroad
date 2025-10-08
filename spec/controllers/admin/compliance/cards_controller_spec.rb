@@ -17,13 +17,13 @@ describe Admin::Compliance::CardsController do
     let(:card_type) { "other" }
     let(:limit) { 10 }
     let(:transaction_date) { "02/22/2022" }
-    let!(:purchase_visa) { create(:purchase,
-                                  card_type: "visa",
-                                  card_visual: "**** **** **** 1234",
-                                  created_at: Time.zone.local(2019, 1, 17, 1, 2, 3),
-                                  price_cents: 777,
-                                  card_expiry_year: 2022,
-                                  card_expiry_month: 10) }
+    let!(:purchase_visa) do create(:purchase,
+                                   card_type: "visa",
+                                   card_visual: "**** **** **** 1234",
+                                   created_at: Time.zone.local(2019, 1, 17, 1, 2, 3),
+                                   price_cents: 777,
+                                   card_expiry_year: 2022,
+                                   card_expiry_month: 10) end
 
     before do
       stub_const("Admin::Compliance::CardsController::MAX_RESULT_LIMIT", limit)

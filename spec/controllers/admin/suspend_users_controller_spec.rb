@@ -27,11 +27,11 @@ describe Admin::SuspendUsersController do
 
       expect(props["title"]).to eq("Mass-suspend users")
       expect(props["suspend_reasons"]).to eq([
-        "Violating our terms of service",
-        "Creating products that violate our ToS",
-        "Using Gumroad to commit fraud",
-        "Using Gumroad for posting spam or SEO manipulation",
-      ])
+                                               "Violating our terms of service",
+                                               "Creating products that violate our ToS",
+                                               "Using Gumroad to commit fraud",
+                                               "Using Gumroad for posting spam or SEO manipulation",
+                                             ])
       expect(props["authenticity_token"]).to be_present
     end
   end

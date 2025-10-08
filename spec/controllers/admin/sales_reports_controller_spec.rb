@@ -37,7 +37,6 @@ describe Admin::SalesReportsController do
       expect(props["job_history"]).to eq([JSON.parse(job_history)])
       expect(props["authenticity_token"]).to be_present
     end
-
   end
 
   describe "POST create" do

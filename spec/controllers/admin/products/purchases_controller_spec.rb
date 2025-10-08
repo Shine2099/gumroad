@@ -10,7 +10,7 @@ describe Admin::Products::PurchasesController do
 
   let(:admin_user) { create(:admin_user) }
   let(:product) { create(:product) }
-  let(:purchase_state) { 'successful'}
+  let(:purchase_state) { "successful" }
   let(:purchases) { create_list(:purchase, 2, link: product, purchase_state:) }
   let(:ordered_purchases) { purchases.sort_by(&:created_at).reverse }
   let(:page) { nil }

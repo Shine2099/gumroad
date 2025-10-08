@@ -29,8 +29,8 @@ describe Admin::MerchantAccountsController do
         props = json_object["props"]
 
         expect(props["live_attributes"]).to eq({
-          "Email" => "sb-byx2u2205460@business.example.com"
-        })
+                                                 "Email" => "sb-byx2u2205460@business.example.com"
+                                               })
       end
     end
 
@@ -48,41 +48,41 @@ describe Admin::MerchantAccountsController do
         props = json_object["props"]
 
         expect(props["live_attributes"]).to eq({
-          "Charges enabled" => false,
-          "Payout enabled" => false,
-          "Disabled reason" => "rejected.fraud",
-          "Fields needed" => {
-            "alternatives" => [],
-            "current_deadline" => nil,
-            "currently_due" => [
-              "individual.address.city",
-              "individual.address.line1",
-              "individual.address.postal_code",
-              "individual.address.state",
-              "individual.id_number",
-              "individual.nationality"
-            ],
-            "disabled_reason" => "rejected.fraud",
-            "errors" => [],
-            "eventually_due" => [
-              "individual.address.city",
-              "individual.address.line1",
-              "individual.address.postal_code",
-              "individual.address.state",
-              "individual.id_number",
-              "individual.nationality"
-            ],
-            "past_due" => [
-              "individual.address.city",
-              "individual.address.line1",
-              "individual.address.postal_code",
-              "individual.address.state",
-              "individual.id_number",
-              "individual.nationality"
-            ],
-            "pending_verification" => []
-          }
-        })
+                                                 "Charges enabled" => false,
+                                                 "Payout enabled" => false,
+                                                 "Disabled reason" => "rejected.fraud",
+                                                 "Fields needed" => {
+                                                   "alternatives" => [],
+                                                   "current_deadline" => nil,
+                                                   "currently_due" => [
+                                                     "individual.address.city",
+                                                     "individual.address.line1",
+                                                     "individual.address.postal_code",
+                                                     "individual.address.state",
+                                                     "individual.id_number",
+                                                     "individual.nationality"
+                                                   ],
+                                                   "disabled_reason" => "rejected.fraud",
+                                                   "errors" => [],
+                                                   "eventually_due" => [
+                                                     "individual.address.city",
+                                                     "individual.address.line1",
+                                                     "individual.address.postal_code",
+                                                     "individual.address.state",
+                                                     "individual.id_number",
+                                                     "individual.nationality"
+                                                   ],
+                                                   "past_due" => [
+                                                     "individual.address.city",
+                                                     "individual.address.line1",
+                                                     "individual.address.postal_code",
+                                                     "individual.address.state",
+                                                     "individual.id_number",
+                                                     "individual.nationality"
+                                                   ],
+                                                   "pending_verification" => []
+                                                 }
+                                               })
       end
     end
   end
