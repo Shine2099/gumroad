@@ -11,7 +11,7 @@ module Payment::AsJson
       currency: currency,
       status: state,
       created_at: created_at,
-      processed_at: state == COMPLETED ? updated_at : nil,
+      processed_at: state == self.class::COMPLETED ? updated_at : nil,
       payment_processor: processor,
       bank_account_visual: bank_account&.account_number_visual,
       paypal_email: payment_address
