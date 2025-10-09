@@ -32,9 +32,9 @@ describe Admin::Search::PurchasesController do
     end
 
     context "when multiple purchases are found" do
-      let!(:purchase_1) { create(:purchase, email:) }
-      let!(:purchase_2) { create(:gift, gifter_email: email, gifter_purchase: create(:purchase)).gifter_purchase }
-      let!(:purchase_3) { create(:gift, giftee_email: email, giftee_purchase: create(:purchase)).giftee_purchase }
+      let!(:purchase_1) { create(:purchase, email:, created_at: 3.days.ago) }
+      let!(:purchase_2) { create(:gift, gifter_email: email, gifter_purchase: create(:purchase, created_at: 2.days.ago)).gifter_purchase }
+      let!(:purchase_3) { create(:gift, giftee_email: email, giftee_purchase: create(:purchase, created_at: 1.day.ago)).giftee_purchase }
 
       it "returns purchases from Admin::Search::PurchasesService" do
         expect(Admin::Search::PurchasesService).to receive(:new).with(query: email, product_title_query: nil, purchase_status: nil).and_call_original
@@ -49,7 +49,7 @@ describe Admin::Search::PurchasesController do
         json_object = JSON.parse(CGI.unescapeHTML(data_page))
         props = json_object["props"]
 
-        expect(props["purchases"]).to eq([purchase_1, purchase_2, purchase_3].as_json(admin: true))
+        expect(props["purchases"]).to eq([purchase_3, purchase_2, purchase_1].as_json(admin: true))
         expect(props["query"]).to eq(email)
         expect(props["product_title_query"]).to be_nil
         expect(props["purchase_status"]).to be_nil
