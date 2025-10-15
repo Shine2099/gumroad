@@ -85,7 +85,7 @@ services:
         condition: service_completed_successfully
     volumes:
       - ../spec/support/fixtures:/fixtures:ro
-      - ./fixture-files.txt:/fixture-files.txt:ro
+      - ./fixture-files-private.txt:/fixture-files-private.txt:ro
       - ./fixture-files-public.txt:/fixture-files-public.txt:ro
     entrypoint: >
       /bin/sh -c " /usr/bin/mc alias set myminio http://minio:9000 minioadmin minioadmin; echo \"Copying private fixture files to MinIO bucket...\"; while IFS= read -r file; do
@@ -95,7 +95,7 @@ services:
         else
           echo \"Warning: $$file not found in fixtures directory\";
         fi;
-      done < /fixture-files.txt; echo \"Copying public fixture files to MinIO bucket...\"; while IFS= read -r file; do
+      done < /fixture-files-private.txt; echo \"Copying public fixture files to MinIO bucket...\"; while IFS= read -r file; do
         if [ -f \"/fixtures/$$file\" ]; then
           echo \"Copying $$file to gumroad-specs/specs/ (public)\";
           /usr/bin/mc cp \"/fixtures/$$file\" \"myminio/gumroad-specs/specs/$$file\";
