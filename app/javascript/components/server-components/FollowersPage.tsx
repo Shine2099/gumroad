@@ -17,6 +17,7 @@ import { ExportSubscribersPopover } from "$app/components/server-components/Foll
 import { PageHeader } from "$app/components/ui/PageHeader";
 import Placeholder from "$app/components/ui/Placeholder";
 import { Tabs, Tab } from "$app/components/ui/Tabs";
+import { Aside } from "$app/components/ui/Aside";
 import { useUserAgentInfo } from "$app/components/UserAgent";
 import { WithTooltip } from "$app/components/WithTooltip";
 
@@ -205,11 +206,16 @@ export const FollowersPage = ({ followers: initialFollowers, per_page, total }: 
               </Button>
             ) : null}
             {selectedFollower ? (
-              <aside className={selectedFollower.can_update ? "" : "js-team-member-read-only"}>
-                <header>
-                  <h2>Details</h2>
-                  <button className="close" onClick={() => setSelectedFollowerId(null)} title="Close" />
-                </header>
+              <Aside
+                ariaLabel="Follower Details"
+                onClose={() => setSelectedFollowerId(null)}
+                className={selectedFollower.can_update ? "" : "js-team-member-read-only"}
+                header={
+                  <>
+                    <h2 className="text-singleline">Details</h2>
+                  </>
+                }
+              >
                 <div className="stack">
                   <div>
                     <div>
@@ -226,7 +232,7 @@ export const FollowersPage = ({ followers: initialFollowers, per_page, total }: 
                     </div>
                   </div>
                 </div>
-              </aside>
+              </Aside>
             ) : null}
           </div>
         ) : (

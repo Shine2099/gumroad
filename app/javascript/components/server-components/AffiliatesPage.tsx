@@ -56,6 +56,7 @@ import { showAlert } from "$app/components/server-components/Alert";
 import { PageHeader } from "$app/components/ui/PageHeader";
 import Placeholder from "$app/components/ui/Placeholder";
 import { Tabs, Tab } from "$app/components/ui/Tabs";
+import { Aside } from "$app/components/ui/Aside";
 import { useDebouncedCallback } from "$app/components/useDebouncedCallback";
 import { useLocalPagination } from "$app/components/useLocalPagination";
 import { useUserAgentInfo } from "$app/components/UserAgent";
@@ -603,11 +604,15 @@ const AffiliateDetails = ({
   const navigation = useNavigation();
 
   return ReactDOM.createPortal(
-    <aside>
-      <header>
-        <h2>{selectedAffiliate.affiliate_user_name}</h2>
-        <button className="close" aria-label="Close" onClick={onClose} />
-      </header>
+    <Aside
+      ariaLabel="Affiliate Details"
+      onClose={onClose}
+      header={
+        <>
+          <h2 className="text-singleline">{selectedAffiliate.affiliate_user_name}</h2>
+        </>
+      }
+    >
       {selectedAffiliate.products.map((product) => {
         const productStatistics = statistics?.products[product.id];
 
@@ -656,7 +661,7 @@ const AffiliateDetails = ({
           {navigation.state === "submitting" ? "Deleting..." : "Delete"}
         </Button>
       </section>
-    </aside>,
+    </Aside>,
     document.body,
   );
 };

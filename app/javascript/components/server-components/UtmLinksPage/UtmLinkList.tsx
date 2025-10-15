@@ -25,6 +25,7 @@ import { Progress } from "$app/components/Progress";
 import { showAlert } from "$app/components/server-components/Alert";
 import { extractSortParam } from "$app/components/server-components/UtmLinksPage";
 import Placeholder from "$app/components/ui/Placeholder";
+import { Aside } from "$app/components/ui/Aside";
 import { useDebouncedCallback } from "$app/components/useDebouncedCallback";
 import { useUserAgentInfo } from "$app/components/UserAgent";
 import { Sort, useSortingTableDriver } from "$app/components/useSortingTableDriver";
@@ -414,11 +415,15 @@ const UtmLinkDetails = ({
   const userAgentInfo = useUserAgentInfo();
 
   return ReactDOM.createPortal(
-    <aside>
-      <header>
-        <h2>{utmLink.title}</h2>
-        <button className="close" aria-label="Close details" onClick={onClose} />
-      </header>
+    <Aside
+      ariaLabel="UTM Link Details"
+      onClose={onClose}
+      header={
+        <>
+          <h2 className="text-singleline">{utmLink.title}</h2>
+        </>
+      }
+    >
       <section className="stack">
         <div>
           <h3>Details</h3>
@@ -533,7 +538,7 @@ const UtmLinkDetails = ({
           Delete
         </Button>
       </div>
-    </aside>,
+    </Aside>,
     document.body,
   );
 };
