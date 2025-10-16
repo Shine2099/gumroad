@@ -544,7 +544,7 @@ describe ProductFile do
 
   describe "mobile" do
     before do
-      @file = create(:product_file, url: "#{S3_BASE_URL}/attachments/2/original/chapter 2.mp4", is_transcoded_for_hls: true)
+      @file = create(:product_file, url: "#{AWS_S3_ENDPOINT}/gumroad-specs/attachments/2/original/chapter 2.mp4", is_transcoded_for_hls: true)
     end
 
     it "returns name values that contain extensions" do
