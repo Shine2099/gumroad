@@ -799,7 +799,7 @@ describe UrlRedirectsController do
     it "returns http success" do
       get :show, params: { id: @token }
 
-      s3_path = @url.sub("#{AWS_S3_ENDPOINT}/gumroad-specs", "")
+      s3_path = @url.sub("#{AWS_S3_ENDPOINT}/#{S3_BUCKET}", "")
       loc = response.location
       expect(loc.include?(FILE_DOWNLOAD_DISTRIBUTION_URL)).to be(true)
       expect(loc.include?(s3_path)).to be(true)
@@ -936,11 +936,11 @@ describe UrlRedirectsController do
 
         context "when the product has rich content" do
           it "sets the correct source urls for all video files in the product and returns the index of the file that should be played on load" do
-            pdf_file = create(:product_file, url: "#{AWS_S3_ENDPOINT}/gumroad-specs/attachment/manual.pdf")
-            video_file_2 = create(:product_file, url: "#{AWS_S3_ENDPOINT}/gumroad-specs/attachments/43a5363194e74e9ee75b6203eaea6705/original/chapter1.mp4", position: 2)
-            subtitle_file_en = create(:subtitle_file, language: "English", url: "#{AWS_S3_ENDPOINT}/gumroad-specs/attachment/english.srt", product_file: video_file_2)
-            subtitle_file_es = create(:subtitle_file, language: "Spanish", url: "#{AWS_S3_ENDPOINT}/gumroad-specs/attachment/spanish.srt", product_file: video_file_2)
-            video_file_3 = create(:product_file, url: "#{AWS_S3_ENDPOINT}/gumroad-specs/attachments/43a5363194e74e9ee75b6203eaea6705/original/chapter3.mp4", position: 1)
+            pdf_file = create(:product_file, url: "#{AWS_S3_ENDPOINT}/#{S3_BUCKET}/attachment/manual.pdf")
+            video_file_2 = create(:product_file, url: "#{AWS_S3_ENDPOINT}/#{S3_BUCKET}/attachments/43a5363194e74e9ee75b6203eaea6705/original/chapter1.mp4", position: 2)
+            subtitle_file_en = create(:subtitle_file, language: "English", url: "#{AWS_S3_ENDPOINT}/#{S3_BUCKET}/attachment/english.srt", product_file: video_file_2)
+            subtitle_file_es = create(:subtitle_file, language: "Spanish", url: "#{AWS_S3_ENDPOINT}/#{S3_BUCKET}/attachment/spanish.srt", product_file: video_file_2)
+            video_file_3 = create(:product_file, url: "#{AWS_S3_ENDPOINT}/#{S3_BUCKET}/attachments/43a5363194e74e9ee75b6203eaea6705/original/chapter3.mp4", position: 1)
             @multifile_product.product_files << pdf_file
             @multifile_product.product_files << video_file_2
             @multifile_product.product_files << video_file_3
@@ -1127,8 +1127,8 @@ describe UrlRedirectsController do
     describe "multiple files" do
       before do
         @product = create(:product)
-        ch1 = "#{AWS_S3_ENDPOINT}/gumroad-specs/attachments/43a5363194e74e9ee75b6203eaea6705/original/chapter1.mp4"
-        ch2 = "#{AWS_S3_ENDPOINT}/gumroad-specs/attachments/43a5363194e74e9ee75b6203eaea6705/original/chapter2.mp4"
+        ch1 = "#{AWS_S3_ENDPOINT}/#{S3_BUCKET}/attachments/43a5363194e74e9ee75b6203eaea6705/original/chapter1.mp4"
+        ch2 = "#{AWS_S3_ENDPOINT}/#{S3_BUCKET}/attachments/43a5363194e74e9ee75b6203eaea6705/original/chapter2.mp4"
         @product.product_files << create(:product_file, url: ch1)
         @product.product_files << create(:product_file, url: ch2)
         @product.save!

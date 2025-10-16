@@ -128,7 +128,7 @@ describe UrlRedirect do
 
       it "returns the right url when there is a provided url redirect for an installment" do
         @installment = create(:installment, link: @product, installment_type: "product")
-        url = "#{AWS_S3_ENDPOINT}/gumroad-specs/attachments/43a5363194e74e9ee75b6203eaea6705/original/chapter1.mp4"
+        url = "#{AWS_S3_ENDPOINT}/#{S3_BUCKET}/attachments/43a5363194e74e9ee75b6203eaea6705/original/chapter1.mp4"
         @installment.product_files << create(:product_file, url:)
         @installment_url_redirect = create(:url_redirect, installment: @installment, imported_customer: @imported_customer, link: @product)
         @product.product_files << create(:product_file, url:)
