@@ -936,11 +936,11 @@ describe UrlRedirectsController do
 
         context "when the product has rich content" do
           it "sets the correct source urls for all video files in the product and returns the index of the file that should be played on load" do
-            pdf_file = create(:product_file, url: "#{S3_BASE_URL}/attachment/manual.pdf")
-            video_file_2 = create(:product_file, url: "#{S3_BASE_URL}/attachments/43a5363194e74e9ee75b6203eaea6705/original/chapter1.mp4", position: 2)
-            subtitle_file_en = create(:subtitle_file, language: "English", url: "#{S3_BASE_URL}/attachment/english.srt", product_file: video_file_2)
-            subtitle_file_es = create(:subtitle_file, language: "Spanish", url: "#{S3_BASE_URL}/attachment/spanish.srt", product_file: video_file_2)
-            video_file_3 = create(:product_file, url: "#{S3_BASE_URL}/attachments/43a5363194e74e9ee75b6203eaea6705/original/chapter3.mp4", position: 1)
+            pdf_file = create(:product_file, url: "#{AWS_S3_ENDPOINT}/gumroad-specs/attachment/manual.pdf")
+            video_file_2 = create(:product_file, url: "#{AWS_S3_ENDPOINT}/gumroad-specs/attachments/43a5363194e74e9ee75b6203eaea6705/original/chapter1.mp4", position: 2)
+            subtitle_file_en = create(:subtitle_file, language: "English", url: "#{AWS_S3_ENDPOINT}/gumroad-specs/attachment/english.srt", product_file: video_file_2)
+            subtitle_file_es = create(:subtitle_file, language: "Spanish", url: "#{AWS_S3_ENDPOINT}/gumroad-specs/attachment/spanish.srt", product_file: video_file_2)
+            video_file_3 = create(:product_file, url: "#{AWS_S3_ENDPOINT}/gumroad-specs/attachments/43a5363194e74e9ee75b6203eaea6705/original/chapter3.mp4", position: 1)
             @multifile_product.product_files << pdf_file
             @multifile_product.product_files << video_file_2
             @multifile_product.product_files << video_file_3
