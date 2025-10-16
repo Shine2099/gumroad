@@ -799,7 +799,7 @@ describe UrlRedirectsController do
     it "returns http success" do
       get :show, params: { id: @token }
 
-      s3_path = @url.sub("https://s3.amazonaws.com/gumroad-specs", "")
+      s3_path = @url.sub("#{AWS_S3_ENDPOINT}/gumroad-specs", "")
       loc = response.location
       expect(loc.include?(FILE_DOWNLOAD_DISTRIBUTION_URL)).to be(true)
       expect(loc.include?(s3_path)).to be(true)
@@ -1127,8 +1127,8 @@ describe UrlRedirectsController do
     describe "multiple files" do
       before do
         @product = create(:product)
-        ch1 = "#{S3_BASE_URL}/attachments/43a5363194e74e9ee75b6203eaea6705/original/chapter1.mp4"
-        ch2 = "#{S3_BASE_URL}/attachments/43a5363194e74e9ee75b6203eaea6705/original/chapter2.mp4"
+        ch1 = "#{AWS_S3_ENDPOINT}/gumroad-specs/attachments/43a5363194e74e9ee75b6203eaea6705/original/chapter1.mp4"
+        ch2 = "#{AWS_S3_ENDPOINT}/gumroad-specs/attachments/43a5363194e74e9ee75b6203eaea6705/original/chapter2.mp4"
         @product.product_files << create(:product_file, url: ch1)
         @product.product_files << create(:product_file, url: ch2)
         @product.save!
@@ -1513,9 +1513,9 @@ describe UrlRedirectsController do
 
         it "gets current product file if replaced" do
           @product.product_files.each(&:mark_deleted)
-          create(:product_file, link: @product, url: "#{S3_BASE_URL}/specs/nyt.pdf", filetype: "pdf")
+          create(:product_file, link: @product, url: "#{S3_BASE_URL}/specs/test.pdf", filetype: "pdf")
           get(:read, params: { id: @url_redirect.token })
-          expect(assigns(:read_url)).to include("nyt.pdf")
+          expect(assigns(:read_url)).to include("test.pdf")
         end
 
         it "recovers from an S3 error" do
