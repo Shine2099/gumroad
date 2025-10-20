@@ -818,6 +818,7 @@ Rails.application.routes.draw do
 
     # balances
     get "/payouts", to: "balance#index", as: :balance
+    get "/payouts/taxes", to: "balance#taxes", as: :balance_taxes
     get "/payouts/payments", to: "balance#payments_paged", as: :payments_paged
     resources :instant_payouts, only: [:create]
     namespace :payouts do

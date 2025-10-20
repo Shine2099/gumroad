@@ -10,4 +10,8 @@ class BalancePolicy < ApplicationPolicy
   def export?
     index?
   end
+
+  def taxes?
+    index?
+  end
 end
