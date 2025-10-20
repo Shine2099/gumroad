@@ -30,7 +30,7 @@ type SheetFooterProps = {
 type SheetCloseProps = {
   children: React.ReactNode;
   asChild?: boolean;
-  onClick?: () => void;
+  onClick?: React.MouseEventHandler<HTMLElement>;
 };
 
 export const Sheet = ({ children, className, ariaLabel, onClose, header }: SheetProps) => {
@@ -86,7 +86,8 @@ export const SheetFooter = ({ children, className }: SheetFooterProps) => (
 
 export const SheetClose = ({ children, asChild, onClick }: SheetCloseProps) => {
   if (asChild && React.isValidElement(children)) {
-    return React.cloneElement(children, { onClick } as React.HTMLAttributes<HTMLElement>);
+    const props = { onClick };
+    return React.cloneElement(children, props);
   }
 
   return (
