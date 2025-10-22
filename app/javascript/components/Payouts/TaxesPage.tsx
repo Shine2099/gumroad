@@ -1,7 +1,6 @@
 import * as React from "react";
 
-import stonksLogo from "images/brands/stonks-logo.svg";
-import kickLogo from "images/brands/kick-logo.svg";
+import stonksLogo from "images/brands/stonks.svg";
 
 import { Button } from "$app/components/Button";
 import { Icon } from "$app/components/Icons";
@@ -31,7 +30,7 @@ interface TaxSavingSuggestion {
 interface FAQItem {
   id: string;
   question: string;
-  answer?: string;
+  answer?: React.ReactNode;
 }
 
 const TaxesPage = () => {
@@ -95,41 +94,64 @@ const TaxesPage = () => {
       icon: "stonks",
       avgRefund: "$8,200",
     },
-    {
-      id: "2",
-      title: "kick.co",
-      description: "Handles your bookkeeping automatically, so you're always tax-ready. Built for creators.",
-      icon: "kick",
-    },
   ];
 
   const faqItems: FAQItem[] = [
     {
       id: "why-1099-k",
       question: "Why did I receive a 1099-K?",
+      answer: (
+        <>
+          You received a 1099-K if your U.S.-based Gumroad account had over $20,000 in gross sales and more than 200
+          transactions in the previous calendar year. The 1099-K is a purely informational form that summarizes the
+          sales activity of your account and is designed to assist you in reporting your taxes.{" "}
+          <a href="/help/article/15-1099s" target="_blank" rel="noreferrer">
+            Learn more
+          </a>
+          .
+        </>
+      ),
     },
     {
       id: "how-gross-sales-calculated",
       question: "How is the 'Gross Sales' amount on my 1099-K calculated?",
-      answer:
-        "The gross sales amount is the total of all payments processed on your behalf by Gumroad for the calendar year, before any fees, refunds, or adjustments. This is the amount reported to the IRS. Learn more.",
+      answer: (
+        <>
+          The 1099-K shows your total unadjusted transaction volume, not your actual payouts. It includes Gumroad fees,
+          VAT, affiliate commissions, and other adjustments, so it won't match the amount you were paid.{" "}
+          <a href="/help/article/15-1099s#mismatch" target="_blank" rel="noreferrer">
+            Learn more
+          </a>
+          .
+        </>
+      ),
     },
     {
       id: "find-gumroad-fees",
       question: "Where can I find my Gumroad fees to deduct on my tax return?",
-    },
-    {
-      id: "vat-refund",
-      question: "How can I get a VAT refund?",
+      answer: (
+        <>
+          You can download a CSV file of your sales data within a selected date range from the{" "}
+          <a href="/customers">Sales tab</a>. The CSV will include a <b>Fees</b> column which shows Gumroad's fees plus
+          any Apple/Google in-app fees. If you use Stripe Connect or PayPal Connect, check the <b>Stripe Fee Amount</b>{" "}
+          and <b>PayPal Fee Amount</b> columns for their respective processing fees.{" "}
+          <a href="/help/article/74-the-analytics-dashboard#sales-csv" target="_blank" rel="noreferrer">
+            Learn more
+          </a>
+          .
+        </>
+      ),
     },
     {
       id: "report-income-no-1099",
       question: "Do I need to report income if I didn't receive a 1099-K?",
+      answer:
+        "Yes. Even if you didn't meet the IRS thresholds for a 1099-K, you are still required to report all income from Gumroad on your tax return.",
     },
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="">
       <section className="p-4 md:p-8">
         <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <h2>Tax documents</h2>
@@ -200,18 +222,18 @@ const TaxesPage = () => {
               <tbody>
                 {taxDocuments.map((doc) => (
                   <tr key={doc.id}>
-                    <td>
+                    <td data-label="Document">
                       <div className="flex items-center gap-2">
                         {doc.isNew && <span className="pill small">New</span>}
                         <span>{doc.document}</span>
                       </div>
                     </td>
-                    <td>{doc.type}</td>
-                    <td>{doc.gross}</td>
-                    <td>{doc.fees}</td>
-                    <td>{doc.taxes}</td>
-                    <td>{doc.net}</td>
-                    <td className="text-right">
+                    <td data-label="Type">{doc.type}</td>
+                    <td data-label="Gross">{doc.gross}</td>
+                    <td data-label="Fees">{doc.fees}</td>
+                    <td data-label="Taxes">{doc.taxes}</td>
+                    <td data-label="Net">{doc.net}</td>
+                    <td data-label="" className="text-right">
                       <div className="flex justify-end">
                         <Button small className="w-full sm:w-auto">
                           Download
@@ -236,7 +258,7 @@ const TaxesPage = () => {
 
       <section className="p-4 md:p-8">
         <h2 className="mb-4">Save on your taxes</h2>
-        <div className="radio-buttons grid-cols-1! sm:grid-cols-2!" role="radiogroup">
+        <div className="radio-buttons grid-cols-1" role="radiogroup">
           {taxSavingSuggestions.map((suggestion) => (
             <Button
               key={suggestion.id}
@@ -246,18 +268,12 @@ const TaxesPage = () => {
             >
               <div className="flex w-full items-center gap-4">
                 <div
-                  className={`flex h-16 w-16 flex-shrink-0 items-center justify-center rounded ${
-                    suggestion.icon === "stonks" ? "" : ""
-                  }`}
+                  className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded"
                   style={{
-                    backgroundColor: suggestion.icon === "stonks" ? "#101241" : "#F9F9FB",
+                    backgroundColor: "#101241",
                   }}
                 >
-                  {suggestion.icon === "stonks" ? (
-                    <img src={stonksLogo} alt="Stonks" className="h-6 w-6" />
-                  ) : (
-                    <img src={kickLogo} alt="Kick" className="h-6 w-6" />
-                  )}
+                  <img src={stonksLogo} alt="Stonks" className="h-6 w-6" />
                 </div>
                 <div className="min-w-0 flex-1 space-y-1 text-left">
                   <h4 className="text-lg leading-tight font-semibold">{suggestion.title}</h4>
@@ -270,7 +286,7 @@ const TaxesPage = () => {
       </section>
 
       <section className="p-4 md:p-8">
-        <h2 className="mb-4">Find answers to your tax questions.</h2>
+        <h2 className="mb-4">Find answers to your tax questions</h2>
         <div className="stack">
           {faqItems.map((item) => (
             <details key={item.id}>
@@ -280,7 +296,7 @@ const TaxesPage = () => {
           ))}
         </div>
         <p className="text-muted mt-4 text-sm">
-          Learn more on our <a href="/help">Help Center</a>.
+          Need more help? Search our <a href="/help">Help Center</a>.
         </p>
       </section>
     </div>
