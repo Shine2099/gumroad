@@ -19,10 +19,6 @@ export const CustomReceiptTextInput = ({
         onChange={(evt) => onChange(evt.target.value)}
         rows={3}
       />
-      <small>
-        Add custom text that will appear on the customer's receipt to highlight important information (max 500
-        characters)
-      </small>
     </fieldset>
   );
 };

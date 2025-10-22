@@ -213,11 +213,11 @@ export const ProductTab = () => {
                 <h2>Customize Receipt</h2>
                 <CustomViewContentButtonTextInput
                   value={product.custom_view_content_button_text}
-                  onChange={(value) => updateProduct({ custom_view_content_button_text: value || null })}
+                  onChange={(value) => updateProduct({ custom_view_content_button_text: value })}
                 />
                 <CustomReceiptTextInput
                   value={product.custom_receipt_text}
-                  onChange={(value) => updateProduct({ custom_receipt_text: value || null })}
+                  onChange={(value) => updateProduct({ custom_receipt_text: value })}
                 />
               </section>
               <section className="p-4! md:p-8!">

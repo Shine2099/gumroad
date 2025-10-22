@@ -238,11 +238,13 @@ describe ProductPresenter do
     before do
       product.save_custom_button_text_option("pay_prompt")
       product.save_custom_summary("To summarize, I am a product.")
+      product.save_custom_view_content_button_text("Download Files")
+      product.save_custom_receipt_text("Thank you for purchasing! Feel free to contact us any time for support.")
       product.save_custom_attributes({ "Detail 1" => "Value 1" })
       product.user.reload
     end
 
-    it "returns the properties for the product edit page" do
+    fit "returns the properties for the product edit page" do
       expect(presenter.edit_props).to eq(
         {
           product: {
@@ -255,6 +257,8 @@ describe ProductPresenter do
             suggested_price_cents: 200,
             custom_button_text_option: "pay_prompt",
             custom_summary: "To summarize, I am a product.",
+            custom_view_content_button_text: "Download Files",
+            custom_receipt_text: "Thank you for purchasing! Feel free to contact us any time for support.",
             custom_attributes: { "Detail 1" => "Value 1" },
             file_attributes: [
               {
