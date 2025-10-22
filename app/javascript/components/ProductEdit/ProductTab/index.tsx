@@ -20,6 +20,7 @@ import { CoverEditor } from "$app/components/ProductEdit/ProductTab/CoverEditor"
 import { CustomButtonTextOptionInput } from "$app/components/ProductEdit/ProductTab/CustomButtonTextOptionInput";
 import { CustomPermalinkInput } from "$app/components/ProductEdit/ProductTab/CustomPermalinkInput";
 import { CustomSummaryInput } from "$app/components/ProductEdit/ProductTab/CustomSummaryInput";
+import { CustomViewContentButtonTextInput } from "$app/components/ProductEdit/ProductTab/CustomViewContentButtonTextInput";
 import { DescriptionEditor, useImageUpload } from "$app/components/ProductEdit/ProductTab/DescriptionEditor";
 import { DiscordIntegrationEditor } from "$app/components/ProductEdit/ProductTab/DiscordIntegrationEditor";
 import { DurationEditor } from "$app/components/ProductEdit/ProductTab/DurationEditor";
@@ -205,6 +206,13 @@ export const ProductTab = () => {
                   setCustomAttributes={(custom_attributes) => updateProduct({ custom_attributes })}
                   fileAttributes={product.file_attributes}
                   setFileAttributes={(file_attributes) => updateProduct({ file_attributes })}
+                />
+              </section>
+              <section className="p-4! md:p-8!">
+                <h2>Customize Receipt</h2>
+                <CustomViewContentButtonTextInput
+                  value={product.custom_view_content_button_text}
+                  onChange={(value) => updateProduct({ custom_view_content_button_text: value || null })}
                 />
               </section>
               <section className="p-4! md:p-8!">
