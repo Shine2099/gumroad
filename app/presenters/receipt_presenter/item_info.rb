@@ -30,6 +30,10 @@ class ReceiptPresenter::ItemInfo
     }
   end
 
+  def custom_receipt_note
+    product.custom_receipt_text.presence
+  end
+
   private
     attr_reader :seller, :subscription
 
@@ -44,10 +48,6 @@ class ReceiptPresenter::ItemInfo
         rental_product_note,
         preorder_note
       ].compact
-    end
-
-    def custom_receipt_note
-      nil
     end
 
     def free_trial_purchase_note

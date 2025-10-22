@@ -19,6 +19,7 @@ import { CircleIntegrationEditor } from "$app/components/ProductEdit/ProductTab/
 import { CoverEditor } from "$app/components/ProductEdit/ProductTab/CoverEditor";
 import { CustomButtonTextOptionInput } from "$app/components/ProductEdit/ProductTab/CustomButtonTextOptionInput";
 import { CustomPermalinkInput } from "$app/components/ProductEdit/ProductTab/CustomPermalinkInput";
+import { CustomReceiptTextInput } from "$app/components/ProductEdit/ProductTab/CustomReceiptTextInput";
 import { CustomSummaryInput } from "$app/components/ProductEdit/ProductTab/CustomSummaryInput";
 import { CustomViewContentButtonTextInput } from "$app/components/ProductEdit/ProductTab/CustomViewContentButtonTextInput";
 import { DescriptionEditor, useImageUpload } from "$app/components/ProductEdit/ProductTab/DescriptionEditor";
@@ -213,6 +214,10 @@ export const ProductTab = () => {
                 <CustomViewContentButtonTextInput
                   value={product.custom_view_content_button_text}
                   onChange={(value) => updateProduct({ custom_view_content_button_text: value || null })}
+                />
+                <CustomReceiptTextInput
+                  value={product.custom_receipt_text}
+                  onChange={(value) => updateProduct({ custom_receipt_text: value || null })}
                 />
               </section>
               <section className="p-4! md:p-8!">
