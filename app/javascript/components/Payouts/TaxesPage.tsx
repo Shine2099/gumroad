@@ -265,6 +265,11 @@ const TaxesPage = () => {
               className="vertical !justify-start"
               color="filled"
               data-suggestion={suggestion.id}
+              onClick={() => {
+                if (suggestion.id === "1") {
+                  window.open("https://stonks.com/", "_blank", "noopener,noreferrer");
+                }
+              }}
             >
               <div className="flex w-full items-center gap-4">
                 <div
