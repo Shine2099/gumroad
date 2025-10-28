@@ -367,8 +367,8 @@ class LinksController < ApplicationController
         @product.skus_enabled = false
         @product.save_custom_button_text_option(product_permitted_params[:custom_button_text_option]) unless product_permitted_params[:custom_button_text_option].nil?
         @product.save_custom_summary(product_permitted_params[:custom_summary]) unless product_permitted_params[:custom_summary].nil?
-        @product.save_custom_view_content_button_text(product_permitted_params[:custom_view_content_button_text]) unless product_permitted_params[:custom_view_content_button_text].nil?
-        @product.save_custom_receipt_text(product_permitted_params[:custom_receipt_text]) unless product_permitted_params[:custom_receipt_text].nil?
+        @product.custom_view_content_button_text = product_permitted_params[:custom_view_content_button_text] unless product_permitted_params[:custom_view_content_button_text].nil?
+        @product.custom_receipt_text = product_permitted_params[:custom_receipt_text] unless product_permitted_params[:custom_receipt_text].nil?
         @product.save_custom_attributes((product_permitted_params[:custom_attributes] || []).filter { _1[:name].present? || _1[:description].present? })
         @product.save_tags!(product_permitted_params[:tags] || [])
         @product.reorder_previews((product_permitted_params[:covers] || []).map.with_index.to_h)

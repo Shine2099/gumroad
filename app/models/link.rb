@@ -226,6 +226,8 @@ class Link < ApplicationRecord
   attr_json_data_accessor :excluded_sales_tax_regions, default: -> { [] }
   attr_json_data_accessor :sections, default: -> { [] }
   attr_json_data_accessor :main_section_index, default: -> { 0 }
+  attr_json_data_accessor :custom_view_content_button_text
+  attr_json_data_accessor :custom_receipt_text
 
   scope :alive,                           -> { where(purchase_disabled_at: nil, banned_at: nil, deleted_at: nil) }
   scope :visible,                         -> { where(deleted_at: nil) }
@@ -957,7 +959,7 @@ class Link < ApplicationRecord
     end
   end
 
-  %w[custom_summary custom_button_text_option custom_view_content_button_text custom_receipt_text custom_attributes purchase_terms].each do |method_name|
+  %w[custom_summary custom_button_text_option custom_attributes purchase_terms].each do |method_name|
     define_method "save_#{method_name}" do |argument|
       self.json_data ||= {}
       self.json_data[method_name] = argument
@@ -965,7 +967,7 @@ class Link < ApplicationRecord
     end
   end
 
-  %w[custom_summary custom_button_text_option custom_view_content_button_text custom_receipt_text purchase_terms].each do |method_name|
+  %w[custom_summary custom_button_text_option purchase_terms].each do |method_name|
     define_method method_name do
       self.json_data.present? ? self.json_data[method_name] : nil
     end

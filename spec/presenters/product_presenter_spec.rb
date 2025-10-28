@@ -238,9 +238,10 @@ describe ProductPresenter do
     before do
       product.save_custom_button_text_option("pay_prompt")
       product.save_custom_summary("To summarize, I am a product.")
-      product.save_custom_view_content_button_text("Download Files")
-      product.save_custom_receipt_text("Thank you for purchasing! Feel free to contact us any time for support.")
       product.save_custom_attributes({ "Detail 1" => "Value 1" })
+      product.custom_view_content_button_text = "Download Files"
+      product.custom_receipt_text = "Thank you for purchasing! Feel free to contact us any time for support."
+      product.save
       product.user.reload
     end
 

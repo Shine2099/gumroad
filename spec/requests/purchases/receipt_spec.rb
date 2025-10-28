@@ -61,8 +61,9 @@ describe("Viewing a purchase receipt", type: :system, js: true) do
 
     context "when product has receipt customization" do
       before do
-        product.save_custom_view_content_button_text("Access Your Purchase")
-        product.save_custom_receipt_text("Welcome! Your purchase includes lifetime updates.")
+        product.custom_view_content_button_text = "Access Your Purchase"
+        product.custom_receipt_text = "Welcome! Your purchase includes lifetime updates."
+        product.save
       end
 
       it "displays custom content in the receipt page" do
