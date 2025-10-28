@@ -100,6 +100,7 @@ export type Product = {
   custom_view_content_button_text: string | null;
   custom_view_content_button_text_max_length: number;
   custom_receipt_text: string | null;
+  custom_receipt_text_max_length: number;
   custom_attributes: Attribute[];
   file_attributes: Attribute[];
   max_purchase_count: number | null;

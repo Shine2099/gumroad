@@ -219,6 +219,7 @@ export const ProductTab = () => {
                 <CustomReceiptTextInput
                   value={product.custom_receipt_text}
                   onChange={(value) => updateProduct({ custom_receipt_text: value })}
+                  maxLength={product.custom_receipt_text_max_length}
                 />
               </section>
               <section className="p-4! md:p-8!">
