@@ -28,12 +28,12 @@ export interface Pagination {
   count: number;
   next: number | null;
   limit: number;
-};
+}
 
 export interface CountlessPagination {
   page: number;
   limit: number;
-};
+}
 
 type PaginatedResponse = {
   pagination: Pagination;
