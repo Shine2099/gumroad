@@ -95,6 +95,7 @@ class ProductPresenter
         custom_button_text_option: product.custom_button_text_option.presence,
         custom_summary: product.custom_summary,
         custom_view_content_button_text: product.custom_view_content_button_text,
+        custom_view_content_button_text_max_length: Product::Validations::MAX_VIEW_CONTENT_BUTTON_TEXT_LENGTH,
         custom_receipt_text: product.custom_receipt_text,
         custom_attributes: product.custom_attributes,
         file_attributes: product.file_info_for_product_page.map { { name: _1.to_s, value: _2 } },

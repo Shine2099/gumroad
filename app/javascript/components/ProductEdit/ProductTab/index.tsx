@@ -214,6 +214,7 @@ export const ProductTab = () => {
                 <CustomViewContentButtonTextInput
                   value={product.custom_view_content_button_text}
                   onChange={(value) => updateProduct({ custom_view_content_button_text: value })}
+                  maxLength={product.custom_view_content_button_text_max_length}
                 />
                 <CustomReceiptTextInput
                   value={product.custom_receipt_text}
