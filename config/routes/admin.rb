@@ -43,6 +43,7 @@ namespace :admin do
           resources :purchases, only: :index
         end
       end
+      resources :guids, only: [:index]
     end
     resources :service_charges, only: :index
 
@@ -168,14 +169,8 @@ namespace :admin do
   end
 
   # Compliance
-
-  namespace "compliance" do
-    get "/users/:user_id/guids", to: "guids#index", as: :guids
-    resources :guids, only: [] do
-      scope module: "guids" do
-        resources :users, only: [:index]
-      end
-    end
+  resources :guids, only: [:show]
+  scope module: "compliance" do
     resources :cards, only: [:index] do
       collection do
         post :refund
