@@ -108,7 +108,7 @@ export const Card = ({
           <PopoverTrigger>
             <Icon name="three-dots" />
           </PopoverTrigger>
-          <PopoverContent className="border-0 p-0 shadow-none">
+          <PopoverContent className="border-0 p-0 shadow-none" usePortal>
             <div role="menu">
               <div role="menuitem" onClick={toggleArchived}>
                 <Icon name="archive" />

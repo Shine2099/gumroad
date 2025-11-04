@@ -35,7 +35,7 @@ export const PopoverContent = React.forwardRef<
       align = "start",
       collisionPadding = 16,
       matchTriggerWidth = false,
-      usePortal = true,
+      usePortal = false,
       ...props
     },
     ref,

@@ -117,7 +117,7 @@ export const PopoverMenuItem = ({
         </div>
       </MenuItemTooltip>
     </PopoverTrigger>
-    <PopoverContent usePortal={false}>
+    <PopoverContent className="border-0 p-0 shadow-none">
       <PopoverClose>{children}</PopoverClose>
     </PopoverContent>
   </Popover>

@@ -252,7 +252,7 @@ const MenubarItem = ({
             {menuItem.label}
           </a>
         </PopoverTrigger>
-        <PopoverContent className="border-0 p-0 shadow-none" arrowClassName="dark:fill-black/35" usePortal={false}>
+        <PopoverContent className="border-0 p-0 shadow-none" arrowClassName="dark:fill-black/35">
           <ItemsList
             key={`${uid}-${menuOpen}`}
             menuId={uid}

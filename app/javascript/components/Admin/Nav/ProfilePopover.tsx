@@ -15,7 +15,7 @@ export const DashboardNavProfilePopover = ({ children, user }: { children: React
       </div>
       <Icon name="outline-cheveron-down" className="group-data-[state=open]:rotate-180" />
     </PopoverTrigger>
-    <PopoverContent collisionPadding={0} side="top" className="border-0 p-0 shadow-none" usePortal={false}>
+    <PopoverContent side="top" className="border-0 p-0 shadow-none" collisionPadding={0} matchTriggerWidth>
       {children}
     </PopoverContent>
   </Popover>

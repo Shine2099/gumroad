@@ -350,7 +350,7 @@ const UtmLinkActions = ({ link, children }: { link: SavedUtmLink; children: Reac
           <Icon name="three-dots" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent>{children}</PopoverContent>
+      <PopoverContent className="border-0 p-0 shadow-none">{children}</PopoverContent>
     </Popover>
   </div>
 );

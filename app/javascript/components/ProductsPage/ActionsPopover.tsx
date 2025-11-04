@@ -90,7 +90,7 @@ const ActionsPopover = ({
         <PopoverTrigger>
           <Icon name="three-dots" />
         </PopoverTrigger>
-        <PopoverContent className="border-0 p-0 shadow-none" usePortal={false}>
+        <PopoverContent className="border-0 p-0 shadow-none" usePortal>
           <div role="menu">
             <div role="menuitem" inert={!product.can_duplicate || isDuplicating} onClick={() => void handleDuplicate()}>
               <Icon name="outline-duplicate" />

@@ -20,7 +20,7 @@ function NavbarFooter() {
       <NavLink text="Settings" icon="gear-fill" href={Routes.settings_main_url(routeParams)} />
       <NavLink text="Help" icon="book" href={Routes.help_center_root_url(routeParams)} />
       <DashboardNavProfilePopover user={currentSeller}>
-        <div role="menu" className="w-52 shadow-none!">
+        <div role="menu" className="shadow-none!">
           {teamMemberships != null && teamMemberships.length > 0 ? (
             <>
               {teamMemberships.map((teamMembership) => (
