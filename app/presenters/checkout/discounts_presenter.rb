@@ -24,6 +24,7 @@ class Checkout::DiscountsPresenter
           currency_type: product.price_currency_type,
           url: product.long_url,
           is_tiered_membership: product.is_tiered_membership?,
+          is_recurring_billing: product.is_recurring_billing?,
         }
       end,
     }
@@ -44,6 +45,7 @@ class Checkout::DiscountsPresenter
           url: product.long_url,
           currency_type: product.price_currency_type,
           is_tiered_membership: product.is_tiered_membership?,
+          is_recurring_billing: product.is_recurring_billing?,
         }
       end,
       limit: offer_code.max_purchase_count,
