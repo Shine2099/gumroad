@@ -1,27 +1,26 @@
+import { useForm } from "@inertiajs/react";
 import * as React from "react";
-import { createCast } from "ts-safe-cast";
 
-import { updateProfileSettings as requestUpdateProfileSettings, unlinkTwitter } from "$app/data/profile_settings";
+import { unlinkTwitter } from "$app/data/profile_settings";
 import { CreatorProfile, ProfileSettings } from "$app/parsers/profile";
 import { SettingPage } from "$app/parsers/settings";
 import { getContrastColor } from "$app/utils/color";
 import { asyncVoid } from "$app/utils/promise";
 import { assertResponseError } from "$app/utils/request";
-import { register } from "$app/utils/serverComponentUtil";
 
 import { Button } from "$app/components/Button";
+import { useClientAlert } from "$app/components/ClientAlertProvider";
 import { useDomains } from "$app/components/DomainSettings";
 import { Icon } from "$app/components/Icons";
 import { useLoggedInUser } from "$app/components/LoggedInUser";
 import { Preview } from "$app/components/Preview";
+import { Profile, Props as ProfileProps } from "$app/components/Profile/index";
 import { LogoInput } from "$app/components/Profile/Settings/LogoInput";
-import { showAlert } from "$app/components/server-components/Alert";
-import { Profile, Props as ProfileProps } from "$app/components/server-components/Profile/index";
 import { Layout as SettingsLayout } from "$app/components/Settings/Layout";
 import { SocialAuthButton } from "$app/components/SocialAuthButton";
 import { WithTooltip } from "$app/components/WithTooltip";
 
-type Props = {
+export type ProfilePageProps = {
   profile_settings: ProfileSettings;
   settings_pages: SettingPage[];
 } & ProfileProps;
@@ -35,30 +34,36 @@ const FONT_DESCRIPTIONS: Record<string, string> = {
   "Roboto Slab": "Personable and fun serif",
 };
 
-const SettingsPage = ({ creator_profile, profile_settings, settings_pages, ...profileProps }: Props) => {
+const SettingsPage = ({ creator_profile, profile_settings, settings_pages, ...profileProps }: ProfilePageProps) => {
+  const { showAlert } = useClientAlert();
   const { rootDomain, scheme } = useDomains();
   const loggedInUser = useLoggedInUser();
   const [creatorProfile, setCreatorProfile] = React.useState(creator_profile);
   const updateCreatorProfile = (newProfile: Partial<CreatorProfile>) =>
     setCreatorProfile((prevProfile) => ({ ...prevProfile, ...newProfile }));
 
-  const [profileSettings, setProfileSettings] = React.useState(profile_settings);
+  const form = useForm(profile_settings);
+
+  const profileSettings = form.data;
   const updateProfileSettings = (newSettings: Partial<ProfileSettings>) =>
-    setProfileSettings((prevSettings) => ({ ...prevSettings, ...newSettings }));
+    form.setData({ ...form.data, ...newSettings });
 
   const uid = React.useId();
 
-  const canUpdate = loggedInUser?.policies.settings_profile.update || false;
+  const canUpdate = (loggedInUser?.policies.settings_profile.update || false) && !form.processing;
 
-  const handleSave = asyncVoid(async () => {
-    try {
-      await requestUpdateProfileSettings(profileSettings);
-      showAlert("Changes saved!", "success");
-    } catch (e) {
-      assertResponseError(e);
-      showAlert(e.message, "error");
-    }
-  });
+  const handleSave = () => {
+    form.put(Routes.settings_profile_path(), {
+      preserveScroll: true,
+      onSuccess: () => {
+        showAlert("Changes saved!", "success");
+      },
+      onError: (errors) => {
+        const errorMessage = Object.values(errors).join(", ");
+        showAlert(errorMessage, "error");
+      }
+    });
+  };
 
   const handleUnlinkTwitter = asyncVoid(async () => {
     try {
@@ -257,4 +262,4 @@ const SettingsPage = ({ creator_profile, profile_settings, settings_pages, ...pr
   );
 };
 
-export default register({ component: SettingsPage, propParser: createCast() });
+export default SettingsPage;

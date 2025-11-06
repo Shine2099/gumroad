@@ -2,8 +2,8 @@ import * as React from "react";
 
 import { SavedCreditCard } from "$app/parsers/card";
 
-import { PayoutCreditCard } from "$app/components/server-components/PayoutPage/CreditCard";
-import { PayoutDebitCardData } from "$app/components/server-components/Settings/PaymentsPage";
+import { PayoutCreditCard } from "$app/components/PayoutPage/CreditCard";
+import { PayoutDebitCardData } from "$app/components/Settings/PaymentsPage";
 
 const DebitCardSection = ({
   isFormDisabled,

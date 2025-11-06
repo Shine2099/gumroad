@@ -1,7 +1,7 @@
 import { cx } from "class-variance-authority";
 import * as React from "react";
 import { GroupBase, SelectInstance } from "react-select";
-import { cast, createCast } from "ts-safe-cast";
+import { cast } from "ts-safe-cast";
 
 import {
   ROLES,
@@ -19,15 +19,14 @@ import { SettingPage } from "$app/parsers/settings";
 import { isValidEmail } from "$app/utils/email";
 import { asyncVoid } from "$app/utils/promise";
 import { assertResponseError } from "$app/utils/request";
-import { register } from "$app/utils/serverComponentUtil";
 
 import { Button } from "$app/components/Button";
+import { useClientAlert } from "$app/components/ClientAlertProvider";
 import { useCurrentSeller } from "$app/components/CurrentSeller";
 import { Icon } from "$app/components/Icons";
 import { LoadingSpinner } from "$app/components/LoadingSpinner";
 import { Modal } from "$app/components/Modal";
 import { Option, Select } from "$app/components/Select";
-import { showAlert } from "$app/components/server-components/Alert";
 import { Layout as SettingsLayout } from "$app/components/Settings/Layout";
 import { WithTooltip } from "$app/components/WithTooltip";
 
@@ -39,15 +38,13 @@ const ROLE_TITLES: Record<Role, string> = {
   support: "Support",
 };
 
-const TeamPage = ({
-  member_infos,
-  can_invite_member,
-  settings_pages,
-}: {
+export type TeamPageProps = {
   member_infos: MemberInfo[];
   can_invite_member: boolean;
   settings_pages: SettingPage[];
-}) => {
+};
+
+const TeamPage = ({ member_infos, can_invite_member, settings_pages }: TeamPageProps) => {
   const [memberInfos, setMemberInfos] = React.useState<MemberInfo[]>(member_infos);
 
   const options: Option[] = ROLES.map((role) => ({
@@ -79,6 +76,7 @@ const AddTeamMembersSection = ({
   refreshMemberInfos: () => void;
   options: Option[];
 }) => {
+  const { showAlert } = useClientAlert();
   const emailUID = React.useId();
   const roleUID = React.useId();
 
@@ -210,6 +208,7 @@ const TeamMembersSection = ({
   const [confirming, setConfirming] = React.useState<MemberInfo | null>(null);
   const [deletedMember, setDeletedMember] = React.useState<MemberInfo | null>(null);
   const ref = React.useRef<HTMLHeadingElement>(null);
+  const { showAlert } = useClientAlert();
 
   const handleOptionChange = async ({
     memberInfo,
@@ -395,4 +394,4 @@ const TeamMembersSection = ({
   );
 };
 
-export default register({ component: TeamPage, propParser: createCast() });
+export default TeamPage;

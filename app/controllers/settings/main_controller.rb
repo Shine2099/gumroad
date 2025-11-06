@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
-class Settings::MainController < Sellers::BaseController
+class Settings::MainController < Settings::BaseController
   include ActiveSupport::NumberHelper
 
   before_action :authorize
 
   def show
     @title = "Settings"
-    @react_component_props = SettingsPresenter.new(pundit_user:).main_props
+
+    render inertia: "Settings/Main", props: settings_presenter.main_props
   end
 
   def update

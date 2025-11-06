@@ -1,8 +1,6 @@
 import * as React from "react";
-import { createCast } from "ts-safe-cast";
 
 import { SettingPage } from "$app/parsers/settings";
-import { register } from "$app/utils/serverComponentUtil";
 
 import ApplicationForm from "$app/components/Settings/AdvancedPage/ApplicationForm";
 import { Layout } from "$app/components/Settings/Layout";
@@ -33,4 +31,4 @@ const EditApplicationPage = ({ settings_pages, application }: Props) => (
   </Layout>
 );
 
-export default register({ component: EditApplicationPage, propParser: createCast() });
+export default EditApplicationPage;

@@ -1,11 +1,10 @@
 import { parseISO } from "date-fns";
 import * as React from "react";
-import { createCast, cast } from "ts-safe-cast";
+import { cast } from "ts-safe-cast";
 
 import { SettingPage } from "$app/parsers/settings";
 import { asyncVoid } from "$app/utils/promise";
 import { assertResponseError, request } from "$app/utils/request";
-import { register } from "$app/utils/serverComponentUtil";
 
 import { Button } from "$app/components/Button";
 import { Icon } from "$app/components/Icons";
@@ -187,4 +186,4 @@ const AuthorizedApplicationsPage = (props: Props) => {
     </Layout>
   );
 };
-export default register({ component: AuthorizedApplicationsPage, propParser: createCast() });
+export default AuthorizedApplicationsPage;

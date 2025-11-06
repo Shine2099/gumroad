@@ -1,37 +1,39 @@
+import { useForm } from "@inertiajs/react";
 import * as React from "react";
-import { createCast } from "ts-safe-cast";
 
-import {
-  saveThirdPartyAnalytics,
-  ThirdPartyAnalytics,
-  Snippet,
-  SNIPPET_LOCATIONS,
-} from "$app/data/third_party_analytics";
+import { ThirdPartyAnalytics, Snippet, SNIPPET_LOCATIONS } from "$app/data/third_party_analytics";
 import { SettingPage } from "$app/parsers/settings";
-import { asyncVoid } from "$app/utils/promise";
-import { register } from "$app/utils/serverComponentUtil";
 
 import { Button } from "$app/components/Button";
+import { useClientAlert } from "$app/components/ClientAlertProvider";
 import { Details } from "$app/components/Details";
 import { Icon } from "$app/components/Icons";
 import { useLoggedInUser } from "$app/components/LoggedInUser";
-import { showAlert } from "$app/components/server-components/Alert";
 import { Layout as SettingsLayout } from "$app/components/Settings/Layout";
 import { TypeSafeOptionSelect } from "$app/components/TypeSafeOptionSelect";
 import Placeholder from "$app/components/ui/Placeholder";
 
 type Products = { permalink: string; name: string }[];
-type Props = {
+export type ThirdPartyAnalyticsPageProps = {
   settings_pages: SettingPage[];
   third_party_analytics: ThirdPartyAnalytics;
   products: Products;
 };
 
-const ThirdPartyAnalyticsPage = ({ settings_pages, third_party_analytics, products }: Props) => {
+const ThirdPartyAnalyticsPage = ({ settings_pages, third_party_analytics, products }: ThirdPartyAnalyticsPageProps) => {
   const loggedInUser = useLoggedInUser();
-  const [thirdPartyAnalytics, setThirdPartyAnalytics] = React.useState(third_party_analytics);
+  const { showAlert } = useClientAlert();
+
+  const form = useForm({
+    user: third_party_analytics,
+  });
+
+  const thirdPartyAnalytics = form.data.user;
   const updateThirdPartyAnalytics = (update: Partial<ThirdPartyAnalytics>) =>
-    setThirdPartyAnalytics((prevThirdPartyAnalytics) => ({ ...prevThirdPartyAnalytics, ...update }));
+    form.setData("user", {
+      ...form.data.user,
+      ...update,
+    });
 
   const uid = React.useId();
 
@@ -51,22 +53,35 @@ const ThirdPartyAnalyticsPage = ({ settings_pages, third_party_analytics, produc
       Add snippet
     </Button>
   );
+  const handleSave = () => {
+    form.setData({
+      user: {
+        ...thirdPartyAnalytics,
+        snippets: thirdPartyAnalytics.snippets.map((snippet) => ({
+          ...snippet,
+          id: snippet.id && !snippet.id.startsWith(NEW_SNIPPET_ID_PREFIX) ? snippet.id : null,
+        })),
+      },
+    });
+
+    form.put(Routes.settings_third_party_analytics_path(), {
+      preserveScroll: true,
+      onSuccess: () => {
+        showAlert("Changes saved!", "success");
+      },
+      onError: (errors: Record<string, string>) => {
+        const errorMessage = errors.error_message || Object.values(errors).join(", ");
+        showAlert(errorMessage, "error");
+      },
+    });
+  };
+
   return (
     <SettingsLayout
       currentPage="third_party_analytics"
       pages={settings_pages}
-      onSave={asyncVoid(async () => {
-        const result = await saveThirdPartyAnalytics({
-          ...thirdPartyAnalytics,
-          snippets: thirdPartyAnalytics.snippets.map((snippet) => ({
-            ...snippet,
-            id: snippet.id && !snippet.id.startsWith(NEW_SNIPPET_ID_PREFIX) ? snippet.id : null,
-          })),
-        });
-        if (result.success) showAlert("Changes saved!", "success");
-        else showAlert(result.error_message, "error");
-      })}
-      canUpdate={loggedInUser?.policies.settings_third_party_analytics_user.update || false}
+      onSave={handleSave}
+      canUpdate={Boolean(loggedInUser?.policies.settings_third_party_analytics_user.update) && !form.processing}
     >
       <form>
         <section className="p-4! md:p-8!">
@@ -322,4 +337,4 @@ const SnippetRow = ({
   );
 };
 
-export default register({ component: ThirdPartyAnalyticsPage, propParser: createCast() });
+export default ThirdPartyAnalyticsPage;

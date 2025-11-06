@@ -4,7 +4,7 @@ import * as React from "react";
 import { SavedCreditCard } from "$app/parsers/card";
 
 import { Button } from "$app/components/Button";
-import { FormFieldName, User } from "$app/components/server-components/Settings/PaymentsPage";
+import { FormFieldName, User } from "$app/components/Settings/PaymentsPage";
 
 export type BankAccount =
   | {

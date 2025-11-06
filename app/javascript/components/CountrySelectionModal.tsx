@@ -1,9 +1,8 @@
 import cx from "classnames";
 import * as React from "react";
-import { cast, createCast } from "ts-safe-cast";
+import { cast } from "ts-safe-cast";
 
 import { assertResponseError, request } from "$app/utils/request";
-import { register } from "$app/utils/serverComponentUtil";
 
 import { Button } from "$app/components/Button";
 import { LoadingSpinner } from "$app/components/LoadingSpinner";
@@ -101,4 +100,4 @@ export const CountrySelectionModal = ({ country: initialCountry, countries }: Pr
   );
 };
 
-export default register({ component: CountrySelectionModal, propParser: createCast() });
+export default CountrySelectionModal;

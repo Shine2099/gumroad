@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-class Settings::ThirdPartyAnalyticsController < Sellers::BaseController
+class Settings::ThirdPartyAnalyticsController < Settings::BaseController
   before_action :authorize
 
   def show
     @title = "Settings"
-    @settings_presenter = SettingsPresenter.new(pundit_user:)
-    @react_component_props = {
-      third_party_analytics: @settings_presenter.third_party_analytics_props,
-      settings_pages: @settings_presenter.pages,
+
+    render inertia: "Settings/ThirdPartyAnalytics", props: {
+      third_party_analytics: settings_presenter.third_party_analytics_props,
+      settings_pages: settings_presenter.pages,
       products: current_seller.links.alive.map { |product| { permalink: product.unique_permalink, name: product.name } }
     }
   end

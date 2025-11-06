@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
-class Settings::AdvancedController < Sellers::BaseController
+class Settings::AdvancedController < Settings::BaseController
   before_action :authorize
 
   def show
     @title = "Settings"
-    @react_component_props = SettingsPresenter.new(pundit_user:).advanced_props
+
+    render inertia: "Settings/Advanced", props: settings_presenter.advanced_props
   end
 
   def update

@@ -1,3 +1,4 @@
+import { Link } from "@inertiajs/react";
 import cx from "classnames";
 import * as React from "react";
 
@@ -42,8 +43,8 @@ export const Layout = ({ onSave, pages, currentPage, children, hasAside, canUpda
     >
       <Tabs>
         {pages.map((page) => (
-          <Tab key={page} href={Routes[`settings_${page}_path`]()} isSelected={currentPage === page}>
-            {PAGE_TITLES[page]}
+          <Tab key={page} isSelected={currentPage === page} asChild>
+            <Link href={Routes[`settings_${page}_path`]()}>{PAGE_TITLES[page]}</Link>
           </Tab>
         ))}
       </Tabs>
