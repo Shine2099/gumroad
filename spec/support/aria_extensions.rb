@@ -75,8 +75,7 @@ Capybara.add_selector(:tooltip, locator_type: [nil]) do
   end
 
   node_filter(:attached, default: true) do |node|
-    puts node == node.session.document, node, node.session.document
-    return true if node == node.session.document
+    next true if node.query_scope == node.session.document
     node["id"] == (node.query_scope["aria-describedby"] || node.query_scope.ancestor("[aria-describedby]")["aria-describedby"])
   end
 end
