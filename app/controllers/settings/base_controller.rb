@@ -3,7 +3,6 @@
 class Settings::BaseController < Sellers::BaseController
   layout "inertia"
 
-  # Share common data across all settings pages
   inertia_share do
     {
       settings: {

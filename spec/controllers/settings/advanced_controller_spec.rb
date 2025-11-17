@@ -6,8 +6,6 @@ require "shared_examples/authorize_called"
 require "inertia_rails/rspec"
 
 describe Settings::AdvancedController, :vcr, type: :controller, inertia: true do
-  render_views
-
   it_behaves_like "inherits from Sellers::BaseController"
 
   let(:seller) { create(:named_seller) }
