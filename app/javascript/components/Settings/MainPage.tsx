@@ -1,11 +1,10 @@
-import { useForm } from "@inertiajs/react";
+import { useForm, router } from "@inertiajs/react";
 import cx from "classnames";
 import * as React from "react";
-import { cast } from "ts-safe-cast";
 
 import { SettingPage } from "$app/parsers/settings";
 import { asyncVoid } from "$app/utils/promise";
-import { ResponseError, request, assertResponseError } from "$app/utils/request";
+import { request, assertResponseError } from "$app/utils/request";
 
 import { Button } from "$app/components/Button";
 import { Modal } from "$app/components/Modal";
@@ -88,25 +87,22 @@ const MainPage = (props: MainPageProps) => {
   const [resentConfirmationEmail, setResentConfirmationEmail] = React.useState(false);
   const formRef = React.useRef<HTMLFormElement>(null);
 
-  const resendConfirmationEmail = async () => {
+  const resendConfirmationEmail = () => {
     setIsResendingConfirmationEmail(true);
 
-    try {
-      const response = await request({
-        url: Routes.resend_confirmation_email_settings_main_path(),
-        method: "POST",
-        accept: "json",
-      });
-      const responseData = cast<{ success: boolean }>(await response.json());
-      if (!responseData.success) throw new ResponseError();
-      showAlert("Confirmation email resent!", "success");
-      setResentConfirmationEmail(true);
-    } catch (e) {
-      assertResponseError(e);
-      showAlert("Sorry, something went wrong. Please try again.", "error");
-    }
-
-    setIsResendingConfirmationEmail(false);
+    router.post(
+      Routes.resend_confirmation_email_settings_main_path(),
+      {},
+      {
+        onSuccess: () => {
+          setResentConfirmationEmail(true);
+          setIsResendingConfirmationEmail(false);
+        },
+        onError: () => {
+          setIsResendingConfirmationEmail(false);
+        },
+      },
+    );
   };
 
   const onSave = () => {
@@ -115,13 +111,6 @@ const MainPage = (props: MainPageProps) => {
 
     form.put(Routes.settings_main_path(), {
       preserveScroll: true,
-      onSuccess: () => {
-        showAlert("Your account has been updated!", "success");
-      },
-      onError: (errors) => {
-        const errorMessage = errors.error_message || Object.values(errors).join(", ");
-        showAlert(errorMessage, "error");
-      },
     });
   };
 
@@ -157,7 +146,7 @@ const MainPage = (props: MainPageProps) => {
                     className="underline"
                     onClick={(e) => {
                       e.preventDefault();
-                      void resendConfirmationEmail();
+                      resendConfirmationEmail();
                     }}
                   >
                     {isResendingConfirmationEmail ? "Resending..." : "Resend confirmation?"}
