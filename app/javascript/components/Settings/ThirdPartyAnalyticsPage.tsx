@@ -8,7 +8,6 @@ import { Button } from "$app/components/Button";
 import { Details } from "$app/components/Details";
 import { Icon } from "$app/components/Icons";
 import { useLoggedInUser } from "$app/components/LoggedInUser";
-import { showAlert } from "$app/components/server-components/Alert";
 import { Layout as SettingsLayout } from "$app/components/Settings/Layout";
 import { TypeSafeOptionSelect } from "$app/components/TypeSafeOptionSelect";
 import Placeholder from "$app/components/ui/Placeholder";
@@ -65,13 +64,6 @@ const ThirdPartyAnalyticsPage = ({ settings_pages, third_party_analytics, produc
 
     form.put(Routes.settings_third_party_analytics_path(), {
       preserveScroll: true,
-      onSuccess: () => {
-        showAlert("Changes saved!", "success");
-      },
-      onError: (errors: Record<string, string>) => {
-        const errorMessage = errors.error_message || Object.values(errors).join(", ");
-        showAlert(errorMessage, "error");
-      },
     });
   };
 
