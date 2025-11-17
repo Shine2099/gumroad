@@ -19,16 +19,37 @@ class Settings::ThirdPartyAnalyticsController < Settings::BaseController
       ThirdPartyAnalytic.save_third_party_analytics(third_party_analytics_params[:snippets] || [], current_seller)
 
       if current_seller.save
-        render json: { success: true }
+        render inertia: "Settings/ThirdPartyAnalytics", props: {
+          third_party_analytics: settings_presenter.third_party_analytics_props,
+          settings_pages: settings_presenter.pages,
+          products: current_seller.links.alive.map { |product| { permalink: product.unique_permalink, name: product.name } }
+        }, status: :ok
       else
-        render json: { success: false, error_message: current_seller.errors.full_messages.to_sentence }
+        message = current_seller.errors.full_messages.to_sentence
+        redirect_to(
+          settings_third_party_analytics_path,
+          inertia: { errors: { error_message: message } },
+          alert: message,
+          status: :see_other
+        )
       end
     end
   rescue ThirdPartyAnalytic::ThirdPartyAnalyticInvalid => e
-    render json: { success: false, error_message: e.message }
+    redirect_to(
+      settings_third_party_analytics_path,
+      inertia: { errors: { error_message: e.message } },
+      alert: e.message,
+      status: :see_other
+    )
   rescue StandardError => e
     Bugsnag.notify(e)
-    render json: { success: false, error_message: "Something broke. We're looking into what happened. Sorry about this!" }
+    message = "Something broke. We're looking into what happened. Sorry about this!"
+    redirect_to(
+      settings_third_party_analytics_path,
+      inertia: { errors: { error_message: message } },
+      alert: message,
+      status: :see_other
+    )
   end
 
   private
