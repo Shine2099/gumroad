@@ -3,8 +3,9 @@
 require "spec_helper"
 require "shared_examples/sellers_base_controller_concern"
 require "shared_examples/authorize_called"
+require "inertia_rails/rspec"
 
-describe Settings::PasswordController, :vcr do
+describe Settings::PasswordController, :vcr, type: :controller, inertia: true do
   it_behaves_like "inherits from Sellers::BaseController"
 
   let (:user) { create(:user) }
@@ -18,13 +19,12 @@ describe Settings::PasswordController, :vcr do
   end
 
   describe "GET show" do
-    it "returns http success and assigns correct instance variables" do
+    it "returns http success and renders Inertia component" do
       get :show
 
       expect(response).to be_successful
-      expect(assigns(:react_component_props)).to eq(
-        require_old_password: true, settings_pages: %w(main profile team payments password third_party_analytics advanced)
-      )
+      expect(inertia.component).to eq("Settings/Password")
+      expect(inertia.props).to be_present
     end
   end
 
@@ -32,37 +32,45 @@ describe Settings::PasswordController, :vcr do
     context "when request payload is missing" do
       it "returns failure response" do
         with_real_pwned_password_check do
-          put :update, xhr: true
+          put :update
         end
-        expect(response.parsed_body["success"]).to be(false)
+        expect(response).to redirect_to(settings_password_path)
+        expect(response).to have_http_status :see_other
+        expect(flash[:alert]).to eq("Incorrect password.")
+        expect(session[:inertia_errors]).to be_present
       end
     end
 
     context "when the specified new password is not compromised" do
       it "returns success response" do
         with_real_pwned_password_check do
-          put :update, xhr: true, params: { user: { password: user.password, new_password: "#{user.password}-new" } }
+          put :update, params: { user: { password: user.password, new_password: "#{user.password}-new" } }
         end
-        expect(response.parsed_body["success"]).to be(true)
+        expect(response).to be_successful
+        expect(inertia.component).to eq("Settings/Password")
       end
     end
 
     context "when the specified new password is compromised" do
       it "returns failure response" do
         with_real_pwned_password_check do
-          put :update, xhr: true, params: { user: { password: user.password, new_password: "password" } }
+          put :update, params: { user: { password: user.password, new_password: "password" } }
         end
-        expect(response.parsed_body["success"]).to be(false)
+        expect(response).to redirect_to(settings_password_path)
+        expect(response).to have_http_status :see_other
+        expect(flash[:alert]).to be_present
+        expect(session[:inertia_errors]).to be_present
       end
     end
 
     it "invalidates the user's active sessions and keeps the current session active" do
       travel_to(DateTime.current) do
         expect do
-          put :update, xhr: true, params: { user: { password: user.password, new_password: "#{user.password}-new" } }
+          put :update, params: { user: { password: user.password, new_password: "#{user.password}-new" } }
         end.to change { user.reload.last_active_sessions_invalidated_at }.from(nil).to(DateTime.current)
 
-        expect(response.parsed_body["success"]).to be(true)
+        expect(response).to be_successful
+        expect(inertia.component).to eq("Settings/Password")
         expect(request.env["warden"].session["last_sign_in_at"]).to eq(DateTime.current.to_i)
       end
     end
@@ -77,9 +85,10 @@ describe Settings::PasswordController, :vcr do
 
     it "returns http success without checking for old password" do
       with_real_pwned_password_check do
-        put :update, xhr: true, params: { user: { password: "", new_password: "#{user}-new" } }
+        put :update, params: { user: { password: "", new_password: "#{user}-new" } }
       end
-      expect(response.parsed_body["success"]).to be(true)
+      expect(response).to be_successful
+      expect(inertia.component).to eq("Settings/Password")
     end
   end
 end
