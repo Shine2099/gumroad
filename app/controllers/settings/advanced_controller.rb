@@ -16,19 +16,37 @@ class Settings::AdvancedController < Settings::BaseController
       end
 
       if @invalid_blocked_email.present?
-        return render json: { success: false, error_message: "The email #{@invalid_blocked_email} cannot be blocked as it is invalid." }
+        message = "The email #{@invalid_blocked_email} cannot be blocked as it is invalid."
+        return redirect_to(
+          settings_advanced_path,
+          inertia: { errors: { error_message: message } },
+          alert: message,
+          status: :see_other
+        )
       end
     rescue => e
       Bugsnag.notify(e)
       logger.error "Couldn't block customer emails: #{e.message}"
-      return render json: { success: false, error_message: "Sorry, something went wrong. Please try again." }
+      message = "Sorry, something went wrong. Please try again."
+      return redirect_to(
+        settings_advanced_path,
+        inertia: { errors: { error_message: message } },
+        alert: message,
+        status: :see_other
+      )
     end
 
     begin
       current_seller.with_lock { current_seller.update(advanced_params) }
     rescue => e
       Bugsnag.notify(e)
-      return render json: { success: false, error_message: "Something broke. We're looking into what happened. Sorry about this!" }
+      message = "Something broke. We're looking into what happened. Sorry about this!"
+      return redirect_to(
+        settings_advanced_path,
+        inertia: { errors: { error_message: message } },
+        alert: message,
+        status: :see_other
+      )
     end
 
     if params[:domain].present?
@@ -40,15 +58,28 @@ class Settings::AdvancedController < Settings::BaseController
       rescue ActiveRecord::RecordNotUnique
         error_message = "The custom domain is already in use."
       end
-      return render json: { success: false, error_message: } if error_message
+      if error_message
+        return redirect_to(
+          settings_advanced_path,
+          inertia: { errors: { error_message: } },
+          alert: error_message,
+          status: :see_other
+        )
+      end
     elsif params[:domain] == "" && current_seller.custom_domain.present?
       current_seller.custom_domain.mark_deleted!
     end
 
     if current_seller.save
-      render json: { success: true }
+      render inertia: "Settings/Advanced", props: settings_presenter.advanced_props, status: :ok
     else
-      render json: { success: false, error_message: current_seller.errors.full_messages.to_sentence }
+      message = current_seller.errors.full_messages.to_sentence
+      redirect_to(
+        settings_advanced_path,
+        inertia: { errors: { error_message: message } },
+        alert: message,
+        status: :see_other
+      )
     end
   end
 
