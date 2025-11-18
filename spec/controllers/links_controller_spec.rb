@@ -4514,6 +4514,53 @@ describe LinksController, :vcr, inertia: true do
             expect(response.parsed_body["products"]).to eq([product_json(@product_without_review, "profile"), product_json(@product_with_review, "profile")])
           end
         end
+
+        describe "offer code in product URLs" do
+          before do
+            @user = create(:recommendable_user)
+            @product_with_offer_code = create(:product, :recommendable, name: "product with offer", user: @user)
+            @offer_code = create(:offer_code, code: "BLACKFRIDAY2025", amount_percentage: 20, products: [@product_with_offer_code], user: @user)
+            Link.__elasticsearch__.refresh_index!
+          end
+
+          it "includes offer_code in product URLs when BLACKFRIDAY2025 is provided" do
+            get :search, params: { offer_codes: "BLACKFRIDAY2025" }
+
+            expect(response).to be_successful
+            product_result = response.parsed_body["products"].find { |p| p["id"] == @product_with_offer_code.external_id }
+            expect(product_result["url"]).to include("code=BLACKFRIDAY2025")
+          end
+
+          it "filters out other offer codes and does not add code parameter" do
+            get :search, params: { offer_codes: "OTHERCODE", query: "product with offer" }
+
+            expect(response).to be_successful
+            product_result = response.parsed_body["products"].find { |p| p["id"] == @product_with_offer_code.external_id }
+            expect(product_result["url"]).not_to include("code=") if product_result
+          end
+
+          it "does not include offer_code in product URLs when not provided" do
+            get :search, params: { query: "product with offer" }
+
+            expect(response).to be_successful
+            product_result = response.parsed_body["products"].find { |p| p["id"] == @product_with_offer_code.external_id }
+            expect(product_result["url"]).not_to include("code=") if product_result
+          end
+
+          it "does not include offer_code in URLs when searching on profile" do
+            @recommended_by = nil
+            @on_profile = true
+            section = create(:seller_profile_products_section, seller: @user)
+            get :search, params: { user_id: @user.external_id, section_id: section.external_id, offer_codes: "BLACKFRIDAY2025" }
+
+            expect(response).to be_successful
+            product_result = response.parsed_body["products"].find { |p| p["id"] == @product_with_offer_code.external_id }
+            if product_result
+              # Verify that offer_code is not included when searching on profile
+              expect(product_result["url"]).not_to include("code=")
+            end
+          end
+        end
       end
 
       describe "Discover tracking" do

@@ -52,7 +52,7 @@ module ProductsHelper
     sentence
   end
 
-  def url_for_product_page(product, request:, recommended_by: nil, recommender_model_name: nil, layout: nil, affiliate_id: nil, query: nil)
+  def url_for_product_page(product, request:, recommended_by: nil, recommender_model_name: nil, layout: nil, affiliate_id: nil, query: nil, offer_code: nil)
     if request.present? && user_by_domain(request.host) == product.user
       options = { host: request.host_with_port, protocol: request.protocol }
       options[:recommended_by] = recommended_by if recommended_by.present?
@@ -60,9 +60,10 @@ module ProductsHelper
       options[:layout] = layout if layout.present?
       options[:affiliate_id] = affiliate_id if affiliate_id.present?
       options[:query] = query if query.present?
+      options[:code] = offer_code if offer_code.present?
       short_link_url(product.general_permalink, options)
     else
-      product.long_url(recommended_by:, recommender_model_name:, layout:, affiliate_id:)
+      product.long_url(recommended_by:, recommender_model_name:, layout:, affiliate_id:, offer_code:)
     end
   end
 

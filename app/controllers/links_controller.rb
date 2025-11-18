@@ -234,6 +234,7 @@ class LinksController < ApplicationController
       search_params[:sort] = ProductSortKey::PAGE_LAYOUT if search_params[:sort] == "default"
       search_params[:ids]&.map! { ObfuscateIds.decrypt(_1) }
     else
+      format_search_params!
       search_params[:sort] = ProductSortKey::FEATURED if search_params[:sort] == "default"
       search_params[:include_rated_as_adult] = logged_in_user&.show_nsfw_products?
       search_params[:curated_product_ids] = params[:curated_product_ids]&.map { ObfuscateIds.decrypt(_1) }
@@ -251,6 +252,7 @@ class LinksController < ApplicationController
       create_discover_search!(query: search_params[:query], taxonomy_id: search_params[:taxonomy_id])
     end
 
+    offer_code = search_params[:offer_codes]&.first unless on_profile
     results = search_products(search_params)
     results[:products] = results[:products].includes(ProductPresenter::ASSOCIATIONS_FOR_CARD).map do |product|
       ProductPresenter.card_for_web(
@@ -259,7 +261,8 @@ class LinksController < ApplicationController
         recommended_by:,
         target: on_profile ? Product::Layout::PROFILE : Product::Layout::DISCOVER,
         show_seller: !on_profile,
-        query: (search_params[:query] unless on_profile)
+        query: (search_params[:query] unless on_profile),
+        offer_code: (offer_code unless on_profile)
       )
     end
     render json: results

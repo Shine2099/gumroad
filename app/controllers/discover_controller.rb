@@ -33,6 +33,7 @@ class DiscoverController < ApplicationController
     params[:size] = INITIAL_PRODUCTS_COUNT
 
     @search_results = search_products(params)
+    offer_code = params[:offer_codes]&.first
     @search_results[:products] = @search_results[:products].includes(ProductPresenter::ASSOCIATIONS_FOR_CARD).map do |product|
       ProductPresenter.card_for_web(
         product:,
@@ -40,7 +41,8 @@ class DiscoverController < ApplicationController
         recommended_by: RecommendationType::GUMROAD_SEARCH_RECOMMENDATION,
         target: Product::Layout::DISCOVER,
         compute_description: false,
-        query: params[:query]
+        query: params[:query],
+        offer_code:
       )
     end
 

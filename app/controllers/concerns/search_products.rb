@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module SearchProducts
+  ALLOWED_OFFER_CODES = ["BLACKFRIDAY2025"].freeze
+
   private
     def search_products(params)
       filetype_options = Link.filetype_options(params)
@@ -26,9 +28,9 @@ module SearchProducts
       end
 
       if params[:offer_codes].is_a?(String)
-        params[:offer_codes] = params[:offer_codes].split(",").map(&:squish).select { |code| code == "BLACKFRIDAY2025" }
+        params[:offer_codes] = params[:offer_codes].split(",").map(&:squish).select { |code| ALLOWED_OFFER_CODES.include?(code) }
       elsif params[:offer_codes].is_a?(Array)
-        params[:offer_codes] = params[:offer_codes].select { |code| code == "BLACKFRIDAY2025" }
+        params[:offer_codes] = params[:offer_codes].select { |code| ALLOWED_OFFER_CODES.include?(code) }
       end
 
       if params[:size].is_a?(String)

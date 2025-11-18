@@ -69,6 +69,20 @@ describe ProductPresenter::Card do
 
         expect(result).not_to have_key(:description)
       end
+
+      it "includes offer_code in URL when provided" do
+        result = described_class.new(product:).for_web(request:, recommended_by: "discover", offer_code: "BLACKFRIDAY2025")
+
+        expect(result[:url]).to eq(product.long_url(recommended_by: "discover", offer_code: "BLACKFRIDAY2025"))
+        expect(result[:url]).to include("code=BLACKFRIDAY2025")
+      end
+
+      it "does not include offer_code in URL when not provided" do
+        result = described_class.new(product:).for_web(request:, recommended_by: "discover")
+
+        expect(result[:url]).to eq(product.long_url(recommended_by: "discover"))
+        expect(result[:url]).not_to include("code=")
+      end
     end
 
     context "membership product" do

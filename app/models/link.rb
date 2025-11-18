@@ -498,7 +498,7 @@ class Link < ApplicationRecord
     self
   end
 
-  def long_url(recommended_by: nil, recommender_model_name: nil, include_protocol: true, layout: nil, affiliate_id: nil, query: nil, autocomplete: false)
+  def long_url(recommended_by: nil, recommender_model_name: nil, include_protocol: true, layout: nil, affiliate_id: nil, query: nil, autocomplete: false, offer_code: nil)
     host = user.subdomain_with_protocol || UrlService.domain_with_protocol
     options = { host: }
     options[:recommended_by] = recommended_by if recommended_by.present?
@@ -507,6 +507,7 @@ class Link < ApplicationRecord
     options[:query] = query if query.present?
     options[:affiliate_id] = affiliate_id if affiliate_id.present?
     options[:autocomplete] = "true" if autocomplete
+    options[:code] = offer_code if offer_code.present?
 
     product_long_url = Rails.application.routes.url_helpers.short_link_url(general_permalink, options)
     product_long_url.sub!(/\A#{PROTOCOL}:\/\//o, "") unless include_protocol

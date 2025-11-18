@@ -118,6 +118,51 @@ describe DiscoverController do
         expect(response.body).to have_selector("meta[name='description'][content='#{description}']", visible: false)
       end
     end
+
+    context "offer code in product URLs" do
+      let!(:creator) { create(:recommendable_user) }
+      let!(:product_with_offer_code) { create(:product, :recommendable, user: creator) }
+
+      before do
+        create(:offer_code, code: "BLACKFRIDAY2025", amount_percentage: 20, products: [product_with_offer_code], user: creator)
+        Link.import(refresh: true, force: true)
+      end
+
+      it "includes offer_code in product URLs when BLACKFRIDAY2025 is provided" do
+        get :index, params: { offer_codes: "BLACKFRIDAY2025" }
+
+        expect(response).to be_successful
+        search_results = assigns(:search_results)
+        expect(search_results).to be_present
+        expect(search_results[:products]).to be_present
+        product_url = search_results[:products].find { |p| p[:id] == product_with_offer_code.external_id }[:url]
+        expect(product_url).to include("code=BLACKFRIDAY2025")
+      end
+
+      it "filters out other offer codes and does not add code parameter" do
+        get :index, params: { offer_codes: "OTHERCODE", query: "offer" }
+
+        expect(response).to be_successful
+        search_results = assigns(:search_results)
+        if search_results[:products].present?
+          # If products are found, verify no code parameter is added
+          product_url = search_results[:products].first[:url]
+          expect(product_url).not_to include("code=")
+        end
+      end
+
+      it "does not include offer_code in product URLs when not provided" do
+        get :index, params: { query: "offer" }
+
+        expect(response).to be_successful
+        search_results = assigns(:search_results)
+        if search_results[:products].present?
+          # If products are found, verify no code parameter is added
+          product_url = search_results[:products].first[:url]
+          expect(product_url).not_to include("code=")
+        end
+      end
+    end
   end
 
   describe "#recommended_products" do
