@@ -310,9 +310,7 @@ const OverlayMenu = ({
 } & React.AriaAttributes) => {
   const { onSelectItem, selectedItem, topLevelMenuItems } = useMenuContext();
   const [menuOpen, setMenuOpen] = React.useState(false);
-
   React.useEffect(() => setMenuOpen(false), [selectedItem]);
-
   const overlayMenuUID = React.useId();
 
   return (
