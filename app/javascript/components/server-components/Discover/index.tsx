@@ -29,6 +29,7 @@ type Props = {
   taxonomies_for_nav: Taxonomy[];
   recommended_products: CardProduct[];
   curated_product_ids: string[];
+  black_friday_button_html: string;
 };
 
 const sortTitles = {
@@ -83,6 +84,29 @@ const ProductsCarousel = ({ products, title }: { products: CardProduct[]; title:
     </section>
   );
 };
+
+const BlackFridayBanner = () => (
+  <div className="flex h-full shrink-0 items-center gap-x-4 [&>*]:flex-shrink-0">
+    <span className="mx-2 inline-block text-lg">✦</span>
+    <span className="flex items-center text-xl font-medium text-black">BLACK FRIDAY IS LIVE</span>
+    <span className="mx-2 inline-block text-lg">✦</span>
+    <span className="flex items-center text-xl font-medium text-black">
+      <span className="mr-1.5 font-bold">1,844</span>ACTIVE DEALS
+    </span>
+    <span className="mx-2 inline-block text-lg">✦</span>
+    <span className="flex items-center text-xl font-medium text-black">CREATOR-MADE PRODUCTS</span>
+    <span className="mx-2 inline-block text-lg">✦</span>
+    <span className="flex items-center text-xl font-medium text-black">
+      <span className="mr-1.5 font-bold">$1,590,877</span>IN SALES SO FAR
+    </span>
+    <span className="mx-2 inline-block text-lg">✦</span>
+    <span className="flex items-center text-xl font-medium text-black">BIG SAVINGS</span>
+    <span className="mx-2 inline-block text-lg">✦</span>
+    <span className="flex items-center text-xl font-medium text-black">
+      <span className="mr-1.5 font-bold">35%</span>AVERAGE DISCOUNT
+    </span>
+  </div>
+);
 
 // Featured products and search results overlap when there are no filters, so we skip over the featured products in the search request
 // See DiscoverController::RECOMMENDED_PRODUCTS_COUNT
@@ -202,6 +226,46 @@ const Discover = (props: Props) => {
       query={state.params.query}
       setQuery={(query) => dispatch({ type: "set-params", params: { query, taxonomy: taxonomyPath } })}
     >
+      <header className="relative flex flex-col items-center justify-center">
+        <div className="relative flex min-h-[72vh] w-full flex-col items-center justify-center bg-black">
+          <img
+            src="/assets/illustrations/sale.svg"
+            alt="Sale"
+            className="absolute top-1/2 left-40 hidden w-32 -translate-y-1/2 rotate-[-24deg] object-contain md:left-12 md:block md:w-40 lg:left-36 lg:w-48 xl:left-60 xl:w-60"
+            draggable={false}
+          />
+          <div className="relative">
+            <img
+              src="/assets/illustrations/black_friday.svg"
+              alt="Black Friday"
+              className="max-w-96 object-contain"
+              draggable={false}
+            />
+            <img
+              src="/assets/illustrations/sale.svg"
+              alt="Sale"
+              className="absolute right-0 bottom-0 w-24 rotate-[16deg] object-contain md:hidden"
+              draggable={false}
+            />
+          </div>
+          <img
+            src="/assets/illustrations/sale.svg"
+            alt="Sale"
+            className="absolute top-1/2 right-40 hidden w-32 -translate-y-1/2 rotate-[24deg] object-contain md:right-12 md:block md:w-40 lg:right-36 lg:w-48 xl:right-60 xl:w-60"
+            draggable={false}
+          />
+          <div className="font-regular mx-12 text-center text-xl text-white">
+            Snag creator-made deals <br className="block sm:hidden" /> before they're gone.
+          </div>
+          <div className="mt-8 text-base" dangerouslySetInnerHTML={{ __html: props.black_friday_button_html }} />
+        </div>
+        <div className="h-14 w-full overflow-hidden border-b border-black bg-yellow-400">
+          <div className="flex h-14 min-w-fit items-center gap-x-4 whitespace-nowrap hover:[animation-play-state:paused] motion-safe:animate-[marquee-scroll_42s_linear_infinite] motion-reduce:animate-none">
+            <BlackFridayBanner />
+            <BlackFridayBanner />
+          </div>
+        </div>
+      </header>
       <div className="grid gap-16! px-4 py-16 lg:ps-16 lg:pe-16">
         {showRecommendedSections ? (
           <ProductsCarousel

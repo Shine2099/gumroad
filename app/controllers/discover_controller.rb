@@ -55,6 +55,7 @@ class DiscoverController < ApplicationController
       recommended_products: recommendations,
       curated_product_ids: curated_products.map { _1.product.external_id },
       search_offset: params[:from] || 0,
+      black_friday_button_html: render_to_string(partial: "home/shared/button", locals: { text: "Get Black Friday deals", url: discover_path, variant: "pink", size: "default" }, layout: false),
     }
   end
 
