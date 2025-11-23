@@ -1,13 +1,15 @@
 import * as React from "react";
 
-import { buttonVariants } from "$app/components/Button";
+import { Button } from "$app/components/Button";
 import { Popover, PopoverContent, PopoverTrigger } from "$app/components/Popover";
 
 type Props = { iosAppUrl: string; androidAppUrl: string };
 
 export const OpenInAppButton = ({ iosAppUrl, androidAppUrl }: Props) => (
   <Popover>
-    <PopoverTrigger className={buttonVariants()}>Open in app</PopoverTrigger>
+    <PopoverTrigger asChild>
+      <Button>Open in app</Button>
+    </PopoverTrigger>
     <PopoverContent sideOffset={4}>
       <div className="mx-auto grid w-72 gap-4 text-center">
         <h3>Gumroad Library</h3>

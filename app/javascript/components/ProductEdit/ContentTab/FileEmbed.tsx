@@ -15,7 +15,7 @@ import { getMimeType } from "$app/utils/mimetypes";
 import { summarizeUploadProgress } from "$app/utils/summarizeUploadProgress";
 
 import { AudioPlayer } from "$app/components/AudioPlayer";
-import { Button, buttonVariants, NavigationButton } from "$app/components/Button";
+import { Button, NavigationButton } from "$app/components/Button";
 import { connectedFileRowClassName } from "$app/components/Download/RichContent";
 import { useEvaporateUploader } from "$app/components/EvaporateUploader";
 import { FileRowContent } from "$app/components/FileRowContent";
@@ -490,8 +490,10 @@ const FileEmbedNodeView = ({ node, editor, getPos, updateAttributes }: NodeViewP
 
           {file.is_streamable ? (
             <Popover>
-              <PopoverTrigger aria-label="Thumbnail view" className={buttonVariants()}>
-                <Icon name={node.attrs.collapsed ? "arrows-expand" : "arrows-collapse"} />
+              <PopoverTrigger aria-label="Thumbnail view" asChild>
+                <Button>
+                  <Icon name={node.attrs.collapsed ? "arrows-expand" : "arrows-collapse"} />
+                </Button>
               </PopoverTrigger>
               <PopoverContent sideOffset={4} className="border-0 p-0 shadow-none">
                 <div role="menu">

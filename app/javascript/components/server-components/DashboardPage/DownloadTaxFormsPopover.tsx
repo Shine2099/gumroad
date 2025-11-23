@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { Button, buttonVariants } from "$app/components/Button";
+import { Button } from "$app/components/Button";
 import { Icon } from "$app/components/Icons";
 import { Popover, PopoverContent, PopoverTrigger } from "$app/components/Popover";
 import { showAlert } from "$app/components/server-components/Alert";
@@ -41,9 +41,11 @@ export const DownloadTaxFormsPopover = ({ taxForms }: Props) => {
         if (open) setSelectedYears(new Set());
       }}
     >
-      <PopoverTrigger aria-label="Tax forms" className={buttonVariants()}>
-        Tax forms
-        <Icon name="download" />
+      <PopoverTrigger aria-label="Tax forms" asChild>
+        <Button>
+          Tax forms
+          <Icon name="download" />
+        </Button>
       </PopoverTrigger>
       <PopoverContent sideOffset={4}>
         <div className="max-w-[300px] space-y-4 sm:max-w-full">

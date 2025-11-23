@@ -1,10 +1,9 @@
 import * as React from "react";
 import { createCast } from "ts-safe-cast";
 
-import { classNames } from "$app/utils/classNames";
 import { register } from "$app/utils/serverComponentUtil";
 
-import { buttonVariants } from "$app/components/Button";
+import { Button } from "$app/components/Button";
 import { Icon } from "$app/components/Icons";
 import { Popover, PopoverContent, PopoverTrigger } from "$app/components/Popover";
 
@@ -12,8 +11,10 @@ type Props = { contentHTML: string };
 
 export const FilterPopover = ({ contentHTML }: Props) => (
   <Popover aria-label="Filter">
-    <PopoverTrigger className={classNames(buttonVariants(), "js-toggle-filter-list")}>
-      <Icon name="filter" />
+    <PopoverTrigger className="js-toggle-filter-list" asChild>
+      <Button>
+        <Icon name="filter" />
+      </Button>
     </PopoverTrigger>
     <PopoverContent sideOffset={4}>
       <div

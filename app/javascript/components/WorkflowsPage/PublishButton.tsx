@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { type SaveActionName } from "$app/types/workflow";
 
-import { Button, buttonVariants } from "$app/components/Button";
+import { Button } from "$app/components/Button";
 import { Icon } from "$app/components/Icons";
 import { Popover, PopoverContent, PopoverTrigger } from "$app/components/Popover";
 import { Toggle } from "$app/components/Toggle";
@@ -36,9 +36,11 @@ export const PublishButton = ({
     </Button>
   ) : (
     <Popover>
-      <PopoverTrigger disabled={isDisabled} className={buttonVariants({ color: "accent" })}>
-        Publish
-        <Icon name="outline-cheveron-down" />
+      <PopoverTrigger disabled={isDisabled} asChild>
+        <Button color="accent">
+          Publish
+          <Icon name="outline-cheveron-down" />
+        </Button>
       </PopoverTrigger>
       <PopoverContent sideOffset={4}>
         <fieldset>

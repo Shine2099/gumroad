@@ -16,7 +16,7 @@ import { asyncVoid } from "$app/utils/promise";
 import { AbortError, assertResponseError } from "$app/utils/request";
 import { writeQueryParams } from "$app/utils/url";
 
-import { Button, buttonVariants } from "$app/components/Button";
+import { Button } from "$app/components/Button";
 import { DiscountInput, InputtedDiscount } from "$app/components/CheckoutDashboard/DiscountInput";
 import { Layout, Page } from "$app/components/CheckoutDashboard/Layout";
 import { CopyToClipboard } from "$app/components/CopyToClipboard";
@@ -383,8 +383,10 @@ const DiscountsPage = ({ offer_codes, pages, products, pagination: initialPagina
                             }}
                             aria-label="Open discount action menu"
                           >
-                            <PopoverTrigger className={buttonVariants()}>
-                              <Icon name="three-dots" />
+                            <PopoverTrigger asChild>
+                              <Button>
+                                <Icon name="three-dots" />
+                              </Button>
                             </PopoverTrigger>
                             <PopoverContent sideOffset={4} className="border-0 p-0 shadow-none">
                               <div role="menu">

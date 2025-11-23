@@ -4,7 +4,7 @@ import * as React from "react";
 
 import { assertDefined } from "$app/utils/assert";
 
-import { buttonVariants } from "$app/components/Button";
+import { Button } from "$app/components/Button";
 import { Icon } from "$app/components/Icons";
 import { Popover, PopoverContent, PopoverTrigger } from "$app/components/Popover";
 
@@ -23,8 +23,10 @@ export const NodeActionsMenu = ({
 
   return (
     <Popover open={isOpen} onOpenChange={setOpen} aria-label="Actions">
-      <PopoverTrigger className={buttonVariants({ color: "filled", size: "sm" })} data-drag-handle draggable>
-        <Icon name="outline-drag" />
+      <PopoverTrigger data-drag-handle draggable asChild>
+        <Button small color="filled">
+          <Icon name="outline-drag" />
+        </Button>
       </PopoverTrigger>
       <PopoverContent sideOffset={4} className="actions-menu border-0 p-0 shadow-none">
         <div role="menu">

@@ -1,7 +1,7 @@
 import { useForm, usePage } from "@inertiajs/react";
 import * as React from "react";
 
-import { Button, buttonVariants } from "$app/components/Button";
+import { Button } from "$app/components/Button";
 import { Icon } from "$app/components/Icons";
 import { Popover, PopoverContent, PopoverTrigger } from "$app/components/Popover";
 import { useOriginalLocation } from "$app/components/useOriginalLocation";
@@ -86,8 +86,10 @@ const SearchPopover = () => {
 
   return (
     <Popover open={open} onOpenChange={setOpen} aria-label="Toggle Search">
-      <PopoverTrigger className={buttonVariants()}>
-        <Icon name="solid-search" />
+      <PopoverTrigger asChild>
+        <Button>
+          <Icon name="solid-search" />
+        </Button>
       </PopoverTrigger>
       <PopoverContent sideOffset={4}>
         <div className="grid w-96 max-w-full gap-3">

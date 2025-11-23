@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { Button, buttonVariants, NavigationButton } from "$app/components/Button";
+import { Button, NavigationButton } from "$app/components/Button";
 import { Icon } from "$app/components/Icons";
 import { Popover, PopoverContent, PopoverTrigger } from "$app/components/Popover";
 
@@ -8,8 +8,8 @@ type Props = { zip_path: string; files: { url: string; filename: string | null }
 
 export const DownloadAllButton = ({ zip_path, files }: Props) => (
   <Popover>
-    <PopoverTrigger className={buttonVariants()}>
-      Download all
+    <PopoverTrigger asChild>
+      <Button>Download all</Button>
       <Icon name="outline-cheveron-down" />
     </PopoverTrigger>
     <PopoverContent sideOffset={4}>

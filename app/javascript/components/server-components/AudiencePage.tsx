@@ -10,7 +10,7 @@ import { AnalyticsLayout } from "$app/components/Analytics/AnalyticsLayout";
 import { useAnalyticsDateRange } from "$app/components/Analytics/useAnalyticsDateRange";
 import { AudienceChart } from "$app/components/Audience/AudienceChart";
 import { AudienceQuickStats } from "$app/components/Audience/AudienceQuickStats";
-import { buttonVariants } from "$app/components/Button";
+import { Button } from "$app/components/Button";
 import { DateRangePicker } from "$app/components/DateRangePicker";
 import { Icon } from "$app/components/Icons";
 import { LoadingSpinner } from "$app/components/LoadingSpinner";
@@ -57,8 +57,10 @@ const AudiencePage = ({ total_follower_count }: { total_follower_count: number }
         <>
           <Popover aria-label="Export">
             <WithTooltip tip="Export" position="bottom">
-              <PopoverTrigger aria-label="Export" className={buttonVariants()}>
-                <Icon aria-label="Download" name="download" />
+              <PopoverTrigger aria-label="Export" asChild>
+                <Button>
+                  <Icon aria-label="Download" name="download" />
+                </Button>
               </PopoverTrigger>
             </WithTooltip>
             <PopoverContent sideOffset={4}>

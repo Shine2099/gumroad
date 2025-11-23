@@ -10,7 +10,7 @@ import { assertDefined } from "$app/utils/assert";
 import { asyncVoid } from "$app/utils/promise";
 import { assertResponseError } from "$app/utils/request";
 
-import { Button, buttonVariants, NavigationButton } from "$app/components/Button";
+import { Button, NavigationButton } from "$app/components/Button";
 import { FileRow, shouldShowSubtitlesForFile } from "$app/components/Download/FileList";
 import { Icon } from "$app/components/Icons";
 import { LoadingSpinner } from "$app/components/LoadingSpinner";
@@ -365,9 +365,11 @@ const FileGroupDownloadAllButton = ({ folderId, files }: { folderId: string; fil
 
   return (
     <Popover>
-      <PopoverTrigger disabled={isDownloading} className={buttonVariants()} contentEditable={false}>
-        Download all
-        <Icon name="outline-cheveron-down" />
+      <PopoverTrigger disabled={isDownloading} contentEditable={false} asChild>
+        <Button>
+          Download all
+          <Icon name="outline-cheveron-down" />
+        </Button>
       </PopoverTrigger>
       <PopoverContent sideOffset={4}>
         <div className="grid gap-2">

@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { buttonVariants } from "$app/components/Button";
+import { Button } from "$app/components/Button";
 import { Icon } from "$app/components/Icons";
 import { Popover, PopoverContent, PopoverTrigger } from "$app/components/Popover";
 
@@ -14,8 +14,10 @@ export const Search = ({ onSearch, value, placeholder = "Search" }: SearchProps)
   const searchInputRef = React.useRef<HTMLInputElement>(null);
   return (
     <Popover>
-      <PopoverTrigger className={buttonVariants()}>
-        <Icon name="solid-search" />
+      <PopoverTrigger asChild>
+        <Button>
+          <Icon name="solid-search" />
+        </Button>
       </PopoverTrigger>
       <PopoverContent sideOffset={4} onOpenAutoFocus={() => searchInputRef.current?.focus()}>
         <div className="input input-wrapper">

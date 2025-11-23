@@ -258,8 +258,10 @@ const CustomersPage = ({
               placeholder="Search sales"
             />
             <Popover aria-label="Filter">
-              <PopoverTrigger className={buttonVariants()}>
-                <Icon name="filter" />
+              <PopoverTrigger asChild>
+                <Button>
+                  <Icon name="filter" />
+                </Button>
               </PopoverTrigger>
               <PopoverContent sideOffset={4} className="border-0 p-0 shadow-none">
                 <div className="stack" style={{ width: "35rem" }}>
@@ -376,8 +378,10 @@ const CustomersPage = ({
               </PopoverContent>
             </Popover>
             <Popover aria-label="Export">
-              <PopoverTrigger className={buttonVariants()}>
-                <Icon name="download" />
+              <PopoverTrigger asChild>
+                <Button>
+                  <Icon name="download" />
+                </Button>
               </PopoverTrigger>
               <PopoverContent>
                 <div className="flex flex-col gap-4">

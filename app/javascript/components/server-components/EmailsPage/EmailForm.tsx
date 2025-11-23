@@ -20,7 +20,7 @@ import { ALLOWED_EXTENSIONS } from "$app/utils/file";
 import { asyncVoid } from "$app/utils/promise";
 import { AbortError, assertResponseError, request } from "$app/utils/request";
 
-import { Button, buttonVariants } from "$app/components/Button";
+import { Button } from "$app/components/Button";
 import { useCurrentSeller } from "$app/components/CurrentSeller";
 import { DateInput } from "$app/components/DateInput";
 import { useDomains } from "$app/components/DomainSettings";
@@ -636,10 +636,12 @@ export const EmailForm = () => {
           <>
             {channel.email && channel.profile ? (
               <Popover>
-                <PopoverTrigger disabled={isBusy} className={buttonVariants()}>
-                  <Icon name="eye-fill" />
-                  Preview
-                  <Icon name="outline-cheveron-down" />
+                <PopoverTrigger disabled={isBusy} asChild>
+                  <Button>
+                    <Icon name="eye-fill" />
+                    Preview
+                    <Icon name="outline-cheveron-down" />
+                  </Button>
                 </PopoverTrigger>
                 <PopoverContent sideOffset={4}>
                   <div className="grid gap-3">
@@ -668,9 +670,11 @@ export const EmailForm = () => {
               Cancel
             </Link>
             <Popover>
-              <PopoverTrigger disabled={isBusy} className={buttonVariants()}>
-                {channel.profile ? "Publish" : "Send"}
-                <Icon name="outline-cheveron-down" />
+              <PopoverTrigger disabled={isBusy} asChild>
+                <Button>
+                  {channel.profile ? "Publish" : "Send"}
+                  <Icon name="outline-cheveron-down" />
+                </Button>
               </PopoverTrigger>
               <PopoverContent>
                 <div className="grid gap-3">

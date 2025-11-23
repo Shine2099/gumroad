@@ -10,7 +10,7 @@ import { between } from "$app/utils/math";
 import { asyncVoid } from "$app/utils/promise";
 import { assertResponseError } from "$app/utils/request";
 
-import { Button, buttonVariants } from "$app/components/Button";
+import { Button } from "$app/components/Button";
 import { Icon } from "$app/components/Icons";
 import { LoadingSpinner } from "$app/components/LoadingSpinner";
 import { Popover, PopoverContent, PopoverTrigger } from "$app/components/Popover";
@@ -94,8 +94,10 @@ export const CoverEditor = ({
               aria-label="Add cover"
             >
               <WithTooltip tip={canAddPreview ? null : "Maximum number of previews uploaded"}>
-                <PopoverTrigger disabled={!canAddPreview || isUploading} className={buttonVariants()}>
-                  <Icon name="plus" />
+                <PopoverTrigger disabled={!canAddPreview || isUploading} asChild>
+                  <Button>
+                    <Icon name="plus" />
+                  </Button>
                 </PopoverTrigger>
               </WithTooltip>
               <PopoverContent sideOffset={4}>

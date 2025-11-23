@@ -9,7 +9,7 @@ import { request } from "$app/utils/request";
 import { generatePageIcon } from "$app/utils/rich_content_page";
 import { register } from "$app/utils/serverComponentUtil";
 
-import { Button, buttonVariants } from "$app/components/Button";
+import { Button } from "$app/components/Button";
 import { DiscordButton } from "$app/components/DiscordButton";
 import { DownloadAllButton } from "$app/components/Download/DownloadAllButton";
 import { FileItem, FileList as DownloadFileList, FolderItem } from "$app/components/Download/FileList";
@@ -338,8 +338,10 @@ const WithContent = ({
         <div role="navigation" className="mt-auto flex gap-4 border-t border-border pt-4 lg:justify-end lg:pb-4">
           {isDesktop ? null : (
             <Popover aria-label="Table of Contents">
-              <PopoverTrigger className={buttonVariants()}>
-                <Icon name="unordered-list" />
+              <PopoverTrigger asChild>
+                <Button>
+                  <Icon name="unordered-list" />
+                </Button>
               </PopoverTrigger>
               <PopoverContent sideOffset={4} className="border-0 p-0 shadow-none">
                 <div role="menu">

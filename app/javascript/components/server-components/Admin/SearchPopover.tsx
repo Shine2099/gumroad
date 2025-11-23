@@ -3,7 +3,7 @@ import { createCast } from "ts-safe-cast";
 
 import { register } from "$app/utils/serverComponentUtil";
 
-import { Button, buttonVariants } from "$app/components/Button";
+import { Button } from "$app/components/Button";
 import { Icon } from "$app/components/Icons";
 import { Popover, PopoverContent, PopoverTrigger } from "$app/components/Popover";
 import { Separator } from "$app/components/Separator";
@@ -14,8 +14,10 @@ export const SearchPopover = ({ card_types }: Props) => {
   const searchParams = new URL(useOriginalLocation()).searchParams;
   return (
     <Popover aria-label="Toggle Search">
-      <PopoverTrigger className={buttonVariants()}>
-        <Icon name="solid-search" />
+      <PopoverTrigger asChild>
+        <Button>
+          <Icon name="solid-search" />
+        </Button>
       </PopoverTrigger>
       <PopoverContent sideOffset={4}>
         <div className="grid w-96 max-w-full gap-3">
