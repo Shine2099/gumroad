@@ -136,7 +136,7 @@ const Discover = (props: Props) => {
       }
     }
 
-    parseParams(["sort", "query"], (value) => value);
+    parseParams(["sort", "query", "offer_code"], (value) => value);
     parseParams(["min_price", "max_price", "rating"], (value) => Number(value));
     parseParams(["filetypes", "tags"], (value) => value.split(","));
     if (!parsedParams.sort) parsedParams.sort = defaultSortOrder;
@@ -167,7 +167,7 @@ const Discover = (props: Props) => {
           else url.searchParams.delete(key);
         }
       };
-      serializeParams(["sort", "query"], (value) => value);
+      serializeParams(["sort", "query", "offer_code"], (value) => value);
       serializeParams(["min_price", "max_price", "rating"], (value) => value.toString());
       serializeParams(["filetypes", "tags"], (value) => value.join(","));
       window.history.pushState(state.params, "", url);
@@ -193,9 +193,12 @@ const Discover = (props: Props) => {
     dispatch({ type: "set-params", params: { ...state.params, from: undefined, ...newParams } });
 
   const [recommendedProducts, setRecommendedProducts] = React.useState<CardProduct[]>(props.recommended_products);
+
+  const hasOfferCode = !!state.params.offer_code;
+
   useOnChange(
     asyncVoid(async () => {
-      if (state.params.query) return;
+      if (state.params.query || hasOfferCode) return;
       setRecommendedProducts([]);
       try {
         setRecommendedProducts(await getRecommendedProducts({ taxonomy: state.params.taxonomy }));
@@ -203,14 +206,14 @@ const Discover = (props: Props) => {
         assertResponseError(e);
       }
     }),
-    [state.params.taxonomy],
+    [state.params.taxonomy, hasOfferCode],
   );
 
   const isCuratedProducts =
     recommendedProducts[0] &&
     new URL(recommendedProducts[0].url).searchParams.get("recommended_by") === "products_for_you";
 
-  const showRecommendedSections = recommendedProducts.length && !state.params.query;
+  const showRecommendedSections = recommendedProducts.length && !state.params.query && !hasOfferCode;
 
   return (
     <Layout
@@ -276,13 +279,13 @@ const Discover = (props: Props) => {
         <section className="flex flex-col gap-4">
           <div style={{ display: "flex", justifyContent: "space-between", gap: "var(--spacer-2)", flexWrap: "wrap" }}>
             <h2>
-              {state.params.query
+              {state.params.query || hasOfferCode
                 ? state.results?.products.length
                   ? `Showing 1-${state.results.products.length} of ${state.results.total} products`
                   : null
                 : sortTitles[is<keyof typeof sortTitles>(state.params.sort) ? state.params.sort : "trending"]}
             </h2>
-            {state.params.query ? null : (
+            {state.params.query || hasOfferCode ? null : (
               <Tabs>
                 {props.curated_product_ids.length > 0 ? (
                   <Tab
@@ -324,11 +327,11 @@ const Discover = (props: Props) => {
             state={state}
             dispatchAction={dispatch}
             currencyCode={props.currency_code}
-            hideSort={!state.params.query}
+            hideSort={!state.params.query && !hasOfferCode}
             defaults={{
               taxonomy: state.params.taxonomy,
               query: state.params.query,
-              sort: state.params.query ? "default" : state.params.sort,
+              sort: state.params.query || hasOfferCode ? "default" : state.params.sort,
             }}
             appendFilters={
               <details>
