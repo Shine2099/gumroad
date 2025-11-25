@@ -29,6 +29,8 @@ type Props = {
   taxonomies_for_nav: Taxonomy[];
   recommended_products: CardProduct[];
   curated_product_ids: string[];
+  show_black_friday_hero: boolean;
+  is_black_friday_page: boolean;
   black_friday_button_html: string;
 };
 
@@ -85,6 +87,10 @@ const ProductsCarousel = ({ products, title }: { products: CardProduct[]; title:
   );
 };
 
+// TODO: replace the hardcoded values with the actual data from the backend
+// And cache them with a 10.minutes expiration period
+// check how long it takes in production to fetch the data in order to determine
+// the most suitable caching policy
 const BlackFridayBanner = () => (
   <div className="flex h-full shrink-0 items-center gap-x-4 [&>*]:flex-shrink-0">
     <span className="mx-2 inline-block text-lg">✦</span>
@@ -229,46 +235,50 @@ const Discover = (props: Props) => {
       query={state.params.query}
       setQuery={(query) => dispatch({ type: "set-params", params: { query, taxonomy: taxonomyPath } })}
     >
-      <header className="relative flex flex-col items-center justify-center">
-        <div className="relative flex min-h-[72vh] w-full flex-col items-center justify-center bg-black">
-          <img
-            src="/assets/illustrations/sale.svg"
-            alt="Sale"
-            className="absolute top-1/2 left-40 hidden w-32 -translate-y-1/2 rotate-[-24deg] object-contain md:left-12 md:block md:w-40 lg:left-36 lg:w-48 xl:left-60 xl:w-60"
-            draggable={false}
-          />
-          <div className="relative">
-            <img
-              src="/assets/illustrations/black_friday.svg"
-              alt="Black Friday"
-              className="max-w-96 object-contain"
-              draggable={false}
-            />
+      {props.show_black_friday_hero ? (
+        <header className="relative flex flex-col items-center justify-center">
+          <div className="relative flex min-h-[72vh] w-full flex-col items-center justify-center bg-black">
             <img
               src="/assets/illustrations/sale.svg"
               alt="Sale"
-              className="absolute right-0 bottom-0 w-27.5 rotate-[16deg] object-contain md:hidden"
+              className="absolute top-1/2 left-40 hidden w-32 -translate-y-1/2 rotate-[-24deg] object-contain md:left-12 md:block md:w-40 lg:left-36 lg:w-48 xl:left-60 xl:w-60"
               draggable={false}
             />
+            <div className="relative">
+              <img
+                src="/assets/illustrations/black_friday.svg"
+                alt="Black Friday"
+                className="max-w-96 object-contain"
+                draggable={false}
+              />
+              <img
+                src="/assets/illustrations/sale.svg"
+                alt="Sale"
+                className="absolute right-0 bottom-0 w-27.5 rotate-[16deg] object-contain md:hidden"
+                draggable={false}
+              />
+            </div>
+            <img
+              src="/assets/illustrations/sale.svg"
+              alt="Sale"
+              className="absolute top-1/2 right-40 hidden w-32 -translate-y-1/2 rotate-[24deg] object-contain md:right-12 md:block md:w-40 lg:right-36 lg:w-48 xl:right-60 xl:w-60"
+              draggable={false}
+            />
+            <div className="font-regular mx-12 text-center text-xl text-white">
+              Snag creator-made deals <br className="block sm:hidden" /> before they're gone.
+            </div>
+            {!props.is_black_friday_page && (
+              <div className="mt-8 text-base" dangerouslySetInnerHTML={{ __html: props.black_friday_button_html }} />
+            )}
           </div>
-          <img
-            src="/assets/illustrations/sale.svg"
-            alt="Sale"
-            className="absolute top-1/2 right-40 hidden w-32 -translate-y-1/2 rotate-[24deg] object-contain md:right-12 md:block md:w-40 lg:right-36 lg:w-48 xl:right-60 xl:w-60"
-            draggable={false}
-          />
-          <div className="font-regular mx-12 text-center text-xl text-white">
-            Snag creator-made deals <br className="block sm:hidden" /> before they're gone.
+          <div className="h-14 w-full overflow-hidden border-b border-black bg-yellow-400">
+            <div className="flex h-14 min-w-fit items-center gap-x-4 whitespace-nowrap hover:[animation-play-state:paused] motion-safe:animate-[marquee-scroll_42s_linear_infinite] motion-reduce:animate-none">
+              <BlackFridayBanner />
+              <BlackFridayBanner />
+            </div>
           </div>
-          <div className="mt-8 text-base" dangerouslySetInnerHTML={{ __html: props.black_friday_button_html }} />
-        </div>
-        <div className="h-14 w-full overflow-hidden border-b border-black bg-yellow-400">
-          <div className="flex h-14 min-w-fit items-center gap-x-4 whitespace-nowrap hover:[animation-play-state:paused] motion-safe:animate-[marquee-scroll_42s_linear_infinite] motion-reduce:animate-none">
-            <BlackFridayBanner />
-            <BlackFridayBanner />
-          </div>
-        </div>
-      </header>
+        </header>
+      ) : null}
       <div className="grid gap-16! px-4 py-16 lg:ps-16 lg:pe-16">
         {showRecommendedSections ? (
           <ProductsCarousel
