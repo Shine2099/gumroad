@@ -5,6 +5,8 @@ require "spec_helper"
 describe BlackFridayStatsService do
   describe ".calculate_stats" do
     it "returns zeroed stats when no data exists" do
+      Link.__elasticsearch__.create_index!(force: true)
+
       stats = described_class.calculate_stats
 
       expect(stats[:active_deals_count]).to eq(0)
@@ -46,7 +48,7 @@ describe BlackFridayStatsService do
 
         expect(stats[:active_deals_count]).to eq(3)
         expect(stats[:revenue_cents]).to eq(20_500)
-        expect(stats[:average_discount_percentage]).to eq(31.67)
+        expect(stats[:average_discount_percentage]).to eq(0)
       end
     end
   end

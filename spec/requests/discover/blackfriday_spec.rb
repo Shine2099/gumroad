@@ -23,7 +23,7 @@ describe("Black Friday 2025", js: true, type: :system) do
       allow(BlackFridayStatsService).to receive(:fetch_stats).and_return({
                                                                            active_deals_count: 1,
                                                                            revenue_cents: 3750, # 5 purchases * 750 cents = $37.50
-                                                                           average_discount_percentage: 25
+                                                                           average_discount_percentage: 0
                                                                          })
     end
 
@@ -46,8 +46,7 @@ describe("Black Friday 2025", js: true, type: :system) do
       expect(page).to have_text("ACTIVE DEALS")
       expect(page).to have_text("$37.50")
       expect(page).to have_text("IN SALES SO FAR")
-      expect(page).to have_text("25%")
-      expect(page).to have_text("AVERAGE DISCOUNT")
+      expect(page).not_to have_text("AVERAGE DISCOUNT")
 
       # When visiting a taxonomy page, the CTA should be the taxonomy page with the offer code
       click_on("Films")

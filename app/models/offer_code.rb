@@ -18,8 +18,7 @@ class OfferCode < ApplicationRecord
 
   stripped_fields :code
 
-  has_many :offer_codes_products, dependent: :destroy
-  has_many :products, through: :offer_codes_products
+  has_and_belongs_to_many :products, class_name: "Link", join_table: "offer_codes_products", association_foreign_key: "product_id"
   belongs_to :user
   has_many :purchases
   has_many :purchases_that_count_towards_offer_code_uses, -> { counts_towards_offer_code_uses }, class_name: "Purchase"

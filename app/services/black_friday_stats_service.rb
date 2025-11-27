@@ -19,17 +19,11 @@ class BlackFridayStatsService
       return default_stats if products_by_id.empty?
 
       purchase_stats = fetch_purchase_stats(products_by_id.keys, thirty_days_ago)
-      average_discount_percentage = calculate_average_discount_percentage(
-        purchase_counts: purchase_stats[:counts_by_product],
-        products_by_id:,
-        code: black_friday_code,
-        since: thirty_days_ago
-      )
 
       default_stats.merge(
         active_deals_count: products_by_id.size,
         revenue_cents: purchase_stats[:total_revenue_cents],
-        average_discount_percentage:
+        average_discount_percentage: 0 # We don't want to show the average discount percentage for now
       )
     rescue => e
       # ! NOTE: Given the criticality of the Black Friday period,
@@ -101,58 +95,6 @@ class BlackFridayStatsService
           total_revenue_cents: response.aggregations.total_revenue.value.to_i,
           counts_by_product:
         }
-      end
-
-      def calculate_average_discount_percentage(purchase_counts:, products_by_id:, code:, since:)
-        return 0 if purchase_counts.blank?
-
-        discounts = discount_percentages_by_product(products_by_id:, code:, since:)
-        eligible_counts = purchase_counts.select { |product_id, _| discounts.key?(product_id) }
-        return 0 if eligible_counts.blank?
-
-        total_purchases = eligible_counts.values.sum
-        weighted_sum = eligible_counts.sum do |product_id, count|
-          discounts[product_id] * count
-        end
-
-        (weighted_sum / total_purchases.to_f).round(2)
-      end
-
-      def discount_percentages_by_product(products_by_id:, code:, since:)
-        product_ids = products_by_id.keys
-        OfferCode.where(code:)
-                 .where(created_at: since..)
-                 .includes(:offer_codes_products)
-                 .each_with_object({}) do |offer_code, hash|
-          targets = offer_code.universal? ? product_ids : product_ids_for_offer_code(offer_code, product_ids)
-          targets.each do |product_id|
-            product = products_by_id[product_id]
-            next unless product
-
-            percent = offer_code_percentage_for_product(offer_code, product[:price_cents])
-            next if percent.zero?
-
-            hash[product_id] = percent
-          end
-        end
-      end
-
-      def offer_code_percentage_for_product(offer_code, product_price_cents)
-        return 0 if product_price_cents.to_i <= 0
-
-        if offer_code.is_percent?
-          offer_code.amount_percentage.to_f
-        elsif offer_code.amount_cents.present?
-          [(offer_code.amount_cents.to_f / product_price_cents) * 100, 100].min.round(2)
-        else
-          0
-        end
-      end
-
-      def product_ids_for_offer_code(offer_code, available_ids)
-        return [] if available_ids.blank?
-
-        offer_code.offer_codes_products.map(&:product_id) & available_ids
       end
 
       def default_stats
