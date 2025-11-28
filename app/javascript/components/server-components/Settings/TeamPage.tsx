@@ -29,6 +29,7 @@ import { Modal } from "$app/components/Modal";
 import { Option, Select } from "$app/components/Select";
 import { showAlert } from "$app/components/server-components/Alert";
 import { Layout as SettingsLayout } from "$app/components/Settings/Layout";
+import { Alert } from "$app/components/ui/Alert";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "$app/components/ui/Table";
 import { WithTooltip } from "$app/components/WithTooltip";
 
@@ -267,12 +268,12 @@ const TeamMembersSection = ({
         <h2 ref={ref}>Team members</h2>
       </header>
       {deletedMember ? (
-        <div role="alert" className="success">
+        <Alert className="grid-cols-[auto_1fr_auto]" variant="success">
           <div>
             {deletedMember.name !== "" ? deletedMember.name : deletedMember.email} was removed from team members
           </div>
           <button
-            className="close underline"
+            className="col-start-2 underline sm:col-start-3"
             type="button"
             onClick={asyncVoid(async () => {
               try {
@@ -291,7 +292,7 @@ const TeamMembersSection = ({
           >
             Undo
           </button>
-        </div>
+        </Alert>
       ) : null}
       <Table>
         <TableHeader>

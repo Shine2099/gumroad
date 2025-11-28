@@ -15,6 +15,7 @@ import { TaxonomyEditor } from "$app/components/ProductEdit/ShareTab/TaxonomyEdi
 import { useProductEditContext } from "$app/components/ProductEdit/state";
 import { Toggle } from "$app/components/Toggle";
 import { TwitterShareButton } from "$app/components/TwitterShareButton";
+import { Alert, AlertIcon } from "$app/components/ui/Alert";
 import { useRunOnce } from "$app/components/useRunOnce";
 
 export const ShareTab = () => {
@@ -71,12 +72,12 @@ export const ShareTab = () => {
               </a>
             </header>
             {isListedOnDiscover ? (
-              <div role="status" className="success">
+              <Alert className="grid-cols-[auto_1fr_auto]" role="status" variant="success">
                 <div>{product.name} is listed on Gumroad Discover.</div>
-                <a className="close" href={discoverLink.toString()}>
+                <a className="col-start-2 sm:col-start-3" href={discoverLink.toString()}>
                   View
                 </a>
-              </div>
+              </Alert>
             ) : null}
             <div className="flex flex-col gap-4">
               <p>
@@ -121,30 +122,36 @@ const DiscoverEligibilityPromo = () => {
   });
 
   if (!show) return null;
-
+  // TODO(review note - cleanup before merging):
+  // Before hands were only visible on mobile view but sizing was off. Now it is visible on all views.
   return (
-    <div role="status" className="promo">
-      <img src={hands} />
-      <div>
-        To appear on Gumroad Discover, make sure to meet all the{" "}
-        <a href="/help/article/79-gumroad-discover" target="_blank" rel="noreferrer">
-          eligibility criteria
-        </a>
-        , which includes making at least one successful sale and completing the Risk Review process explained in detail{" "}
-        <a href="/help/article/13-getting-paid" target="_blank" rel="noreferrer">
-          here
-        </a>
-        .
+    <Alert role="status">
+      <AlertIcon asChild>
+        <img src={hands} alt="" className="size-12 self-center" />
+      </AlertIcon>
+      <div className="flex flex-col gap-2">
+        <div>
+          To appear on Gumroad Discover, make sure to meet all the{" "}
+          <a href="/help/article/79-gumroad-discover" target="_blank" rel="noreferrer">
+            eligibility criteria
+          </a>
+          , which includes making at least one successful sale and completing the Risk Review process explained in
+          detail{" "}
+          <a href="/help/article/13-getting-paid" target="_blank" rel="noreferrer">
+            here
+          </a>
+          .
+        </div>
+        <button
+          className="w-max underline"
+          onClick={() => {
+            localStorage.setItem("showDiscoverEligibilityPromo", "false");
+            setShow(false);
+          }}
+        >
+          Close
+        </button>
       </div>
-      <button
-        className="close underline"
-        onClick={() => {
-          localStorage.setItem("showDiscoverEligibilityPromo", "false");
-          setShow(false);
-        }}
-      >
-        Close
-      </button>
-    </div>
+    </Alert>
   );
 };

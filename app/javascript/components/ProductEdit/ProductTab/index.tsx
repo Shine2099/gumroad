@@ -38,6 +38,7 @@ import { useProductEditContext } from "$app/components/ProductEdit/state";
 import { ToggleSettingRow } from "$app/components/SettingRow";
 import { Toggle } from "$app/components/Toggle";
 import { TypeSafeOptionSelect } from "$app/components/TypeSafeOptionSelect";
+import { Alert, AlertIcon } from "$app/components/ui/Alert";
 
 export const ProductTab = () => {
   const uid = React.useId();
@@ -85,22 +86,20 @@ export const ProductTab = () => {
       <div className="squished">
         <form>
           <section className="p-4! md:p-8!">
+            {/* TODO cleanup before merge: Icon was not visible earlier and p-6 was not being applied */}
             {showAiNotification ? (
-              <div
-                role="status"
-                className="grid grid-cols-[auto_1fr_auto] items-start gap-4 rounded-lg !border-pink bg-pink/20 p-6"
-              >
-                <span className="self-center text-lg">
+              <Alert role="status" className="grid grid-cols-[auto_1fr_auto] gap-4" variant="pink">
+                <AlertIcon className="self-center text-lg">
                   <Icon name="sparkle" />
-                </span>
+                </AlertIcon>
                 <div>
                   <strong>Your AI product is ready!</strong> Take a moment to check out the product and content tabs.
                   Tweak things and make it your own—this is your time to shine!
                 </div>
-                <button className="col-start-3! self-center underline" onClick={() => setShowAiNotification(false)}>
+                <button className="self-center underline" onClick={() => setShowAiNotification(false)}>
                   close
                 </button>
-              </div>
+              </Alert>
             ) : null}
             <BundleConversionNotice />
             <fieldset>
