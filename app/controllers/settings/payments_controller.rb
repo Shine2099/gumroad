@@ -13,7 +13,7 @@ class Settings::PaymentsController < Settings::BaseController
 
   def update
     unless current_seller.email.present?
-      return re_render_with_error("You have to confirm your email address before you can do that.")
+      return redirect_with_error("You have to confirm your email address before you can do that.")
     end
     return unless current_seller.fetch_or_build_user_compliance_info.country.present?
 
@@ -27,7 +27,7 @@ class Settings::PaymentsController < Settings::BaseController
         return redirect_to settings_payments_path, status: :see_other
       rescue => e
         Bugsnag.notify("Update country failed for user #{current_seller.id} (from #{compliance_info.country_code} to #{updated_country_code}): #{e}")
-        return re_render_with_error("Country update failed")
+        return redirect_with_error("Country update failed")
       end
     end
 
@@ -35,7 +35,7 @@ class Settings::PaymentsController < Settings::BaseController
       zip_code = params.dig(:user, :is_business) ? params.dig(:user, :business_zip_code).presence : params.dig(:user, :zip_code).presence
       if zip_code
         unless UsZipCodes.identify_state_code(zip_code).present?
-          return re_render_with_error("You entered a ZIP Code that doesn't exist within your country.")
+          return redirect_with_error("You entered a ZIP Code that doesn't exist within your country.")
         end
       end
     end
@@ -49,10 +49,10 @@ class Settings::PaymentsController < Settings::BaseController
     end
 
     if params.dig(:user, :country) == Compliance::Countries::ARE.alpha2 && !params.dig(:user, :is_business) && payout_type != "PayPal"
-      return re_render_with_error("Individual accounts from the UAE are not supported. Please use a business account.")
+      return redirect_with_error("Individual accounts from the UAE are not supported. Please use a business account.")
     end
     if current_seller.has_stripe_account_connected?
-      return re_render_with_error("You cannot change your payout method to #{payout_type} because you have a stripe account connected.")
+      return redirect_with_error("You cannot change your payout method to #{payout_type} because you have a stripe account connected.")
     end
 
     current_seller.tos_agreements.create!(ip: request.remote_ip)
@@ -62,13 +62,13 @@ class Settings::PaymentsController < Settings::BaseController
     return unless update_user_compliance_info
 
     if params[:payout_threshold_cents].present? && params[:payout_threshold_cents].to_i < current_seller.minimum_payout_threshold_cents
-      return re_render_with_error("Your payout threshold must be greater than the minimum payout amount")
+      return redirect_with_error("Your payout threshold must be greater than the minimum payout amount")
     end
 
     unless current_seller.update(
       params.permit(:payouts_paused_by_user, :payout_threshold_cents, :payout_frequency)
     )
-      return re_render_with_error(current_seller.errors.full_messages.first)
+      return redirect_with_error(current_seller.errors.full_messages.first)
     end
 
     # Once the user has submitted all their information, and a bank account record was created for them,
@@ -77,7 +77,7 @@ class Settings::PaymentsController < Settings::BaseController
       begin
         StripeMerchantAccountManager.create_account(current_seller, passphrase: GlobalConfig.get("STRONGBOX_GENERAL_PASSWORD"))
       rescue => e
-        return re_render_with_error(e.try(:message) || "Something went wrong.")
+        return redirect_with_error(e.try(:message) || "Something went wrong.")
       end
     end
 
@@ -198,7 +198,7 @@ class Settings::PaymentsController < Settings::BaseController
                         "PayPal payouts are not supported in your country."
       end
 
-      re_render_with_error(error_message)
+      redirect_with_error(error_message)
       false
     end
 
@@ -213,12 +213,12 @@ class Settings::PaymentsController < Settings::BaseController
           comment_type: :note,
           content: result[:error_message]
         )
-        re_render_with_error(result[:error_message], error_code: result[:error_code])
+        redirect_with_error(result[:error_message], error_code: result[:error_code])
         false
       end
     end
 
-    def re_render_with_error(error_message, error_code: nil)
+    def redirect_with_error(error_message, error_code: nil)
       errors_hash = { base: [error_message] }
       errors_hash[:error_code] = [error_code] if error_code.present?
       redirect_to settings_payments_path, inertia: { errors: errors_hash }

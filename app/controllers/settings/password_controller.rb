@@ -11,7 +11,7 @@ class Settings::PasswordController < Settings::BaseController
   end
 
   def update
-    false
+    added_password = false
 
     if @user.provider.present?
       unless @user.confirmed?

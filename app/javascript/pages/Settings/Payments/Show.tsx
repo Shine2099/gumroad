@@ -178,6 +178,32 @@ export default function PaymentsPage() {
     }
   }, [errors, clientErrorMessage]);
 
+  React.useEffect(() => {
+    setComplianceInfo(props.compliance_info);
+  }, [props.compliance_info]);
+
+  React.useEffect(() => {
+    setBankAccount(props.bank_account_details.bank_account);
+    setShowNewBankAccount(!props.bank_account_details.account_number_visual);
+  }, [props.bank_account_details]);
+
+  React.useEffect(() => {
+    setPaypalEmailAddress(props.paypal_address);
+  }, [props.paypal_address]);
+
+  React.useEffect(() => {
+    const newPayoutMethod: PayoutMethod = props.stripe_connect.has_connected_stripe
+      ? "stripe"
+      : props.bank_account_details.show_bank_account && props.bank_account_details.is_a_card
+        ? "card"
+        : props.bank_account_details.account_number_visual !== null
+          ? "bank"
+          : props.bank_account_details.show_paypal
+            ? "paypal"
+            : "bank";
+    setSelectedPayoutMethod(newPayoutMethod);
+  }, [props.stripe_connect.has_connected_stripe, props.bank_account_details]);
+
   const isStreetAddressPOBox = (input: string) => {
     const countryCode: CountryCode = cast(props.user.country_code);
 
