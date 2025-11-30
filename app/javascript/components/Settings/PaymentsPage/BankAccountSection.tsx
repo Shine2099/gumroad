@@ -5,6 +5,7 @@ import { SavedCreditCard } from "$app/parsers/card";
 
 import { Button } from "$app/components/Button";
 import { FormFieldName, User } from "$app/components/server-components/Settings/PaymentsPage";
+import { Alert } from "$app/components/ui/Alert";
 
 export type BankAccount =
   | {
@@ -2440,11 +2441,9 @@ const BankAccountSection = ({
       </section>
 
       {hasConnectedStripe ? (
-        <section>
-          <div role="alert" className="warning">
-            You cannot change your payout method to bank account because you have a stripe account connected.
-          </div>
-        </section>
+        <Alert color="warning">
+          You cannot change your payout method to bank account because you have a stripe account connected.
+        </Alert>
       ) : null}
     </>
   );

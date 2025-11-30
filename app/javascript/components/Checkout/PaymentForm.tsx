@@ -55,6 +55,7 @@ import { LoadingSpinner } from "$app/components/LoadingSpinner";
 import { useLoggedInUser } from "$app/components/LoggedInUser";
 import { PriceInput } from "$app/components/PriceInput";
 import { showAlert } from "$app/components/server-components/Alert";
+import { Alert } from "$app/components/ui/Alert";
 import { Tab, Tabs } from "$app/components/ui/Tabs";
 import { useIsDarkTheme } from "$app/components/useIsDarkTheme";
 import { useOnChangeSync } from "$app/components/useOnChange";
@@ -589,13 +590,7 @@ const CustomerDetails = () => {
           ) : null}
         </div>
       ) : null}
-      {state.warning ? (
-        <div>
-          <div role="status" className="warning">
-            {state.warning}
-          </div>
-        </div>
-      ) : null}
+      {state.warning ? <Alert color="warning">{state.warning}</Alert> : null}
       {isTippingEnabled(state) ? <TipSelector /> : null}
       {state.products.length === 1 && state.products[0]?.canGift && !state.products[0]?.payInInstallments ? (
         <GiftForm isMembership={state.products[0]?.nativeType === "membership"} />
@@ -1204,12 +1199,10 @@ export const PaymentForm = ({
   return (
     <div ref={paymentFormRef} className={cx("stack", className)} aria-label="Payment form">
       {isTestPurchase ? (
-        <div>
-          <div role="alert" className="info">
-            This will be a test purchase as you are the creator of at least one of the products. Your payment method
-            will not be charged.
-          </div>
-        </div>
+        <Alert color="info">
+          This will be a test purchase as you are the creator of at least one of the products. Your payment method will
+          not be charged.
+        </Alert>
       ) : null}
       <EmailAddress />
       {!isFreePurchase ? (
@@ -1226,13 +1219,7 @@ export const PaymentForm = ({
               ) : null}
             </div>
           </div>
-          {notice ? (
-            <div>
-              <div role="alert" className="info">
-                {notice}
-              </div>
-            </div>
-          ) : null}
+          {notice ? <Alert color="info">{notice}</Alert> : null}
           <CreditCard />
         </>
       ) : null}

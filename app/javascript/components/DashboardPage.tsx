@@ -313,11 +313,9 @@ export const DashboardPage = ({
         className="border-b-0 sm:border-b"
       />
       {stripe_verification_message ? (
-        <div role="alert" className="warning">
-          <div>
+        <Alert color="warning">
             {stripe_verification_message} <a href={Routes.settings_payments_path()}>Update</a>
-          </div>
-        </div>
+        </Alert>
       ) : null}
       {show_1099_download_notice ? (
         <Alert color="info">

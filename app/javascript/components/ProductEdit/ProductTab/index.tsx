@@ -38,6 +38,7 @@ import { useProductEditContext } from "$app/components/ProductEdit/state";
 import { ToggleSettingRow } from "$app/components/SettingRow";
 import { Toggle } from "$app/components/Toggle";
 import { TypeSafeOptionSelect } from "$app/components/TypeSafeOptionSelect";
+import { Alert } from "$app/components/ui/Alert";
 
 export const ProductTab = () => {
   const uid = React.useId();
@@ -86,9 +87,9 @@ export const ProductTab = () => {
         <form>
           <section className="p-4! md:p-8!">
             {showAiNotification ? (
-              <div
+              <Alert
                 role="status"
-                className="grid grid-cols-[auto_1fr_auto] items-start gap-4 rounded-lg !border-pink bg-pink/20 p-6"
+                className="grid grid-cols-[auto_1fr_auto] items-start gap-4 rounded-lg !border-pink bg-pink/20"
               >
                 <span className="self-center text-lg">
                   <Icon name="sparkle" />
@@ -100,7 +101,7 @@ export const ProductTab = () => {
                 <button className="col-start-3! self-center underline" onClick={() => setShowAiNotification(false)}>
                   close
                 </button>
-              </div>
+              </Alert>
             ) : null}
             <BundleConversionNotice />
             <fieldset>

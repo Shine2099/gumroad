@@ -121,7 +121,21 @@ const DiscoverEligibilityPromo = () => {
   if (!show) return null;
 
   return (
-    <div role="status" className="promo">
+    <Alert
+      role="status"
+      className="promo"
+      action={
+        <button
+          className="close underline"
+          onClick={() => {
+            localStorage.setItem("showDiscoverEligibilityPromo", "false");
+            setShow(false);
+          }}
+        >
+          Close
+        </button>
+      }
+    >
       <img src={hands} />
       <div>
         To appear on Gumroad Discover, make sure to meet all the{" "}
@@ -134,15 +148,6 @@ const DiscoverEligibilityPromo = () => {
         </a>
         .
       </div>
-      <button
-        className="close underline"
-        onClick={() => {
-          localStorage.setItem("showDiscoverEligibilityPromo", "false");
-          setShow(false);
-        }}
-      >
-        Close
-      </button>
-    </div>
+    </Alert>
   );
 };

@@ -33,6 +33,7 @@ import { Select, Option } from "$app/components/Select";
 import { showAlert } from "$app/components/server-components/Alert";
 import { Skeleton } from "$app/components/Skeleton";
 import { TypeSafeOptionSelect } from "$app/components/TypeSafeOptionSelect";
+import { Alert } from "$app/components/ui/Alert";
 import { PageHeader } from "$app/components/ui/PageHeader";
 import Placeholder from "$app/components/ui/Placeholder";
 import { Sheet, SheetHeader } from "$app/components/ui/Sheet";
@@ -340,7 +341,7 @@ const DiscountsPage = ({
     >
       <section className="p-4 md:p-8">
         {show_black_friday_banner && !offerCodes.some((offerCode) => offerCode.code === black_friday_code) ? (
-          <div role="status" className="mb-8 border !border-pink bg-pink/20 px-4 py-3 md:px-8">
+          <Alert role="status" className="mb-8 border !border-pink bg-pink/20">
             <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
               <div className="flex flex-1 flex-row items-center gap-2 md:gap-4">
                 <img src={blackFridayIllustration} alt="Black Friday" className="h-12 w-12 shrink-0" />
@@ -361,7 +362,7 @@ const DiscountsPage = ({
                 Join Black Friday Deals
               </Button>
             </div>
-          </div>
+          </Alert>
         ) : null}
         {offerCodes.length > 0 ? (
           <section className="flex flex-col gap-4">
@@ -937,9 +938,9 @@ const Form = ({
               </Button>
             </div>
             {isBlackFridayMode ? (
-              <div role="alert" className="info" style={{ marginTop: "var(--spacer-2)" }}>
+              <Alert color="info" className="mt-2">
                 By using this discount, your product will be featured in Black Friday Deals on Discover.
-              </div>
+              </Alert>
             ) : null}
           </fieldset>
           <fieldset className={cx({ danger: selectedProductIds.error })}>

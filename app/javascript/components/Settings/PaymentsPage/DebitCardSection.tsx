@@ -4,6 +4,7 @@ import { SavedCreditCard } from "$app/parsers/card";
 
 import { PayoutCreditCard } from "$app/components/server-components/PayoutPage/CreditCard";
 import { PayoutDebitCardData } from "$app/components/server-components/Settings/PaymentsPage";
+import { Alert } from "$app/components/ui/Alert";
 
 const DebitCardSection = ({
   isFormDisabled,
@@ -24,11 +25,9 @@ const DebitCardSection = ({
       <PayoutCreditCard saved_card={savedCard} is_form_disabled={isFormDisabled} setDebitCard={setDebitCard} />
     </section>
     {hasConnectedStripe ? (
-      <section>
-        <div role="alert" className="warning">
-          You cannot change your payout method to card because you have a stripe account connected.
-        </div>
-      </section>
+      <Alert color="warning">
+        You cannot change your payout method to card because you have a stripe account connected.
+      </Alert>
     ) : null}
   </>
 );
