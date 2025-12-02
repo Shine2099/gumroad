@@ -72,7 +72,7 @@ export const ShareTab = () => {
               </a>
             </header>
             {isListedOnDiscover ? (
-              <Alert color="success" action={<a href={discoverLink.toString()}>View</a>}>
+              <Alert role="status" color="success" action={<a href={discoverLink.toString()}>View</a>}>
                 {product.name} is listed on Gumroad Discover.
               </Alert>
             ) : null}
