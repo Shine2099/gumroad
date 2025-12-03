@@ -1,4 +1,4 @@
-import { useForm, router, usePage } from "@inertiajs/react";
+import { useForm, usePage } from "@inertiajs/react";
 import cx from "classnames";
 import * as React from "react";
 import { cast } from "ts-safe-cast";
@@ -88,26 +88,17 @@ export default function MainPage() {
   const handleProductLevelSupportEmailsChange = (emails: ProductLevelSupportEmail[]) =>
     updateUserSettings({ product_level_support_emails: emails });
 
-  const [isResendingConfirmationEmail, setIsResendingConfirmationEmail] = React.useState(false);
   const [resentConfirmationEmail, setResentConfirmationEmail] = React.useState(false);
   const formRef = React.useRef<HTMLFormElement>(null);
 
-  const resendConfirmationEmail = () => {
-    setIsResendingConfirmationEmail(true);
+  const resendConfirmationEmailForm = useForm({});
 
-    router.post(
-      Routes.resend_confirmation_email_settings_main_path(),
-      {},
-      {
-        onSuccess: () => {
-          setResentConfirmationEmail(true);
-          setIsResendingConfirmationEmail(false);
-        },
-        onError: () => {
-          setIsResendingConfirmationEmail(false);
-        },
+  const resendConfirmationEmail = () => {
+    resendConfirmationEmailForm.post(Routes.resend_confirmation_email_settings_main_path(), {
+      onSuccess: () => {
+        setResentConfirmationEmail(true);
       },
-    );
+    });
   };
 
   const onSave = () => {
@@ -149,7 +140,7 @@ export default function MainPage() {
                       resendConfirmationEmail();
                     }}
                   >
-                    {isResendingConfirmationEmail ? "Resending..." : "Resend confirmation?"}
+                    {resendConfirmationEmailForm.processing ? "Resending..." : "Resend confirmation?"}
                   </button>
                 )}
               </small>

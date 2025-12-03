@@ -19,10 +19,15 @@ describe Settings::ThirdPartyAnalyticsController, type: :controller, inertia: tr
       get :show
       expect(response).to be_successful
       expect(inertia.component).to eq("Settings/ThirdPartyAnalytics/Show")
-      expect(inertia.props).to be_present
-      expect(inertia.props[:third_party_analytics]).to be_present
-      expect(inertia.props[:settings_pages]).to be_an(Array)
-      expect(inertia.props[:products]).to be_an(Array)
+      settings_presenter = SettingsPresenter.new(pundit_user: controller.pundit_user)
+      expected_props = {
+        third_party_analytics: settings_presenter.third_party_analytics_props,
+        settings_pages: settings_presenter.pages,
+        products: seller.links.alive.map { |product| { permalink: product.unique_permalink, name: product.name } },
+      }
+      # Compare only the expected props from inertia.props (ignore shared props)
+      actual_props = inertia.props.slice(*expected_props.keys)
+      expect(actual_props).to eq(expected_props)
     end
   end
 

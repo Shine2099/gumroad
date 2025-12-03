@@ -14,13 +14,6 @@ router.on("before", (event) => {
       "X-CSRF-Token": token,
     };
   }
-
-  // Track previous route for navigation
-  const currentUrl = window.location.pathname;
-  const newUrl = typeof event.detail.visit.url === "string" ? event.detail.visit.url : event.detail.visit.url.pathname;
-  if (currentUrl !== newUrl) {
-    sessionStorage.setItem("inertia_previous_route", currentUrl);
-  }
 });
 
 async function resolvePageComponent(name) {

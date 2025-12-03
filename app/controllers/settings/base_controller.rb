@@ -11,7 +11,7 @@ class Settings::BaseController < Sellers::BaseController
     }
   end
 
-  private
+  protected
     def settings_presenter
       @settings_presenter ||= SettingsPresenter.new(pundit_user:)
     end

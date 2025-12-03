@@ -28,10 +28,11 @@ describe Settings::MainController, type: :controller, inertia: true do
 
       expect(response).to be_successful
       expect(inertia.component).to eq("Settings/Main/Show")
-      expect(inertia.props).to be_present
-      expect(inertia.props[:settings_pages]).to be_an(Array)
-      expect(inertia.props[:user]).to be_present
-      expect(inertia.props[:is_form_disabled]).to be_in([true, false])
+      settings_presenter = SettingsPresenter.new(pundit_user:)
+      expected_props = settings_presenter.main_props
+      # Compare only the expected props from inertia.props (ignore shared props)
+      actual_props = inertia.props.slice(*expected_props.keys)
+      expect(actual_props).to eq(expected_props)
     end
   end
 

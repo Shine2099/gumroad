@@ -22,10 +22,18 @@ describe Settings::TeamController, type: :controller, inertia: true do
 
       expect(response).to be_successful
       expect(inertia.component).to eq("Settings/Team/Show")
-      expect(inertia.props).to be_present
-      expect(inertia.props[:member_infos]).to be_an(Array)
-      expect(inertia.props[:settings_pages]).to be_an(Array)
-      expect(inertia.props[:can_invite_member]).to be_in([true, false])
+      settings_presenter = SettingsPresenter.new(pundit_user: controller.pundit_user)
+      team_presenter = Settings::TeamPresenter.new(pundit_user: controller.pundit_user)
+      expected_props = {
+        member_infos: team_presenter.member_infos.map(&:to_hash),
+        can_invite_member: Pundit.policy!(controller.pundit_user, [:settings, :team, TeamInvitation]).create?,
+        settings_pages: settings_presenter.pages,
+      }
+      # Compare only the expected props from inertia.props (ignore shared props)
+      actual_props = inertia.props.slice(*expected_props.keys)
+      # Convert member_infos objects to hashes for comparison
+      actual_props[:member_infos] = actual_props[:member_infos].map(&:to_hash) if actual_props[:member_infos]
+      expect(actual_props).to eq(expected_props)
     end
 
     context "when user does not have an email" do

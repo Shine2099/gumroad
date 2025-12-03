@@ -40,11 +40,14 @@ describe Settings::PaymentsController, :vcr, type: :controller, inertia: true do
 
       expect(response).to be_successful
       expect(inertia.component).to eq("Settings/Payments/Show")
-      expect(inertia.props).to be_present
-      expect(inertia.props[:settings_pages]).to be_an(Array)
-      expect(inertia.props[:user]).to be_present
-      expect(inertia.props[:user][:country_code]).to eq("US")
-      expect(inertia.props[:is_form_disabled]).to be_in([true, false])
+      settings_presenter = SettingsPresenter.new(pundit_user: controller.pundit_user)
+      expected_props = settings_presenter.payments_props(remote_ip: request.remote_ip)
+      # Compare only the expected props from inertia.props (ignore shared props)
+      actual_props = inertia.props.slice(*expected_props.keys)
+      # Convert actual countries hash keys from symbols to strings to match presenter output
+      # Inertia RSpec helper returns symbol keys, but presenter uses string keys
+      actual_props[:countries] = actual_props[:countries].transform_keys(&:to_s) if actual_props[:countries] && actual_props[:countries].keys.first.is_a?(Symbol)
+      expect(actual_props).to eq(expected_props)
     end
   end
 

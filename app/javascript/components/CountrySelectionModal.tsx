@@ -1,4 +1,3 @@
-import { router } from "@inertiajs/react";
 import cx from "classnames";
 import * as React from "react";
 import { cast } from "ts-safe-cast";
@@ -50,12 +49,7 @@ export const CountrySelectionModal = ({ country: initialCountry, countries }: Pr
       <Modal
         open
         onClose={() => {
-          const previousRoute = sessionStorage.getItem("inertia_previous_route");
-          if (previousRoute) {
-            router.visit(previousRoute);
-          } else {
-            router.visit(Routes.dashboard_path());
-          }
+          window.history.back();
         }}
         title="Where are you located?"
         footer={

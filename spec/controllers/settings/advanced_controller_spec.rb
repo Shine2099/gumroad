@@ -22,12 +22,11 @@ describe Settings::AdvancedController, :vcr, type: :controller, inertia: true do
 
       expect(response).to be_successful
       expect(inertia.component).to eq("Settings/Advanced/Show")
-      expect(inertia.props).to be_present
-      expect(inertia.props[:settings_pages]).to be_an(Array)
-      expect(inertia.props[:user_id]).to be_present
-      expect(inertia.props[:notification_endpoint]).to be_a(String)
-      expect(inertia.props[:applications]).to be_an(Array)
-      expect(inertia.props[:allow_deactivation]).to be_in([true, false])
+      settings_presenter = SettingsPresenter.new(pundit_user: controller.pundit_user)
+      expected_props = settings_presenter.advanced_props
+      # Compare only the expected props from inertia.props (ignore shared props)
+      actual_props = inertia.props.slice(*expected_props.keys)
+      expect(actual_props).to eq(expected_props)
     end
   end
 

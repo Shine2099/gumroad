@@ -20,9 +20,14 @@ describe Settings::ProfileController, :vcr, type: :controller, inertia: true do
 
       expect(response).to be_successful
       expect(inertia.component).to eq("Settings/Profile/Show")
-      expect(inertia.props).to be_present
-      expect(inertia.props[:settings_pages]).to be_an(Array)
-      expect(inertia.props[:profile_settings]).to be_present
+      settings_presenter = SettingsPresenter.new(pundit_user: controller.pundit_user)
+      profile_presenter = ProfilePresenter.new(pundit_user: controller.pundit_user, seller:)
+      expected_props = settings_presenter.profile_props.merge(
+        profile_presenter.profile_settings_props(request:)
+      )
+      # Compare only the expected props from inertia.props (ignore shared props)
+      actual_props = inertia.props.slice(*expected_props.keys)
+      expect(actual_props).to eq(expected_props)
     end
   end
 
