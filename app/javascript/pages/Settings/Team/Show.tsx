@@ -1,4 +1,4 @@
-import { usePage } from "@inertiajs/react";
+import { usePage, router } from "@inertiajs/react";
 import { cx } from "class-variance-authority";
 import * as React from "react";
 import { GroupBase, SelectInstance } from "react-select";
@@ -10,7 +10,6 @@ import {
   MemberInfo,
   TeamInvitation,
   createTeamInvitation,
-  fetchMemberInfos,
   deleteMember,
   resendInvitation,
   restoreMember,
@@ -48,19 +47,15 @@ type TeamPageProps = {
 
 export default function TeamPage() {
   const props = cast<TeamPageProps>(usePage().props);
-  const [memberInfos, setMemberInfos] = React.useState<MemberInfo[]>(props.member_infos);
 
   const options: Option[] = ROLES.map((role) => ({
     id: role,
     label: ROLE_TITLES[role],
   }));
 
-  const refreshMemberInfos = asyncVoid(async () => {
-    const result = await fetchMemberInfos();
-    if (result.success) {
-      setMemberInfos(result.member_infos);
-    }
-  });
+  const refreshMemberInfos = () => {
+    router.reload({ only: ["member_infos"] });
+  };
 
   return (
     <SettingsLayout currentPage="team" pages={props.settings_pages}>
@@ -68,7 +63,7 @@ export default function TeamPage() {
         {props.can_invite_member ? (
           <AddTeamMembersSection refreshMemberInfos={refreshMemberInfos} options={options} />
         ) : null}
-        <TeamMembersSection memberInfos={memberInfos} refreshMemberInfos={refreshMemberInfos} />
+        <TeamMembersSection memberInfos={props.member_infos} refreshMemberInfos={refreshMemberInfos} />
       </form>
     </SettingsLayout>
   );

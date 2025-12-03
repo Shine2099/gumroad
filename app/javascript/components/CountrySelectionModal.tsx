@@ -1,3 +1,4 @@
+import { router } from "@inertiajs/react";
 import cx from "classnames";
 import * as React from "react";
 import { cast } from "ts-safe-cast";
@@ -49,7 +50,12 @@ export const CountrySelectionModal = ({ country: initialCountry, countries }: Pr
       <Modal
         open
         onClose={() => {
-          window.history.back();
+          const referrer = document.referrer;
+          if (referrer && new URL(referrer).origin === window.location.origin) {
+            window.history.back();
+          } else {
+            router.get(Routes.dashboard_path());
+          }
         }}
         title="Where are you located?"
         footer={
