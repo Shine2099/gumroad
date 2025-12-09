@@ -1,3 +1,4 @@
+import { Slot } from "@radix-ui/react-slot";
 import { cva } from "class-variance-authority";
 import * as React from "react";
 import { is } from "ts-safe-cast";
@@ -8,19 +9,6 @@ import { classNames } from "$app/utils/classNames";
 import { ButtonColor, buttonColors } from "$app/components/design";
 
 export type BrandName = "paypal" | "discord" | "stripe" | "facebook" | "twitter" | "apple" | "android" | "kindle" | "zoom" | "google";
-
-const brandColors: Record<BrandName, { bg: string; text: string }> = {
-  paypal: { bg: "#00457c", text: "#ffffff" },
-  discord: { bg: "#7289da", text: "#ffffff" },
-  stripe: { bg: "#625bf6", text: "#ffffff" },
-  facebook: { bg: "#4267b2", text: "#ffffff" },
-  twitter: { bg: "#000000", text: "#ffffff" },
-  apple: { bg: "#000000", text: "#ffffff" },
-  android: { bg: "#142f40", text: "#ffffff" },
-  kindle: { bg: "#f3a642", text: "#000000" },
-  zoom: { bg: "#4087fc", text: "#ffffff" },
-  google: { bg: "#5383ec", text: "#ffffff" },
-};
 
 export const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 cursor-pointer border border-border rounded bg-transparent font-inherit no-underline transition-transform hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[0.25rem_0.25rem_0_currentColor] active:translate-x-0 active:translate-y-0 active:shadow-none disabled:opacity-30 disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-none",
@@ -37,14 +25,24 @@ export const buttonVariants = cva(
         sm: "p-2 text-sm leading-[1.3]",
       },
       color: {
-        primary: "bg-black text-white hover:bg-[rgb(var(--accent))] hover:text-[rgb(var(--contrast-accent))]",
+        primary: "bg-black text-white hover:bg-accent hover:text-accent-foreground",
         black: "bg-black text-white",
-        accent: "bg-[rgb(var(--accent))] text-[rgb(var(--contrast-accent))]",
+        accent: "bg-accent text-accent-foreground",
         filled: "bg-white text-black",
-        success: "bg-[rgb(var(--success))] text-[rgb(var(--contrast-success))]",
-        danger: "bg-[rgb(var(--danger))] text-[rgb(var(--contrast-danger))]",
-        warning: "bg-[rgb(var(--warning))] text-[rgb(var(--contrast-warning))]",
-        info: "bg-[rgb(var(--info))] text-[rgb(var(--contrast-info))]",
+        success: "bg-success text-white",
+        danger: "bg-danger text-white",
+        warning: "bg-warning text-black",
+        info: "bg-primary text-primary-foreground",
+        paypal: "bg-[#00457c] text-white border-[#00457c]",
+        discord: "bg-[#7289da] text-white border-[#7289da]",
+        stripe: "bg-[#625bf6] text-white border-[#625bf6]",
+        facebook: "bg-[#4267b2] text-white border-[#4267b2]",
+        twitter: "bg-black text-white border-black",
+        apple: "bg-black text-white border-black",
+        android: "bg-[#142f40] text-white border-[#142f40]",
+        kindle: "bg-[#f3a642] text-black border-[#f3a642]",
+        zoom: "bg-[#4087fc] text-white border-[#4087fc]",
+        google: "bg-[#5383ec] text-white border-[#5383ec]",
       },
     },
     compoundVariants: [
@@ -56,22 +54,22 @@ export const buttonVariants = cva(
       {
         variant: "outline",
         color: "danger",
-        className: "bg-transparent text-current hover:bg-[rgb(var(--danger))] hover:text-[rgb(var(--contrast-danger))]",
+        className: "bg-transparent text-current hover:bg-danger hover:text-white",
       },
       {
         variant: "outline",
         color: "success",
-        className: "bg-transparent text-current hover:bg-[rgb(var(--success))] hover:text-[rgb(var(--contrast-success))]",
+        className: "bg-transparent text-current hover:bg-success hover:text-white",
       },
       {
         variant: "outline",
         color: "warning",
-        className: "bg-transparent text-current hover:bg-[rgb(var(--warning))] hover:text-[rgb(var(--contrast-warning))]",
+        className: "bg-transparent text-current hover:bg-warning hover:text-black",
       },
       {
         variant: "outline",
         color: "info",
-        className: "bg-transparent text-current hover:bg-[rgb(var(--info))] hover:text-[rgb(var(--contrast-info))]",
+        className: "bg-transparent text-current hover:bg-primary hover:text-primary-foreground",
       },
       {
         variant: "outline",
@@ -81,7 +79,7 @@ export const buttonVariants = cva(
       {
         variant: "outline",
         color: "accent",
-        className: "bg-transparent text-current hover:bg-[rgb(var(--accent))] hover:text-[rgb(var(--contrast-accent))]",
+        className: "bg-transparent text-current hover:bg-accent hover:text-accent-foreground",
       },
       {
         variant: "outline",
@@ -98,13 +96,15 @@ export const buttonVariants = cva(
 
 // Legacy props for backward compatibility
 type ButtonVariation = {
-  color?: ButtonColor | undefined;
+  color?: ButtonColor | BrandName | undefined;
   outline?: boolean | undefined;
   small?: boolean | undefined;
   brand?: BrandName | undefined;
 };
 
-export interface ButtonProps extends Omit<React.ComponentPropsWithoutRef<"button">, "color">, ButtonVariation {}
+export interface ButtonProps extends Omit<React.ComponentPropsWithoutRef<"button">, "color">, ButtonVariation {
+  asChild?: boolean;
+}
 
 const useButtonCommon = ({
   className,
@@ -118,41 +118,35 @@ const useButtonCommon = ({
   const variant = outline ? "outline" : color === "danger" ? "destructive" : "default";
   const size = small ? "sm" : "default";
 
-  // If brand is specified, use brand colors
-  const brandStyle = brand
-    ? {
-        backgroundColor: brandColors[brand].bg,
-        color: brandColors[brand].text,
-        borderColor: brandColors[brand].bg,
-      }
-    : undefined;
+  // Support legacy brand prop by mapping it to color
+  const effectiveColor = brand || color;
 
   const classes = classNames(
-    buttonVariants({ variant, size, color: color && !outline && !brand ? color : undefined }),
+    buttonVariants({ variant, size, color: effectiveColor && !outline ? effectiveColor : undefined }),
     className,
   );
 
   const icon = brand && <span className={`brand-icon brand-icon-${brand}`} />;
 
-  return { classes, style: brandStyle, icon };
+  return { classes, icon };
 };
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, color, outline, small, brand, disabled, children, ...props }, ref) => {
-    const { classes, style, icon } = useButtonCommon({ className, color, outline, small, brand });
+  ({ className, color, outline, small, brand, disabled, children, asChild = false, ...props }, ref) => {
+    const { classes, icon } = useButtonCommon({ className, color, outline, small, brand });
+    const Comp = asChild ? Slot : "button";
 
     return (
-      <button
+      <Comp
         className={classes}
-        style={style}
         ref={ref}
         disabled={disabled}
-        type="button"
+        type={asChild ? undefined : "button"}
         {...props}
       >
         {icon}
         {children}
-      </button>
+      </Comp>
     );
   },
 );
@@ -164,12 +158,11 @@ export interface NavigationButtonProps extends Omit<React.ComponentPropsWithoutR
 
 export const NavigationButton = React.forwardRef<HTMLAnchorElement, NavigationButtonProps>(
   ({ className, color, outline, small, brand, disabled, children, ...props }, ref) => {
-    const { classes, style, icon } = useButtonCommon({ className, color, outline, small, brand });
+    const { classes, icon } = useButtonCommon({ className, color, outline, small, brand });
 
     return (
       <a
         className={classes}
-        style={style}
         ref={ref}
         inert={disabled}
         {...props}
