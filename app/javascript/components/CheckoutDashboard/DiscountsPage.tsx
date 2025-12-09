@@ -443,9 +443,9 @@ const DiscountsPage = ({
                             onToggle={(open) => setPopoverOfferCodeId(open ? offerCode.id : null)}
                             aria-label="Open discount action menu"
                             trigger={
-                              <div className="button">
+                              <Button>
                                 <Icon name="three-dots" />
-                              </div>
+                              </Button>
                             }
                           >
                             <div role="menu">
