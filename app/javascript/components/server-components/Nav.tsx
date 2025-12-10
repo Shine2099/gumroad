@@ -85,6 +85,8 @@ export const Nav = (props: Props) => {
             }
           />
           <DashboardNavProfilePopover user={currentSeller}>
+            {/* role="menu" has styling from scss files and classNames don't take precedent,
+            so we need bangs until we remove the scss that applies */}
             <div role="menu" className="border-0! shadow-none! dark:border!">
               {teamMemberships != null && teamMemberships.length > 0 ? (
                 <>
