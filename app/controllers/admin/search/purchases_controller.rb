@@ -18,14 +18,14 @@ class Admin::Search::PurchasesController < Admin::BaseController
       end
     end
 
-    @purchases = AdminSearchService.new.search_purchases(
+    purchases = AdminSearchService.new.search_purchases(
       query: params[:query]&.strip,
       product_title_query: params[:product_title_query]&.strip,
       **search_params,
     )
 
     pagination, purchases = pagy_countless(
-      @purchases,
+      purchases,
       limit: params[:per_page] || RECORDS_PER_PAGE,
       page: params[:page],
       countless_minimal: true

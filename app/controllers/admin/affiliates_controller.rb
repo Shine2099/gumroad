@@ -5,17 +5,20 @@ class Admin::AffiliatesController < Admin::BaseController
   include Admin::ListPaginatedUsers
 
   before_action :fetch_affiliate, only: [:show]
-  before_action :clean_search_query, only: [:index]
-  before_action :fetch_users_from_query, only: [:index]
 
   helper Pagy::UrlHelpers
 
   def index
     @title = "Affiliate results"
-    @users = @users.joins(:direct_affiliate_accounts).distinct
-    @users = @users.with_blocked_attributes_for(:form_email, :form_email_domain)
 
-    list_paginated_users users: @users, template: "Admin/Affiliates/Index", legacy_template: "admin/affiliates/index", single_result_redirect_path: ->(user) { admin_affiliate_path(user.external_id) }
+    users = User.admin_search(params[:query])
+                .order(created_at: :desc, id: :desc)
+                .joins(:direct_affiliate_accounts)
+                .distinct
+
+    list_paginated_users users:,
+                         template: "Admin/Affiliates/Index",
+                         single_result_redirect_path: ->(user) { admin_affiliate_path(user.external_id) }
   end
 
   def show
@@ -41,16 +44,5 @@ class Admin::AffiliatesController < Admin::BaseController
       @affiliate_user ||= User.find_by_external_id(params[:external_id].gsub(/^ext-/, ""))
 
       e404 if @affiliate_user.nil? || @affiliate_user.direct_affiliate_accounts.blank?
-    end
-
-    def clean_search_query
-      @raw_query = params[:query].strip
-      @query = "%#{@raw_query}%"
-    end
-
-    def fetch_users_from_query
-      @users = User.where(email: @raw_query).order(created_at: :desc, id: :desc) if EmailFormatValidator.valid?(@raw_query)
-      @users ||= User.where("external_id = ? or email like ? or name like ?",
-                            @raw_query, @query, @query).order(created_at: :desc, id: :desc)
     end
 end

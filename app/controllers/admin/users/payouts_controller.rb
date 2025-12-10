@@ -11,7 +11,7 @@ class Admin::Users::PayoutsController < Admin::BaseController
   def index
     @title = "Payouts"
 
-    pagination, @payouts = pagy(
+    pagination, payouts = pagy(
       @user.payments.order(id: :desc),
       limit: params[:per_page] || RECORDS_PER_PAGE,
       page: params[:page]
@@ -19,7 +19,7 @@ class Admin::Users::PayoutsController < Admin::BaseController
 
     render inertia: "Admin/Users/Payouts/Index",
            props: {
-             payouts: @payouts.includes(:user, bank_account: :credit_card).map { Admin::PaymentPresenter.new(payment: _1).props },
+             payouts: payouts.includes(:user, bank_account: :credit_card).map { Admin::PaymentPresenter.new(payment: _1).props },
              pagination: PagyPresenter.new(pagination).props
            }
   end
