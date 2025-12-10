@@ -29,8 +29,8 @@ describe Admin::AffiliatesController, inertia: true do
 
     context "when there are multiple affiliates in search result" do
       before do
-        @affiliate_users = 10.times.map do
-          user = create(:user, name: "test")
+        @affiliate_users = 10.times.map do |i|
+          user = create(:user, name: "test", created_at: i.days.ago, updated_at: i.days.ago)
           create(:direct_affiliate, affiliate_user: user)
           user
         end
@@ -41,7 +41,7 @@ describe Admin::AffiliatesController, inertia: true do
 
         expect(response).to be_successful
         expect(inertia.component).to eq("Admin/Affiliates/Index")
-        expect(assigns[:users].to_a).to match_array(@affiliate_users)
+        expect(inertia.props[:users]).to eq @affiliate_users.take(5).map { |user| Admin::UserPresenter::Card.new(user: user, pundit_user: SellerContext.new(user: @admin_user, seller: @admin_user)).props }
       end
 
       it "returns JSON response when requested" do
@@ -49,7 +49,7 @@ describe Admin::AffiliatesController, inertia: true do
 
         expect(response).to be_successful
         expect(response.content_type).to match(%r{application/json})
-        expect(response.parsed_body["users"].map { _1["id"] }).to match_array(@affiliate_users.drop(5).map(&:external_id))
+        expect(response.parsed_body["users"].map { _1["id"] }).to match_array(@affiliate_users.take(5).map(&:external_id))
         expect(response.parsed_body["pagination"]).to be_present
       end
     end

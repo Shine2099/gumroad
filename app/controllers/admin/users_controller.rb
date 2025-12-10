@@ -182,7 +182,7 @@ class Admin::UsersController < Admin::BaseController
         )
         user_credit.notify_user if credit_amount_cents > 0
         render json: { success: true, amount: credit_amount }
-      rescue ArgumentError, Credit::Error => e
+      rescue ArgumentError => e
         render json: { success: false, message: e.message }
       end
     else

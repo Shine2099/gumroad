@@ -69,7 +69,7 @@ describe Admin::Search::PurchasesController, type: :controller, inertia: true do
       get :index, params: { query: email }
 
       assert_response :success
-      expect(assigns(:purchases)).to include(purchase_1, purchase_2, purchase_3)
+      expect(inertia.props[:purchases]).to eq [purchase_1, purchase_2, purchase_3].map { |purchase| Admin::PurchasePresenter.new(purchase).list_props }
     end
 
     describe "product_title_query" do
@@ -91,7 +91,7 @@ describe Admin::Search::PurchasesController, type: :controller, inertia: true do
           get :index, params: { query: email, product_title_query: product_title_query }
 
           assert_response :success
-          expect(assigns(:purchases)).to include(purchase)
+          expect(inertia.props[:purchases]).to include(Admin::PurchasePresenter.new(purchase).list_props)
         end
       end
 
@@ -102,7 +102,7 @@ describe Admin::Search::PurchasesController, type: :controller, inertia: true do
           get :index, params: { query: "", product_title_query: product_title_query }
 
           assert_response :success
-          expect(assigns(:purchases)).to include(purchase)
+          expect(inertia.props[:purchases]).to include(Admin::PurchasePresenter.new(purchase).list_props)
         end
       end
     end
@@ -125,7 +125,7 @@ describe Admin::Search::PurchasesController, type: :controller, inertia: true do
           get :index, params: { query: email, purchase_status: purchase_status }
 
           assert_response :success
-          expect(assigns(:purchases)).to include(successful_purchase)
+          expect(inertia.props[:purchases]).to include(Admin::PurchasePresenter.new(successful_purchase).list_props)
         end
       end
 
@@ -136,7 +136,7 @@ describe Admin::Search::PurchasesController, type: :controller, inertia: true do
           get :index, params: { query: "", purchase_status: purchase_status }
 
           assert_response :success
-          expect(assigns(:purchases)).to include(successful_purchase)
+          expect(inertia.props[:purchases]).to include(Admin::PurchasePresenter.new(successful_purchase).list_props)
         end
       end
     end

@@ -11,12 +11,7 @@ class Admin::AffiliatesController < Admin::BaseController
   def index
     @title = "Affiliate results"
 
-    users = User.admin_search(params[:query])
-                .order(created_at: :desc, id: :desc)
-                .joins(:direct_affiliate_accounts)
-                .distinct
-
-    list_paginated_users users:,
+    list_paginated_users users: User.admin_search(params[:query]).order(created_at: :desc, id: :desc).joins(:direct_affiliate_accounts).distinct,
                          template: "Admin/Affiliates/Index",
                          single_result_redirect_path: ->(user) { admin_affiliate_path(user.external_id) }
   end

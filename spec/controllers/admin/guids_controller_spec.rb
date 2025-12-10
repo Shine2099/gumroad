@@ -29,13 +29,7 @@ describe Admin::GuidsController, type: :controller, inertia: true do
 
       expect(response).to be_successful
       expect(inertia.component).to eq("Admin/Compliance/Guids/Show")
-    end
-
-    it "returns unique users for the supplied browser GUID" do
-      get :show, params: { id: browser_guid }
-
-      expect(response).to be_successful
-      expect(assigns(:users).to_a).to match_array [user1, user2, user3]
+      expect(inertia.props[:users]).to eq [user1, user2, user3].map { |user| Admin::UserPresenter::Card.new(user: user, pundit_user: SellerContext.new(user: admin_user, seller: admin_user)).props }
     end
 
     it "returns JSON response when requested" do
@@ -65,8 +59,7 @@ describe Admin::GuidsController, type: :controller, inertia: true do
       get :show, params: { id: browser_guid }
 
       expect(response).to be_successful
-      expect(assigns(:users).to_a).to match_array [user1, user2, user3]
-      expect(assigns(:users).to_a).not_to include(other_user)
+      expect(inertia.props[:users]).to eq [user1, user2, user3].map { |user| Admin::UserPresenter::Card.new(user: user, pundit_user: SellerContext.new(user: admin_user, seller: admin_user)).props }
     end
 
     it "paginates results" do
