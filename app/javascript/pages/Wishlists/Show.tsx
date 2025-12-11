@@ -14,7 +14,9 @@ type Props = WishlistProps & {
   taxonomies_for_nav?: Taxonomy[];
 };
 
-const WishlistShowPage = ({ layout, creator_profile, taxonomies_for_nav, ...wishlistProps }: Props) => {
+export default function WishlistShowPage() {
+  const { layout, creator_profile, taxonomies_for_nav, ...wishlistProps } = cast<Props>(usePage().props);
+
   if (layout === "profile" && creator_profile) {
     return (
       <ProfileLayout creatorProfile={creator_profile}>
@@ -32,10 +34,4 @@ const WishlistShowPage = ({ layout, creator_profile, taxonomies_for_nav, ...wish
   }
 
   return <Wishlist {...wishlistProps} />;
-};
-
-export default function WishlistsShow() {
-  const props = cast<Props>(usePage().props);
-
-  return <WishlistShowPage {...props} />;
 }
