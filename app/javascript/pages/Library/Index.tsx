@@ -1,8 +1,7 @@
 import { usePage } from "@inertiajs/react";
 import { produce } from "immer";
 import * as React from "react";
-import { is } from "ts-safe-cast";
-import { cast } from "ts-safe-cast";
+import { cast, is } from "ts-safe-cast";
 
 import { deletePurchasedProduct, setPurchaseArchived } from "$app/data/library";
 import { ProductNativeType } from "$app/parsers/product";
