@@ -83,8 +83,10 @@ export const Layout = ({
                 Subscribers
               </Tab>
             ) : (
-              <Tab href={emailTabPath(tab)} isSelected={selectedTab === tab} key={tab}>
-                {tab === "published" ? "Published" : tab === "scheduled" ? "Scheduled" : "Drafts"}
+              <Tab asChild isSelected={selectedTab === tab} key={tab}>
+                <Link to={emailTabPath(tab)}>
+                  {tab === "published" ? "Published" : tab === "scheduled" ? "Scheduled" : "Drafts"}
+                </Link>
               </Tab>
             ),
           )}
