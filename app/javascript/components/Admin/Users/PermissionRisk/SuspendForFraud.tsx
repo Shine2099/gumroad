@@ -36,9 +36,9 @@ const SuspendForFraud = ({ user }: SuspendForFraudProps) => {
                     className="flex-1"
                     placeholder="Add suspension note (optional)"
                   />
-                  <button type="submit" className="button" disabled={isLoading}>
+                  <Button type="submit" disabled={isLoading}>
                     {isLoading ? "Submitting..." : "Submit"}
-                  </button>
+                  </Button>
                 </div>
               </fieldset>
             )}
