@@ -190,14 +190,14 @@ const GettingStartedItem = ({
 
   if (completed) {
     return (
-      <Button className={cx(commonClasses, "cursor-default!")} data-status="completed">
+      <Button color="filled" className={cx(commonClasses, "cursor-default! dark:bg-black dark:text-white")} data-status="completed">
         {content}
       </Button>
     );
   }
 
   return (
-    <NavigationButton href={link} className={commonClasses} data-status="pending">
+    <NavigationButton color="filled" href={link} className={cx(commonClasses, "dark:bg-black dark:text-white")} data-status="pending">
       {content}
     </NavigationButton>
   );
