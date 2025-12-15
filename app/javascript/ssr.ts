@@ -46,6 +46,7 @@ import GumroadBlogIndexPage from "$app/components/server-components/GumroadBlog/
 import GumroadBlogPostPage from "$app/components/server-components/GumroadBlog/PostPage";
 import HelpCenterArticlesIndexPage from "$app/components/server-components/HelpCenter/ArticlesIndexPage";
 import LibraryPage from "$app/components/server-components/LibraryPage";
+import PasswordResetPage from "$app/components/server-components/PasswordResetPage";
 import Nav from "$app/components/server-components/Nav";
 import PayoutCreditCard from "$app/components/server-components/PayoutPage/CreditCard";
 import PdfReaderPage from "$app/components/server-components/PdfReaderPage";
@@ -80,6 +81,7 @@ import SubscriptionManager from "$app/components/server-components/SubscriptionM
 import SubscriptionManagerMagicLink from "$app/components/server-components/SubscriptionManagerMagicLink";
 import SupportHeader from "$app/components/server-components/support/Header";
 import TaxesCollectionModal from "$app/components/server-components/TaxesCollectionModal";
+import TwoFactorAuthenticationPage from "$app/components/server-components/TwoFactorAuthenticationPage";
 import UtmLinksPage from "$app/components/server-components/UtmLinksPage";
 import VideoStreamPlayer from "$app/components/server-components/VideoStreamPlayer";
 import WishlistPage from "$app/components/server-components/WishlistPage";
@@ -140,6 +142,7 @@ ReactOnRails.register({
   LibraryPage,
   MainSettingsPage,
   Nav,
+  PasswordResetPage,
   PasswordSettingsPage,
   PaymentsSettingsPage,
   PayoutCreditCard,
@@ -168,6 +171,7 @@ ReactOnRails.register({
   TaxesCollectionModal,
   TeamSettingsPage,
   ThirdPartyAnalyticsSettingsPage,
+  TwoFactorAuthenticationPage,
   VideoStreamPlayer,
   WishlistPage,
   WishlistsFollowingPage,
