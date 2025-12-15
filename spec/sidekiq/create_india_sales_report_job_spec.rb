@@ -146,7 +146,7 @@ describe CreateIndiaSalesReportJob do
                                         "Tax Difference (floored)"
                                       ])
 
-      expect(actual_payload.length).to eq(2)
+      expect(actual_payload.length).to eq(3)
 
       data_row = actual_payload[1]
 
