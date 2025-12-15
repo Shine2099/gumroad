@@ -1,15 +1,23 @@
 # frozen_string_literal: true
 
 class TwoFactorAuthenticationController < ApplicationController
+  include InertiaRendering
+
   before_action :redirect_to_signed_in_path, if: -> { user_signed_in? && skip_two_factor_authentication?(logged_in_user) }
   before_action :fetch_user
   before_action :check_presence_of_user, except: :verify
   before_action :redirect_to_login_path, only: :verify, if: -> { @user.blank? }
   before_action :validate_user_id_from_params, except: :new
 
+  layout "inertia", only: [:new]
+
   # Get /two-factor
   def new
-    @hide_layouts = true
+    render inertia: "Auth/TwoFactorAuthentication", props: {
+      user_id: @user.encrypted_external_id,
+      email: @user.email,
+      token: (User::DEFAULT_AUTH_TOKEN unless Rails.env.production?)
+    }
   end
 
   # POST /two-factor.json
@@ -40,14 +48,13 @@ class TwoFactorAuthenticationController < ApplicationController
         flash[:notice] = "Successfully logged in!"
 
         respond_to do |format|
-          format.html { redirect_to login_path_for(@user) }
+          format.html { redirect_to login_path_for(@user), status: :see_other }
           format.json { render json: { redirect_location: login_path_for(@user) } }
         end
       else
         respond_to do |format|
           format.html do
-            flash[:alert] = "Invalid token, please try again."
-            redirect_to two_factor_authentication_path
+            redirect_to two_factor_authentication_path, warning: "Invalid token, please try again.", status: :see_other
           end
           format.json { render json: { error_message: "Invalid token, please try again." }, status: :unprocessable_entity }
         end

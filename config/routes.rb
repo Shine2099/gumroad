@@ -539,8 +539,13 @@ Rails.application.routes.draw do
 
     # Enforce stricter formats to restrict people from bypassing Rack::Attack by using different formats in URL.
     scope format: true, constraints: { format: :json } do
-      post "/two-factor", to: "two_factor_authentication#create"
+      post "/two-factor", to: "two_factor_authentication#create", as: :two_factor
       post "/two-factor/resend_authentication_token", to: "two_factor_authentication#resend_authentication_token", as: :resend_authentication_token
+    end
+
+    # HTML format for Inertia form submission
+    scope format: false do
+      post "/two-factor", to: "two_factor_authentication#create", as: :two_factor_html
     end
 
     scope format: true, constraints: { format: :html } do

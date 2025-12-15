@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class User::PasswordsController < Devise::PasswordsController
+  include InertiaRendering
+
+  layout "inertia", only: [:edit]
+
   def new
     e404
   end
@@ -24,6 +28,9 @@ class User::PasswordsController < Devise::PasswordsController
     end
 
     @title = "Reset your password"
+    render inertia: "Auth/PasswordReset", props: {
+      reset_password_token: @reset_password_token
+    }
   end
 
   def update
@@ -38,12 +45,12 @@ class User::PasswordsController < Devise::PasswordsController
       else
         "That reset password token doesn't look valid (or may have expired)."
       end
-      render json: { error_message: error_message }, status: :unprocessable_entity
+      redirect_to edit_user_password_path(reset_password_token: @reset_password_token), warning: error_message, status: :see_other
     else
       flash[:notice] = "Your password has been reset, and you're now logged in."
       @user.invalidate_active_sessions!
       sign_in @user unless @user.deleted?
-      head :no_content
+      redirect_to login_path_for(@user), status: :see_other
     end
   end
 
