@@ -22,8 +22,6 @@ import { showAlert } from "$app/components/server-components/Alert";
 import { Sheet, SheetHeader } from "$app/components/ui/Sheet";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "$app/components/ui/Table";
 import Placeholder from "$app/components/ui/Placeholder";
-import { useDebouncedCallback } from "$app/components/useDebouncedCallback";
-import { useOnChange } from "$app/components/useOnChange";
 import { useUserAgentInfo } from "$app/components/UserAgent";
 import { WithTooltip } from "$app/components/WithTooltip";
 import { previewInstallment, SavedInstallment } from "$app/data/installments";
@@ -51,7 +49,6 @@ export default function EmailsPublished() {
     state: "delete-confirmation" | "deleting";
   } | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [query, setQuery] = React.useState("");
   const selectedInstallment = selectedInstallmentId
     ? (installments.find((i) => i.external_id === selectedInstallmentId) ?? null)
     : null;
@@ -64,7 +61,7 @@ export default function EmailsPublished() {
     setIsLoading(true);
     try {
       activeFetchRequest.current?.cancel();
-      const request = getPublishedInstallments({ page: nextPage, query });
+      const request = getPublishedInstallments({ page: nextPage, query: "" });
       activeFetchRequest.current = request;
       const response = await request.response;
       setInstallments(reset ? response.installments : [...installments, ...response.installments]);
@@ -79,14 +76,6 @@ export default function EmailsPublished() {
       showAlert("Sorry, something went wrong. Please try again.", "error");
     }
   };
-  const debouncedFetchInstallments = useDebouncedCallback(
-    (options: { reset: boolean }) => void fetchInstallments(options),
-    500,
-  );
-
-  useOnChange(() => {
-    debouncedFetchInstallments({ reset: true });
-  }, [query]);
 
   const handleDelete = async () => {
     if (!deletingInstallment) return;
@@ -105,7 +94,7 @@ export default function EmailsPublished() {
   const userAgentInfo = useUserAgentInfo();
 
   return (
-    <EmailsLayout selectedTab="published" hasPosts={has_posts} query={query} onQueryChange={setQuery}>
+    <EmailsLayout selectedTab="published" hasPosts={has_posts}>
       <div className="space-y-4 p-4 md:p-8">
         {installments.length > 0 ? (
           <>
