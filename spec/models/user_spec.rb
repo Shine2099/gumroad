@@ -2576,65 +2576,67 @@ describe User, :vcr do
   end
 
   describe "#timezone_formatted_offset" do
-    context "without specifying a time (uses current time)" do
-      it "returns DST-aware offset for Pacific Time" do
-        user = build(:user, timezone: "Pacific Time (US & Canada)")
+    it "returns DST-aware offset for Pacific Time" do
+      user = build(:user, timezone: "Pacific Time (US & Canada)")
 
-        travel_to Time.utc(2025, 1, 15, 12, 0, 0) do
-          expect(user.timezone_formatted_offset).to eq("-08:00")
-        end
-
-        travel_to Time.utc(2025, 7, 15, 12, 0, 0) do
-          expect(user.timezone_formatted_offset).to eq("-07:00")
-        end
+      travel_to Time.utc(2025, 1, 15, 12, 0, 0) do
+        expect(user.timezone_formatted_offset).to eq("-08:00")
       end
 
-      it "returns DST-aware offset for London" do
-        user = build(:user, timezone: "London")
-
-        travel_to Time.utc(2025, 1, 15, 12, 0, 0) do
-          expect(user.timezone_formatted_offset).to eq("+00:00")
-        end
-
-        travel_to Time.utc(2025, 7, 15, 12, 0, 0) do
-          expect(user.timezone_formatted_offset).to eq("+01:00")
-        end
-      end
-
-      it "returns consistent offset for timezones without DST" do
-        user = build(:user, timezone: "Arizona")
-
-        travel_to Time.utc(2025, 1, 15, 12, 0, 0) do
-          expect(user.timezone_formatted_offset).to eq("-07:00")
-        end
-
-        travel_to Time.utc(2025, 7, 15, 12, 0, 0) do
-          expect(user.timezone_formatted_offset).to eq("-07:00")
-        end
+      travel_to Time.utc(2025, 7, 15, 12, 0, 0) do
+        expect(user.timezone_formatted_offset).to eq("-07:00")
       end
     end
 
-    context "with a specific time via at: parameter" do
-      it "returns the offset for the specified date regardless of current time" do
-        user = build(:user, timezone: "Pacific Time (US & Canada)")
+    it "returns DST-aware offset for London" do
+      user = build(:user, timezone: "London")
 
-        travel_to Time.utc(2025, 7, 15, 12, 0, 0) do
-          winter_date = Date.new(2025, 1, 15)
-          expect(user.timezone_formatted_offset(at: winter_date)).to eq("-08:00")
-
-          summer_date = Date.new(2025, 7, 15)
-          expect(user.timezone_formatted_offset(at: summer_date)).to eq("-07:00")
-        end
+      travel_to Time.utc(2025, 1, 15, 12, 0, 0) do
+        expect(user.timezone_formatted_offset).to eq("+00:00")
       end
 
-      it "handles DST transition boundary dates correctly" do
-        user = build(:user, timezone: "Pacific Time (US & Canada)")
-
-        expect(user.timezone_formatted_offset(at: Date.new(2025, 3, 8))).to eq("-08:00")
-        expect(user.timezone_formatted_offset(at: Date.new(2025, 3, 10))).to eq("-07:00")
-        expect(user.timezone_formatted_offset(at: Date.new(2025, 11, 1))).to eq("-07:00")
-        expect(user.timezone_formatted_offset(at: Date.new(2025, 11, 3))).to eq("-08:00")
+      travel_to Time.utc(2025, 7, 15, 12, 0, 0) do
+        expect(user.timezone_formatted_offset).to eq("+01:00")
       end
+    end
+
+    it "returns consistent offset for timezones without DST" do
+      user = build(:user, timezone: "Arizona")
+
+      travel_to Time.utc(2025, 1, 15, 12, 0, 0) do
+        expect(user.timezone_formatted_offset).to eq("-07:00")
+      end
+
+      travel_to Time.utc(2025, 7, 15, 12, 0, 0) do
+        expect(user.timezone_formatted_offset).to eq("-07:00")
+      end
+    end
+
+    it "returns offset for specified date via at: parameter" do
+      user = build(:user, timezone: "Pacific Time (US & Canada)")
+
+      # Query winter date offset from summer
+      travel_to Time.utc(2025, 7, 15, 12, 0, 0) do
+        expect(user.timezone_formatted_offset(at: Date.new(2025, 1, 15))).to eq("-08:00")
+        expect(user.timezone_formatted_offset(at: Date.new(2025, 7, 15))).to eq("-07:00")
+      end
+    end
+
+    it "handles DST transition boundary dates correctly" do
+      user = build(:user, timezone: "Pacific Time (US & Canada)")
+
+      expect(user.timezone_formatted_offset(at: Date.new(2025, 3, 8))).to eq("-08:00")
+      expect(user.timezone_formatted_offset(at: Date.new(2025, 3, 10))).to eq("-07:00")
+      expect(user.timezone_formatted_offset(at: Date.new(2025, 11, 1))).to eq("-07:00")
+      expect(user.timezone_formatted_offset(at: Date.new(2025, 11, 3))).to eq("-08:00")
+    end
+  end
+
+  describe "#timezone_id" do
+    it "returns IANA timezone identifier" do
+      expect(build(:user, timezone: "Pacific Time (US & Canada)").timezone_id).to eq("America/Los_Angeles")
+      expect(build(:user, timezone: "London").timezone_id).to eq("Europe/London")
+      expect(build(:user, timezone: "Arizona").timezone_id).to eq("America/Phoenix")
     end
   end
 

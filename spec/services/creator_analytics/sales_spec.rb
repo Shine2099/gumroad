@@ -165,4 +165,54 @@ describe CreatorAnalytics::Sales do
       end
     end
   end
+
+  describe "DST handling" do
+    context "when sale occurs near midnight during DST" do
+      let(:user_timezone) { "Pacific Time (US & Canada)" }
+
+      it "correctly attributes sale to the right day" do
+        user = create(:user, timezone: user_timezone)
+        product = create(:product, user: user)
+
+        create(:purchase, link: product, created_at: Time.utc(2025, 7, 15, 7, 30))
+        index_model_records(Purchase)
+
+        service = described_class.new(
+          user: user,
+          products: [product],
+          dates: [Date.new(2025, 7, 14), Date.new(2025, 7, 15)]
+        )
+
+        result = service.by_product_and_date
+
+        expect(result[[product.id, "2025-07-15"]]).to eq({ count: 1, total: 100 })
+        expect(result[[product.id, "2025-07-14"]]).to be_nil
+      end
+    end
+
+    context "when query spans DST transition" do
+      let(:user_timezone) { "Pacific Time (US & Canada)" }
+
+      it "correctly buckets sales across DST boundary" do
+        user = create(:user, timezone: user_timezone)
+        product = create(:product, user: user)
+
+        create(:purchase, link: product, created_at: Time.utc(2025, 3, 9, 7, 0))
+        create(:purchase, link: product, created_at: Time.utc(2025, 3, 10, 8, 0))
+        index_model_records(Purchase)
+
+        service = described_class.new(
+          user: user,
+          products: [product],
+          dates: (Date.new(2025, 3, 8)..Date.new(2025, 3, 10)).to_a
+        )
+
+        result = service.by_product_and_date
+
+        
+        expect(result[[product.id, "2025-03-08"]]).to eq({ count: 1, total: 100 })
+        expect(result[[product.id, "2025-03-10"]]).to eq({ count: 1, total: 100 })
+      end
+    end
+  end
 end

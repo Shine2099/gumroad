@@ -5,11 +5,11 @@ class CreatorAnalytics::ProductPageViews
     @user = user
     @products = products
     @dates = dates
-    @timezone_offset = @user.timezone_formatted_offset(at: @dates.last)
+    @timezone = @user.timezone_id
     @query = {
       bool: {
         filter: [{ terms: { product_id: @products.map(&:id) } }],
-        must: [{ range: { timestamp: { time_zone: @timezone_offset, gte: @dates.first.to_s, lte: @dates.last.to_s } } }]
+        must: [{ range: { timestamp: { time_zone: @timezone, gte: @dates.first.to_s, lte: @dates.last.to_s } } }]
       }
     }
   end
@@ -17,7 +17,7 @@ class CreatorAnalytics::ProductPageViews
   def by_product_and_date
     sources = [
       { product_id: { terms: { field: "product_id" } } },
-      { date: { date_histogram: { time_zone: @timezone_offset, field: "timestamp", calendar_interval: "day", format: "yyyy-MM-dd" } } }
+      { date: { date_histogram: { time_zone: @timezone, field: "timestamp", calendar_interval: "day", format: "yyyy-MM-dd" } } }
     ]
     paginate(sources:).each_with_object({}) do |bucket, result|
       key = [
@@ -48,7 +48,7 @@ class CreatorAnalytics::ProductPageViews
     sources = [
       { product_id: { terms: { field: "product_id" } } },
       { referrer_domain: { terms: { field: "referrer_domain" } } },
-      { date: { date_histogram: { time_zone: @timezone_offset, field: "timestamp", calendar_interval: "day", format: "yyyy-MM-dd" } } }
+      { date: { date_histogram: { time_zone: @timezone, field: "timestamp", calendar_interval: "day", format: "yyyy-MM-dd" } } }
     ]
     paginate(sources:).each_with_object(Hash.new(0)) do |bucket, hash|
       key = [

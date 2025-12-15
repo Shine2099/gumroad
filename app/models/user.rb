@@ -815,6 +815,9 @@ class User < ApplicationRecord
   # is active at the given time. For example, Pacific Time returns "-07:00" during PDT (summer)
   # and "-08:00" during PST (winter).
   #
+  # Note: For Elasticsearch queries, prefer using timezone_id directly as it handles DST
+  # automatically across date ranges that span DST transitions.
+  #
   # @param at [Time, Date, nil] Optional time to calculate the offset for. Defaults to Time.current.
   def timezone_formatted_offset(at: nil)
     time = at ? at.in_time_zone(timezone) : Time.current.in_time_zone(timezone)
