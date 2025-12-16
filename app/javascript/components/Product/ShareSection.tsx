@@ -181,7 +181,11 @@ export const ShareSection = ({
               window.location.href = Routes.login_url({ host: appDomain, next: product.long_url });
               return;
             }
-            open ? setIsOpen(true) : closeDropdown();
+            if (open) {
+              setIsOpen(true);
+            } else {
+              closeDropdown();
+            }
           }}
         />
 
