@@ -430,27 +430,30 @@ function PayoutLineItem({
 }
 
 export default function PayoutsIndex() {
-  const { payout_presenter } = usePage<{ payout_presenter: PayoutsProps }>().props;
+  const {
+    payout_presenter,
+    past_payout_period_data,
+    pagination,
+  } = usePage<{
+    payout_presenter: PayoutsProps;
+    past_payout_period_data: PayoutsProps["past_payout_period_data"];
+    pagination: PayoutsProps["pagination"];
+  }>().props;
+
   const {
     next_payout_period_data,
     processing_payout_periods_data,
     payouts_status,
     payouts_paused_by,
     payouts_paused_for_reason,
-    past_payout_period_data: initialPastPayoutPeriodData,
     instant_payout,
     show_instant_payouts_notice,
-    pagination: initialPagination,
     tax_center_enabled,
   } = payout_presenter;
 
   const loggedInUser = useLoggedInUser();
   const userAgentInfo = useUserAgentInfo();
   const isNavigating = useRouteLoading();
-
-  const [pastPayoutPeriodData, setPastPayoutPeriodData] = React.useState(initialPastPayoutPeriodData);
-  const [pagination, setPagination] = React.useState(initialPagination);
-  const [isLoadingMore, setIsLoadingMore] = React.useState(false);
 
   const [isInstantPayoutModalOpen, setIsInstantPayoutModalOpen] = React.useState(false);
   const [instantPayoutId, setInstantPayoutId] = React.useState<string>(instant_payout?.payable_balances[0]?.id ?? "");
@@ -484,22 +487,12 @@ export default function PayoutsIndex() {
     );
   };
 
-  const loadNextPage = asyncVoid(async () => {
-    setIsLoadingMore(true);
-    try {
-      const response = await fetch(Routes.payments_paged_path({ page: pagination.page + 1 }), {
-        headers: { Accept: "application/json" },
-      });
-      if (!response.ok) throw new Error("Failed to load more payouts");
-      const data = await response.json();
-      setPastPayoutPeriodData((prev) => [...prev, ...data.payouts]);
-      setPagination(data.pagination);
-    } catch (error) {
-      showAlert("Failed to load more payouts. Please try again.", "error");
-    } finally {
-      setIsLoadingMore(false);
-    }
-  });
+  const loadNextPage = () => {
+    router.reload({
+      data: { page: pagination.page + 1 },
+      only: ["past_payout_period_data", "pagination"],
+    });
+  };
 
   if (!loggedInUser) return null;
 
@@ -712,7 +705,7 @@ export default function PayoutsIndex() {
                 </div>
               ) : null}
               {next_payout_period_data.status === "not_payable" ? (
-                pastPayoutPeriodData.length > 0 ? (
+                past_payout_period_data.length > 0 ? (
                   <div className="info" role="status">
                     <p>
                       Reach a balance of at least{" "}
@@ -740,18 +733,18 @@ export default function PayoutsIndex() {
             </section>
           </section>
         ) : null}
-        {pastPayoutPeriodData.length > 0 ? (
+        {past_payout_period_data.length > 0 ? (
           <>
             <section>
               <h2>Past payouts</h2>
               <section className="flex flex-col gap-4">
-                {pastPayoutPeriodData.map((payoutPeriodData, idx) => (
+                {past_payout_period_data.map((payoutPeriodData, idx) => (
                   <Period key={idx} payoutPeriodData={payoutPeriodData} />
                 ))}
               </section>
             </section>
             {pagination.page < pagination.pages ? (
-              <Button color="primary" onClick={loadNextPage} disabled={isLoadingMore}>
+              <Button color="primary" onClick={loadNextPage} disabled={isNavigating}>
                 Show older payouts
               </Button>
             ) : null}

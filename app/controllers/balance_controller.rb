@@ -22,23 +22,14 @@ class BalanceController < Sellers::BaseController
       pagination:,
       past_payouts:
     )
+    payout_props = payout_presenter.props
 
     render inertia: "Payouts/Index",
-           props: { payout_presenter: payout_presenter.props }
-  end
-
-  # TODO:
-  # - Remove this action and use InertiaRails.merge with the index action to load next page
-  # - Rename this controller to PayoutsController for consistency
-  def payments_paged
-    authorize :balance, :index?
-
-    pagination, payouts = fetch_payouts
-
-    render json: {
-      payouts: payouts.map { payout_period_data(current_seller, _1) },
-      pagination:
-    }
+           props: {
+             payout_presenter: payout_props.except(:past_payout_period_data, :pagination),
+             past_payout_period_data: InertiaRails.merge { payout_props[:past_payout_period_data] },
+             pagination: payout_props[:pagination]
+           }
   end
 
   private
