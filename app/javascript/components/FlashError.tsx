@@ -7,7 +7,7 @@ type PageProps = {
   flash?: AlertPayload;
 };
 
-export function useFlashError(): React.ReactNode {
+export const FlashError: React.FC = () => {
   const { flash } = usePage<PageProps>().props;
 
   if (flash?.status === "warning" && flash?.message) {
@@ -28,4 +28,4 @@ export function useFlashError(): React.ReactNode {
   }
 
   return null;
-}
+};
