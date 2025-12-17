@@ -4,15 +4,14 @@ import * as React from "react";
 import { Layout } from "$app/components/Authentication/Layout";
 import { Button } from "$app/components/Button";
 import { PasswordInput } from "$app/components/PasswordInput";
-import { type AlertPayload } from "$app/components/server-components/Alert";
+import { useFlashError } from "$app/components/useFlashError";
 
 type PageProps = {
   reset_password_token: string;
-  flash: AlertPayload;
 };
 
 function PasswordReset() {
-  const { reset_password_token, flash } = usePage<PageProps>().props;
+  const { reset_password_token  } = usePage<PageProps>().props;
   const uid = React.useId();
 
   const form = useForm({
@@ -28,17 +27,12 @@ function PasswordReset() {
     form.put(Routes.user_password_path());
   };
 
-  const errorMessage = flash?.status === "warning" ? (flash?.message ?? null) : null;
 
   return (
     <Layout header={<h1>Reset your password</h1>} headerActions={<Link href={Routes.login_path()}>Log in</Link>}>
       <form onSubmit={handleSubmit}>
         <section>
-          {errorMessage ? (
-            <div role="alert" className="danger">
-              {errorMessage}
-            </div>
-          ) : null}
+          {useFlashError()}
           <fieldset>
             <legend>
               <label htmlFor={`${uid}-password`}>Enter a new password</label>

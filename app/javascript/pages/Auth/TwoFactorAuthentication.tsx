@@ -6,18 +6,18 @@ import { assertResponseError } from "$app/utils/request";
 
 import { Layout } from "$app/components/Authentication/Layout";
 import { Button } from "$app/components/Button";
-import { showAlert, type AlertPayload } from "$app/components/server-components/Alert";
+import { showAlert } from "$app/components/server-components/Alert";
 import { useOriginalLocation } from "$app/components/useOriginalLocation";
+import { useFlashError } from "$app/components/useFlashError";
 
 type PageProps = {
   user_id: string;
   email: string;
   token: string | null;
-  flash: AlertPayload;
 };
 
 function TwoFactorAuthentication() {
-  const { user_id, email, token: initialToken, flash } = usePage<PageProps>().props;
+  const { user_id, email, token: initialToken  } = usePage<PageProps>().props;
   const next = new URL(useOriginalLocation()).searchParams.get("next");
   const uid = React.useId();
 
@@ -47,7 +47,6 @@ function TwoFactorAuthentication() {
     setResending(false);
   };
 
-  const errorMessage = flash?.message ?? null;
 
   return (
     <Layout
@@ -62,11 +61,7 @@ function TwoFactorAuthentication() {
     >
       <form onSubmit={handleSubmit}>
         <section>
-          {errorMessage ? (
-            <div role="alert" className="danger">
-              {errorMessage}
-            </div>
-          ) : null}
+          {useFlashError()}
           <fieldset>
             <legend>
               <label htmlFor={uid}>Authentication Token</label>
