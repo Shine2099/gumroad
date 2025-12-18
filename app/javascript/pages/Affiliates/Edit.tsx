@@ -41,7 +41,7 @@ export default function AffiliatesEdit() {
   const props = cast<Props>(usePage().props);
   const loggedInUser = useLoggedInUser();
 
-  const { data, setData, patch, processing, errors, setError, clearErrors } = useForm<{
+  const form = useForm<{
     affiliate: {
       email: string;
       products: AffiliateProduct[];
@@ -60,6 +60,7 @@ export default function AffiliatesEdit() {
       destination_url: props.affiliate.destination_url,
     },
   });
+  const { data, setData, patch, processing, errors } = form;
 
   const applyToAllProducts = data.affiliate.products.every(
     (p) => p.enabled && p.fee_percent === data.affiliate.fee_percent,
@@ -87,19 +88,19 @@ export default function AffiliatesEdit() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    clearErrors();
+    form.clearErrors();
 
     if (
       applyToAllProducts &&
       (!data.affiliate.fee_percent || data.affiliate.fee_percent < 1 || data.affiliate.fee_percent > 90)
     ) {
-      setError("affiliate.fee_percent", "Commission must be between 1% and 90%");
+      form.setError("affiliate.fee_percent", "Commission must be between 1% and 90%");
       showAlert("Commission must be between 1% and 90%", "error");
       return;
     }
 
     if (!applyToAllProducts && data.affiliate.products.every((p) => !p.enabled)) {
-      setError("affiliate.products", "Please enable at least one product");
+      form.setError("affiliate.products", "Please enable at least one product");
       showAlert("Please enable at least one product", "error");
       return;
     }
@@ -108,7 +109,7 @@ export default function AffiliatesEdit() {
       !applyToAllProducts &&
       data.affiliate.products.some((p) => p.enabled && (!p.fee_percent || p.fee_percent < 1 || p.fee_percent > 90))
     ) {
-      setError("affiliate.products", "All enabled products must have commission between 1% and 90%");
+      form.setError("affiliate.products", "All enabled products must have commission between 1% and 90%");
       showAlert("All enabled products must have commission between 1% and 90%", "error");
       return;
     }
@@ -118,7 +119,7 @@ export default function AffiliatesEdit() {
       data.affiliate.destination_url !== "" &&
       !isUrlValid(data.affiliate.destination_url)
     ) {
-      setError("affiliate.destination_url", "Please enter a valid URL");
+      form.setError("affiliate.destination_url", "Please enter a valid URL");
       showAlert("Please enter a valid URL", "error");
       return;
     }

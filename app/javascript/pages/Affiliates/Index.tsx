@@ -3,13 +3,8 @@ import cx from "classnames";
 import { parseISO } from "date-fns";
 import * as React from "react";
 
-import {
-  Affiliate,
-  AffiliateRequest,
-  AffiliateStatistics,
-  getStatistics,
-} from "$app/data/affiliates";
 import { updateAffiliateRequest } from "$app/data/affiliate_request";
+import { Affiliate, AffiliateRequest, AffiliateStatistics, getStatistics } from "$app/data/affiliates";
 import { formatPriceCentsWithCurrencySymbol } from "$app/utils/currency";
 import { asyncVoid } from "$app/utils/promise";
 import { assertResponseError } from "$app/utils/request";
@@ -18,22 +13,21 @@ import { Button } from "$app/components/Button";
 import { CopyToClipboard } from "$app/components/CopyToClipboard";
 import { Icon } from "$app/components/Icons";
 import { LoadingSpinner } from "$app/components/LoadingSpinner";
-import { NavigationButtonInertia } from "$app/components/NavigationButton";
 import { useLoggedInUser } from "$app/components/LoggedInUser";
+import { NavigationButtonInertia } from "$app/components/NavigationButton";
 import { Pagination, PaginationProps } from "$app/components/Pagination";
 import { Popover } from "$app/components/Popover";
 import { showAlert } from "$app/components/server-components/Alert";
 import { Skeleton } from "$app/components/Skeleton";
 import { PageHeader } from "$app/components/ui/PageHeader";
-
 import Placeholder from "$app/components/ui/Placeholder";
 import { Sheet, SheetHeader } from "$app/components/ui/Sheet";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "$app/components/ui/Table";
 import { Tabs, Tab } from "$app/components/ui/Tabs";
 import { useDebouncedCallback } from "$app/components/useDebouncedCallback";
 import { useLocalPagination } from "$app/components/useLocalPagination";
-import useRouteLoading from "$app/components/useRouteLoading";
 import { useUserAgentInfo } from "$app/components/UserAgent";
+import useRouteLoading from "$app/components/useRouteLoading";
 import { Sort, useClientSortingTableDriver, useSortingTableDriver } from "$app/components/useSortingTableDriver";
 import { WithTooltip } from "$app/components/WithTooltip";
 
@@ -193,10 +187,7 @@ const AffiliateRequestsTable = ({
                 <TableCell>
                   <div className="flex flex-wrap gap-3 lg:justify-end">
                     <Button
-                      disabled={
-                        !loggedInUser?.policies.direct_affiliate.update ||
-                        !!affiliateRequest.processingState
-                      }
+                      disabled={!loggedInUser?.policies.direct_affiliate.update || !!affiliateRequest.processingState}
                       onClick={() => update(affiliateRequest, "ignore")}
                     >
                       {affiliateRequest.processingState === "ignore" ? "Ignoring" : "Ignore"}
@@ -321,7 +312,7 @@ export default function AffiliatesIndex() {
         (statistics) => setAffiliateStatistics((prev) => ({ ...prev, [id]: statistics })),
         (err: unknown) => {
           assertResponseError(err);
-          showAlert((err as Error).message, "error");
+          showAlert(err instanceof Error ? err.message : String(err), "error");
           affiliateStatisticsRequests.current.delete(id);
         },
       );
@@ -357,15 +348,15 @@ export default function AffiliatesIndex() {
         ) : (
           <>
             {affiliate_requests.length > 0 && !searchQuery && pagination.page === 1 ? (
-              <AffiliateRequestsTable affiliateRequests={affiliate_requests} allowApproveAll={allow_approve_all_requests} />
+              <AffiliateRequestsTable
+                affiliateRequests={affiliate_requests}
+                allowApproveAll={allow_approve_all_requests}
+              />
             ) : null}
             {affiliates.length > 0 ? (
               <>
                 <section className="flex flex-col gap-4">
-                  <Table
-                    aria-live="polite"
-                    className={cx(isNavigating && "pointer-events-none opacity-50")}
-                  >
+                  <Table aria-live="polite" className={cx(isNavigating && "pointer-events-none opacity-50")}>
                     <TableCaption>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         Affiliates
@@ -440,9 +431,7 @@ export default function AffiliatesIndex() {
                                   color="danger"
                                   onClick={() => remove(affiliate.id)}
                                   aria-label="Delete"
-                                  disabled={
-                                    !loggedInUser?.policies.direct_affiliate.update || isNavigating
-                                  }
+                                  disabled={!loggedInUser?.policies.direct_affiliate.update || isNavigating}
                                 >
                                   <Icon name="trash2" />
                                 </Button>

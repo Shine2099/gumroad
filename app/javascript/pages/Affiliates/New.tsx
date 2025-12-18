@@ -1,21 +1,28 @@
 import { useForm, usePage } from "@inertiajs/react";
 import cx from "classnames";
 import * as React from "react";
+import { cast } from "ts-safe-cast";
 
-import { SelfServeAffiliateProduct } from "$app/data/affiliates";
 import { isValidEmail } from "$app/utils/email";
 import { isUrlValid } from "$app/utils/url";
 
 import { Button } from "$app/components/Button";
 import { Icon } from "$app/components/Icons";
-import { NavigationButtonInertia } from "$app/components/NavigationButton";
 import { useLoggedInUser } from "$app/components/LoggedInUser";
+import { NavigationButtonInertia } from "$app/components/NavigationButton";
 import { NumberInput } from "$app/components/NumberInput";
 import { showAlert } from "$app/components/server-components/Alert";
 import { PageHeader } from "$app/components/ui/PageHeader";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "$app/components/ui/Table";
 
-type AffiliateProduct = SelfServeAffiliateProduct & { referral_url: string };
+type AffiliateProduct = {
+  id: number;
+  name: string;
+  enabled: boolean;
+  fee_percent: number | null;
+  destination_url: string | null;
+  referral_url: string;
+};
 
 type Props = {
   products: AffiliateProduct[];
@@ -23,18 +30,27 @@ type Props = {
 };
 
 export default function AffiliatesNew() {
-  const props = usePage<{ props: Props }>().props as unknown as Props;
+  const props = cast<Props>(usePage().props);
   const loggedInUser = useLoggedInUser();
 
-  const { data, setData, post, processing, errors, setError, clearErrors } = useForm({
+  const form = useForm<{
+    affiliate: {
+      email: string;
+      products: AffiliateProduct[];
+      fee_percent: number | null;
+      apply_to_all_products: boolean;
+      destination_url: string | null;
+    };
+  }>({
     affiliate: {
       email: "",
       products: props.products,
-      fee_percent: null as number | null,
+      fee_percent: null,
       apply_to_all_products: props.products.length === 0,
-      destination_url: null as string | null,
+      destination_url: null,
     },
   });
+  const { data, setData, post, processing, errors } = form;
 
   const emailInputRef = React.useRef<HTMLInputElement>(null);
   const uid = React.useId();
@@ -44,7 +60,11 @@ export default function AffiliatesNew() {
       setData("affiliate", {
         ...data.affiliate,
         apply_to_all_products: true,
-        products: data.affiliate.products.map((p) => ({ ...p, enabled: true, fee_percent: data.affiliate.fee_percent })),
+        products: data.affiliate.products.map((p) => ({
+          ...p,
+          enabled: true,
+          fee_percent: data.affiliate.fee_percent,
+        })),
       });
     } else {
       setData("affiliate", {
@@ -57,27 +77,30 @@ export default function AffiliatesNew() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    clearErrors();
+    form.clearErrors();
 
     if (!data.affiliate.email) {
-      setError("affiliate.email", "Email is required");
+      form.setError("affiliate.email", "Email is required");
       showAlert("Email is required", "error");
       return;
     }
     if (!isValidEmail(data.affiliate.email)) {
-      setError("affiliate.email", "Please enter a valid email address");
+      form.setError("affiliate.email", "Please enter a valid email address");
       showAlert("Please enter a valid email address", "error");
       return;
     }
 
-    if (data.affiliate.apply_to_all_products && (!data.affiliate.fee_percent || data.affiliate.fee_percent < 1 || data.affiliate.fee_percent > 90)) {
-      setError("affiliate.fee_percent", "Commission must be between 1% and 90%");
+    if (
+      data.affiliate.apply_to_all_products &&
+      (!data.affiliate.fee_percent || data.affiliate.fee_percent < 1 || data.affiliate.fee_percent > 90)
+    ) {
+      form.setError("affiliate.fee_percent", "Commission must be between 1% and 90%");
       showAlert("Commission must be between 1% and 90%", "error");
       return;
     }
 
     if (!data.affiliate.apply_to_all_products && data.affiliate.products.every((p) => !p.enabled)) {
-      setError("affiliate.products", "Please enable at least one product");
+      form.setError("affiliate.products", "Please enable at least one product");
       showAlert("Please enable at least one product", "error");
       return;
     }
@@ -86,13 +109,17 @@ export default function AffiliatesNew() {
       !data.affiliate.apply_to_all_products &&
       data.affiliate.products.some((p) => p.enabled && (!p.fee_percent || p.fee_percent < 1 || p.fee_percent > 90))
     ) {
-      setError("affiliate.products", "All enabled products must have commission between 1% and 90%");
+      form.setError("affiliate.products", "All enabled products must have commission between 1% and 90%");
       showAlert("All enabled products must have commission between 1% and 90%", "error");
       return;
     }
 
-    if (data.affiliate.destination_url && data.affiliate.destination_url !== "" && !isUrlValid(data.affiliate.destination_url)) {
-      setError("affiliate.destination_url", "Please enter a valid URL");
+    if (
+      data.affiliate.destination_url &&
+      data.affiliate.destination_url !== "" &&
+      !isUrlValid(data.affiliate.destination_url)
+    ) {
+      form.setError("affiliate.destination_url", "Please enter a valid URL");
       showAlert("Please enter a valid URL", "error");
       return;
     }
@@ -236,7 +263,9 @@ export default function AffiliatesNew() {
                       onChange={(value) =>
                         setData("affiliate", {
                           ...data.affiliate,
-                          products: data.affiliate.products.map((p) => (p.id === product.id ? { ...p, fee_percent: value } : p)),
+                          products: data.affiliate.products.map((p) =>
+                            p.id === product.id ? { ...p, fee_percent: value } : p,
+                          ),
                         })
                       }
                       value={product.fee_percent}
