@@ -63,7 +63,6 @@ import DisputeEvidencePage from "$app/components/server-components/Purchase/Disp
 import PurchaseProductPage from "$app/components/server-components/Purchase/ProductPage";
 import SubscribeReviewReminders from "$app/components/server-components/ReviewReminders/SubscribeReviewReminders";
 import UnsubscribeReviewReminders from "$app/components/server-components/ReviewReminders/UnsubscribeReviewReminders";
-import ReviewsPage from "$app/components/server-components/ReviewsPage";
 import SecureRedirectPage from "$app/components/server-components/SecureRedirectPage";
 import SignupPage from "$app/components/server-components/SignupPage";
 import SubscribePage from "$app/components/server-components/SubscribePage";
@@ -143,7 +142,6 @@ ReactOnRails.register({
   ProfileWishlistPage,
   PublicChargePage,
   PublicLicenseKeyPage,
-  ReviewsPage,
   SecureRedirectPage,
   SignupPage,
   SubscribePage,
