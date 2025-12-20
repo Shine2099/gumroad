@@ -55,7 +55,7 @@ export const BundleProductItem = ({
           </CartItemFooter>
         ) : null}
       </CartItemMain>
-      <CartItemEnd className="mt-auto flex-row gap-4 p-4">
+      <CartItemEnd className="flex-row items-center gap-4 p-4">
         {bundleProduct.is_quantity_enabled || bundleProduct.variants ? (
           <Popover trigger={<div className="link">Configure</div>} open={editPopoverOpen} onToggle={setEditPopoverOpen}>
             <div className="flex w-96 flex-col gap-4">
