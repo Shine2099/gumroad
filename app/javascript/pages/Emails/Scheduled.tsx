@@ -8,8 +8,6 @@ import {
   getScheduledInstallments,
   Pagination,
   ScheduledInstallment,
-  previewInstallment,
-  SavedInstallment,
 } from "$app/data/installments";
 import { assertDefined } from "$app/utils/assert";
 import { classNames } from "$app/utils/classNames";
@@ -29,6 +27,7 @@ import { useUserAgentInfo } from "$app/components/UserAgent";
 
 import scheduledPlaceholder from "$assets/images/placeholders/scheduled_posts.png";
 import { EmptyStatePlaceholder } from "$app/components/EmailsPage/EmptyStatePlaceholder";
+import { ViewEmailButton } from "$app/components/EmailsPage/ViewEmailButton";
 
 type AudienceCounts = Map<string, number | "loading" | "failed">;
 
@@ -278,28 +277,3 @@ export default function EmailsScheduled() {
     </EmailsLayout>
   );
 }
-
-const ViewEmailButton = (props: { installment: SavedInstallment }) => {
-  const [sendingPreviewEmail, setSendingPreviewEmail] = React.useState(false);
-
-  return (
-    <Button
-      disabled={sendingPreviewEmail}
-      onClick={asyncVoid(async () => {
-        setSendingPreviewEmail(true);
-        try {
-          await previewInstallment(props.installment.external_id);
-          showAlert("A preview has been sent to your email.", "success");
-        } catch (error) {
-          assertResponseError(error);
-          showAlert(error.message, "error");
-        } finally {
-          setSendingPreviewEmail(false);
-        }
-      })}
-    >
-      <Icon name="envelope-fill"></Icon>
-      {sendingPreviewEmail ? "Sending..." : "View email"}
-    </Button>
-  );
-};

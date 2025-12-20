@@ -2,18 +2,10 @@ import { usePage } from "@inertiajs/react";
 import React from "react";
 import { cast } from "ts-safe-cast";
 
-import {
-  deleteInstallment,
-  getPublishedInstallments,
-  Pagination,
-  PublishedInstallment,
-  previewInstallment,
-  SavedInstallment,
-} from "$app/data/installments";
+import { deleteInstallment, getPublishedInstallments, Pagination, PublishedInstallment } from "$app/data/installments";
 import { assertDefined } from "$app/utils/assert";
 import { classNames } from "$app/utils/classNames";
 import { formatStatNumber } from "$app/utils/formatStatNumber";
-import { asyncVoid } from "$app/utils/promise";
 import { AbortError, assertResponseError } from "$app/utils/request";
 
 import { Button, NavigationButton } from "$app/components/Button";
@@ -29,6 +21,7 @@ import { WithTooltip } from "$app/components/WithTooltip";
 
 import publishedPlaceholder from "$assets/images/placeholders/published_posts.png";
 import { EmptyStatePlaceholder } from "$app/components/EmailsPage/EmptyStatePlaceholder";
+import { ViewEmailButton } from "$app/components/EmailsPage/ViewEmailButton";
 
 type PageProps = {
   installments: PublishedInstallment[];
@@ -295,28 +288,3 @@ export default function EmailsPublished() {
     </EmailsLayout>
   );
 }
-
-const ViewEmailButton = (props: { installment: SavedInstallment }) => {
-  const [sendingPreviewEmail, setSendingPreviewEmail] = React.useState(false);
-
-  return (
-    <Button
-      disabled={sendingPreviewEmail}
-      onClick={asyncVoid(async () => {
-        setSendingPreviewEmail(true);
-        try {
-          await previewInstallment(props.installment.external_id);
-          showAlert("A preview has been sent to your email.", "success");
-        } catch (error) {
-          assertResponseError(error);
-          showAlert(error.message, "error");
-        } finally {
-          setSendingPreviewEmail(false);
-        }
-      })}
-    >
-      <Icon name="envelope-fill"></Icon>
-      {sendingPreviewEmail ? "Sending..." : "View email"}
-    </Button>
-  );
-};
