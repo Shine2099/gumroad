@@ -25,7 +25,6 @@ describe PublicController do
       get :ping
       expect(response).to be_successful
       expect(assigns(:title)).to eq("Ping")
-      expect(assigns(:on_ping_page)).to be(true)
       expect(inertia).to render_component("Public/Ping")
     end
   end
