@@ -1,3 +1,4 @@
+import cx from "classnames";
 import { Link } from "@inertiajs/react";
 import React from "react";
 
@@ -104,7 +105,7 @@ export const NewEmailButton = ({ copyFrom }: { copyFrom?: string } = {}) => {
   const href = copyFrom ? `/emails/new?copy_from=${copyFrom}` : "/emails/new";
 
   return (
-    <a className={copyFrom ? "button" : "button accent"} href={href}>
+    <a className={cx("button", { accent: !copyFrom })} href={href}>
       {copyFrom ? "Duplicate" : "New email"}
     </a>
   );
