@@ -17,10 +17,6 @@
     <% end %>
     <%= javascript_include_tag "application" %>
     <%= load_pack("base") unless @hide_layouts %>
-    <% if @widget_scripts %>
-      <script src="/js/gumroad.js"></script>
-      <script src="/js/gumroad-embed.js"></script>
-    <% end %>
     <%= yield :script %>
   </body>
 </html>

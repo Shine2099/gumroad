@@ -19,8 +19,6 @@ class PublicController < ApplicationController
     @title = "Widgets"
     widget_presenter = WidgetPresenter.new(seller: current_seller)
 
-    @widget_scripts = true
-
     render inertia: "Public/Widgets", props: widget_presenter.widget_props
   end
 

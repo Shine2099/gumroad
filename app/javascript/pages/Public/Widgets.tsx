@@ -3,6 +3,7 @@ import React from "react";
 import { cast } from "ts-safe-cast";
 
 import { WidgetsPage } from "$app/components/server-components/Developer/WidgetsPage";
+import { useExternalScripts } from "$app/hooks/useExternalScripts";
 
 type Product = {
   name: string;
@@ -20,6 +21,8 @@ type Props = {
 
 const PublicWidgets = () => {
   const { default_product, display_product_select, products, affiliated_products } = cast<Props>(usePage().props);
+
+  useExternalScripts(["/js/gumroad.js", "/js/gumroad-embed.js"]);
 
   return (
     <WidgetsPage

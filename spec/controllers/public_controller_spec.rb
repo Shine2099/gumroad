@@ -62,7 +62,6 @@ describe PublicController, type: :controller, inertia: true do
 
         expect(assigns(:title)).to eq("Widgets")
         expect(assigns(:on_widgets_page)).to be(true)
-        expect(assigns(:widget_scripts)).to be(true)
       end
     end
   end
