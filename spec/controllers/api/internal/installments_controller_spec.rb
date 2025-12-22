@@ -30,7 +30,7 @@ describe Api::Internal::InstallmentsController do
       get :index, params: { page: 1, type: "published" }, format: :json
 
       expect(response).to be_successful
-      expect(response.parsed_body[:pagination]).to eq({ count: 1, next: nil }.as_json)
+      expect(response.parsed_body[:pagination]).to eq({ page: 1, count: 1, next: nil }.as_json)
       expect(response.parsed_body[:installments]).to eq([InstallmentPresenter.new(seller:, installment: published_installment).props.as_json])
     end
 
@@ -38,7 +38,7 @@ describe Api::Internal::InstallmentsController do
       get :index, params: { page: 1, type: "scheduled" }, format: :json
 
       expect(response).to be_successful
-      expect(response.parsed_body[:pagination]).to eq({ count: 1, next: nil }.as_json)
+      expect(response.parsed_body[:pagination]).to eq({ page: 1, count: 1, next: nil }.as_json)
       expect(response.parsed_body[:installments]).to eq([InstallmentPresenter.new(seller:, installment: scheduled_installment).props.as_json])
     end
 
@@ -46,7 +46,7 @@ describe Api::Internal::InstallmentsController do
       get :index, params: { page: 1, type: "draft" }, format: :json
 
       expect(response).to be_successful
-      expect(response.parsed_body[:pagination]).to eq({ count: 1, next: nil }.as_json)
+      expect(response.parsed_body[:pagination]).to eq({ page: 1, count: 1, next: nil }.as_json)
       expect(response.parsed_body[:installments]).to eq([InstallmentPresenter.new(seller:, installment: draft_installment).props.as_json])
     end
 
@@ -58,7 +58,7 @@ describe Api::Internal::InstallmentsController do
       get :index, params: { page: 1, type: "published", query: "miss" }, format: :json
 
       expect(response).to be_successful
-      expect(response.parsed_body[:pagination]).to eq({ count: 1, next: nil }.as_json)
+      expect(response.parsed_body[:pagination]).to eq({ page: 1, count: 1, next: nil }.as_json)
       expect(response.parsed_body[:installments]).to eq([InstallmentPresenter.new(seller:, installment: another_installment).props.as_json])
     end
 
