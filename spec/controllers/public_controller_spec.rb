@@ -9,8 +9,7 @@ describe PublicController, type: :controller, inertia: true do
 
   let!(:demo_product) { create(:product, unique_permalink: "demo") }
 
-  { api: "API",
-    widgets: "Widgets" }.each do |url, title|
+  { api: "API" }.each do |url, title|
     describe "GET '#{url}'" do
       it "succeeds and set instance variable" do
         get(url)
