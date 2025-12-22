@@ -34,7 +34,7 @@ export function DeleteEmailModal<T extends DeleteableInstallment>({
   const handleDelete = () => {
     if (!installment) return;
     deleteForm.delete(Routes.email_path(installment.external_id), {
-      preserveState: true,
+      only: ["flash"],
       onSuccess: () => {
         onSuccess(installment);
         onClose();
