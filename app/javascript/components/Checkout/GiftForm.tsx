@@ -16,7 +16,7 @@ export const GiftForm = ({ isMembership }: { isMembership: boolean }) => {
   const hasError = getErrors(state).has("gift");
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-4">
       <label className="flex w-full items-center">
         <input
           type="checkbox"
@@ -37,7 +37,7 @@ export const GiftForm = ({ isMembership }: { isMembership: boolean }) => {
       </label>
 
       {gift ? (
-        <div className="flex w-full flex-col gap-4 py-4">
+        <div className="flex w-full flex-col gap-4">
           {isMembership ? (
             <Alert variant="info">
               Note: Free trials will be charged immediately. The membership will not auto-renew. The recipient must
