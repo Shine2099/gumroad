@@ -801,14 +801,15 @@ Rails.application.routes.draw do
     get "/communities(/:seller_id/:community_id)", to: "communities#index", as: :community
 
     # emails
-    # TODO: Add :drafts, :new, :edit routes once those pages are migrated to Inertia
+    # TODO: Add :new, :edit routes once those pages are migrated to Inertia
     resources :emails, only: [:index, :destroy] do
       collection do
         get :published
         get :scheduled
+        get :drafts
       end
     end
-    # TODO: Remove this catch-all once drafts, new, edit email pages are migrated to Inertia
+    # TODO: Remove this catch-all once new, edit email pages are migrated to Inertia
     get "/emails/*other", to: "emails#index" # route handled by react-router
     get "/posts", to: redirect("/emails")
 

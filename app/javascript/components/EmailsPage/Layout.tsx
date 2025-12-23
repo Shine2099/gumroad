@@ -8,8 +8,8 @@ import { PageHeader } from "$app/components/ui/PageHeader";
 import { Tab, Tabs } from "$app/components/ui/Tabs";
 import { WithTooltip } from "$app/components/WithTooltip";
 
-type InertiaTab = "published" | "scheduled";
-type LegacyTab = "drafts" | "subscribers";
+type InertiaTab = "published" | "scheduled" | "drafts";
+type LegacyTab = "subscribers";
 export type EmailTab = InertiaTab | LegacyTab;
 
 // Path helpers - use Rails routes for Inertia pages, hardcoded paths for legacy pages
@@ -20,7 +20,7 @@ export const emailTabPath = (tab: EmailTab) => {
     case "scheduled":
       return Routes.scheduled_emails_path();
     case "drafts":
-      return "/emails/drafts"; // Hardcoded - still uses react-router
+      return Routes.drafts_emails_path();
     case "subscribers":
       return Routes.followers_path();
   }
@@ -85,10 +85,10 @@ export const EmailsLayout = ({ selectedTab, children, hasPosts, query, onQueryCh
           <Tab asChild isSelected={selectedTab === "scheduled"}>
             <Link href={Routes.scheduled_emails_path()}>Scheduled</Link>
           </Tab>
-          {/* Legacy pages - use regular href for full page reload */}
-          <Tab href="/emails/drafts" isSelected={selectedTab === "drafts"}>
-            Drafts
+          <Tab asChild isSelected={selectedTab === "drafts"}>
+            <Link href={Routes.drafts_emails_path()}>Drafts</Link>
           </Tab>
+          {/* Legacy pages - use regular href for full page reload */}
           <Tab href={Routes.followers_path()} isSelected={selectedTab === "subscribers"}>
             Subscribers
           </Tab>

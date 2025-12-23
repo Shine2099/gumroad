@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class EmailsController < Sellers::BaseController
-  layout "inertia", only: [:published, :scheduled]
+  layout "inertia", only: [:published, :scheduled, :drafts]
 
   before_action :set_installment, only: [:destroy]
 
@@ -35,6 +35,15 @@ class EmailsController < Sellers::BaseController
     @title = "Scheduled Emails"
     presenter = PaginatedInstallmentsPresenter.new(seller: current_seller, type: Installment::SCHEDULED, page: params[:page], query: params[:query])
     render inertia: "Emails/Scheduled", props: presenter.props
+  end
+
+  def drafts
+    authorize Installment, :index?
+    create_user_event("emails_view")
+
+    @title = "Draft Emails"
+    presenter = PaginatedInstallmentsPresenter.new(seller: current_seller, type: Installment::DRAFT, page: params[:page], query: params[:query])
+    render inertia: "Emails/Drafts", props: presenter.props
   end
 
   def destroy
