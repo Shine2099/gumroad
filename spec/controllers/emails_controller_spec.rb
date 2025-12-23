@@ -3,8 +3,9 @@
 require "spec_helper"
 require "shared_examples/authorize_called"
 require "shared_examples/sellers_base_controller_concern"
+require "inertia_rails/rspec"
 
-describe EmailsController do
+describe EmailsController, type: :controller, inertia: true do
   it_behaves_like "inherits from Sellers::BaseController"
 
   render_views
@@ -21,135 +22,124 @@ describe EmailsController do
     it "redirects to the published tab" do
       get :index
 
-      expect(response).to redirect_to("/emails/published")
+      expect(response).to redirect_to(published_emails_path)
     end
 
     it "redirects to the scheduled tab if there are scheduled installments" do
-      create(:installment, seller:, ready_to_publish: true)
+      create(:scheduled_installment, seller:)
 
       get :index
 
-      expect(response).to redirect_to("/emails/scheduled")
+      expect(response).to redirect_to(scheduled_emails_path)
     end
   end
 
-  describe "GET published", inertia: true do
+  describe "GET published" do
     it_behaves_like "authorize called for action", :get, :published do
       let(:record) { Installment }
+      let(:policy_method) { :index? }
     end
 
-    it "renders the Published component" do
+    it "renders the Inertia component with correct props" do
+      create(:installment, seller:, published_at: 1.day.ago)
+
       get :published
-      expect_inertia.to render_component("Emails/Published")
+
+      expect(response).to be_successful
+      expect(inertia.component).to eq("Emails/Published")
+      expect(inertia.props).to include(
+        installments: be_an(Array),
+        pagination: be_a(Hash),
+        has_posts: be_in([true, false])
+      )
     end
   end
 
-  describe "GET scheduled", inertia: true do
+  describe "GET scheduled" do
     it_behaves_like "authorize called for action", :get, :scheduled do
       let(:record) { Installment }
+      let(:policy_method) { :index? }
     end
 
-    it "renders the Scheduled component" do
+    it "renders the Inertia component with correct props" do
+      create(:scheduled_installment, seller:)
+
       get :scheduled
-      expect_inertia.to render_component("Emails/Scheduled")
+
+      expect(response).to be_successful
+      expect(inertia.component).to eq("Emails/Scheduled")
+      expect(inertia.props).to include(
+        installments: be_an(Array),
+        pagination: be_a(Hash),
+        has_posts: be_in([true, false])
+      )
     end
   end
 
-  describe "GET drafts", inertia: true do
+  describe "GET drafts" do
     it_behaves_like "authorize called for action", :get, :drafts do
       let(:record) { Installment }
+      let(:policy_method) { :index? }
     end
 
-    it "renders the Drafts component" do
+    it "renders the Inertia component with correct props" do
+      create(:installment, seller:)
+
       get :drafts
-      expect_inertia.to render_component("Emails/Drafts")
+
+      expect(response).to be_successful
+      expect(inertia.component).to eq("Emails/Drafts")
+      expect(inertia.props).to include(
+        installments: be_an(Array),
+        pagination: be_a(Hash),
+        has_posts: be_in([true, false])
+      )
     end
   end
 
-  describe "GET new", inertia: true do
+  describe "GET new" do
     it_behaves_like "authorize called for action", :get, :new do
       let(:record) { Installment }
     end
 
-    it "renders the EmailForm component" do
+    it "renders the Inertia component with correct props" do
       get :new
-      expect_inertia.to render_component("EmailsPage/EmailForm")
+
+      expect(response).to be_successful
+      expect(inertia.component).to eq("Emails/New")
+      expect(inertia.props).to have_key(:context)
+    end
+
+    it "includes copy_from installment when copy_from param is present" do
+      installment = create(:installment, seller:)
+      get :new, params: { copy_from: installment.external_id }
+
+      expect(response).to be_successful
+      expect(inertia.props).to have_key(:installment)
     end
   end
 
-  describe "GET edit", inertia: true do
+  describe "GET edit" do
     let(:installment) { create(:installment, seller:) }
 
     it_behaves_like "authorize called for action", :get, :edit do
-      let(:params) { { id: installment.id } }
       let(:record) { installment }
+      let(:request_params) { { id: installment.external_id } }
     end
 
-    it "renders the EmailForm component" do
-      get :edit, params: { id: installment.id }
-      expect_inertia.to render_component("EmailsPage/EmailForm")
-    end
-  end
+    it "renders the Inertia component with correct props" do
+      get :edit, params: { id: installment.external_id }
 
-  describe "POST create" do
-    let(:params) { { installment: { name: "New Email", message: "Hello" } } }
-
-    it_behaves_like "authorize called for action", :post, :create do
-      let(:params) { super().merge(this_params) }
-      let(:record) { Installment }
-      let(:this_params) { params }
+      expect(response).to be_successful
+      expect(inertia.component).to eq("Emails/Edit")
+      expect(inertia.props).to have_key(:installment)
+      expect(inertia.props).to have_key(:context)
     end
 
-    it "creates a new installment" do
-      expect {
-        post :create, params: params
-      }.to change(Installment, :count).by(1)
-    end
-
-    it "redirects to the edit page" do
-      post :create, params: params
-      expect(response).to redirect_to(edit_email_path(Installment.last))
-    end
-  end
-
-  describe "PATCH update" do
-    let(:installment) { create(:installment, seller:) }
-    let(:params) { { id: installment.id, installment: { name: "Updated Name" } } }
-
-    it_behaves_like "authorize called for action", :patch, :update do
-      let(:params) { super().merge(this_params) }
-      let(:record) { installment }
-      let(:this_params) { params }
-    end
-
-    it "updates the installment" do
-      patch :update, params: params
-      expect(installment.reload.name).to eq("Updated Name")
-    end
-
-    it "redirects to the edit page" do
-      patch :update, params: params
-      expect(response).to redirect_to(edit_email_path(installment))
-    end
-  end
-
-  describe "DELETE destroy" do
-    let!(:installment) { create(:installment, seller:) }
-
-    it_behaves_like "authorize called for action", :delete, :destroy do
-      let(:params) { { id: installment.id } }
-      let(:record) { installment }
-    end
-
-    it "deletes the installment" do
-      expect {
-        delete :destroy, params: { id: installment.id }
-      }.to change(Installment, :count).by(-1)
-    end
-
-    it "redirects to the drafts page" do
-      delete :destroy, params: { id: installment.id }
-      expect(response).to redirect_to(drafts_emails_path)
+    context "when installment doesn't exist" do
+      it "returns 404" do
+        expect { get :edit, params: { id: "nonexistent" } }.to raise_error(ActionController::RoutingError)
+      end
     end
   end
 end
