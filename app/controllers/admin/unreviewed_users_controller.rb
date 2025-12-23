@@ -1,38 +1,35 @@
 # frozen_string_literal: true
 
 class Admin::UnreviewedUsersController < Admin::BaseController
-  include Pagy::Backend
-
-  RECORDS_PER_PAGE = 100
-
   def index
     @title = "Unreviewed users"
 
-    service = Admin::UnreviewedUsersService.new(cutoff_date: cutoff_date)
+    cached_data = Admin::UnreviewedUsersService.cached_users_data
 
-    @total_count = service.count
+    if cached_data.nil?
+      # No cached data yet, render empty state
+      render inertia: "Admin/UnreviewedUsers/Index",
+             props: {
+               users: [],
+               total_count: 0,
+               cutoff_date: Admin::UnreviewedUsersService::DEFAULT_CUTOFF_YEARS.years.ago.to_date.to_s,
+               cached_at: nil
+             }
+      return
+    end
 
-    pagination, users = pagy(
-      service.users_with_unpaid_balance,
-      limit: params[:per_page] || RECORDS_PER_PAGE,
-      page: params[:page]
-    )
+    # Sanity check: filter out users who are no longer not_reviewed
+    user_ids = cached_data[:users].map { |u| u[:id] }
+    still_unreviewed_ids = User.where(id: user_ids, user_risk_state: "not_reviewed").pluck(:id).to_set
+
+    still_unreviewed_users = cached_data[:users].select { |u| still_unreviewed_ids.include?(u[:id]) }
 
     render inertia: "Admin/UnreviewedUsers/Index",
            props: {
-             users: users.map { |user| Admin::UnreviewedUserPresenter.new(user).props },
-             pagination: PagyPresenter.new(pagination).props.merge(limit: pagination.limit),
-             total_count: @total_count,
-             cutoff_date: service.cutoff_date.to_s
+             users: still_unreviewed_users,
+             total_count: still_unreviewed_users.size,
+             cutoff_date: cached_data[:cutoff_date],
+             cached_at: cached_data[:cached_at]
            }
   end
-
-  private
-    def cutoff_date
-      return nil unless params[:cutoff_date].present?
-
-      Date.parse(params[:cutoff_date])
-    rescue ArgumentError
-      nil
-    end
 end

@@ -42,55 +42,38 @@ describe Admin::UnreviewedUsersController, type: :controller, inertia: true do
     end
 
     context "when logged in as admin" do
-      it "returns successful response" do
-        get :index
-
-        expect(response).to be_successful
-        expect(inertia.component).to eq "Admin/UnreviewedUsers/Index"
-      end
-
-      it "returns empty list when no unreviewed users exist" do
-        get :index
-
-        expect(response).to be_successful
-        expect(inertia.props[:users]).to be_empty
-        expect(inertia.props[:total_count]).to eq(0)
-      end
-
-      context "with unreviewed users with unpaid balance" do
-        let!(:unreviewed_user_with_balance) do
-          user = create(:user, user_risk_state: "not_reviewed", created_at: 1.year.ago)
-          create(:balance, user:, amount_cents: 5000)
-          user
+      context "when no cached data exists" do
+        before do
+          $redis.del(RedisKey.unreviewed_users_data)
         end
 
-        let!(:unreviewed_user_with_low_balance) do
-          user = create(:user, user_risk_state: "not_reviewed", created_at: 1.year.ago)
-          create(:balance, user:, amount_cents: 500)
-          user
-        end
-
-        let!(:compliant_user_with_balance) do
-          user = create(:user, user_risk_state: "compliant", created_at: 1.year.ago)
-          create(:balance, user:, amount_cents: 5000)
-          user
-        end
-
-        let!(:old_unreviewed_user) do
-          user = create(:user, user_risk_state: "not_reviewed", created_at: 3.years.ago)
-          create(:balance, user:, amount_cents: 5000)
-          user
-        end
-
-        it "returns only unreviewed users with balance > $10 created within 2 years" do
+        it "returns empty state" do
           get :index
 
-          user_ids = inertia.props[:users].map { |u| u[:id] }
+          expect(response).to be_successful
+          expect(inertia.component).to eq "Admin/UnreviewedUsers/Index"
+          expect(inertia.props[:users]).to be_empty
+          expect(inertia.props[:total_count]).to eq(0)
+          expect(inertia.props[:cached_at]).to be_nil
+        end
+      end
 
-          expect(user_ids).to include(unreviewed_user_with_balance.id)
-          expect(user_ids).not_to include(unreviewed_user_with_low_balance.id)
-          expect(user_ids).not_to include(compliant_user_with_balance.id)
-          expect(user_ids).not_to include(old_unreviewed_user.id)
+      context "when cached data exists" do
+        let!(:unreviewed_user) do
+          create(:user, user_risk_state: "not_reviewed", created_at: 1.year.ago)
+        end
+
+        before do
+          balance = create(:balance, user: unreviewed_user, amount_cents: 5000)
+          Admin::UnreviewedUsersService.cache_users_data!
+        end
+
+        it "returns cached users" do
+          get :index
+
+          expect(response).to be_successful
+          expect(inertia.props[:users].size).to eq(1)
+          expect(inertia.props[:users].first[:id]).to eq(unreviewed_user.id)
         end
 
         it "returns total count" do
@@ -99,55 +82,51 @@ describe Admin::UnreviewedUsersController, type: :controller, inertia: true do
           expect(inertia.props[:total_count]).to eq(1)
         end
 
-        it "returns user details" do
-          get :index
-
-          user_data = inertia.props[:users].find { |u| u[:id] == unreviewed_user_with_balance.id }
-
-          expect(user_data[:id]).to eq(unreviewed_user_with_balance.id)
-          expect(user_data[:email]).to eq(unreviewed_user_with_balance.email)
-          expect(user_data[:unpaid_balance_cents]).to eq(5000)
-          expect(user_data[:admin_url]).to eq(admin_user_path(unreviewed_user_with_balance.external_id))
-        end
-
-        it "orders users by unpaid balance descending" do
-          user_with_higher_balance = create(:user, user_risk_state: "not_reviewed", created_at: 1.year.ago)
-          create(:balance, user: user_with_higher_balance, amount_cents: 10000)
-
-          get :index
-
-          user_ids = inertia.props[:users].map { |u| u[:id] }
-
-          expect(user_ids.first).to eq(user_with_higher_balance.id)
-        end
-
-        it "includes old users when cutoff_date param is provided" do
-          get :index, params: { cutoff_date: 4.years.ago.to_date.to_s }
-
-          user_ids = inertia.props[:users].map { |u| u[:id] }
-
-          expect(user_ids).to include(old_unreviewed_user.id)
-        end
-
-        it "returns cutoff_date in response" do
+        it "returns cutoff_date" do
           get :index
 
           expect(inertia.props[:cutoff_date]).to eq(2.years.ago.to_date.to_s)
         end
+
+        it "returns cached_at timestamp" do
+          get :index
+
+          expect(inertia.props[:cached_at]).to be_present
+        end
       end
 
-      context "with revenue source badges" do
+      context "sanity check - filters out users no longer unreviewed" do
+        let!(:user) do
+          create(:user, user_risk_state: "not_reviewed", created_at: 1.year.ago)
+        end
+
+        before do
+          create(:balance, user:, amount_cents: 5000)
+          Admin::UnreviewedUsersService.cache_users_data!
+          # User is now marked as compliant after caching
+          user.update!(user_risk_state: "compliant")
+        end
+
+        it "excludes users who are no longer not_reviewed" do
+          get :index
+
+          expect(inertia.props[:users]).to be_empty
+          expect(inertia.props[:total_count]).to eq(0)
+        end
+      end
+
+      context "with revenue source badges in cached data" do
         let(:user) { create(:user, user_risk_state: "not_reviewed", created_at: 1.year.ago) }
         let!(:balance) { create(:balance, user:, amount_cents: 5000) }
 
         it "includes sales badge when user has sales balance" do
           product = create(:product, user:)
           create(:purchase, seller: user, link: product, purchase_success_balance: balance)
+          Admin::UnreviewedUsersService.cache_users_data!
 
           get :index
 
           user_data = inertia.props[:users].find { |u| u[:id] == user.id }
-
           expect(user_data[:revenue_sources]).to include("sales")
         end
 
@@ -156,11 +135,11 @@ describe Admin::UnreviewedUsersController, type: :controller, inertia: true do
           direct_affiliate = create(:direct_affiliate, affiliate_user: user, seller: product.user, products: [product])
           purchase = create(:purchase, link: product, affiliate: direct_affiliate)
           create(:affiliate_credit, affiliate_user: user, seller: product.user, purchase:, link: product, affiliate: direct_affiliate, affiliate_credit_success_balance: balance)
+          Admin::UnreviewedUsersService.cache_users_data!
 
           get :index
 
           user_data = inertia.props[:users].find { |u| u[:id] == user.id }
-
           expect(user_data[:revenue_sources]).to include("affiliate")
         end
 
@@ -170,37 +149,13 @@ describe Admin::UnreviewedUsersController, type: :controller, inertia: true do
           collaborator = create(:collaborator, affiliate_user: user, seller: seller, products: [product])
           purchase = create(:purchase, link: product, affiliate: collaborator)
           create(:affiliate_credit, affiliate_user: user, seller: seller, purchase:, link: product, affiliate: collaborator, affiliate_credit_success_balance: balance)
+          Admin::UnreviewedUsersService.cache_users_data!
 
           get :index
 
           user_data = inertia.props[:users].find { |u| u[:id] == user.id }
-
           expect(user_data[:revenue_sources]).to include("collaborator")
           expect(user_data[:revenue_sources]).not_to include("affiliate")
-        end
-      end
-
-      context "with pagination" do
-        before do
-          stub_const("Admin::UnreviewedUsersController::RECORDS_PER_PAGE", 2)
-          3.times do |i|
-            user = create(:user, user_risk_state: "not_reviewed", created_at: 1.year.ago)
-            create(:balance, user:, amount_cents: 2000 + (i * 100))
-          end
-        end
-
-        it "returns first page of users" do
-          get :index
-
-          expect(inertia.props[:users].length).to eq(2)
-          expect(inertia.props[:pagination][:page]).to eq(1)
-        end
-
-        it "returns second page when requested" do
-          get :index, params: { page: 2 }
-
-          expect(inertia.props[:users].length).to eq(1)
-          expect(inertia.props[:pagination][:page]).to eq(2)
         end
       end
     end

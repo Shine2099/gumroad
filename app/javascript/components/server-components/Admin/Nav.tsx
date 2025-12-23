@@ -25,15 +25,9 @@ type CurrentUser = {
   impersonated_user: ImpersonatedUser | null;
 };
 
-type Props = { title: string; current_user: CurrentUser; unreviewed_users_count?: number | null };
+type Props = { title: string; current_user: CurrentUser };
 
-const CountBadge = ({ count }: { count: number }) => (
-  <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-pink px-1.5 text-xs text-black">
-    {count.toLocaleString()}
-  </span>
-);
-
-export const Nav = ({ title, current_user, unreviewed_users_count }: Props) => {
+export const Nav = ({ title, current_user }: Props) => {
   const routeParams = { host: useAppDomain() };
   const loggedInUser = useLoggedInUser();
 
@@ -70,12 +64,7 @@ export const Nav = ({ title, current_user, unreviewed_users_count }: Props) => {
         <NavLink text="Features" icon="solid-flag" href={Routes.admin_flipper_ui_url(routeParams)} />
         <NavLink text="Refund queue" icon="solid-currency-dollar" href={Routes.admin_refund_queue_url(routeParams)} />
         <NavLink text="Sales reports" icon="bar-chart-fill" href={Routes.admin_sales_reports_url(routeParams)} />
-        <NavLink
-          text="Unreviewed users"
-          icon="people-fill"
-          href={Routes.admin_unreviewed_users_url(routeParams)}
-          badge={unreviewed_users_count ? <CountBadge count={unreviewed_users_count} /> : undefined}
-        />
+        <NavLink text="Unreviewed users" icon="people-fill" href={Routes.admin_unreviewed_users_url(routeParams)} />
       </NavSection>
     </NavFramework>
   );

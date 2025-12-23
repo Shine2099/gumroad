@@ -3,6 +3,7 @@
 class Admin::UnreviewedUsersService
   MINIMUM_BALANCE_CENTS = 1000
   DEFAULT_CUTOFF_YEARS = 2
+  MAX_CACHED_USERS = 1000
 
   attr_reader :cutoff_date
 
@@ -10,24 +11,38 @@ class Admin::UnreviewedUsersService
     @cutoff_date = cutoff_date || DEFAULT_CUTOFF_YEARS.years.ago.to_date
   end
 
-  def count
-    base_scope.count.size
-  end
-
-  def users_with_unpaid_balance
-    base_scope
+  def users_with_unpaid_balance(limit: nil)
+    scope = base_scope
       .order(Arel.sql("SUM(balances.amount_cents) DESC"))
       .select("users.*, SUM(balances.amount_cents) AS total_balance_cents")
+
+    limit ? scope.limit(limit) : scope
   end
 
-  def self.cached_count
-    $redis.get(RedisKey.unreviewed_users_count)&.to_i
+  def self.cached_users_data
+    data = $redis.get(RedisKey.unreviewed_users_data)
+    return nil unless data
+
+    JSON.parse(data, symbolize_names: true)
   end
 
-  def self.cache_count!
-    count = new.count
-    $redis.set(RedisKey.unreviewed_users_count, count)
-    count
+  def self.cache_users_data!
+    service = new
+    users = service.users_with_unpaid_balance(limit: MAX_CACHED_USERS)
+
+    users_data = users.map do |user|
+      Admin::UnreviewedUserPresenter.new(user).props
+    end
+
+    cache_payload = {
+      users: users_data,
+      total_count: users_data.size,
+      cutoff_date: service.cutoff_date.to_s,
+      cached_at: Time.current.iso8601
+    }
+
+    $redis.set(RedisKey.unreviewed_users_data, cache_payload.to_json)
+    cache_payload
   end
 
   private
@@ -41,4 +56,3 @@ class Admin::UnreviewedUsersService
         .having("SUM(balances.amount_cents) > ?", MINIMUM_BALANCE_CENTS)
     end
 end
-

@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
-class ComputeUnreviewedUsersCountWorker
+class CacheUnreviewedUsersDataWorker
   include Sidekiq::Job
   sidekiq_options retry: 2, queue: :low
 
   def perform
-    Admin::UnreviewedUsersService.cache_count!
+    Admin::UnreviewedUsersService.cache_users_data!
   end
 end
+

@@ -3,55 +3,6 @@
 require "spec_helper"
 
 describe Admin::UnreviewedUsersService do
-  describe "#count" do
-    it "returns count of unreviewed users with unpaid balance > $10" do
-      unreviewed_user = create(:user, user_risk_state: "not_reviewed", created_at: 1.year.ago)
-      create(:balance, user: unreviewed_user, amount_cents: 5000)
-
-      another_unreviewed_user = create(:user, user_risk_state: "not_reviewed", created_at: 6.months.ago)
-      create(:balance, user: another_unreviewed_user, amount_cents: 3000)
-
-      expect(described_class.new.count).to eq(2)
-    end
-
-    it "excludes users with balance <= $10" do
-      user_with_low_balance = create(:user, user_risk_state: "not_reviewed", created_at: 1.year.ago)
-      create(:balance, user: user_with_low_balance, amount_cents: 500)
-
-      expect(described_class.new.count).to eq(0)
-    end
-
-    it "excludes compliant users" do
-      compliant_user = create(:user, user_risk_state: "compliant", created_at: 1.year.ago)
-      create(:balance, user: compliant_user, amount_cents: 5000)
-
-      expect(described_class.new.count).to eq(0)
-    end
-
-    it "excludes users created before cutoff date" do
-      old_user = create(:user, user_risk_state: "not_reviewed", created_at: 3.years.ago)
-      create(:balance, user: old_user, amount_cents: 5000)
-
-      expect(described_class.new.count).to eq(0)
-    end
-
-    it "includes old users when custom cutoff_date is provided" do
-      old_user = create(:user, user_risk_state: "not_reviewed", created_at: 3.years.ago)
-      create(:balance, user: old_user, amount_cents: 5000)
-
-      expect(described_class.new(cutoff_date: 4.years.ago.to_date).count).to eq(1)
-    end
-
-    it "sums multiple balances for the same user" do
-      user = create(:user, user_risk_state: "not_reviewed", created_at: 1.year.ago)
-      create(:balance, user:, amount_cents: 600)
-      create(:balance, user:, amount_cents: 600)
-
-      # Total is 1200, which is > 1000 threshold
-      expect(described_class.new.count).to eq(1)
-    end
-  end
-
   describe "#users_with_unpaid_balance" do
     it "returns users ordered by total balance descending" do
       low_balance_user = create(:user, user_risk_state: "not_reviewed", created_at: 1.year.ago)
@@ -74,31 +25,107 @@ describe Admin::UnreviewedUsersService do
 
       expect(result.total_balance_cents).to eq(5000)
     end
-  end
 
-  describe ".cached_count" do
-    it "returns the cached count from Redis" do
-      $redis.set(RedisKey.unreviewed_users_count, 42)
+    it "excludes users with balance <= $10" do
+      user_with_low_balance = create(:user, user_risk_state: "not_reviewed", created_at: 1.year.ago)
+      create(:balance, user: user_with_low_balance, amount_cents: 500)
 
-      expect(described_class.cached_count).to eq(42)
+      expect(described_class.new.users_with_unpaid_balance).to be_empty
     end
 
-    it "returns nil when no cached value exists" do
-      $redis.del(RedisKey.unreviewed_users_count)
+    it "excludes compliant users" do
+      compliant_user = create(:user, user_risk_state: "compliant", created_at: 1.year.ago)
+      create(:balance, user: compliant_user, amount_cents: 5000)
 
-      expect(described_class.cached_count).to be_nil
+      expect(described_class.new.users_with_unpaid_balance).to be_empty
+    end
+
+    it "excludes users created before cutoff date" do
+      old_user = create(:user, user_risk_state: "not_reviewed", created_at: 3.years.ago)
+      create(:balance, user: old_user, amount_cents: 5000)
+
+      expect(described_class.new.users_with_unpaid_balance).to be_empty
+    end
+
+    it "includes old users when custom cutoff_date is provided" do
+      old_user = create(:user, user_risk_state: "not_reviewed", created_at: 3.years.ago)
+      create(:balance, user: old_user, amount_cents: 5000)
+
+      users = described_class.new(cutoff_date: 4.years.ago.to_date).users_with_unpaid_balance
+
+      expect(users.map(&:id)).to include(old_user.id)
+    end
+
+    it "respects the limit parameter" do
+      3.times do
+        user = create(:user, user_risk_state: "not_reviewed", created_at: 1.year.ago)
+        create(:balance, user:, amount_cents: 5000)
+      end
+
+      users = described_class.new.users_with_unpaid_balance(limit: 2)
+
+      expect(users.to_a.size).to eq(2)
     end
   end
 
-  describe ".cache_count!" do
-    it "computes and stores count in Redis" do
+  describe ".cached_users_data" do
+    it "returns nil when no cached data exists" do
+      $redis.del(RedisKey.unreviewed_users_data)
+
+      expect(described_class.cached_users_data).to be_nil
+    end
+
+    it "returns parsed data from Redis" do
+      cache_payload = {
+        users: [{ id: 1, email: "test@example.com" }],
+        total_count: 1,
+        cutoff_date: "2023-01-01",
+        cached_at: "2024-01-01T00:00:00Z"
+      }
+      $redis.set(RedisKey.unreviewed_users_data, cache_payload.to_json)
+
+      result = described_class.cached_users_data
+
+      expect(result[:users].first[:email]).to eq("test@example.com")
+      expect(result[:total_count]).to eq(1)
+    end
+  end
+
+  describe ".cache_users_data!" do
+    it "caches user data in Redis" do
       user = create(:user, user_risk_state: "not_reviewed", created_at: 1.year.ago)
       create(:balance, user:, amount_cents: 5000)
 
-      result = described_class.cache_count!
+      result = described_class.cache_users_data!
 
-      expect(result).to eq(1)
-      expect($redis.get(RedisKey.unreviewed_users_count)).to eq("1")
+      expect(result[:users].size).to eq(1)
+      expect(result[:users].first[:id]).to eq(user.id)
+      expect(result[:total_count]).to eq(1)
+      expect(result[:cutoff_date]).to eq(2.years.ago.to_date.to_s)
+      expect(result[:cached_at]).to be_present
+    end
+
+    it "stores data in Redis" do
+      user = create(:user, user_risk_state: "not_reviewed", created_at: 1.year.ago)
+      create(:balance, user:, amount_cents: 5000)
+
+      described_class.cache_users_data!
+
+      cached = described_class.cached_users_data
+      expect(cached[:users].first[:id]).to eq(user.id)
+    end
+
+    it "limits to MAX_CACHED_USERS" do
+      stub_const("Admin::UnreviewedUsersService::MAX_CACHED_USERS", 2)
+
+      3.times do |i|
+        user = create(:user, user_risk_state: "not_reviewed", created_at: 1.year.ago)
+        create(:balance, user:, amount_cents: 5000 + (i * 1000))
+      end
+
+      result = described_class.cache_users_data!
+
+      expect(result[:users].size).to eq(2)
     end
   end
 
@@ -117,4 +144,3 @@ describe Admin::UnreviewedUsersService do
     end
   end
 end
-

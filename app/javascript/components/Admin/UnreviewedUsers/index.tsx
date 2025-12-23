@@ -4,7 +4,6 @@ import * as React from "react";
 import { formatPriceCentsWithCurrencySymbol } from "$app/utils/currency";
 
 import EmptyState from "$app/components/Admin/EmptyState";
-import PaginatedLoader, { type Pagination } from "$app/components/Admin/PaginatedLoader";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "$app/components/ui/Table";
 
 type RevenueSource = "sales" | "collaborator" | "affiliate" | "credit";
@@ -22,9 +21,9 @@ type UnreviewedUser = {
 
 type PageProps = {
   users: UnreviewedUser[];
-  pagination: Pagination;
   total_count: number;
   cutoff_date: string;
+  cached_at: string | null;
 };
 
 const RevenueBadge = ({ type }: { type: RevenueSource }) => {
@@ -40,18 +39,24 @@ const RevenueBadge = ({ type }: { type: RevenueSource }) => {
   );
 };
 
-const UnreviewedUsersPage = () => {
-  const { users, pagination, total_count, cutoff_date } = usePage<PageProps>().props;
+const formatCachedAt = (cachedAt: string | null) => {
+  if (!cachedAt) return null;
+  const date = new Date(cachedAt);
+  return date.toLocaleString();
+};
 
-  if (users.length === 0 && pagination.page === 1) {
+const UnreviewedUsersPage = () => {
+  const { users, total_count, cutoff_date, cached_at } = usePage<PageProps>().props;
+
+  if (users.length === 0) {
     return <EmptyState message="No unreviewed users with unpaid balance found." />;
   }
 
   return (
     <div className="flex flex-col gap-4">
       <div className="text-sm text-muted">
-        Showing {users.length} of {total_count} unreviewed users with unpaid balance &gt; $10 (created since{" "}
-        {cutoff_date})
+        Top {total_count.toLocaleString()} unreviewed users with unpaid balance &gt; $10 (created since {cutoff_date})
+        {cached_at ? <span className="ml-2">• Last updated: {formatCachedAt(cached_at)}</span> : null}
       </div>
       <Table>
         <TableHeader>
@@ -98,7 +103,6 @@ const UnreviewedUsersPage = () => {
           ))}
         </TableBody>
       </Table>
-      <PaginatedLoader itemsLength={users.length} pagination={pagination} only={["users", "pagination"]} />
     </div>
   );
 };

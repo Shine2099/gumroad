@@ -11,8 +11,7 @@ class Admin::BaseController < ApplicationController
       compliance: {
         reasons: Compliance::TOS_VIOLATION_REASONS,
         default_reason: Compliance::DEFAULT_TOS_VIOLATION_REASON
-      },
-      unreviewed_users_count: Admin::UnreviewedUsersService.cached_count
+      }
     }
   end
 

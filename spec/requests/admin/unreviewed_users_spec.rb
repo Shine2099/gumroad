@@ -10,13 +10,11 @@ describe "Admin::UnreviewedUsersController", type: :system, js: true do
   end
 
   describe "GET /admin/unreviewed_users" do
-    it "displays the unreviewed users page" do
-      visit admin_unreviewed_users_path
+    context "when no cached data exists" do
+      before do
+        $redis.del(RedisKey.unreviewed_users_data)
+      end
 
-      expect(page).to have_text("Unreviewed users")
-    end
-
-    context "when there are no unreviewed users" do
       it "shows empty state message" do
         visit admin_unreviewed_users_path
 
@@ -24,11 +22,21 @@ describe "Admin::UnreviewedUsersController", type: :system, js: true do
       end
     end
 
-    context "when there are unreviewed users with unpaid balance" do
+    context "when cached data exists" do
       let!(:user_with_balance) do
         user = create(:user, user_risk_state: "not_reviewed", created_at: 1.year.ago, name: "Test Creator")
         create(:balance, user:, amount_cents: 5000)
         user
+      end
+
+      before do
+        Admin::UnreviewedUsersService.cache_users_data!
+      end
+
+      it "displays the unreviewed users page" do
+        visit admin_unreviewed_users_path
+
+        expect(page).to have_text("Unreviewed users")
       end
 
       it "displays user information" do
@@ -45,10 +53,16 @@ describe "Admin::UnreviewedUsersController", type: :system, js: true do
         expect(page).to have_link(user_with_balance.external_id, href: admin_user_path(user_with_balance.external_id))
       end
 
-      it "shows the cutoff date in the summary" do
+      it "shows the cutoff date in the header" do
         visit admin_unreviewed_users_path
 
         expect(page).to have_text("created since #{2.years.ago.to_date}")
+      end
+
+      it "shows last updated timestamp" do
+        visit admin_unreviewed_users_path
+
+        expect(page).to have_text("Last updated:")
       end
     end
 
@@ -59,6 +73,7 @@ describe "Admin::UnreviewedUsersController", type: :system, js: true do
       it "shows sales badge when user has sales" do
         product = create(:product, user:)
         create(:purchase, seller: user, link: product, purchase_success_balance: balance)
+        Admin::UnreviewedUsersService.cache_users_data!
 
         visit admin_unreviewed_users_path
 
@@ -70,6 +85,7 @@ describe "Admin::UnreviewedUsersController", type: :system, js: true do
         direct_affiliate = create(:direct_affiliate, affiliate_user: user, seller: product.user, products: [product])
         purchase = create(:purchase, link: product, affiliate: direct_affiliate)
         create(:affiliate_credit, affiliate_user: user, seller: product.user, purchase:, link: product, affiliate: direct_affiliate, affiliate_credit_success_balance: balance)
+        Admin::UnreviewedUsersService.cache_users_data!
 
         visit admin_unreviewed_users_path
 
@@ -82,6 +98,7 @@ describe "Admin::UnreviewedUsersController", type: :system, js: true do
         collaborator = create(:collaborator, affiliate_user: user, seller: seller, products: [product])
         purchase = create(:purchase, link: product, affiliate: collaborator)
         create(:affiliate_credit, affiliate_user: user, seller: seller, purchase:, link: product, affiliate: collaborator, affiliate_credit_success_balance: balance)
+        Admin::UnreviewedUsersService.cache_users_data!
 
         visit admin_unreviewed_users_path
 
@@ -89,39 +106,21 @@ describe "Admin::UnreviewedUsersController", type: :system, js: true do
       end
     end
 
-    context "with pagination" do
+    context "sanity check - filters out reviewed users" do
+      let!(:user) do
+        create(:user, user_risk_state: "not_reviewed", created_at: 1.year.ago)
+      end
+
       before do
-        stub_const("Admin::UnreviewedUsersController::RECORDS_PER_PAGE", 2)
-        3.times do |i|
-          user = create(:user, user_risk_state: "not_reviewed", created_at: 1.year.ago)
-          create(:balance, user:, amount_cents: 2000 + (i * 100))
-        end
-      end
-
-      it "shows count of total users" do
-        visit admin_unreviewed_users_path
-
-        expect(page).to have_text("of 3 unreviewed users")
-      end
-    end
-
-    context "with cutoff_date parameter" do
-      let!(:old_user) do
-        user = create(:user, user_risk_state: "not_reviewed", created_at: 3.years.ago)
         create(:balance, user:, amount_cents: 5000)
-        user
+        Admin::UnreviewedUsersService.cache_users_data!
+        user.update!(user_risk_state: "compliant")
       end
 
-      it "excludes old users by default" do
+      it "does not show users who were reviewed after caching" do
         visit admin_unreviewed_users_path
 
-        expect(page).not_to have_text(old_user.email)
-      end
-
-      it "includes old users when cutoff_date param is provided" do
-        visit admin_unreviewed_users_path(cutoff_date: 4.years.ago.to_date.to_s)
-
-        expect(page).to have_text(old_user.email)
+        expect(page).to have_text("No unreviewed users with unpaid balance found")
       end
     end
   end
