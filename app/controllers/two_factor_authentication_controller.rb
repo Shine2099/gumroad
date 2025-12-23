@@ -11,8 +11,8 @@ class TwoFactorAuthenticationController < ApplicationController
 
   layout "inertia", only: [:new]
 
-  # Get /two-factor
   def new
+    @title = "Two-Factor Authentication"
     render inertia: "TwoFactorAuthentication/New", props: {
       user_id: @user.encrypted_external_id,
       email: @user.email,
@@ -20,12 +20,10 @@ class TwoFactorAuthenticationController < ApplicationController
     }
   end
 
-  # POST /two-factor
   def create
     verify_auth_token_and_redirect(params[:token])
   end
 
-  # GET /two-factor/verify.html
   def verify
     verify_auth_token_and_redirect(params[:token])
   end
@@ -47,7 +45,7 @@ class TwoFactorAuthenticationController < ApplicationController
 
         flash[:notice] = "Successfully logged in!"
 
-        redirect_to login_path_for(@user), allow_other_host: true, status: :see_other
+        redirect_to login_path_for(@user), status: :see_other
       else
         redirect_to two_factor_authentication_path, warning: "Invalid token, please try again.", status: :see_other
       end

@@ -4,7 +4,7 @@ import * as React from "react";
 import { Layout } from "$app/components/Authentication/Layout";
 import { Button } from "$app/components/Button";
 import { useOriginalLocation } from "$app/components/useOriginalLocation";
-import { FlashError } from "$app/components/FlashError";
+import { FlashError } from "$app/components/WarningFlashMessage";
 
 type PageProps = {
   user_id: string;
@@ -26,7 +26,6 @@ function TwoFactorAuthentication() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Post to /two-factor with user_id in query string for Rack::Attack throttling
     form.post(Routes.two_factor_authentication_path({ user_id }));
   };
 

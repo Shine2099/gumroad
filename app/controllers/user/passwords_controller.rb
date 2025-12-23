@@ -49,7 +49,7 @@ class User::PasswordsController < Devise::PasswordsController
       flash[:notice] = "Your password has been reset, and you're now logged in."
       @user.invalidate_active_sessions!
       sign_in @user unless @user.deleted?
-      redirect_to login_path_for(@user), status: :see_other, allow_other_host: true
+      redirect_to login_path_for(@user), status: :see_other
     end
   end
 

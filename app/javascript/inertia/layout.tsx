@@ -1,3 +1,6 @@
+import { Head, usePage } from "@inertiajs/react";
+import React from "react";
+
 import { classNames } from "$app/utils/classNames";
 
 import { Nav } from "$app/components/client-components/Nav";
@@ -6,7 +9,6 @@ import LoadingSkeleton from "$app/components/LoadingSkeleton";
 import { type LoggedInUser, LoggedInUserProvider, parseLoggedInUser } from "$app/components/LoggedInUser";
 import Alert, { showAlert, type AlertPayload } from "$app/components/server-components/Alert";
 import useRouteLoading from "$app/components/useRouteLoading";
-import { Head, usePage } from "@inertiajs/react";
 
 type PageProps = {
   title: string;

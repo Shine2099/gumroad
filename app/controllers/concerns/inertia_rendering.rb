@@ -12,10 +12,10 @@ module InertiaRendering
         title: @title
       )
     end
+
     inertia_share if: :user_signed_in? do
       { current_user: current_user_props(current_user, impersonated_user) }
     end
-
   end
 
   private

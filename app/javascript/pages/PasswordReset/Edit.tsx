@@ -4,7 +4,7 @@ import * as React from "react";
 import { Layout } from "$app/components/Authentication/Layout";
 import { Button } from "$app/components/Button";
 import { PasswordInput } from "$app/components/PasswordInput";
-import { FlashError } from "$app/components/FlashError";
+import { FlashError } from "$app/components/WarningFlashMessage";
 
 type PageProps = {
   reset_password_token: string;
@@ -39,7 +39,7 @@ function PasswordReset() {
             <PasswordInput
               id={`${uid}-password`}
               value={form.data.user.password}
-              onChange={(e) => form.setData("user", { ...form.data.user, password: e.target.value })}
+              onChange={(e) => form.setData("user.password", e.target.value)}
               placeholder="Password"
               required
               autoFocus
@@ -53,7 +53,7 @@ function PasswordReset() {
             <PasswordInput
               id={`${uid}-password-confirmation`}
               value={form.data.user.password_confirmation}
-              onChange={(e) => form.setData("user", { ...form.data.user, password_confirmation: e.target.value })}
+              onChange={(e) => form.setData("user.password_confirmation", e.target.value)}
               placeholder="Password (to confirm)"
               required
               autoComplete="new-password"
