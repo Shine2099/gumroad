@@ -6,16 +6,6 @@ class Api::Internal::InstallmentsController < Api::Internal::BaseController
   before_action :set_installment, only: %i[edit update]
   before_action :authorize_user, only: %i[edit update]
 
-  def index
-    authorize Installment
-
-    render json: PaginatedInstallmentsPresenter.new(
-      seller: current_seller,
-      type: params[:type],
-      page: params[:page],
-      query: params[:query]
-    ).props
-  end
 
   def new
     authorize Installment
