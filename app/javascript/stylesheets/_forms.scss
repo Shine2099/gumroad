@@ -64,7 +64,7 @@ fieldset {
       font-weight: normal;
     }
 
-    &> > :last-child:not(:only-child) {
+    &> :last-child:not(:only-child) {
       float: right;
       margin-left: auto;
     }
@@ -138,7 +138,7 @@ fieldset {
     }
   }
 
-  &> >.icon {
+  &>.icon {
     @include text-muted;
   }
 }
@@ -214,7 +214,7 @@ input[type="checkbox"]:not([role="switch"]) {
     font-weight: bold;
   }
 
-  &> > :first-child {
+  &> :first-child {
     flex-shrink: 0;
   }
 
@@ -323,14 +323,14 @@ input[type="search"] {
 }
 
 form {
-  &> >section {
+  &>section {
     $y-gap: spacer(6);
     display: grid;
     padding: spacer(7) 0;
     border-top: $border;
     gap: $y-gap;
 
-    &> >header {
+    &>header {
       display: grid;
       gap: spacer(3);
       align-content: start;
@@ -351,12 +351,12 @@ form {
       padding-bottom: spacer(7) - $y-gap;
       grid-template-columns: 25% 1fr;
 
-      &> >* {
+      &>* {
         margin-bottom: $y-gap;
         grid-column: 2;
       }
 
-      &> >header {
+      &>header {
         grid-column: 1/2;
         grid-row: 1/10;
       }
