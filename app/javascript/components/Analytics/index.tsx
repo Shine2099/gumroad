@@ -11,7 +11,7 @@ import {
 import { assertDefined } from "$app/utils/assert";
 import { AbortError } from "$app/utils/request";
 
-import { AnalyticsLayout } from "$app/components/Analytics/AnalyticsLayout";
+import { AnalyticsLayoutInertia } from "$app/components/Analytics/AnalyticsLayoutInertia";
 import { LocationsTable } from "$app/components/Analytics/LocationsTable";
 import { ProductsPopover } from "$app/components/Analytics/ProductsPopover";
 import { ReferrersTable } from "$app/components/Analytics/ReferrersTable";
@@ -145,7 +145,7 @@ const Analytics = ({ products: initialProducts, country_codes, state_names }: An
   );
 
   return (
-    <AnalyticsLayout
+    <AnalyticsLayoutInertia
       selectedTab="sales"
       actions={
         hasContent ? (
@@ -220,7 +220,7 @@ const Analytics = ({ products: initialProducts, country_codes, state_names }: An
           </Placeholder>
         </div>
       )}
-    </AnalyticsLayout>
+    </AnalyticsLayoutInertia>
   );
 };
 

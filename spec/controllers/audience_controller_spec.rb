@@ -2,8 +2,9 @@
 
 require "spec_helper"
 require "shared_examples/authorize_called"
+require "inertia_rails/rspec"
 
-describe AudienceController do
+describe AudienceController, inertia: true do
   let(:seller) { create(:named_seller) }
 
   include_context "with user signed in as admin for seller"
@@ -13,22 +14,28 @@ describe AudienceController do
       let(:record) { :audience }
     end
 
-    it "sets follower count correctly if there are no followers" do
+    it "renders Inertia component with zero followers" do
       get :index
-      expect(assigns(:total_follower_count)).to eq 0
+
+      expect(response).to be_successful
+      expect(inertia.component).to eq("Audience/Index")
+      expect(inertia.props[:total_follower_count]).to eq(0)
     end
 
-    it "sets follower count correctly if there are followers" do
-      @follower = create(:active_follower, user: seller)
+    it "renders Inertia component with correct follower count" do
+      create(:active_follower, user: seller)
 
       get :index
-      expect(assigns(:total_follower_count)).to eq 1
+
+      expect(response).to be_successful
+      expect(inertia.component).to eq("Audience/Index")
+      expect(inertia.props[:total_follower_count]).to eq(1)
     end
 
     it "sets the last viewed dashboard cookie" do
       get :index
 
-      expect(response.cookies["last_viewed_dashboard"]).to eq "audience"
+      expect(response.cookies["last_viewed_dashboard"]).to eq("audience")
     end
   end
 
