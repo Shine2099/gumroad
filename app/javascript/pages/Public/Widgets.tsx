@@ -2,6 +2,7 @@ import { usePage } from "@inertiajs/react";
 import * as React from "react";
 import ReactDOMServer from "react-dom/server";
 
+import { useExternalScript } from "$app/hooks/useExternalScript";
 import { buildOverlayCodeToCopy, buildEmbedCodeToCopy } from "$app/utils/widgetCodeToCopyBuilders";
 
 import { Button } from "$app/components/Button";
@@ -15,7 +16,6 @@ import { Tab, Tabs } from "$app/components/Developer/Tabs";
 import { useHasChanged } from "$app/components/Developer/useHasChanged";
 import { DomainSettingsProvider, useDomains } from "$app/components/DomainSettings";
 import { Icon } from "$app/components/Icons";
-import { useExternalScript } from "$app/hooks/useExternalScript";
 
 type WidgetsPageProps = {
   default_product: Product;
