@@ -31,9 +31,7 @@ export const GiftForm = ({ isMembership }: { isMembership: boolean }) => {
             }
           }}
         />
-        <div className="flex items-center">
-          <h4>Give as a gift?</h4>
-        </div>
+        <h4>Give as a gift?</h4>
       </label>
 
       {gift ? (
