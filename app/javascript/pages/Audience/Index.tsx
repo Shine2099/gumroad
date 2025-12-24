@@ -5,7 +5,7 @@ import * as React from "react";
 import { AudienceDataByDate, fetchAudienceDataByDate } from "$app/data/audience";
 import { AbortError } from "$app/utils/request";
 
-import { AnalyticsLayoutInertia } from "$app/components/Analytics/AnalyticsLayoutInertia";
+import { AnalyticsLayout } from "$app/components/Analytics/Layout";
 import { useAnalyticsDateRange } from "$app/components/Analytics/useAnalyticsDateRange";
 import { AudienceChart } from "$app/components/Audience/AudienceChart";
 import { AudienceQuickStats } from "$app/components/Audience/AudienceQuickStats";
@@ -55,7 +55,7 @@ export default function Audience() {
   }, [startTime, endTime]);
 
   return (
-    <AnalyticsLayoutInertia
+    <AnalyticsLayout
       selectedTab="following"
       actions={
         hasContent ? (
@@ -106,6 +106,6 @@ export default function Audience() {
           </Placeholder>
         </div>
       )}
-    </AnalyticsLayoutInertia>
+    </AnalyticsLayout>
   );
 }

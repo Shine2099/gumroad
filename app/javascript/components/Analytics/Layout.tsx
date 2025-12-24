@@ -7,7 +7,7 @@ import { useLoggedInUser } from "$app/components/LoggedInUser";
 import { PageHeader } from "$app/components/ui/PageHeader";
 import { Tabs, Tab } from "$app/components/ui/Tabs";
 
-export const AnalyticsLayoutInertia = ({
+export const AnalyticsLayout = ({
   selectedTab,
   children,
   actions,
