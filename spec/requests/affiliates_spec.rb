@@ -440,7 +440,7 @@ describe "Affiliates", type: :system, js: true do
 
         visit affiliates_path
 
-        link = find_link("Add affiliate")
+        link = find_link("Add affiliate", inert: true)
         link.hover
         expect(link[:style]).to eq "pointer-events: none; cursor: not-allowed; opacity: 0.3;"
         expect(link).to have_tooltip(text: "Affiliates with Brazilian Stripe accounts are not supported.")
@@ -505,7 +505,7 @@ describe "Affiliates", type: :system, js: true do
 
       click_on "Save changes"
 
-      expect_alert_message("Changes saved!")
+      expect_alert_message("Affiliate updated successfully")
       # Show the most recently updated affiliate as the first row
       expect(page).to have_table "Affiliates", with_rows: [
         { "Name" => affiliate_user.name, "Products" => "3 products", "Commission" => "10% - 15%" },
@@ -535,7 +535,7 @@ describe "Affiliates", type: :system, js: true do
 
       click_on "Save changes"
 
-      expect_alert_message("Changes saved!")
+      expect_alert_message("Affiliate updated successfully")
       expect(page).to have_current_path(affiliates_path)
       expect(page).to have_button("Previous", disabled: true)
       expect(page).to have_button("Next")
@@ -554,7 +554,7 @@ describe "Affiliates", type: :system, js: true do
       check "Enable all products"
 
       click_on "Save changes"
-      expect_alert_message("Changes saved!")
+      expect_alert_message("Affiliate updated successfully")
       expect(page).to have_table_row({ "Name" => affiliate_user.name, "Products" => "2 products", "Commission" => "15%" })
 
       expect(direct_affiliate.reload.apply_to_all_products).to be true

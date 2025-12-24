@@ -111,7 +111,16 @@ export default function AffiliatesNew() {
       return;
     }
 
-    post(Routes.affiliates_path());
+    post(Routes.affiliates_path(), {
+      onError: (errors: Record<string, string | string[]>) => {
+        const message = errors.base
+          ? Array.isArray(errors.base)
+            ? errors.base[0]
+            : errors.base
+          : "Failed to add affiliate";
+        if (message) showAlert(message, "error");
+      },
+    });
   };
 
   return (

@@ -114,7 +114,16 @@ export default function AffiliatesEdit() {
       return;
     }
 
-    patch(Routes.affiliate_path(props.affiliate.id));
+    patch(Routes.affiliate_path(props.affiliate.id), {
+      onError: (errors: Record<string, string | string[]>) => {
+        const message = errors.base
+          ? Array.isArray(errors.base)
+            ? errors.base[0]
+            : errors.base
+          : "Failed to update affiliate";
+        if (message) showAlert(message, "error");
+      },
+    });
   };
 
   return (

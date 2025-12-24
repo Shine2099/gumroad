@@ -122,6 +122,7 @@ export const AffiliateForm = ({
                 checked={product.enabled}
                 onChange={(e) => onUpdateProduct(product.id, { enabled: e.target.checked })}
                 disabled={processing}
+                aria-label="Enable product"
               />
             </TableCell>
             <TableCell>{product.name}</TableCell>

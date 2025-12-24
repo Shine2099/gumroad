@@ -25,7 +25,11 @@ export const NavigationButtonInertia = React.forwardRef<HTMLAnchorElement, Navig
         )}
         ref={ref}
         inert={disabled}
-        href={props.href ?? ""}
+        {...props}
+        style={{
+          ...props.style,
+          ...(disabled ? { pointerEvents: "none", cursor: "not-allowed", opacity: 0.3 } : {}),
+        }}
       >
         {children}
       </Link>
