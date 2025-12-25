@@ -2,19 +2,19 @@ import { useForm } from "@inertiajs/react";
 import cx from "classnames";
 import * as React from "react";
 
+import type { CollaboratorFormProduct, CollaboratorFormData } from "$app/data/collaborators";
 import { isValidEmail } from "$app/utils/email";
 
 import { Button } from "$app/components/Button";
 import { Layout } from "$app/components/Collaborators/Layout";
 import { Icon } from "$app/components/Icons";
 import { Modal } from "$app/components/Modal";
-import { NumberInput } from "$app/components/NumberInput";
 import { NavigationButtonInertia } from "$app/components/NavigationButton";
+import { NumberInput } from "$app/components/NumberInput";
 import { showAlert } from "$app/components/server-components/Alert";
 import { Pill } from "$app/components/ui/Pill";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "$app/components/ui/Table";
 import { WithTooltip } from "$app/components/WithTooltip";
-import type { CollaboratorFormProduct, CollaboratorFormData } from "$app/data/collaborators";
 
 const DEFAULT_PERCENT_COMMISSION = 50;
 const MIN_PERCENT_COMMISSION = 1;
@@ -58,7 +58,14 @@ const CollaboratorForm = ({ formData }: { formData: CollaboratorFormData }) => {
     return !product.has_another_collaborator && product.published;
   };
 
-  const { data, setData, post, patch, processing, errors, setError, transform } = useForm({
+  const { data, setData, post, patch, processing, errors, setError, transform } = useForm<{
+    email: string;
+    apply_to_all_products: boolean;
+    percent_commission: number | null;
+    dont_show_as_co_creator: boolean;
+    products: CollaboratorProduct[];
+    default_commission_has_error: boolean;
+  }>({
     email: isEditing ? formData.email : "",
     apply_to_all_products: initialApplyToAllProducts,
     percent_commission: initialDefaultPercentCommission,
@@ -68,7 +75,9 @@ const CollaboratorForm = ({ formData }: { formData: CollaboratorFormData }) => {
         ? {
             ...product,
             percent_commission: product.percent_commission || initialDefaultPercentCommission,
-            dont_show_as_co_creator: initialApplyToAllProducts ? initialDontShowAsCoCreator : product.dont_show_as_co_creator,
+            dont_show_as_co_creator: initialApplyToAllProducts
+              ? initialDontShowAsCoCreator
+              : product.dont_show_as_co_creator,
             has_error: false,
           }
         : {
@@ -176,7 +185,10 @@ const CollaboratorForm = ({ formData }: { formData: CollaboratorFormData }) => {
         showAlert(isEditing ? "Changes saved!" : "Collaborator added!", "success");
       },
       onError: (errs: any) => {
-        showAlert(errs.base?.[0] || (isEditing ? "Failed to update collaborator" : "Failed to add collaborator"), "error");
+        showAlert(
+          errs.base?.[0] || (isEditing ? "Failed to update collaborator" : "Failed to add collaborator"),
+          "error",
+        );
       },
     };
 
