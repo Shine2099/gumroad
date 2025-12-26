@@ -103,7 +103,7 @@ export const ShareSection = ({
       <div className="grid grid-cols-[1fr_auto] gap-2">
         <ComboBox
           input={(props) => (
-            <div {...props} className="input" aria-label="Add to wishlist">
+            <div {...props} className={`input ${isOpen ? "!rounded-b-none" : ""}`} aria-label="Add to wishlist">
               <span className="fake-input text-singleline">
                 {saveState.type === "success"
                   ? saveState.wishlist.name
@@ -133,7 +133,7 @@ export const ShareSection = ({
             ) : isCreatingNew ? (
               <form
                 role={props.role}
-                className="grid grid-cols-[1fr_auto] gap-2 p-2"
+                className="flex gap-2 p-2"
                 onSubmit={(e) => {
                   e.preventDefault();
                   if (!newWishlistName.trim()) {
@@ -157,8 +157,8 @@ export const ShareSection = ({
                   className="input"
                   aria-label="Wishlist name"
                 />
-                <Button type="submit" aria-label="Create wishlist" className="whitespace-nowrap">
-                  Create
+                <Button type="submit" aria-label="Create wishlist" color="primary">
+                  <Icon name="outline-check" />
                 </Button>
               </form>
             ) : (
