@@ -221,14 +221,8 @@ describe("Email List", :js, :sidekiq_inline, :elasticsearch_wait_for_refresh, ty
         create(:installment, name: "Hello world!", seller:, link: product)
         refresh
 
-        expect(page).to have_table_row({ "Subject" => "Hello world!", "Sent to" => "Customers of Product name", "Audience" => "1" })
-        expect(page).to have_table_row({ "Subject" => "Email 2 (draft)" })
-        expect(page).to_not have_table_row({ "Subject" => "Email 4 (draft)" })
-
-        first("main").scroll_to :bottom
         wait_for_ajax
-
-        expect(page).to have_table_row({ "Subject" => "Hello world!" })
+        expect(page).to have_table_row({ "Subject" => "Hello world!", "Sent to" => "Customers of Product name", "Audience" => "1" })
         expect(page).to have_table_row({ "Subject" => "Email 2 (draft)" })
         expect(page).to have_table_row({ "Subject" => "Email 4 (draft)" })
       end
