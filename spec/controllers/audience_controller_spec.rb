@@ -46,6 +46,8 @@ describe AudienceController, inertia: true do
       get :index
 
       expect(response).to be_successful
+      expect_inertia.to render_component("Audience/Index")
+      expect(inertia.props[:total_follower_count]).to eq(0)
       expect(inertia.props[:audience_data]).to be_nil
     end
 
@@ -87,5 +89,4 @@ describe AudienceController, inertia: true do
       end
     end
   end
-
 end
