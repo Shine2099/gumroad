@@ -14,7 +14,6 @@ import { ExportSubscribersPopover } from "$app/components/Followers/ExportSubscr
 import { Icon } from "$app/components/Icons";
 import { LoadingSpinner } from "$app/components/LoadingSpinner";
 import { Popover } from "$app/components/Popover";
-import { showAlert } from "$app/components/server-components/Alert";
 import Placeholder from "$app/components/ui/Placeholder";
 import { WithTooltip } from "$app/components/WithTooltip";
 
@@ -48,7 +47,6 @@ export default function AudiencePage() {
       data: { start_time: startTime, end_time: endTime },
       onStart: () => setIsLoading(true),
       onFinish: () => setIsLoading(false),
-      onError: () => showAlert("Sorry, something went wrong. Please try again.", "error"),
     });
   }, [startTime, endTime, hasContent]);
 
