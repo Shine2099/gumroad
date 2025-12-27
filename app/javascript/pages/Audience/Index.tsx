@@ -2,7 +2,7 @@ import { router, usePage } from "@inertiajs/react";
 import { lightFormat } from "date-fns";
 import * as React from "react";
 
-import { AudienceDataByDate } from "$app/data/audience";
+import { type AudienceDataByDate } from "$app/data/audience";
 
 import { AnalyticsLayout } from "$app/components/Analytics/AnalyticsLayout";
 import { useAnalyticsDateRange } from "$app/components/Analytics/useAnalyticsDateRange";
