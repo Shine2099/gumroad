@@ -3,6 +3,7 @@ import React from "react";
 
 import DateTimeWithRelativeTooltip from "$app/components/Admin/DateTimeWithRelativeTooltip";
 import type { User, UserMembership } from "$app/components/Admin/Users/User";
+import { Stack, StackItem } from "$app/components/ui/Stack";
 
 type MembershipsProps = {
   user: User;
@@ -10,11 +11,12 @@ type MembershipsProps = {
 
 type MembershipProps = {
   membership: UserMembership;
+  className?: string;
 };
 
-const Membership = ({ membership }: MembershipProps) => (
-  <div>
-    <div className="flex items-center gap-4">
+const Membership = ({ membership, className }: MembershipProps) => (
+  <div className={className}>
+    <div className={`flex items-center gap-4 ${className ? "grow" : ""}`}>
       <img src={membership.seller.avatar_url} className="user-avatar" alt={membership.seller.display_name_or_email} />
       <div className="grid">
         <h5>
@@ -46,11 +48,13 @@ const Memberships = ({ user: { admin_manageable_user_memberships } }: Membership
         <summary>
           <h3>User memberships</h3>
         </summary>
-        <div className="stack">
+        <Stack>
           {admin_manageable_user_memberships.map((membership) => (
-            <Membership key={membership.id} membership={membership} />
+            <StackItem key={membership.id} asChild>
+              <Membership membership={membership} />
+            </StackItem>
           ))}
-        </div>
+        </Stack>
       </details>
     </>
   );

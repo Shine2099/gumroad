@@ -3,6 +3,7 @@ import React from "react";
 import { Button } from "$app/components/Button";
 import { LoadingSpinner } from "$app/components/LoadingSpinner";
 import { Alert } from "$app/components/ui/Alert";
+import { Stack, StackItem } from "$app/components/ui/Stack";
 
 import AdminProductPurchase, { ProductPurchase } from "./Purchase";
 
@@ -28,11 +29,13 @@ const AdminProductPurchasesContent = ({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="stack">
+      <Stack>
         {purchases.map((purchase) => (
-          <AdminProductPurchase key={purchase.external_id} purchase={purchase} />
+          <StackItem key={purchase.external_id} asChild>
+            <AdminProductPurchase purchase={purchase} />
+          </StackItem>
         ))}
-      </div>
+      </Stack>
 
       {isLoading ? <LoadingSpinner /> : null}
 

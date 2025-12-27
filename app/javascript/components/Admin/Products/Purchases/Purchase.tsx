@@ -15,6 +15,7 @@ export type ProductPurchase = {
   error_code: string | null;
   purchase_state: string;
   gumroad_responsible_for_tax: boolean;
+  className?: string;
 };
 
 const AdminProductPurchase = ({
@@ -32,12 +33,13 @@ const AdminProductPurchase = ({
     is_chargeback_reversed,
     email,
     created,
+    className,
   },
 }: {
   purchase: ProductPurchase;
 }) => (
-  <div>
-    <div>
+  <div className={className}>
+    <div className={className ? "grow" : ""}>
       <h5>
         <a href={Routes.admin_purchase_path(external_id)}>{displayed_price}</a>
         {gumroad_responsible_for_tax ? ` + ${formatted_gumroad_tax_amount} VAT` : null}

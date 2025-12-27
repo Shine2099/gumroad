@@ -43,11 +43,11 @@ type StackItemProps = React.PropsWithChildren<{
 
 export const StackItem = React.forwardRef<HTMLDivElement, StackItemProps>(
   ({ className, asChild, details, children, ...rest }, ref) => {
-    const Component = asChild ? Slot : "div";
     const baseClasses =
       "flex flex-wrap items-center p-4 gap-4 justify-between not-first:border-t not-first:border-border ";
 
     const detailsClasses = details ? "block" : "";
+    const Component = asChild ? Slot : "div";
 
     return (
       <Component ref={ref} className={classNames(baseClasses, detailsClasses, className)} {...rest}>

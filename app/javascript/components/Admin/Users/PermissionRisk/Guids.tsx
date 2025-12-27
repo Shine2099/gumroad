@@ -6,17 +6,19 @@ import { request } from "$app/utils/request";
 
 import { LoadingSpinner } from "$app/components/LoadingSpinner";
 import { Alert } from "$app/components/ui/Alert";
+import { Stack, StackItem } from "$app/components/ui/Stack";
 
 type UserGuids = { guid: string; user_ids: number[] }[];
 
 type GuidProps = {
   guid: string;
   user_ids: number[];
+  className?: string;
 };
 
-const Guid = ({ guid, user_ids }: GuidProps) => (
-  <div>
-    <h5>
+const Guid = ({ guid, user_ids, className }: GuidProps) => (
+  <div className={className}>
+    <h5 className={className ? "grow font-bold" : ""}>
       <Link href={Routes.admin_guid_path(guid)}>{guid}</Link>
     </h5>
     <span>{user_ids.length} users</span>
@@ -27,11 +29,13 @@ const UserGuidsContent = ({ userGuids, isLoading }: { userGuids: UserGuids; isLo
   if (isLoading) return <LoadingSpinner />;
   if (userGuids.length > 0)
     return (
-      <div className="stack">
+      <Stack>
         {userGuids.map(({ guid, user_ids }) => (
-          <Guid key={guid} guid={guid} user_ids={user_ids} />
+          <StackItem key={guid} asChild>
+            <Guid guid={guid} user_ids={user_ids} />
+          </StackItem>
         ))}
-      </div>
+      </Stack>
     );
   return (
     <Alert role="status" variant="info">
