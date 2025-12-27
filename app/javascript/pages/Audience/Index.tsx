@@ -1,5 +1,6 @@
 import { router, usePage } from "@inertiajs/react";
 import { lightFormat } from "date-fns";
+import { cast } from "ts-safe-cast";
 import * as React from "react";
 
 import { type AudienceDataByDate } from "$app/data/audience";
@@ -25,7 +26,7 @@ type AudienceProps = {
 };
 
 export default function AudiencePage() {
-  const { total_follower_count, audience_data } = usePage<AudienceProps>().props;
+  const { total_follower_count, audience_data } = cast<AudienceProps>(usePage().props);
   const dateRange = useAnalyticsDateRange();
   const startTime = lightFormat(dateRange.from, "yyyy-MM-dd");
   const endTime = lightFormat(dateRange.to, "yyyy-MM-dd");
