@@ -186,7 +186,7 @@ class Api::Internal::Helper::PurchasesController < Api::Internal::Helper::BaseCo
           schema: {
             type: "object",
             properties: {
-              query: { type: "string", description: "Order ID to search for" },
+              query: { type: "string", description: "Search by order ID, card fingerprint, or IP address" },
               email: { type: "string", description: "Email address of the customer/buyer" },
               creator_email: { type: "string", description: "Email address of the creator/seller" },
               license_key: { type: "string", description: "Product license key (4 groups of alphanumeric characters separated by dashes)" },
