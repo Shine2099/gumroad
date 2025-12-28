@@ -47,8 +47,6 @@ describe "Product page wishlist selector", js: true, type: :system do
 
       find(:list_box_option, "New wishlist").click
       expect(find_field("Wishlist name").value).to eq("")
-
-      find(:combo_box, "Add to wishlist").click
       expect(page).to have_combo_box("Add to wishlist", with_disabled_options: ["Wishlist 1", "Wishlist 2"])
     end
 
