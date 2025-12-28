@@ -50,7 +50,7 @@ describe AdminSearchService do
 
       it "can use email and query together to find specific purchase" do
         purchase = create(:purchase, email: "customer@example.com")
-        other_purchase = create(:purchase, email: "other@example.com")
+        create(:purchase, email: "other@example.com")
 
         purchases = AdminSearchService.new.search_purchases(query: purchase.external_id, email: "customer@example.com")
         expect(purchases).to eq([purchase])
