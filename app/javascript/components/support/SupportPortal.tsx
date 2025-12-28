@@ -18,7 +18,7 @@ export default function SupportPortal() {
     const url = new URL(location.href);
     if (!isNewTicketOpen && url.searchParams.get("new_ticket")) {
       url.searchParams.delete("new_ticket");
-      router.get(url.toString(), { replace: true, preserveState: true, preserveScroll: true });
+      router.get(url.toString(), {}, { viewTransition: true });
     }
   }, [isNewTicketOpen]);
 
@@ -30,7 +30,7 @@ export default function SupportPortal() {
       url.searchParams.delete("id");
     }
     if (url.toString() !== window.location.href) {
-      router.get(url.toString(), { preserveState: true, preserveScroll: true });
+      router.get(url.toString(), {}, { viewTransition: true });
     }
   }, [selectedConversationSlug]);
 
