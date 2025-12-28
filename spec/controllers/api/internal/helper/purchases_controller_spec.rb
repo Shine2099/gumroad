@@ -371,6 +371,23 @@ describe Api::Internal::Helper::PurchasesController, :vcr do
         expect(response.parsed_body).to eq({ success: true, message: "Purchase found", purchase: purchase_json }.as_json)
       end
     end
+
+    context "when searching by query parameter" do
+      it "returns purchase data when searching by order ID (external_id) via query param" do
+        purchase = create(:purchase)
+        purchase_json = purchase.slice(:email, :link_name, :price_cents, :purchase_state, :created_at)
+        purchase_json[:id] = purchase.external_id_numeric
+        purchase_json[:seller_email] = purchase.seller_email
+        purchase_json[:receipt_url] = receipt_purchase_url(purchase.external_id, host: UrlService.domain_with_protocol, email: purchase.email)
+        purchase_json[:refund_status] = nil
+
+        params = { query: purchase.external_id, timestamp: Time.now.to_i }
+        post :search, params: params
+
+        expect(response).to have_http_status(:success)
+        expect(response.parsed_body).to eq({ success: true, message: "Purchase found", purchase: purchase_json }.as_json)
+      end
+    end
   end
 
   describe "POST auto_refund_purchase" do
