@@ -214,7 +214,6 @@ export const EmailForm = ({ context, installment }: EmailFormProps) => {
   // Use browser APIs for URL params
   const searchParams = new URLSearchParams(window.location.search);
   const currentPathname = window.location.pathname;
-  // Use Inertia's usePage to track URL changes for preview functionality
   const pageUrl = usePage().url;
 
   React.useEffect(() => {
@@ -604,12 +603,7 @@ export const EmailForm = ({ context, installment }: EmailFormProps) => {
 
   const save = asyncVoid(async (action: SaveAction = "save") => {
     await Promise.resolve();
-    if (!validate(action)) {
-      // Reset isSaving if validation fails after countdown completed
-      setIsSaving(false);
-      setSecondsLeftToPublish(0);
-      return;
-    }
+    if (!validate(action)) return;
 
     const payload = {
       installment: {
