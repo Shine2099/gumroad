@@ -20,6 +20,7 @@ describe AudienceController, inertia: true do
       expect(response).to be_successful
       expect_inertia.to render_component("Audience/Index")
       expect(inertia.props[:total_follower_count]).to eq(0)
+      expect(inertia.props[:audience_data]).to be_nil
     end
 
     it "renders Inertia component with correct follower count" do
@@ -30,16 +31,7 @@ describe AudienceController, inertia: true do
       expect(response).to be_successful
       expect_inertia.to render_component("Audience/Index")
       expect(inertia.props[:total_follower_count]).to eq(1)
-    end
-
-    it "renders Inertia component with audience_data when followers exist" do
-      follower = create(:active_follower, user: seller)
-      follower.reload
-
-      get :index
-
-      expect(response).to be_successful
-      expect(inertia.props[:total_follower_count]).to eq(1)
+      expect(inertia.props[:audience_data]).to be_present
     end
 
     context "with date range parameters" do
@@ -55,7 +47,7 @@ describe AudienceController, inertia: true do
       end
 
       it "returns audience_data with expected structure", :sidekiq_inline, :elasticsearch_wait_for_refresh do
-        get :index, params: { start_time: Time.utc(2021, 1, 1), end_time: Time.utc(2021, 1, 3) }
+        get :index, params: { from: Time.utc(2021, 1, 1), to: Time.utc(2021, 1, 3) }
 
         expect(response).to be_successful
         expect(inertia.props[:audience_data]).to eq(
@@ -81,20 +73,14 @@ describe AudienceController, inertia: true do
         start_time = Time.utc(2024, 4, 1).strftime(mask)
         end_time = Time.utc(2024, 4, 30).strftime(mask)
 
-        get :index, params: { start_time: start_time, end_time: end_time }
+        get :index, params: { from: start_time, to: end_time }
 
         expect(response).to be_successful
-        expect(inertia.props[:audience_data]).to be_present
+        expect(inertia.props[:audience_data]).to include(
+          start_date: "Apr  1, 2024",
+          end_date: "Apr 30, 2024",
+        )
       end
-    end
-
-    it "renders Inertia component with nil audience_data when no followers" do
-      get :index
-
-      expect(response).to be_successful
-      expect_inertia.to render_component("Audience/Index")
-      expect(inertia.props[:total_follower_count]).to eq(0)
-      expect(inertia.props[:audience_data]).to be_nil
     end
 
     it "sets the last viewed dashboard cookie" do
