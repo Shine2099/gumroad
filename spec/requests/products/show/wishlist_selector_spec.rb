@@ -15,8 +15,9 @@ describe "Product page wishlist selector", js: true, type: :system do
     find(:combo_box, "Add to wishlist").click
     find(:list_box_option, "New wishlist").click
     fill_in "Wishlist name", with: name
-    click_button "Create"
+    click_button "Create wishlist"
     expect(page).to have_combo_box("Add to wishlist", text: name)
+    expect(page).to have_alert(text: "Wishlist created")
   end
 
   context "when not logged in" do
@@ -42,6 +43,12 @@ describe "Product page wishlist selector", js: true, type: :system do
       expect(user.wishlists.last).to have_attributes(name: "Wishlist 2", products: [product])
 
       find(:combo_box, "Add to wishlist").click
+      expect(page).not_to have_field("Wishlist name")
+
+      find(:list_box_option, "New wishlist").click
+      expect(find_field("Wishlist name").value).to eq("")
+
+      find(:combo_box, "Add to wishlist").click
       expect(page).to have_combo_box("Add to wishlist", with_disabled_options: ["Wishlist 1", "Wishlist 2"])
     end
 
@@ -50,7 +57,7 @@ describe "Product page wishlist selector", js: true, type: :system do
 
       find(:combo_box, "Add to wishlist").click
       find(:list_box_option, "New wishlist").click
-      click_button "Create"
+      click_button "Create wishlist"
 
       expect(page).to have_alert(text: "Please enter a wishlist name")
       expect(user.wishlists.count).to eq(0)
@@ -165,19 +172,6 @@ describe "Product page wishlist selector", js: true, type: :system do
 
         expect(user.wishlists.last.wishlist_products.sole).to have_attributes(product:, rent: true)
       end
-    end
-
-    it "resets form state after creating a wishlist" do
-      visit product.long_url
-
-      create_new_wishlist("First Wishlist")
-      expect(page).to have_alert(text: "Wishlist created")
-
-      find(:combo_box, "Add to wishlist").click
-      expect(page).not_to have_field("Wishlist name")
-
-      find(:list_box_option, "New wishlist").click
-      expect(find_field("Wishlist name").value).to eq("")
     end
   end
 end
