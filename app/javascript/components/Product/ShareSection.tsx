@@ -39,10 +39,6 @@ export const ShareSection = ({
     { state: "closed" } | { state: "open" } | { state: "creating"; newWishlistName: string }
   >({ state: "closed" });
 
-  const closeDropdown = () => {
-    setDropdownState({ state: "closed" });
-  };
-
   const isSelectionInWishlist = (wishlist: WishlistForProduct) =>
     wishlist.selections_in_wishlist.some(
       ({ variant_id, recurrence, rent, quantity }) =>
@@ -54,7 +50,7 @@ export const ShareSection = ({
 
   const addProduct = async (resolveWishlist: Promise<SuccessState>) => {
     setSaveState({ type: "saving" });
-    closeDropdown();
+    setDropdownState({ state: "closed" });
 
     try {
       const { newlyCreated, wishlist } = await resolveWishlist;
@@ -186,7 +182,7 @@ export const ShareSection = ({
             if (open) {
               setDropdownState({ state: "open" });
             } else {
-              closeDropdown();
+              setDropdownState({ state: "closed" });
             }
           }}
         />
