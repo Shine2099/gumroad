@@ -18,19 +18,20 @@ export default function SupportPortal() {
     const url = new URL(location.href);
     if (!isNewTicketOpen && url.searchParams.get("new_ticket")) {
       url.searchParams.delete("new_ticket");
-      router.get(url.toString(), {}, { viewTransition: true });
+      router.replace({ url: url.toString() });
     }
   }, [isNewTicketOpen]);
 
   useEffect(() => {
     const url = new URL(location.href);
     if (selectedConversationSlug) {
+      url.searchParams.delete("new_ticket");
       url.searchParams.set("id", selectedConversationSlug);
     } else {
       url.searchParams.delete("id");
     }
     if (url.toString() !== window.location.href) {
-      router.get(url.toString(), {}, { viewTransition: true });
+      router.get(url.toString());
     }
   }, [selectedConversationSlug]);
 
