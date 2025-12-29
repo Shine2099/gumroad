@@ -348,7 +348,7 @@ describe("Email Editing Flow", :js, :elasticsearch_wait_for_refresh, type: :syst
       expect(page).to have_button("Schedule", disabled: true)
       click_on "Publish now"
     end
-    expect(page).to have_alert(text: "Email successfully published!")
+    expect(page).to have_alert(text: "Email successfully sent!")
 
     published_installment.reload
     expect(published_installment.published_at).to be_within(5.second).of(DateTime.current)
