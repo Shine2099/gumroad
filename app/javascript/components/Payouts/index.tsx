@@ -793,7 +793,7 @@ const Payouts = ({
               footer={
                 <>
                   <Button onClick={() => setIsInstantPayoutModalOpen(false)}>Cancel</Button>
-                  <Button color="primary" disabled={isLoading} onClick={() => void onRequestInstantPayout()}>
+                  <Button color="primary" disabled={isLoading} onClick={() => onRequestInstantPayout()}>
                     Get paid!
                   </Button>
                 </>
