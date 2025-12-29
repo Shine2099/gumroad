@@ -26,11 +26,12 @@ export default function SupportPortal() {
     const url = new URL(location.href);
     if (selectedConversationSlug) {
       url.searchParams.set("id", selectedConversationSlug);
+      url.searchParams.delete("new_ticket");
     } else {
       url.searchParams.delete("id");
     }
     if (url.toString() !== window.location.href) {
-      router.push({ url: url.toString(), preserveScroll: true, preserveState: true });
+      router.push({ url: url.toString(), preserveScroll: true });
     }
   }, [selectedConversationSlug]);
 
