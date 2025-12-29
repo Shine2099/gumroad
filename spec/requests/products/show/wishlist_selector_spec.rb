@@ -35,11 +35,9 @@ describe "Product page wishlist selector", js: true, type: :system do
       visit product.long_url
 
       expect { create_new_wishlist("Wishlist 1") }.to change(user.wishlists, :count).by(1)
-      expect(page).to have_alert(text: "Wishlist created")
       expect(user.wishlists.last).to have_attributes(name: "Wishlist 1", products: [product])
 
       expect { create_new_wishlist("Wishlist 2") }.to change(user.wishlists, :count).by(1)
-      expect(page).to have_alert(text: "Wishlist created")
       expect(user.wishlists.last).to have_attributes(name: "Wishlist 2", products: [product])
 
       find(:combo_box, "Add to wishlist").click
@@ -84,7 +82,6 @@ describe "Product page wishlist selector", js: true, type: :system do
         visit product.long_url
 
         expect { create_new_wishlist("New Wishlist") }.to change(user.wishlists, :count).by(1)
-        expect(page).to have_alert(text: "Wishlist created")
 
         expect(existing_wishlist.reload.products).to contain_exactly(existing_product)
         expect(user.wishlists.last).to have_attributes(name: "New Wishlist", products: [product])

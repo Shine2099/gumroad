@@ -85,11 +85,9 @@ export const ShareSection = ({
     }
   };
 
-  const newWishlist = async () => {
-    if (dropdownState.state !== "creating") {
-      throw new Error("Cannot create wishlist when not in creating state");
-    }
-    const { wishlist } = await createWishlist(dropdownState.newWishlistName);
+  const newWishlist = async (): Promise<SuccessState> => {
+    const name = dropdownState.state === "creating" ? dropdownState.newWishlistName : "";
+    const { wishlist } = await createWishlist(name);
     setWishlists([...wishlists, { ...wishlist, selections_in_wishlist: [] }]);
     return { newlyCreated: true, wishlist };
   };
@@ -147,7 +145,7 @@ export const ShareSection = ({
                   type="text"
                   autoFocus
                   placeholder="Wishlist name"
-                  value={dropdownState.state === "creating" ? dropdownState.newWishlistName : ""}
+                  value={dropdownState.newWishlistName}
                   onChange={(e) => setDropdownState({ state: "creating", newWishlistName: e.target.value })}
                   className="input"
                   aria-label="Wishlist name"
