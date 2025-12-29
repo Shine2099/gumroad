@@ -7,8 +7,6 @@ require "shared_examples/authentication_required"
 require "inertia_rails/rspec"
 
 describe Collaborators::MainController, inertia: true do
-  render_views
-
   it "inherits from Collaborators::BaseController" do
     expect(controller.class.ancestors.include?(Collaborators::BaseController)).to eq(true)
   end

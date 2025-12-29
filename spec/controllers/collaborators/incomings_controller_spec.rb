@@ -6,8 +6,6 @@ require "shared_examples/authentication_required"
 require "inertia_rails/rspec"
 
 describe Collaborators::IncomingsController, inertia: true do
-  render_views
-
   it "inherits from Collaborators::BaseController" do
     expect(controller.class.ancestors.include?(Collaborators::BaseController)).to eq(true)
   end
@@ -16,20 +14,6 @@ describe Collaborators::IncomingsController, inertia: true do
   let!(:seller2) { create(:user) }
   let!(:seller3) { create(:user) }
   let!(:invited_user) { create(:user) }
-  let!(:seller1_product) { create(:product, user: seller1) }
-  let!(:seller2_product) { create(:product, user: seller2) }
-
-  let!(:pending_collaboration) do
-    create(
-      :collaborator,
-      :with_pending_invitation,
-      seller: seller1,
-      affiliate_user: invited_user,
-    )
-  end
-  let!(:pending_collaboration_product) do
-    create(:product_affiliate, affiliate: pending_collaboration, product: seller1_product)
-  end
 
   let!(:accepted_collaboration) do
     create(
@@ -38,23 +22,40 @@ describe Collaborators::IncomingsController, inertia: true do
       affiliate_user: invited_user
     )
   end
-  let!(:accepted_collaboration_product) do
-    create(:product_affiliate, affiliate: accepted_collaboration, product: seller2_product)
-  end
-
-  let!(:other_seller_pending_collaboration) do
-    create(
-      :collaborator,
-      :with_pending_invitation,
-      seller: seller1,
-      affiliate_user: seller2
-    )
-  end
 
   let!(:collaborator) { create(:collaborator, seller: seller3, affiliate_user: invited_user) }
   let!(:invitation) { create(:collaborator_invitation, collaborator: collaborator) }
 
   describe "GET index" do
+    let!(:seller1_product) { create(:product, user: seller1) }
+    let!(:seller2_product) { create(:product, user: seller2) }
+
+    let!(:pending_collaboration) do
+      create(
+        :collaborator,
+        :with_pending_invitation,
+        seller: seller1,
+        affiliate_user: invited_user,
+      )
+    end
+    let!(:pending_collaboration_product) do
+      create(:product_affiliate, affiliate: pending_collaboration, product: seller1_product)
+    end
+
+
+    let!(:accepted_collaboration_product) do
+      create(:product_affiliate, affiliate: accepted_collaboration, product: seller2_product)
+    end
+
+    let!(:other_seller_pending_collaboration) do
+      create(
+        :collaborator,
+        :with_pending_invitation,
+        seller: seller1,
+        affiliate_user: seller2
+      )
+    end
+
     before { sign_in invited_user }
 
     it_behaves_like "authentication required for action", :get, :index
