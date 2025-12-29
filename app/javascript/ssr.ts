@@ -30,7 +30,6 @@ import AudiencePage from "$app/components/server-components/AudiencePage";
 import BundleEditPage from "$app/components/server-components/BundleEditPage";
 import CheckoutPage from "$app/components/server-components/CheckoutPage";
 import CommunitiesPage from "$app/components/server-components/CommunitiesPage";
-import CountrySelectionModal from "$app/components/server-components/CountrySelectionModal";
 import CustomersDownloadPopover from "$app/components/server-components/CustomersPage/DownloadPopover";
 import CustomersFilterPopover from "$app/components/server-components/CustomersPage/FilterPopover";
 import DeveloperWidgetsPage from "$app/components/server-components/Developer/WidgetsPage";
@@ -47,7 +46,6 @@ import GumroadBlogPostPage from "$app/components/server-components/GumroadBlog/P
 import HelpCenterArticlesIndexPage from "$app/components/server-components/HelpCenter/ArticlesIndexPage";
 import LoginPage from "$app/components/server-components/LoginPage";
 import Nav from "$app/components/server-components/Nav";
-import PayoutCreditCard from "$app/components/server-components/PayoutPage/CreditCard";
 import PdfReaderPage from "$app/components/server-components/PdfReaderPage";
 import ProductPage from "$app/components/server-components/Product";
 import ProductIframePage from "$app/components/server-components/Product/IframePage";
@@ -56,7 +54,6 @@ import Profile from "$app/components/server-components/Profile";
 import ProfileCoffeePage from "$app/components/server-components/Profile/CoffeePage";
 import ProfilePostPage from "$app/components/server-components/Profile/PostPage";
 import ProfileProductPage from "$app/components/server-components/Profile/ProductPage";
-import ProfileSettingsPage from "$app/components/server-components/Profile/SettingsPage";
 import ProfileWishlistPage from "$app/components/server-components/Profile/WishlistPage";
 import PublicChargePage from "$app/components/server-components/Public/ChargePage";
 import PublicLicenseKeyPage from "$app/components/server-components/Public/LicenseKeyPage";
@@ -65,14 +62,6 @@ import PurchaseProductPage from "$app/components/server-components/Purchase/Prod
 import SubscribeReviewReminders from "$app/components/server-components/ReviewReminders/SubscribeReviewReminders";
 import UnsubscribeReviewReminders from "$app/components/server-components/ReviewReminders/UnsubscribeReviewReminders";
 import SecureRedirectPage from "$app/components/server-components/SecureRedirectPage";
-import AdvancedSettingsPage from "$app/components/server-components/Settings/AdvancedPage";
-import ApplicationEditPage from "$app/components/server-components/Settings/AdvancedPage/EditApplicationPage";
-import AuthorizedApplicationsSettingsPage from "$app/components/server-components/Settings/AuthorizedApplicationsPage";
-import MainSettingsPage from "$app/components/server-components/Settings/MainPage";
-import PasswordSettingsPage from "$app/components/server-components/Settings/PasswordPage";
-import PaymentsSettingsPage from "$app/components/server-components/Settings/PaymentsPage";
-import TeamSettingsPage from "$app/components/server-components/Settings/TeamPage";
-import ThirdPartyAnalyticsSettingsPage from "$app/components/server-components/Settings/ThirdPartyAnalyticsPage";
 import SignupPage from "$app/components/server-components/SignupPage";
 import SubscribePage from "$app/components/server-components/SubscribePage";
 import SubscribePreview from "$app/components/server-components/SubscribePreview";
@@ -106,21 +95,17 @@ ReactOnRails.register({
   AdminSuspendForTosForm,
   AdminUserGuids,
   AdminUserStats,
-  AdvancedSettingsPage,
   AffiliateRequestPage,
   AffiliatesPage,
   Alert,
   AdminAddCreditForm,
-  ApplicationEditPage,
   HelpCenterArticlesIndexPage,
   SupportHeader,
   AudiencePage,
-  AuthorizedApplicationsSettingsPage,
   BundleEditPage,
   CheckoutPage,
   CodeSnippet,
   CommunitiesPage,
-  CountrySelectionModal,
   CustomersDownloadPopover,
   CustomersFilterPopover,
   DeveloperWidgetsPage,
@@ -136,11 +121,7 @@ ReactOnRails.register({
   GumroadBlogIndexPage,
   GumroadBlogPostPage,
   LoginPage,
-  MainSettingsPage,
   Nav,
-  PasswordSettingsPage,
-  PaymentsSettingsPage,
-  PayoutCreditCard,
   PdfReaderPage,
   Pill,
   ProductEditPage,
@@ -151,7 +132,6 @@ ReactOnRails.register({
   ProfileCoffeePage,
   ProfilePostPage,
   ProfileProductPage,
-  ProfileSettingsPage,
   ProfileWishlistPage,
   PublicChargePage,
   PublicLicenseKeyPage,
@@ -164,8 +144,6 @@ ReactOnRails.register({
   SubscriptionManager,
   SubscriptionManagerMagicLink,
   TaxesCollectionModal,
-  TeamSettingsPage,
-  ThirdPartyAnalyticsSettingsPage,
   VideoStreamPlayer,
   WishlistPage,
   UtmLinksPage,
