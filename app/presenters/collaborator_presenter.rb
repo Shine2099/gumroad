@@ -39,7 +39,7 @@ class CollaboratorPresenter
           id: product_affiliate.product.external_id,
           url: product_affiliate.product.long_url,
           name: product_affiliate.product.name,
-          affiliate_percentage: product_affiliate.affiliate_percentage || DEFAULT_PERCENT_COMMISSION,
+          affiliate_percentage: product_affiliate.affiliate_percentage || collaborator.affiliate_percentage,
           dont_show_as_co_creator: product_affiliate.dont_show_as_co_creator,
         }
       end,

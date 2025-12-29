@@ -6,7 +6,7 @@ export type IncomingCollaborator = {
   seller_name: string;
   seller_avatar_url: string;
   apply_to_all_products: boolean;
-  affiliate_percentage: number;
+  affiliate_percentage: number | null;
   dont_show_as_co_creator: boolean;
   invitation_accepted: boolean;
   products: {

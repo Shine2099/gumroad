@@ -120,7 +120,7 @@ describe CollaboratorPresenter do
                                                   id: product.external_id,
                                                   url: product.long_url,
                                                   name: product.name,
-                                                  affiliate_percentage: CollaboratorPresenter::DEFAULT_PERCENT_COMMISSION,
+                                                  affiliate_percentage: collaborator.affiliate_percentage,
                                                   dont_show_as_co_creator: product_affiliate.dont_show_as_co_creator,
                                                 },
                                               ])

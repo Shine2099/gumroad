@@ -14,35 +14,31 @@ export const formatProductNames = (collaborator: Collaborator | IncomingCollabor
   return count === 1 ? "1 product" : `${count.toLocaleString()} products`;
 };
 
-const getProductCommission = (
+export const getProductCommission = (
   product: Collaborator["products"][number] | IncomingCollaborator["products"][number],
-): number | null => {
+): number => {
   if ("percent_commission" in product) {
     return product.percent_commission;
   }
   return product.affiliate_percentage;
 };
 
-const getDefaultCommission = (collaborator: Collaborator | IncomingCollaborator): number | null => {
+const getDefaultCommission = (collaborator: Collaborator | IncomingCollaborator): number => {
   if ("percent_commission" in collaborator) {
-    return collaborator.percent_commission;
+    return collaborator.percent_commission ?? 0;
   }
-  return collaborator.affiliate_percentage;
+  return collaborator.affiliate_percentage ?? 0;
 };
 
 export const formatCommission = (collaborator: Collaborator | IncomingCollaborator) => {
   const products = collaborator.products;
 
   if (products.length > 0) {
-    const sortedCommissions = products
-      .map((product) => getProductCommission(product))
-      .filter((val): val is number => val !== null)
-      .sort((a, b) => a - b);
+    const sortedCommissions = products.map((product) => getProductCommission(product)).sort((a, b) => a - b);
     const commissions = [...new Set(sortedCommissions)]; // remove duplicates
 
     if (commissions.length === 0) {
-      const defaultCommission = getDefaultCommission(collaborator);
-      return defaultCommission !== null ? formatAsPercent(defaultCommission) : "";
+      return formatAsPercent(getDefaultCommission(collaborator));
     } else if (commissions.length === 1 && commissions[0] !== undefined) {
       return formatAsPercent(commissions[0]);
     } else if (commissions.length > 1) {
@@ -54,6 +50,5 @@ export const formatCommission = (collaborator: Collaborator | IncomingCollaborat
     }
   }
 
-  const defaultCommission = getDefaultCommission(collaborator);
-  return defaultCommission !== null ? formatAsPercent(defaultCommission) : "";
+  return formatAsPercent(getDefaultCommission(collaborator));
 };
