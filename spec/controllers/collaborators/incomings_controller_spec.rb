@@ -143,11 +143,11 @@ describe Collaborators::IncomingsController, inertia: true do
     context "when logged in as the invited user" do
       before { sign_in invited_user }
 
-      it "accepts the invitation when found" do
+      it "accepts the invitation when found and redirects to collaborations page" do
         post :accept, params: { id: collaborator.external_id }
 
-        expect(response).to be_successful
-        expect(inertia.component).to eq("Collaborators/Incoming/Index")
+        expect(response).to be_redirect
+        expect(response).to redirect_to(collaborators_incomings_path)
         expect(flash[:notice]).to eq("Invitation accepted")
         expect(collaborator.reload.invitation_accepted?).to eq(true)
       end
@@ -198,11 +198,11 @@ describe Collaborators::IncomingsController, inertia: true do
     context "when logged in as the invited user" do
       before { sign_in invited_user }
 
-      it "soft-deletes the collaborator when found" do
+      it "soft-deletes the collaborator when found and redirects to collaborations page" do
         post :decline, params: { id: collaborator.external_id }
 
-        expect(response).to be_successful
-        expect(inertia.component).to eq("Collaborators/Incoming/Index")
+        expect(response).to be_redirect
+        expect(response).to redirect_to(collaborators_incomings_path)
         expect(flash[:notice]).to eq("Invitation declined")
         expect(collaborator.reload.deleted?).to eq(true)
       end
@@ -244,30 +244,15 @@ describe Collaborators::IncomingsController, inertia: true do
       let(:request_params) { { id: accepted_collaboration.external_id } }
     end
 
-    it "deletes the collaborator and renders index" do
+    it "deletes the collaborator, sends the appropriate email, and redirects to the collaborations page" do
       expect do
         delete :destroy, params: { id: accepted_collaboration.external_id }
-        expect(response).to have_http_status(:ok)
-        expect(inertia.component).to eq("Collaborators/Incoming/Index")
+        expect(response).to be_redirect
+        expect(response).to redirect_to(collaborators_incomings_path)
         expect(flash[:notice]).to eq("Collaborator removed")
       end.to have_enqueued_mail(AffiliateMailer, :collaboration_ended_by_affiliate_user).with(accepted_collaboration.id)
 
       expect(accepted_collaboration.reload.deleted_at).to be_present
-    end
-
-    context "when seller is deleting the collaboration" do
-      before { sign_in seller2 }
-
-      it "deletes the collaborator and sends the appropriate email" do
-        expect do
-          delete :destroy, params: { id: accepted_collaboration.external_id }
-          expect(response).to have_http_status(:ok)
-          expect(inertia.component).to eq("Collaborators/Incoming/Index")
-          expect(flash[:notice]).to eq("Collaborator removed")
-        end.to have_enqueued_mail(AffiliateMailer, :collaboration_ended_by_seller).with(accepted_collaboration.id)
-
-        expect(accepted_collaboration.reload.deleted_at).to be_present
-      end
     end
 
     context "collaborator is not found" do

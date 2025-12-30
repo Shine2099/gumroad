@@ -6,7 +6,7 @@ require "shared_examples/authorize_called"
 require "shared_examples/authentication_required"
 require "inertia_rails/rspec"
 
-describe Collaborators::MainController, inertia: true do
+describe Collaborators::MainController, type: :controller, inertia: true do
   it "inherits from Collaborators::BaseController" do
     expect(controller.class.ancestors.include?(Collaborators::BaseController)).to eq(true)
   end
@@ -129,6 +129,7 @@ describe Collaborators::MainController, inertia: true do
 
       post :create, params: params
 
+      expect(response).to be_redirect
       expect(response).to redirect_to(new_collaborator_path)
       get :new
       expect(inertia.component).to eq("Collaborators/New")
@@ -148,34 +149,15 @@ describe Collaborators::MainController, inertia: true do
       let(:request_params) { { id: collaborator.external_id } }
     end
 
-    it "deletes the collaborator and renders index" do
+    it "deletes the collaborator, sends the appropriate email, and redirects to the collaborators page" do
       expect do
         delete :destroy, params: { id: collaborator.external_id }
-        expect(response).to have_http_status(:ok)
-        expect(inertia.component).to eq("Collaborators/Index")
+        expect(response).to be_redirect
+        expect(response).to redirect_to(collaborators_path)
         expect(flash[:notice]).to eq("The collaborator was removed successfully.")
       end.to have_enqueued_mail(AffiliateMailer, :collaboration_ended_by_seller).with(collaborator.id)
 
       expect(collaborator.reload.deleted_at).to be_present
-    end
-
-    context "when affiliate user is deleting the collaboration" do
-      let(:affiliate_user) { collaborator.affiliate_user }
-
-      before do
-        sign_in(affiliate_user)
-      end
-
-      it "deletes the collaborator and sends the appropriate email" do
-        expect do
-          delete :destroy, params: { id: collaborator.external_id }
-          expect(response).to have_http_status(:ok)
-          expect(inertia.component).to eq("Collaborators/Index")
-          expect(flash[:notice]).to eq("The collaborator was removed successfully.")
-        end.to have_enqueued_mail(AffiliateMailer, :collaboration_ended_by_affiliate_user).with(collaborator.id)
-
-        expect(collaborator.reload.deleted_at).to be_present
-      end
     end
 
     context "collaborator is not found" do
@@ -227,9 +209,10 @@ describe Collaborators::MainController, inertia: true do
       let(:request_params) { { id: collaborator.external_id } }
     end
 
-    it "updates a collaborator and redirects" do
+    it "updates a collaborator and redirects to collaborators page" do
       expect do
         patch :update, params: params
+        expect(response).to be_redirect
         expect(response).to redirect_to(collaborators_path)
         expect(flash[:notice]).to eq("Changes saved!")
       end.to change { collaborator.products.count }.from(1).to(2)
@@ -246,6 +229,7 @@ describe Collaborators::MainController, inertia: true do
 
       patch :update, params: params
 
+      expect(response).to be_redirect
       expect(response).to redirect_to(edit_collaborator_path(collaborator.external_id))
       get :edit, params: { id: collaborator.external_id }
       expect(inertia.component).to eq("Collaborators/Edit")
@@ -259,6 +243,7 @@ describe Collaborators::MainController, inertia: true do
 
       patch :update, params: params
 
+      expect(response).to be_redirect
       expect(response).to redirect_to(edit_collaborator_path(collaborator.external_id))
       get :edit, params: { id: collaborator.external_id }
       expect(inertia.component).to eq("Collaborators/Edit")

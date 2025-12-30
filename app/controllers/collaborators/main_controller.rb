@@ -39,8 +39,7 @@ class Collaborators::MainController < Collaborators::BaseController
 
   def destroy
     super do
-      flash[:notice] = "The collaborator was removed successfully."
-      render_index_props
+      redirect_to collaborators_path, status: :see_other, notice: "The collaborator was removed successfully."
     end
   end
 

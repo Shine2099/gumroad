@@ -6,7 +6,8 @@ class Collaborators::IncomingsController < Collaborators::BaseController
   before_action :set_invitation!, only: [:accept, :decline]
 
   def index
-    render_incomings_index_props
+    @title = "Collaborations"
+    render inertia: "Collaborators/Incoming/Index", props: IncomingCollaboratorsPresenter.new(seller: current_seller).index_props
   end
 
   def accept
@@ -14,8 +15,7 @@ class Collaborators::IncomingsController < Collaborators::BaseController
 
     @invitation.accept!
 
-    flash[:notice] = "Invitation accepted"
-    render_incomings_index_props
+    redirect_to collaborators_incomings_path, status: :see_other, notice: "Invitation accepted"
   end
 
   def decline
@@ -23,14 +23,12 @@ class Collaborators::IncomingsController < Collaborators::BaseController
 
     @invitation.decline!
 
-    flash[:notice] = "Invitation declined"
-    render_incomings_index_props
+    redirect_to collaborators_incomings_path, status: :see_other, notice: "Invitation declined"
   end
 
   def destroy
     super do
-      flash[:notice] = "Collaborator removed"
-      render_incomings_index_props
+      redirect_to collaborators_incomings_path, status: :see_other, notice: "Collaborator removed"
     end
   end
 
@@ -38,10 +36,5 @@ class Collaborators::IncomingsController < Collaborators::BaseController
     def set_invitation!
       raise ActiveRecord::RecordNotFound unless @collaborator.present?
       @invitation = @collaborator.collaborator_invitation || e404
-    end
-
-    def render_incomings_index_props
-      @title = "Collaborations"
-      render inertia: "Collaborators/Incoming/Index", props: IncomingCollaboratorsPresenter.new(seller: current_seller).index_props
     end
 end
