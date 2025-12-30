@@ -382,12 +382,14 @@ Rails.application.routes.draw do
         post :approve_all
       end
     end
-    resources :affiliates, only: [:index] do
+    resources :affiliates, only: [:index, :new, :edit, :create, :update, :destroy] do
       member do
         get :subscribe_posts
         get :unsubscribe_posts
+        get :statistics
       end
       collection do
+        get :onboarding
         get :export
       end
     end
@@ -402,7 +404,6 @@ Rails.application.routes.draw do
       end
     end
 
-    get "/affiliates/*other", to: "affiliates#index" # route handled by react-router
     get "/emails/*other", to: "emails#index" # route handled by react-router
     get "/dashboard/utm_links/*other", to: "utm_links#index" # route handled by react-router
     get "/communities/*other", to: "communities#index" # route handled by react-router
@@ -907,14 +908,6 @@ Rails.application.routes.draw do
     # React Router routes
     scope module: :api, defaults: { format: :json } do
       namespace :internal do
-        resources :affiliates, only: [:index, :show, :create, :update, :destroy] do
-          collection do
-            get :onboarding
-          end
-          get :statistics, on: :member
-        end
-
-
         resources :installments, only: [:index, :new, :edit, :create, :update, :destroy] do
           member do
             resource :audience_count, only: [:show], controller: "installments/audience_counts", as: :installment_audience_count
