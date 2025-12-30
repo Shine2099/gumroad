@@ -127,7 +127,7 @@ const AdminProductPurchasesContent = ({
               isSelected={selectedPurchaseExternalIds.includes(purchase.external_id)}
               onToggleSelection={togglePurchaseSelection}
             />
-           </StackItem>
+          </StackItem>
         ))}
       </Stack>
 
