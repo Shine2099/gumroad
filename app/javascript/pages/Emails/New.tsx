@@ -11,7 +11,5 @@ export default function EmailsNew() {
     usePage().props,
   );
 
-  return (
-    <EmailForm context={context} installment={installment} />
-  );
+  return <EmailForm context={context} installment={installment} />;
 }

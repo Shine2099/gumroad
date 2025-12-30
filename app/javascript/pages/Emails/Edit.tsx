@@ -9,7 +9,5 @@ import { EmailForm } from "$app/components/EmailsPage/EmailForm";
 export default function EmailsEdit() {
   const { installment, context } = cast<{ installment: Installment; context: InstallmentFormContext }>(usePage().props);
 
-  return (
-    <EmailForm context={context} installment={installment} />
-  );
+  return <EmailForm context={context} installment={installment} />;
 }
