@@ -180,8 +180,10 @@ const isJSONContent = (value: unknown): value is JSONContent =>
 const parseInitialValue = (value: string): string | JSONContent => {
   try {
     let parsed: unknown = JSON.parse(value);
-    if (typeof parsed === "string") {
-      parsed = JSON.parse(parsed);
+    if (typeof parsed === "string" && (parsed.trim().startsWith("{") || parsed.trim().startsWith("["))) {
+      try {
+        parsed = JSON.parse(parsed);
+      } catch {}
     }
     if (isJSONContent(parsed)) {
       return parsed;
@@ -273,7 +275,10 @@ export const EmailForm = ({ context, installment }: EmailFormProps) => {
   const [messageEditor, setMessageEditor] = React.useState<Editor | null>(null);
   React.useEffect(() => {
     if (form.data.installment.message !== "" && messageEditor?.isEmpty) {
-      queueMicrotask(() => messageEditor.commands.setContent(form.data.installment.message, true));
+      queueMicrotask(() => {
+        const parsed = parseInitialValue(form.data.installment.message);
+        messageEditor.commands.setContent(parsed, true);
+      });
     }
   }, [messageEditor]);
   const [scheduleDate, setScheduleDate] = React.useState<Date | null>(startOfHour(addHours(new Date(), 1)));
