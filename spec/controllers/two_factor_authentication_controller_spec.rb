@@ -138,7 +138,7 @@ describe TwoFactorAuthenticationController do
         expect(response).to redirect_to(controller.send(:login_path_for, @user))
       end
 
-      it_behaves_like "merge guest cart with user cart with redirect" do
+      it_behaves_like "merge guest cart with user cart" do
         let(:user) { @user }
         let(:call_action) { post :create, params: { token: user.otp_code, user_id: user.encrypted_external_id } }
         let(:expected_redirect_location) { controller.send(:login_path_for, user) }
