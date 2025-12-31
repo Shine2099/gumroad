@@ -489,9 +489,9 @@ const UtmFieldSelect = ({
       value={value ? (options.find((o) => o.id === value) ?? null) : null}
       onChange={(option) => onChange(option ? option.id : null)}
       inputValue={inputValue ?? ""}
-      onInputChange={(inputVal) =>
+      onInputChange={(value) =>
         setInputValue(
-          inputVal
+          value
             .toLocaleLowerCase()
             .replace(/[^a-z0-9-_]/gu, "-")
             .slice(0, MAX_UTM_PARAM_LENGTH),
