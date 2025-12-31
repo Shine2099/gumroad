@@ -15,7 +15,7 @@ class User::PasswordsController < Devise::PasswordsController
     user = User.alive.by_email(email).first if EmailFormatValidator.valid?(email)
 
     if user&.send_reset_password_instructions
-      redirect_back fallback_location: login_url, notice: "Password reset sent! Please make sure to check your spam folder."
+      redirect_to login_url, notice: "Password reset sent! Please make sure to check your spam folder."
     else
       redirect_back fallback_location: login_url, warning: "An account does not exist with that email."
     end

@@ -18,7 +18,6 @@ describe "Two-Factor Authentication", js: true, type: :system do
     fill_in "Password", with: user.password
     click_on "Login"
 
-    wait_for_ajax
   end
 
   it "redirects to two_factor_authentication_path on login" do
@@ -58,14 +57,12 @@ describe "Two-Factor Authentication", js: true, type: :system do
 
         # Clear the session by resetting the page/session, then login again
         # The 2FA cookie should still be present, so 2FA should be skipped
-        Capybara.reset_sessions!
+        click_on "Logout"
 
         visit login_path
         fill_in "Email", with: user.email
         fill_in "Password", with: user.password
         click_on "Login"
-
-        wait_for_ajax
 
         # It doesn't ask for 2FA again - goes directly to dashboard
         expect(page).to have_text("Dashboard")
@@ -80,8 +77,6 @@ describe "Two-Factor Authentication", js: true, type: :system do
 
         fill_in "Token", with: "abcd", fill_options: { clear: :backspace }
         click_on "Login"
-
-        wait_for_ajax
 
         expect(page).to have_content("Invalid token, please try again.")
       end
