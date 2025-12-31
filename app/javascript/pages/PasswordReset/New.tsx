@@ -18,7 +18,7 @@ function ForgotPasswordPage() {
   const uid = React.useId();
 
   const url = new URL(useOriginalLocation());
-  const next = url.searchParams.get("next");
+  const next = url.searchParams.get("next") || "dashboard";
 
   const form = useForm({
     user: {
