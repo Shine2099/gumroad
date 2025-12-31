@@ -8,7 +8,11 @@ type NavigationProps = {
 
 export const Navigation: React.FC<NavigationProps> = ({ resources }) => {
   return (
-    <div role="navigation" aria-label="API Reference">
+    <div
+      role="navigation"
+      aria-label="API Reference"
+      className="lg:sticky lg:top-8 lg:h-full lg:max-h-[calc(100vh-4rem)] lg:overflow-auto"
+    >
       <menu>
         <li>
           <a href="#api-intro">Introduction</a>
