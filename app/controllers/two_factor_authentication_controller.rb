@@ -1,19 +1,18 @@
 # frozen_string_literal: true
 
 class TwoFactorAuthenticationController < ApplicationController
-  include InertiaRendering
 
   before_action :redirect_to_signed_in_path, if: -> { user_signed_in? && skip_two_factor_authentication?(logged_in_user) }
   before_action :fetch_user
   before_action :check_presence_of_user, except: :verify
   before_action :redirect_to_login_path, only: :verify, if: -> { @user.blank? }
-  before_action :validate_user_id_from_params, except: :new
+  before_action :validate_user_id_from_params, except: :show
 
-  layout "inertia", only: [:new]
+  layout "inertia", only: [:show]
 
-  def new
+  def show
     @title = "Two-Factor Authentication"
-    render inertia: "TwoFactorAuthentication/New", props: {
+    render inertia: "TwoFactorAuthentication/Show", props: {
       user_id: @user.encrypted_external_id,
       email: @user.email,
       token: (User::DEFAULT_AUTH_TOKEN unless Rails.env.production?)
@@ -43,11 +42,9 @@ class TwoFactorAuthenticationController < ApplicationController
       if @user.token_authenticated?(token)
         sign_in_with_two_factor_authentication(@user)
 
-        flash[:notice] = "Successfully logged in!"
-
-        redirect_to login_path_for(@user), status: :see_other
+        redirect_to login_path_for(@user), status: :see_other, notice: "Successfully logged in!"
       else
-        redirect_to two_factor_authentication_path, warning: "Invalid token, please try again.", status: :see_other
+        redirect_to two_factor_authentication_path, warning: "Invalid token, please try again."
       end
     end
 
@@ -59,7 +56,7 @@ class TwoFactorAuthenticationController < ApplicationController
     end
 
     def redirect_to_signed_in_path
-      redirect_to login_path_for(logged_in_user)
+      redirect_to login_path_for(logged_in_user), status: :see_other
     end
 
     def fetch_user

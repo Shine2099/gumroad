@@ -314,20 +314,17 @@ Rails.application.routes.draw do
     post "/notion/unfurl" => "api/v2/notion_unfurl_urls#create"
     delete "/notion/unfurl" => "api/v2/notion_unfurl_urls#destroy"
 
-    # legacy routes
-    get "users/password/new" => redirect("/login")
-
     # /robots.txt
     get "/robots.:format" => "robots#index"
 
     # users (logins/signups and other goodies)
     devise_for(:users,
+               skip: [:passwords],
                controllers: {
                  sessions: "logins",
                  registrations: "signup",
                  confirmations: "confirmations",
                  omniauth_callbacks: "user/omniauth_callbacks",
-                 passwords: "user/passwords"
                })
 
     devise_scope :user do
@@ -341,7 +338,11 @@ Rails.application.routes.draw do
 
       post "login", to: "logins#create"
       get "logout", to: "logins#destroy" # TODO: change the method to DELETE to conform to REST
-      post "forgot_password", to: "user/passwords#create"
+      get "forgot_password", to: "user/passwords#new", as: :new_user_password
+      post "forgot_password", to: "user/passwords#create", as: :forgot_password
+      get "users/password/edit", to: "user/passwords#edit", as: :edit_user_password
+      patch "users/password", to: "user/passwords#update", as: :user_password
+      put "users/password", to: "user/passwords#update"
       scope "/users" do
         get "/check_twitter_link", to: "users/oauth#check_twitter_link"
         get "/unsubscribe/:id", to: "users#email_unsubscribe", as: :user_unsubscribe
@@ -537,9 +538,9 @@ Rails.application.routes.draw do
     end
 
     # Two-Factor Authentication
-    get "/two-factor", to: "two_factor_authentication#new", as: :two_factor_authentication
-    post "/two-factor", to: "two_factor_authentication#create", as: :two_factor
-    get "/two-factor/verify", to: "two_factor_authentication#verify", as: :verify_two_factor_authentication
+    resource :two_factor_authentication, path: "two-factor", controller: "two_factor_authentication", only: [:show, :create] do
+      get :verify
+    end
     post "/two-factor/resend_authentication_token", to: "two_factor_authentication#resend_authentication_token", as: :resend_authentication_token
 
     # library
