@@ -1,3 +1,5 @@
+import type React from "react";
+
 export type ApiParameter = {
   name: string;
   description?: string;
@@ -7,7 +9,7 @@ export type ApiParameter = {
 export type ApiMethod = {
   type: string;
   path: string;
-  description: string;
+  description: React.ReactNode;
   isOAuth?: boolean;
   parameters?: ApiParameter[];
   curlExample?: string;

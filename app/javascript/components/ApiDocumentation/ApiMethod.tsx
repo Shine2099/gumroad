@@ -20,7 +20,13 @@ export const ApiMethod: React.FC<ApiMethodProps> = ({ method }) => {
           <Pill color="primary">{method.type.toUpperCase()}</Pill>
           <span>{method.path}</span>
         </div>
-        <div className="space-y-4" dangerouslySetInnerHTML={{ __html: method.description }} />
+        <div className="space-y-4">
+          {typeof method.description === "string" ? (
+            <div dangerouslySetInnerHTML={{ __html: method.description }} />
+          ) : (
+            method.description
+          )}
+        </div>
         <CodeSnippet>{url}</CodeSnippet>
         {method.parameters && method.parameters.length > 0 ? (
           <div className="parameters">
