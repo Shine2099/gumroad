@@ -348,7 +348,11 @@ const UtmLinkActions = ({ link, onDelete }: { link: SavedUtmLink; onDelete: () =
             <Icon name="pencil" />
             &ensp;Edit
           </Link>
-          <Link href={Routes.new_dashboard_utm_link_path({ copy_from: link.id })} role="menuitem" style={{ textDecoration: "none" }}>
+          <Link
+            href={Routes.new_dashboard_utm_link_path({ copy_from: link.id })}
+            role="menuitem"
+            style={{ textDecoration: "none" }}
+          >
             <Icon name="outline-duplicate" />
             &ensp;Duplicate
           </Link>
