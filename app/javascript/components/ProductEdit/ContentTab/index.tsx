@@ -1047,7 +1047,7 @@ export const ContentTab = () => {
               headerActions={
                 product.variants.length > 0 ? (
                   <>
-                    <hr className="my-2 scale-x-200 border-border lg:hidden" />
+                    <hr className="relative left-1/2 my-2 w-screen max-w-none -translate-x-1/2 border-border lg:hidden" />
                     <ComboBox<Variant>
                       // TODO: Currently needed to get the icon on the selected option even though this is not multiple select. We should fix this in the design system
                       multiple
