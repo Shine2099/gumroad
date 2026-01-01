@@ -230,6 +230,7 @@ class LinksController < ApplicationController
       search_params[:section] = section
       search_params[:is_alive_on_profile] = true
       search_params[:user_id] = user.id
+      search_params[:size] ||= Product::Searchable::RECOMMENDED_PRODUCTS_ON_PROFILE_PAGE
       search_params[:sort] = section.default_product_sort if search_params[:sort].nil?
       search_params[:sort] = ProductSortKey::PAGE_LAYOUT if search_params[:sort] == "default"
       search_params[:ids]&.map! { ObfuscateIds.decrypt(_1) }

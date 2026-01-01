@@ -61,38 +61,37 @@ describe("Product panel on creator profile - infinite scroll pagination", type: 
       visit "/#{@creator.username}?sort=price_asc"
       wait_for_ajax
 
-      expect(page).to have_product_card(count: 9)
+      expect(page).to have_product_card(count: 12)
       expect(page).to have_product_card(@a)
       expect(page).to have_product_card(@c)
-      expect(page).to_not have_product_card(text: "product 7")
+      expect(page).to_not have_product_card(text: "product 10")
 
       first("main").scroll_to :bottom
       wait_for_ajax
 
-      expect(page).to have_product_card(count: 18)
-      expect(page).to have_text("1-18 of 38")
-      expect(page).to have_product_card(text: "product 7")
-      expect(page).to have_product_card(text: "product 8")
-      expect(page).to_not have_product_card(text: "product 13")
-
-      first("main").scroll_to :bottom
-      wait_for_ajax
-
-      expect(page).to have_product_card(count: 27)
-      expect(page).to have_text("1-27 of 38")
-      expect(page).to have_product_card(text: "product 13")
-      expect(page).to have_product_card(text: "product 14")
-      expect(page).to_not have_product_card(text: "product 20")
+      expect(page).to have_product_card(count: 24)
+      expect(page).to have_text("1-24 of 38")
+      expect(page).to have_product_card(text: "product 10")
+      expect(page).to have_product_card(text: "product 11")
+      expect(page).to_not have_product_card(text: "product 18")
 
       first("main").scroll_to :bottom
       wait_for_ajax
 
       expect(page).to have_product_card(count: 36)
       expect(page).to have_text("1-36 of 38")
-      expect(page).to have_product_card(text: "product 20")
-      expect(page).to have_product_card(text: "product 21")
+      expect(page).to have_product_card(text: "product 18")
+      expect(page).to have_product_card(text: "product 19")
       expect(page).to_not have_product_card(text: "product 27")
-      expect(page).to have_product_card(count: 36)
+
+      first("main").scroll_to :bottom
+      wait_for_ajax
+
+      expect(page).to have_product_card(count: 38)
+      expect(page).to have_text("1-38 of 38")
+      expect(page).to have_product_card(text: "product 27")
+      expect(page).to have_product_card(text: "product 28")
+      expect(page).to have_product_card(count: 38)
 
       first("main").scroll_to :bottom
       wait_for_ajax

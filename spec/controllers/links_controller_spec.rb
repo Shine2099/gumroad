@@ -4360,7 +4360,7 @@ describe LinksController, :vcr, inertia: true do
                                                "total" => 23,
                                                "filetypes_data" => [{ "doc_count" => 1, "key" => "pdf" }],
                                                "tags_data" => [{ "doc_count" => 1, "key" => "mustelid" }],
-                                               "products" => shown_products[0...9].map { product_json(_1, "profile") }
+                                               "products" => shown_products[0...12].map { product_json(_1, "profile") }
                                              })
         end
 

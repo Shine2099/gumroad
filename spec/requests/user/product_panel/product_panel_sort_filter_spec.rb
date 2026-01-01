@@ -186,7 +186,7 @@ describe("Product panel on creator profile - Sort/Filter", type: :system, js: tr
     login_as(create(:user))
     visit("/#{@creator.username}")
 
-    expect(page).to have_text("1-9 of 10 products")
+    expect(page).to have_text("1-10 of 10 products")
     expect(page).to_not have_button("Clear")
     toggle_disclosure "Sort by"
     expect(page).to have_checked_field("Highest rated")
@@ -206,7 +206,7 @@ describe("Product panel on creator profile - Sort/Filter", type: :system, js: tr
     click_on("Clear")
     wait_for_ajax
 
-    expect(page).to have_text("1-9 of 10 products")
+    expect(page).to have_text("1-10 of 10 products")
     expect(page).to_not have_button("Clear")
     expect(page).to have_checked_field("Highest rated")
   end
