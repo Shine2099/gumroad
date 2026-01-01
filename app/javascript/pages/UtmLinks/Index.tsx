@@ -1,8 +1,8 @@
 import { Link, router, usePage } from "@inertiajs/react";
-import { classNames } from "$app/utils/classNames";
 import * as React from "react";
 
 import { SavedUtmLink, SortKey, UtmLinkStats, UtmLinksStats } from "$app/types/utm_link";
+import { classNames } from "$app/utils/classNames";
 
 import { AnalyticsLayout } from "$app/components/Analytics/AnalyticsLayout";
 import { Button } from "$app/components/Button";
