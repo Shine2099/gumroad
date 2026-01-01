@@ -17,32 +17,25 @@ const ApiDocumentation: React.FC = () => {
       <main className="p-4 md:p-8">
         <div>
           <div className="grid grid-cols-1 items-start gap-x-16 gap-y-8 lg:grid-cols-[var(--grid-cols-sidebar)]">
-            {/* Navigation sidebar */}
             <Navigation resources={API_METHODS} />
-
-            {/* Main content */}
             <article style={{ display: "grid", gap: "var(--spacer-6)" }}>
               <Introduction />
               <Authentication />
               <Scopes />
               <Resources />
               <Errors />
-
-              {/* API Methods */}
               <div className="stack" id="api-methods">
                 <div>
                   <h2>API Methods</h2>
                 </div>
                 <div>
                   <p>
-                    Gumroad's OAuth 2.0 API lets you see information about your products, as well as you can add, edit, and
-                    delete offer codes, variants, and custom fields. Finally, you can see a user's public information and
-                    subscribe to be notified of their sales.
+                    Gumroad's OAuth 2.0 API lets you see information about your products, as well as you can add, edit,
+                    and delete offer codes, variants, and custom fields. Finally, you can see a user's public
+                    information and subscribe to be notified of their sales.
                   </p>
                 </div>
               </div>
-
-              {/* API Resources */}
               {API_METHODS.map((resource) => (
                 <ApiResource key={resource.name} resource={resource} />
               ))}
