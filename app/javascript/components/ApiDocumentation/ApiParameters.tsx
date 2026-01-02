@@ -20,11 +20,6 @@ type ApiParameterProps = {
 export const ApiParameter: React.FC<ApiParameterProps> = ({ name, children }) => (
   <>
     <strong>{name}</strong>
-    {children ? (
-      <>
-        <br />
-        {children}
-      </>
-    ) : null}
+    {children ? <> {children}</> : null}
   </>
 );
