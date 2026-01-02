@@ -12,9 +12,8 @@ describe "Collaborators", type: :system, js: true do
         it "displays a placeholder message" do
           visit collaborators_path
 
-          expect(page).to have_selector("h1", text: "Collaborators")
-          expect(page).to have_selector("h2", text: "No collaborators yet")
-          expect(page).to have_selector("h4", text: "Share your revenue with the people who helped create your products.")
+          expect(page).to have_text("No collaborators yet")
+          expect(page).to have_text("Share your revenue with the people who helped create your products.")
         end
       end
 
@@ -44,25 +43,25 @@ describe "Collaborators", type: :system, js: true do
 
           [
             {
-              "Name" => collaborator_one.affiliate_user.username,
+              "Name" => collaborator_one.affiliate_user.display_name(prefer_email_over_default_username: true),
               "Products" => "2 products",
               "Cut" => "35% - 50%",
               "Status" => "Accepted"
             },
             {
-              "Name" => collaborator_two.affiliate_user.username,
+              "Name" => collaborator_two.affiliate_user.display_name(prefer_email_over_default_username: true),
               "Products" => "None",
               "Cut" => "30%",
               "Status" => "Accepted"
             },
             {
-              "Name" => collaborator_three.affiliate_user.username,
+              "Name" => collaborator_three.affiliate_user.display_name(prefer_email_over_default_username: true),
               "Products" => product_three.name,
               "Cut" => "30%",
               "Status" => "Accepted"
             },
             {
-              "Name" => collaborator_four.affiliate_user.username,
+              "Name" => collaborator_four.affiliate_user.display_name(prefer_email_over_default_username: true),
               "Products" => "2 products",
               "Cut" => "30%",
               "Status" => "Pending"
@@ -80,8 +79,8 @@ describe "Collaborators", type: :system, js: true do
 
           visit collaborators_path
 
-          find(:table_row, { "Name" => collaborator_one.affiliate_user.username, "Products" => "2 products", "Cut" => "35% - 50%" }).click
-          within_modal collaborator_one.affiliate_user.name do
+          find(:table_row, { "Name" => collaborator_one.affiliate_user.display_name(prefer_email_over_default_username: true), "Products" => "2 products", "Cut" => "35% - 50%" }).click
+          within_modal collaborator_one.affiliate_user.display_name(prefer_email_over_default_username: true) do
             expect(page).to have_text(collaborator_one.affiliate_user.email)
             expect(page).to have_text(product_one.name)
             expect(page).to have_text(product_two.name)
@@ -92,8 +91,8 @@ describe "Collaborators", type: :system, js: true do
             expect(page).not_to have_text("Collaborators won't receive their cut until they set up a payout account in their Gumroad settings.")
           end
 
-          find(:table_row, { "Name" => collaborator_two.affiliate_user.username, "Products" => "None", "Cut" => "30%" }).click
-          within_modal collaborator_two.affiliate_user.name do
+          find(:table_row, { "Name" => collaborator_two.affiliate_user.display_name(prefer_email_over_default_username: true), "Products" => "None", "Cut" => "30%" }).click
+          within_modal collaborator_two.affiliate_user.display_name(prefer_email_over_default_username: true) do
             expect(page).to have_text(collaborator_two.affiliate_user.email)
             expect(page).to have_link("Edit")
             expect(page).to have_button("Remove")
@@ -147,7 +146,7 @@ describe "Collaborators", type: :system, js: true do
 
         expect(page).to have_table_row(
           {
-            "Name" => collaborator.affiliate_user.username,
+            "Name" => collaborator.affiliate_user.display_name(prefer_email_over_default_username: true),
             "Products" => "3 products",
             "Cut" => "50%",
             "Status" => "Pending"
@@ -227,7 +226,7 @@ describe "Collaborators", type: :system, js: true do
         end
         click_on "Add collaborator"
         within find(:table_row, { "Product" => "All products" }) do
-          # expect(find("fieldset.danger")).to have_field("Percentage")
+          expect(find("fieldset.danger")).to have_field("Percentage")
         end
         expect(page).to have_content("Collaborator cut must be 50% or less")
 
@@ -239,7 +238,7 @@ describe "Collaborators", type: :system, js: true do
         end
         click_on "Add collaborator"
         within find(:table_row, { "Product" => product1.name }) do
-          # expect(find("fieldset.danger")).to have_field("Percentage")
+          expect(find("fieldset.danger")).to have_field("Percentage")
         end
         expect(page).to have_content("Collaborator cut must be 50% or less")
         within find(:table_row, { "Product" => product1.name }) do
@@ -249,7 +248,7 @@ describe "Collaborators", type: :system, js: true do
         end
         click_on "Add collaborator"
         within find(:table_row, { "Product" => product1.name }) do
-          # expect(find("fieldset.danger")).to have_field("Percentage")
+          expect(find("fieldset.danger")).to have_field("Percentage")
         end
         expect(page).to have_content("Collaborator cut must be 50% or less")
 
@@ -260,7 +259,7 @@ describe "Collaborators", type: :system, js: true do
         end
         click_on "Add collaborator"
         within find(:table_row, { "Product" => "All products" }) do
-          # expect(find("fieldset.danger")).to have_field("Percentage")
+          expect(find("fieldset.danger")).to have_field("Percentage")
         end
         expect(page).to have_content("Collaborator cut must be 50% or less")
 
@@ -274,7 +273,7 @@ describe "Collaborators", type: :system, js: true do
         click_on "Add collaborator"
         within find(:table_row, { "Product" => product1.name }) do
           expect(page).to have_field("Percentage", placeholder: "50") # shows the default value as a placeholder
-          # expect(find("fieldset.danger")).to have_field("Percentage")
+          expect(find("fieldset.danger")).to have_field("Percentage")
         end
         expect(page).to have_content("Collaborator cut must be 50% or less")
       end
@@ -327,12 +326,12 @@ describe "Collaborators", type: :system, js: true do
         expect(collaborator.products).to match_array [product2, product3, product5]
 
         visit collaborators_path
-        within :table_row, { "Name" => collaborator.affiliate_user.display_name } do
+        within :table_row, { "Name" => collaborator.affiliate_user.display_name(prefer_email_over_default_username: true) } do
           click_on "Edit"
         end
 
         # Wait for edit page to load
-        expect(page).to have_text(collaborator.affiliate_user.display_name, wait: 10)
+        expect(page).to have_text(collaborator.affiliate_user.display_name(prefer_email_over_default_username: true), wait: 10)
 
         # Check the checkbox to see unpublished products (this state is not persisted)
         check "Show unpublished and ineligible products"
@@ -413,23 +412,23 @@ describe "Collaborators", type: :system, js: true do
       create(:product_affiliate, affiliate: collaborators.first, product:)
 
       visit collaborators_path
-      within find(:table_row, { "Name" => collaborators.first.affiliate_user.username }) do
+      within find(:table_row, { "Name" => collaborators.first.affiliate_user.display_name(prefer_email_over_default_username: true) }) do
         click_on "Delete"
       end
       expect(page).to have_alert(text: "Collaborator removed!")
       expect(collaborators.first.reload.deleted_at).to be_present
       expect(product.reload.is_collab).to eq false
-      expect(page).to_not have_table_row({ "Name" => collaborators.first.affiliate_user.username })
+      expect(page).to_not have_table_row({ "Name" => collaborators.first.affiliate_user.display_name(prefer_email_over_default_username: true) })
       expect(page).to have_no_alert
 
-      find(:table_row, { "Name" => collaborators.second.affiliate_user.username }).click
-      within_modal collaborators.second.affiliate_user.username do
+      find(:table_row, { "Name" => collaborators.second.affiliate_user.display_name(prefer_email_over_default_username: true) }).click
+      within_modal collaborators.second.affiliate_user.display_name(prefer_email_over_default_username: true) do
         click_on "Remove"
       end
-      expect(page).to have_no_modal(collaborators.second.affiliate_user.username)
+      expect(page).to have_no_modal(collaborators.second.affiliate_user.display_name(prefer_email_over_default_username: true))
       expect(page).to have_alert(text: "Collaborator removed!")
       expect(collaborators.second.reload.deleted_at).to be_present
-      expect(page).to_not have_table_row({ "Name" => collaborators.second.affiliate_user.username })
+      expect(page).to_not have_table_row({ "Name" => collaborators.second.affiliate_user.display_name(prefer_email_over_default_username: true) })
     end
 
     context "editing a collaborator" do
@@ -447,11 +446,11 @@ describe "Collaborators", type: :system, js: true do
       it "allows editing a collaborator" do
         expect do
           visit collaborators_path
-          within :table_row, { "Name" => collaborator.affiliate_user.display_name } do
+          within :table_row, { "Name" => collaborator.affiliate_user.display_name(prefer_email_over_default_username: true) } do
             click_on "Edit"
           end
 
-          expect(page).to have_text(collaborator.affiliate_user.display_name, wait: 10)
+          expect(page).to have_text(collaborator.affiliate_user.display_name(prefer_email_over_default_username: true), wait: 10)
 
           # edit default commission
           within find(:table_row, { "Product" => "All products" }) do
