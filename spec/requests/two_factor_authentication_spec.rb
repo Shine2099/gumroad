@@ -48,8 +48,8 @@ describe "Two-Factor Authentication", js: true, type: :system do
 
         fill_in_profile
 
-        first("nav[aria-label='Main'] details summary").click
-        click_on "Logout"
+        visit logout_path
+
         login_to_app
 
         # It doesn't ask for 2FA again

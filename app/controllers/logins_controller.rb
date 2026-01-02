@@ -12,7 +12,11 @@ class LoginsController < Devise::SessionsController
   layout "inertia", only: [:new]
 
   def new
-    return redirect_to login_path(next: request.referrer) if params[:next].blank? && request_referrer_is_a_valid_after_login_path?
+    if params[:next].blank? && request_referrer_is_a_valid_after_login_path?
+      uri = URI.parse(request.referrer)
+      next_path = uri.host ? uri.request_uri : request.referrer
+      return redirect_to login_path(next: next_path)
+    end
 
     @title = "Log In"
     auth_presenter = AuthPresenter.new(params:, application: @application)
@@ -49,6 +53,12 @@ class LoginsController < Devise::SessionsController
       end
 
       redirect_to login_path_for(@user), allow_other_host: true
+    end
+  end
+
+  def destroy
+    super do
+      return redirect_to login_path, notice: "Signed out successfully.", status: :see_other
     end
   end
 
