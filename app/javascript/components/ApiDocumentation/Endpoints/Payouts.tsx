@@ -96,14 +96,22 @@ export const GetPayout: React.FC = () => (
     description="Retrieves the details of a specific payout by this user. Available with the 'view_payouts' scope."
   >
     <CodeSnippet caption="cURL example">
-      {`curl https://api.gumroad.com/v2/payouts/payout_id \\
+      {`curl https://api.gumroad.com/v2/payouts/fEGTaEpuKDsnDvf_MfecTA== \\
   -d "access_token=ACCESS_TOKEN" \\
   -X GET`}
     </CodeSnippet>
     <CodeSnippet caption="Example response:">
       {`{
   "success": true,
-  "payout": {...}
+  "payout": {
+    "id": "fEGTaEpuKDsnDvf_MfecTA==",
+    "amount": "150.00",
+    "currency": "USD",
+    "status": "completed",
+    "created_at": "2021-01-05T19:38:56Z",
+    "processed_at": "2021-01-06T10:15:30Z",
+    "payment_processor": "stripe"
+  }
 }`}
     </CodeSnippet>
   </ApiEndpoint>
