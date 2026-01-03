@@ -11,8 +11,8 @@ import { useDomains, useDiscoverUrl } from "$app/components/DomainSettings";
 import { Icon } from "$app/components/Icons";
 import { LoadingSpinner } from "$app/components/LoadingSpinner";
 import { Alert } from "$app/components/ui/Alert";
+import { Card, CardContent } from "$app/components/ui/Card";
 import { Pill } from "$app/components/ui/Pill";
-import { Stack, StackItem } from "$app/components/ui/Stack";
 
 const DiscoverLinkSection = ({
   globalAffiliateId,
@@ -232,8 +232,8 @@ const ProductEligibilitySection = ({
       </fieldset>
       {result.isLoading ? <LoadingSpinner /> : null}
       {result.product ? (
-        <Stack>
-          <StackItem>
+        <Card>
+          <CardContent>
             <a href={result.product.short_url} target="_blank" rel="noreferrer" className="grow">
               {result.product.name}
             </a>
@@ -244,8 +244,8 @@ const ProductEligibilitySection = ({
                 Copy link
               </Button>
             </CopyToClipboard>
-          </StackItem>
-        </Stack>
+          </CardContent>
+        </Card>
       ) : null}
       {result.error ? <Alert variant={result.error.type}>{result.error.message}</Alert> : null}
     </section>

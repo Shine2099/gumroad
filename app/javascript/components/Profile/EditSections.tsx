@@ -33,8 +33,8 @@ import { RichTextEditorToolbar, useImageUploadSettings, useRichTextEditor } from
 import { Select } from "$app/components/Select";
 import { showAlert } from "$app/components/server-components/Alert";
 import { TypeSafeOptionSelect } from "$app/components/TypeSafeOptionSelect";
+import { Card, CardContent } from "$app/components/ui/Card";
 import { Row, RowActions, RowContent, RowDragHandle, Rows } from "$app/components/ui/Rows";
-import { Stack, StackItem } from "$app/components/ui/Stack";
 import { useOnChange } from "$app/components/useOnChange";
 import { useRefToLatest } from "$app/components/useRefToLatest";
 
@@ -180,22 +180,22 @@ export const EditorMenu = ({
           {activeSubmenu}
         </div>
       ) : (
-        <Stack style={{ width: "300px" }}>
+        <Card style={{ width: "300px" }}>
           {items.map((item, key) =>
             isSubmenu(item) ? (
-              <StackItem asChild key={key}>
+              <CardContent asChild key={key}>
                 <button onClick={() => setMenuState(key)}>
                   <h5 className="grow font-bold">{item.props.heading}</h5>
                   <div>
                     {item.props.text} <Icon name="outline-cheveron-right" />
                   </div>
                 </button>
-              </StackItem>
+              </CardContent>
             ) : (
               item
             ),
           )}
-        </Stack>
+        </Card>
       )}
     </Popover>
   );
@@ -281,18 +281,18 @@ export const SectionLayout = ({
             </label>
           </EditorSubmenu>
           {menuItems}
-          <StackItem asChild>
+          <CardContent asChild>
             <button onClick={copyLink}>
               <h5 className="grow font-bold">{linkCopied ? "Copied!" : "Copy link"}</h5>
               <Icon name="link" />
             </button>
-          </StackItem>
-          <StackItem asChild>
+          </CardContent>
+          <CardContent asChild>
             <button onClick={() => void remove()} style={{ color: "rgb(var(--danger))" }}>
               <h5 className="grow font-bold">Remove</h5>
               <Icon name="trash2" />
             </button>
-          </StackItem>
+          </CardContent>
         </EditorMenu>
         <button
           aria-label="Move section up"

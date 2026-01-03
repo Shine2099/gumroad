@@ -22,10 +22,10 @@ import { Thumbnail } from "$app/components/Product/Thumbnail";
 import { Select } from "$app/components/Select";
 import { showAlert } from "$app/components/server-components/Alert";
 import { Alert } from "$app/components/ui/Alert";
+import { Card as UICard, CardContent } from "$app/components/ui/Card";
 import { Placeholder, PlaceholderImage } from "$app/components/ui/Placeholder";
 import { ProductCard, ProductCardFigure, ProductCardHeader, ProductCardFooter } from "$app/components/ui/ProductCard";
 import { ProductCardGrid } from "$app/components/ui/ProductCardGrid";
-import { Stack, StackItem } from "$app/components/ui/Stack";
 import { useAddThirdPartyAnalytics } from "$app/components/useAddThirdPartyAnalytics";
 import { useGlobalEventListener } from "$app/components/useGlobalEventListener";
 import { useIsAboveBreakpoint } from "$app/components/useIsAboveBreakpoint";
@@ -397,8 +397,8 @@ export default function LibraryPage() {
           )}
         >
           {shouldShowFilter ? (
-            <Stack className="overflow-y-auto lg:sticky lg:inset-y-4 lg:max-h-[calc(100vh-2rem)]" aria-label="Filters">
-              <StackItem asChild>
+            <UICard className="overflow-y-auto lg:sticky lg:inset-y-4 lg:max-h-[calc(100vh-2rem)]" aria-label="Filters">
+              <CardContent asChild>
                 <header>
                   <div className="grow">
                     {filteredResults.length
@@ -411,10 +411,10 @@ export default function LibraryPage() {
                     </button>
                   )}
                 </header>
-              </StackItem>
+              </CardContent>
               {isDesktop || mobileFiltersExpanded ? (
                 <>
-                  <StackItem>
+                  <CardContent>
                     <div className="input input-wrapper product-search__wrapper grow">
                       <Icon name="solid-search" />
                       <input
@@ -426,8 +426,8 @@ export default function LibraryPage() {
                         onKeyDown={handleSearchKeyDown}
                       />
                     </div>
-                  </StackItem>
-                  <StackItem className="sort">
+                  </CardContent>
+                  <CardContent className="sort">
                     <fieldset className="grow basis-0">
                       <legend>
                         <label className="filter-header" htmlFor={sortUid}>
@@ -448,9 +448,9 @@ export default function LibraryPage() {
                         <option value="purchase_date">Purchase Date</option>
                       </select>
                     </fieldset>
-                  </StackItem>
+                  </CardContent>
                   {bundles.length > 0 ? (
-                    <StackItem>
+                    <CardContent>
                       <fieldset className="grow basis-0">
                         <legend>
                           <label htmlFor={bundlesUid}>Bundles</label>
@@ -470,9 +470,9 @@ export default function LibraryPage() {
                           isClearable
                         />
                       </fieldset>
-                    </StackItem>
+                    </CardContent>
                   ) : null}
-                  <StackItem className="creator">
+                  <CardContent className="creator">
                     <fieldset role="group" className="grow basis-0">
                       <legend className="filter-header">Creator</legend>
                       <label>
@@ -513,9 +513,9 @@ export default function LibraryPage() {
                         ) : null}
                       </div>
                     </fieldset>
-                  </StackItem>
+                  </CardContent>
                   {archivedCount > 0 ? (
-                    <StackItem className="archived">
+                    <CardContent className="archived">
                       <fieldset role="group" className="grow basis-0">
                         <label className="filter-archived">
                           Show archived only
@@ -532,11 +532,11 @@ export default function LibraryPage() {
                           />
                         </label>
                       </fieldset>
-                    </StackItem>
+                    </CardContent>
                   ) : null}
                 </>
               ) : null}
-            </Stack>
+            </UICard>
           ) : null}
           <ProductCardGrid>
             {filteredResults.slice(0, resultsLimit).map((result) => (

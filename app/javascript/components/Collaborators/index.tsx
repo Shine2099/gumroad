@@ -32,9 +32,9 @@ import { Icon } from "$app/components/Icons";
 import { useLoggedInUser } from "$app/components/LoggedInUser";
 import { showAlert } from "$app/components/server-components/Alert";
 import { Alert } from "$app/components/ui/Alert";
+import { Card, CardContent } from "$app/components/ui/Card";
 import { Placeholder, PlaceholderImage } from "$app/components/ui/Placeholder";
 import { Sheet, SheetHeader } from "$app/components/ui/Sheet";
-import { Stack, StackItem } from "$app/components/ui/Stack";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "$app/components/ui/Table";
 import { WithTooltip } from "$app/components/WithTooltip";
 
@@ -95,32 +95,32 @@ const CollaboratorDetails = ({
         </Alert>
       ) : null}
 
-      <Stack asChild>
+      <Card asChild>
         <section>
-          <StackItem asChild>
+          <CardContent asChild>
             <h3>Email</h3>
-          </StackItem>
-          <StackItem>
+          </CardContent>
+          <CardContent>
             <span className="grow">{selectedCollaborator.email}</span>
-          </StackItem>
+          </CardContent>
         </section>
-      </Stack>
+      </Card>
 
-      <Stack asChild>
+      <Card asChild>
         <section>
-          <StackItem asChild>
+          <CardContent asChild>
             <h3>Products</h3>
-          </StackItem>
+          </CardContent>
           {selectedCollaborator.products.map((product) => (
-            <StackItem asChild key={product.id}>
+            <CardContent asChild key={product.id}>
               <section>
                 <div className="grow">{product.name}</div>
                 <div>{formatAsPercent(product.percent_commission || selectedCollaborator.percent_commission || 0)}</div>
               </section>
-            </StackItem>
+            </CardContent>
           ))}
         </section>
-      </Stack>
+      </Card>
 
       <section className="mt-auto flex gap-4">
         <Link

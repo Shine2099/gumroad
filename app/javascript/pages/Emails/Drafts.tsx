@@ -17,8 +17,8 @@ import {
   useAudienceCounts,
 } from "$app/components/EmailsPage/shared";
 import { useEmailSearch } from "$app/components/EmailsPage/useEmailSearch";
+import { Card, CardContent } from "$app/components/ui/Card";
 import { Sheet, SheetHeader } from "$app/components/ui/Sheet";
-import { Stack, StackItem } from "$app/components/ui/Stack";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "$app/components/ui/Table";
 import { useUserAgentInfo } from "$app/components/UserAgent";
 
@@ -97,16 +97,16 @@ export default function EmailsDrafts() {
             {selectedInstallment ? (
               <Sheet open onOpenChange={() => setSelectedInstallmentId(null)}>
                 <SheetHeader>{selectedInstallment.name}</SheetHeader>
-                <Stack>
-                  <StackItem>
+                <Card>
+                  <CardContent>
                     <h5 className="grow font-bold">Sent to</h5>
                     {selectedInstallment.recipient_description}
-                  </StackItem>
-                  <StackItem>
+                  </CardContent>
+                  <CardContent>
                     <h5 className="grow font-bold">Audience</h5>
                     {formatAudienceCount(audienceCounts, selectedInstallment.external_id)}
-                  </StackItem>
-                  <StackItem>
+                  </CardContent>
+                  <CardContent>
                     <h5 className="grow font-bold">Last edited</h5>
                     {new Date(selectedInstallment.updated_at).toLocaleString(userAgentInfo.locale, {
                       month: "short",
@@ -116,8 +116,8 @@ export default function EmailsDrafts() {
                       minute: "numeric",
                       timeZone: currentSeller.timeZone.name,
                     })}
-                  </StackItem>
-                </Stack>
+                  </CardContent>
+                </Card>
                 <EmailSheetActions
                   installment={selectedInstallment}
                   onDelete={() =>

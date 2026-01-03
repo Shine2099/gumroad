@@ -4,7 +4,7 @@ import { type Product } from "$app/components/Analytics";
 import { Button } from "$app/components/Button";
 import { Icon } from "$app/components/Icons";
 import { Popover } from "$app/components/Popover";
-import { Stack, StackItem } from "$app/components/ui/Stack";
+import { Card, CardContent } from "$app/components/ui/Card";
 
 export type ProductOption = Product & { selected: boolean };
 
@@ -23,8 +23,8 @@ export const ProductsPopover = ({
       </span>
     }
   >
-    <Stack>
-      <StackItem>
+    <Card>
+      <CardContent>
         <fieldset className="grow basis-0">
           <label>
             <input
@@ -57,8 +57,8 @@ export const ProductsPopover = ({
             </label>
           ))}
         </fieldset>
-      </StackItem>
-      <StackItem>
+      </CardContent>
+      <CardContent>
         <Button
           onClick={() =>
             setProducts((prevProducts) => prevProducts.map((product) => ({ ...product, selected: !product.selected })))
@@ -67,7 +67,7 @@ export const ProductsPopover = ({
         >
           Toggle selected
         </Button>
-      </StackItem>
-    </Stack>
+      </CardContent>
+    </Card>
   </Popover>
 );

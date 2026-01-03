@@ -19,10 +19,10 @@ import { Pagination, PaginationProps } from "$app/components/Pagination";
 import { Popover } from "$app/components/Popover";
 import { showAlert } from "$app/components/server-components/Alert";
 import { Skeleton } from "$app/components/Skeleton";
+import { Card, CardContent } from "$app/components/ui/Card";
 import { PageHeader } from "$app/components/ui/PageHeader";
 import { Placeholder, PlaceholderImage } from "$app/components/ui/Placeholder";
 import { Sheet, SheetHeader } from "$app/components/ui/Sheet";
-import { Stack, StackItem } from "$app/components/ui/Stack";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "$app/components/ui/Table";
 import { Tabs, Tab } from "$app/components/ui/Tabs";
 import { useDebouncedCallback } from "$app/components/useDebouncedCallback";
@@ -545,34 +545,34 @@ const AffiliateDetails = ({
         const productStatistics = statistics?.products[product.id];
 
         return (
-          <Stack asChild key={product.id}>
+          <Card asChild key={product.id}>
             <section>
-              <StackItem asChild>
+              <CardContent asChild>
                 <h3>{product.name}</h3>
-              </StackItem>
+              </CardContent>
               {statistics ? (
                 <>
-                  <StackItem>
+                  <CardContent>
                     <h5 className="grow font-bold">Revenue</h5>
                     {formattedSalesVolumeAmount(productStatistics?.volume_cents ?? 0)}
-                  </StackItem>
-                  <StackItem>
+                  </CardContent>
+                  <CardContent>
                     <h5 className="grow font-bold">Sales</h5>
                     {productStatistics?.sales_count ?? 0}
-                  </StackItem>
+                  </CardContent>
                 </>
               ) : null}
-              <StackItem>
+              <CardContent>
                 <h5 className="grow font-bold">Commission</h5>
                 {((product.fee_percent ?? 0) / 100).toLocaleString([], { style: "percent" })}
-              </StackItem>
-              <StackItem>
+              </CardContent>
+              <CardContent>
                 <CopyToClipboard tooltipPosition="bottom" copyTooltip="Copy link" text={product.referral_url}>
                   <Button>Copy link</Button>
                 </CopyToClipboard>
-              </StackItem>
+              </CardContent>
             </section>
-          </Stack>
+          </Card>
         );
       })}
       <section style={{ display: "grid", gap: "var(--spacer-4)", gridAutoFlow: "column", gridAutoColumns: "1fr" }}>

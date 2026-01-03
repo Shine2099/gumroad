@@ -6,7 +6,7 @@ import { request } from "$app/utils/request";
 import type { User } from "$app/components/Admin/Users/User";
 import { LoadingSpinner } from "$app/components/LoadingSpinner";
 import { Alert } from "$app/components/ui/Alert";
-import { Stack, StackItem } from "$app/components/ui/Stack";
+import { Card, CardContent } from "$app/components/ui/Card";
 
 type LatestPostsProps = {
   user: User;
@@ -30,13 +30,13 @@ const LatestPostsContent = ({ posts, isLoading }: { posts: PostProps[]; isLoadin
   if (isLoading) return <LoadingSpinner />;
   if (posts.length > 0)
     return (
-      <Stack>
+      <Card>
         {posts.map(({ id, name, created_at }) => (
-          <StackItem key={id}>
+          <CardContent key={id}>
             <Post id={id} name={name} created_at={created_at} />
-          </StackItem>
+          </CardContent>
         ))}
-      </Stack>
+      </Card>
     );
   return (
     <Alert role="status" variant="info">

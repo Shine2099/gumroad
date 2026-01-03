@@ -20,7 +20,7 @@ import { Select } from "$app/components/Select";
 import { showAlert } from "$app/components/server-components/Alert";
 import { Toggle } from "$app/components/Toggle";
 import { TypeSafeOptionSelect } from "$app/components/TypeSafeOptionSelect";
-import { Stack, StackItem } from "$app/components/ui/Stack";
+import { Card, CardContent } from "$app/components/ui/Card";
 
 export type SimpleProduct = { id: string; name: string; archived: boolean };
 
@@ -124,9 +124,9 @@ const FormPage = ({
               name or more specific instructions.
             </div>
             {customFields.length > 0 ? (
-              <Stack>
+              <Card>
                 {customFields.map((field, i) => (
-                  <StackItem key={field.key}>
+                  <CardContent key={field.key}>
                     <div className="flex grow flex-col gap-4">
                       <fieldset>
                         <legend>
@@ -224,9 +224,9 @@ const FormPage = ({
                         ) : null}
                       </fieldset>
                     </div>
-                  </StackItem>
+                  </CardContent>
                 ))}
-              </Stack>
+              </Card>
             ) : null}
             <div>
               <Button

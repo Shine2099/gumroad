@@ -10,7 +10,7 @@ import { register } from "$app/utils/serverComponentUtil";
 import { Button } from "$app/components/Button";
 import { PoweredByFooter } from "$app/components/PoweredByFooter";
 import { showAlert } from "$app/components/server-components/Alert";
-import { Stack, StackItem } from "$app/components/ui/Stack";
+import { Card, CardContent } from "$app/components/ui/Card";
 
 type FieldState = { value: string; error?: boolean };
 
@@ -110,14 +110,14 @@ const GenerateInvoicePage = ({
   return (
     <>
       <div>
-        <Stack asChild>
+        <Card asChild>
           <main className="mx-auto my-4 h-min max-w-md [&>*]:flex-col [&>*]:items-stretch">
-            <StackItem asChild>
+            <CardContent asChild>
               <header className="text-center">
                 <h4 className="grow font-bold">{form_info.heading}</h4>
               </header>
-            </StackItem>
-            <StackItem>
+            </CardContent>
+            <CardContent>
               <fieldset className={classNames({ danger: fullName.error }, "grow basis-0")}>
                 <label htmlFor="full_name">Full name</label>
                 <input
@@ -201,8 +201,8 @@ const GenerateInvoicePage = ({
                   onChange={(e) => setAdditionalNotes({ value: e.target.value })}
                 />
               </fieldset>
-            </StackItem>
-            <StackItem>
+            </CardContent>
+            <CardContent>
               <h5 className="grow font-bold">{supplier_info.heading}</h5>
               {supplier_info.attributes.map((attribute, index) => (
                 <div key={index}>
@@ -217,8 +217,8 @@ const GenerateInvoicePage = ({
                   {attribute.value}
                 </div>
               ))}
-            </StackItem>
-            <StackItem>
+            </CardContent>
+            <CardContent>
               <h5 className="grow font-bold">{order_info.heading}</h5>
               <div>
                 <h6 className="font-bold">{order_info.invoice_date_attribute.label}</h6>
@@ -259,8 +259,8 @@ const GenerateInvoicePage = ({
                   {attribute.value}
                 </div>
               ))}
-            </StackItem>
-            <StackItem asChild>
+            </CardContent>
+            <CardContent asChild>
               <footer className="text-center">
                 {downloadUrl ? (
                   <span className="grow">
@@ -277,9 +277,9 @@ const GenerateInvoicePage = ({
                   Download
                 </Button>
               </footer>
-            </StackItem>
+            </CardContent>
           </main>
-        </Stack>
+        </Card>
       </div>
       <PoweredByFooter />
     </>

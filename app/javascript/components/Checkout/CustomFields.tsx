@@ -6,7 +6,7 @@ import { CustomFieldDescriptor } from "$app/parsers/product";
 
 import { Creator } from "$app/components/Checkout/cartState";
 import { Product, getCustomFieldKey, getErrors, isProcessing, useState } from "$app/components/Checkout/payment";
-import { Stack, StackItem } from "$app/components/ui/Stack";
+import { Card, CardContent } from "$app/components/ui/Card";
 
 const CustomField = ({ field, fieldKey }: { field: CustomFieldDescriptor; fieldKey: string }) => {
   const [state, dispatch] = useState();
@@ -150,15 +150,15 @@ const SellerCustomFields = ({ seller, className }: { seller: Creator; className?
             <legend>
               <label>{product.name}</label>
             </legend>
-            <Stack>
-              <StackItem>
+            <Card>
+              <CardContent>
                 <section className="flex grow flex-col gap-4">
                   {customFields.map((field) => (
                     <CustomField key={field.id} field={field} fieldKey={getCustomFieldKey(field, product)} />
                   ))}
                 </section>
-              </StackItem>
-            </Stack>
+              </CardContent>
+            </Card>
           </fieldset>
         ))}
       </section>

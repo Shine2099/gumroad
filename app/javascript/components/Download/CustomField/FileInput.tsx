@@ -9,9 +9,9 @@ import { FileKindIcon } from "$app/components/FileRowContent";
 import { Icon } from "$app/components/Icons";
 import { showAlert } from "$app/components/server-components/Alert";
 import { usePurchaseCustomFields, usePurchaseInfo } from "$app/components/server-components/DownloadPage/WithContent";
+import { Card, CardContent } from "$app/components/ui/Card";
 import { Placeholder } from "$app/components/ui/Placeholder";
 import { Row, RowContent, Rows } from "$app/components/ui/Rows";
-import { Stack, StackItem } from "$app/components/ui/Stack";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -88,8 +88,8 @@ export const FileInput = ({ customFieldId }: { customFieldId: string }) => {
   );
 
   return files.length ? (
-    <Stack>
-      <StackItem>
+    <Card>
+      <CardContent>
         <Rows role="list" className="grow">
           {files.map((file, index) => (
             <Row key={index} role="listitem">
@@ -106,9 +106,9 @@ export const FileInput = ({ customFieldId }: { customFieldId: string }) => {
             </Row>
           ))}
         </Rows>
-      </StackItem>
-      <StackItem style={{ justifyContent: "center" }}>{fileUpload}</StackItem>
-    </Stack>
+      </CardContent>
+      <CardContent style={{ justifyContent: "center" }}>{fileUpload}</CardContent>
+    </Card>
   ) : (
     <Placeholder>
       {fileUpload}

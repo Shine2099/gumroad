@@ -1,23 +1,23 @@
 import * as React from "react";
 
 import { useDomains } from "$app/components/DomainSettings";
-import { Stack, StackItem } from "$app/components/ui/Stack";
+import { Card, CardContent } from "$app/components/ui/Card";
 
 export const Layout = ({ heading, children }: { heading: string; children: React.ReactNode }) => {
   const { rootDomain } = useDomains();
 
   return (
     <>
-      <Stack>
-        <StackItem asChild>
+      <Card>
+        <CardContent asChild>
           <header>
             <h2 className="grow">{heading}</h2>
           </header>
-        </StackItem>
-        <StackItem asChild>
+        </CardContent>
+        <CardContent asChild>
           <p>{children}</p>
-        </StackItem>
-      </Stack>
+        </CardContent>
+      </Card>
       <footer
         style={{
           textAlign: "center",

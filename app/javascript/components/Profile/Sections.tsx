@@ -22,7 +22,7 @@ import { FollowForm } from "$app/components/Profile/FollowForm";
 import { useRichTextEditor } from "$app/components/RichTextEditor";
 import { CoffeeProduct } from "$app/components/server-components/Profile/CoffeePage";
 import { formatPostDate } from "$app/components/server-components/Profile/PostPage";
-import { StackItem } from "$app/components/ui/Stack";
+import { CardContent } from "$app/components/ui/Card";
 import { useUserAgentInfo } from "$app/components/UserAgent";
 import { Card as WishlistCard, CardGrid as WishlistCardGrid, CardWishlist } from "$app/components/Wishlist/Card";
 
@@ -124,7 +124,7 @@ const ProductsSectionView = ({
       currencyCode={currencyCode}
       defaults={defaultParams}
       prependFilters={
-        <StackItem>
+        <CardContent>
           <input
             aria-label="Search products"
             placeholder="Search products"
@@ -138,7 +138,7 @@ const ProductsSectionView = ({
             }}
             className="grow"
           />
-        </StackItem>
+        </CardContent>
       }
     />
   );

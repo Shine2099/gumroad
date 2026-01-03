@@ -69,7 +69,7 @@ import { PublicFileEmbed } from "$app/components/TiptapExtensions/PublicFileEmbe
 import { ReviewCard } from "$app/components/TiptapExtensions/ReviewCard";
 import { UpsellCard } from "$app/components/TiptapExtensions/UpsellCard";
 import { Alert } from "$app/components/ui/Alert";
-import { Stack, StackItem } from "$app/components/ui/Stack";
+import { Card, CardContent } from "$app/components/ui/Card";
 import { useAddThirdPartyAnalytics } from "$app/components/useAddThirdPartyAnalytics";
 import { useOnChange } from "$app/components/useOnChange";
 import { useOriginalLocation } from "$app/components/useOriginalLocation";
@@ -384,7 +384,7 @@ export const Product = ({
           ) : null}
         </section>
         {purchase !== null ? (
-          <ExistingPurchaseStack
+          <ExistingPurchaseCard
             purchase={purchase}
             permalink={product.permalink}
             isPreorder={product.preorder !== null}
@@ -594,19 +594,19 @@ export const Product = ({
             </Alert>
           ) : null}
           {product.summary || product.attributes.length > 0 ? (
-            <Stack>
+            <Card>
               {product.summary ? (
-                <StackItem asChild>
+                <CardContent asChild>
                   <p>{product.summary}</p>
-                </StackItem>
+                </CardContent>
               ) : null}
               {product.attributes.map(({ name, value }, idx) => (
-                <StackItem key={idx}>
+                <CardContent key={idx}>
                   <h5 className="grow font-bold">{name}</h5>
                   <div>{value}</div>
-                </StackItem>
+                </CardContent>
               ))}
-            </Stack>
+            </Card>
           ) : null}
           <ShareSection product={product} selection={selection} wishlists={wishlists} />
           {product.refund_policy ? (
@@ -633,7 +633,7 @@ const Covers = ({ covers, mainCoverId }: { covers: AssetPreview[]; mainCoverId: 
   );
 };
 
-const ExistingPurchaseStack = ({
+const ExistingPurchaseCard = ({
   permalink,
   isPreorder,
   isBundle,
@@ -664,14 +664,14 @@ const ExistingPurchaseStack = ({
 
   return (
     <section className="border-t border-border p-6">
-      <Stack>
+      <Card>
         {purchase.membership ? (
           <>
-            <StackItem>
+            <CardContent>
               <h5 className="grow font-bold">{purchase.membership.tier_name}</h5>
               {purchase.total_price_including_tax_and_shipping}
-            </StackItem>
-            <StackItem>
+            </CardContent>
+            <CardContent>
               <NavigationButton
                 href={purchase.membership.manage_url}
                 target="_blank"
@@ -686,10 +686,10 @@ const ExistingPurchaseStack = ({
                 {purchase.subscription_has_lapsed ? "Restart membership" : "Manage membership"}
               </NavigationButton>
               {viewContentButton}
-            </StackItem>
+            </CardContent>
           </>
         ) : (
-          <StackItem asChild>
+          <CardContent asChild>
             <li>
               <h3 className="grow">
                 {isBundle
@@ -702,7 +702,7 @@ const ExistingPurchaseStack = ({
               </h3>
               {viewContentButton}
             </li>
-          </StackItem>
+          </CardContent>
         )}
         {!isPreorder && !isBundle && allowRating ? (
           <ReviewForm
@@ -713,7 +713,7 @@ const ExistingPurchaseStack = ({
             className="flex flex-wrap items-center justify-between gap-4 p-4"
           />
         ) : null}
-      </Stack>
+      </Card>
     </section>
   );
 };

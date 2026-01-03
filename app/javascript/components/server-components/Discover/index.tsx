@@ -20,7 +20,7 @@ import { Icon } from "$app/components/Icons";
 import { HorizontalCard } from "$app/components/Product/Card";
 import { CardGrid, useSearchReducer } from "$app/components/Product/CardGrid";
 import { RatingStars } from "$app/components/RatingStars";
-import { StackItem } from "$app/components/ui/Stack";
+import { CardContent } from "$app/components/ui/Card";
 import { Tabs, Tab } from "$app/components/ui/Tabs";
 import { useOnChange } from "$app/components/useOnChange";
 import { useOriginalLocation } from "$app/components/useOriginalLocation";
@@ -433,7 +433,7 @@ const Discover = (props: Props) => {
             }}
             appendFilters={
               <>
-                <StackItem asChild details>
+                <CardContent asChild details>
                   <details>
                     <summary className="grow grid-flow-col grid-cols-[1fr_auto] before:col-start-2">Rating</summary>
                     <fieldset role="group">
@@ -457,9 +457,9 @@ const Discover = (props: Props) => {
                       ))}
                     </fieldset>
                   </details>
-                </StackItem>
+                </CardContent>
                 {hasOfferCode ? (
-                  <StackItem asChild details>
+                  <CardContent asChild details>
                     <details open>
                       <summary className="grow grid-flow-col grid-cols-[1fr_auto] before:col-start-2">
                         Offer code
@@ -475,7 +475,7 @@ const Discover = (props: Props) => {
                         </button>
                       </div>
                     </details>
-                  </StackItem>
+                  </CardContent>
                 ) : null}
               </>
             }

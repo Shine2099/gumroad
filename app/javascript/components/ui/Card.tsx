@@ -3,21 +3,21 @@ import * as React from "react";
 
 import { classNames } from "$app/utils/classNames";
 
-type StackProps = React.PropsWithChildren<{
+type CardProps = React.PropsWithChildren<{
   className?: string | undefined;
   asChild?: boolean;
   borderless?: boolean;
 }> &
   React.HTMLAttributes<HTMLElement>;
 
-export const Stack = React.forwardRef<HTMLDivElement, StackProps>(
+export const Card = React.forwardRef<HTMLDivElement, CardProps>(
   ({ className, asChild, borderless = false, children, ...rest }, ref) => {
     const Component = asChild ? Slot : "div";
     return (
       <Component
         ref={ref}
         className={classNames(
-          "stack-component grid divide-y divide-solid divide-border rounded border border-border bg-background",
+          "card-component grid divide-y divide-solid divide-border rounded border border-border bg-background",
           borderless && "gap-4 border-none [&>*]:border-none [&>*]:p-0",
           className,
         )}
@@ -29,16 +29,16 @@ export const Stack = React.forwardRef<HTMLDivElement, StackProps>(
   },
 );
 
-Stack.displayName = "Stack";
+Card.displayName = "Card";
 
-type StackItemProps = React.PropsWithChildren<{
+type CardContentProps = React.PropsWithChildren<{
   className?: string | undefined;
   asChild?: boolean;
   details?: boolean;
 }> &
   React.HTMLAttributes<HTMLElement>;
 
-export const StackItem = React.forwardRef<HTMLDivElement, StackItemProps>(
+export const CardContent = React.forwardRef<HTMLDivElement, CardContentProps>(
   ({ className, asChild, details, children, ...rest }, ref) => {
     const Component = asChild ? Slot : "div";
     return (
@@ -53,4 +53,4 @@ export const StackItem = React.forwardRef<HTMLDivElement, StackItemProps>(
   },
 );
 
-StackItem.displayName = "StackItem";
+CardContent.displayName = "CardContent";

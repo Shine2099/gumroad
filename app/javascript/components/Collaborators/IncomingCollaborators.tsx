@@ -17,9 +17,9 @@ import { Icon } from "$app/components/Icons";
 import { LoadingSpinner } from "$app/components/LoadingSpinner";
 import { useLoggedInUser } from "$app/components/LoggedInUser";
 import { showAlert } from "$app/components/server-components/Alert";
+import { Card, CardContent } from "$app/components/ui/Card";
 import { Placeholder, PlaceholderImage } from "$app/components/ui/Placeholder";
 import { Sheet, SheetHeader } from "$app/components/ui/Sheet";
-import { Stack, StackItem } from "$app/components/ui/Stack";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "$app/components/ui/Table";
 import { WithTooltip } from "$app/components/WithTooltip";
 
@@ -75,33 +75,33 @@ const IncomingCollaboratorDetails = ({
 }) => (
   <Sheet open onOpenChange={onClose}>
     <SheetHeader>{selected.seller_name}</SheetHeader>
-    <Stack asChild>
+    <Card asChild>
       <section>
-        <StackItem asChild>
+        <CardContent asChild>
           <h3>Email</h3>
-        </StackItem>
-        <StackItem>
+        </CardContent>
+        <CardContent>
           <span className="grow">{selected.seller_email}</span>
-        </StackItem>
+        </CardContent>
       </section>
-    </Stack>
-    <Stack asChild>
+    </Card>
+    <Card asChild>
       <section>
-        <StackItem asChild>
+        <CardContent asChild>
           <h3>Products</h3>
-        </StackItem>
+        </CardContent>
         {selected.products.map((product) => (
-          <StackItem asChild key={product.id}>
+          <CardContent asChild key={product.id}>
             <section>
               <a href={product.url} target="_blank" rel="noreferrer" className="grow">
                 {product.name}
               </a>
               <div>{formatAsPercent(product.affiliate_percentage)}</div>
             </section>
-          </StackItem>
+          </CardContent>
         ))}
       </section>
-    </Stack>
+    </Card>
 
     <section className="mt-auto flex gap-4">
       {selected.invitation_accepted ? (

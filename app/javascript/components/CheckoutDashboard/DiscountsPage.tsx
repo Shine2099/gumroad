@@ -34,11 +34,11 @@ import { showAlert } from "$app/components/server-components/Alert";
 import { Skeleton } from "$app/components/Skeleton";
 import { TypeSafeOptionSelect } from "$app/components/TypeSafeOptionSelect";
 import { Alert } from "$app/components/ui/Alert";
+import { Card, CardContent } from "$app/components/ui/Card";
 import { PageHeader } from "$app/components/ui/PageHeader";
 import { Pill } from "$app/components/ui/Pill";
 import { Placeholder, PlaceholderImage } from "$app/components/ui/Placeholder";
 import { Sheet, SheetHeader } from "$app/components/ui/Sheet";
-import { Stack, StackItem } from "$app/components/ui/Stack";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "$app/components/ui/Table";
 import { useDebouncedCallback } from "$app/components/useDebouncedCallback";
 import { useGlobalEventListener } from "$app/components/useGlobalEventListener";
@@ -515,59 +515,59 @@ const DiscountsPage = ({
         {selectedOfferCode ? (
           <Sheet open onOpenChange={() => setSelectedOfferCodeId(null)}>
             <SheetHeader>{selectedOfferCode.name || selectedOfferCode.code.toUpperCase()}</SheetHeader>
-            <Stack asChild>
+            <Card asChild>
               <section>
-                <StackItem asChild>
+                <CardContent asChild>
                   <h3>Details</h3>
-                </StackItem>
-                <StackItem>
+                </CardContent>
+                <CardContent>
                   <h5 className="grow font-bold">Code</h5>
                   <Pill size="small">{selectedOfferCode.code.toUpperCase()}</Pill>
-                </StackItem>
-                <StackItem>
+                </CardContent>
+                <CardContent>
                   <h5 className="grow font-bold">Discount</h5>
                   {formatAmount(selectedOfferCode)}
-                </StackItem>
+                </CardContent>
                 {selectedOfferCodeStatistics != null ? (
                   <>
-                    <StackItem>
+                    <CardContent>
                       <h5 className="grow font-bold">Uses</h5>
                       {formatUses(selectedOfferCodeStatistics.uses.total, selectedOfferCode.limit)}
-                    </StackItem>
-                    <StackItem>
+                    </CardContent>
+                    <CardContent>
                       <h5 className="grow font-bold">Revenue</h5>
                       {formatRevenue(selectedOfferCodeStatistics.revenue_cents)}
-                    </StackItem>
+                    </CardContent>
                   </>
                 ) : null}
                 {selectedOfferCode.valid_at ? (
-                  <StackItem>
+                  <CardContent>
                     <h5 className="grow font-bold">Start date</h5>
                     {formatDateTime(new Date(selectedOfferCode.valid_at))}
-                  </StackItem>
+                  </CardContent>
                 ) : null}
                 {selectedOfferCode.expires_at ? (
-                  <StackItem>
+                  <CardContent>
                     <h5 className="grow font-bold">End date</h5>
                     {formatDateTime(new Date(selectedOfferCode.expires_at))}
-                  </StackItem>
+                  </CardContent>
                 ) : null}
                 {selectedOfferCode.minimum_quantity !== null ? (
-                  <StackItem>
+                  <CardContent>
                     <h5 className="grow font-bold">Minimum quantity</h5>
                     {selectedOfferCode.minimum_quantity}
-                  </StackItem>
+                  </CardContent>
                 ) : null}
                 {(selectedOfferCode.products ?? products).some(({ is_tiered_membership }) => is_tiered_membership) ? (
-                  <StackItem>
+                  <CardContent>
                     <h5 className="grow font-bold">Discount duration for memberships</h5>
                     {selectedOfferCode.duration_in_billing_cycles === 1
                       ? "Once (first billing period only)"
                       : "Forever"}
-                  </StackItem>
+                  </CardContent>
                 ) : null}
                 {selectedOfferCode.minimum_amount_cents !== null ? (
-                  <StackItem>
+                  <CardContent>
                     <h5 className="grow font-bold">Minimum amount</h5>
                     {formatPriceCentsWithCurrencySymbol(
                       selectedOfferCode.currency_type,
@@ -576,23 +576,23 @@ const DiscountsPage = ({
                         symbolFormat: "short",
                       },
                     )}
-                  </StackItem>
+                  </CardContent>
                 ) : null}
               </section>
-            </Stack>
+            </Card>
             {selectedOfferCode.products ? (
-              <Stack asChild>
+              <Card asChild>
                 <section>
-                  <StackItem asChild>
+                  <CardContent asChild>
                     <h3>Products</h3>
-                  </StackItem>
+                  </CardContent>
                   {selectedOfferCode.products.map((product) => {
                     const uses =
                       selectedOfferCodeStatistics != null
                         ? (selectedOfferCodeStatistics.uses.products[product.id] ?? 0)
                         : null;
                     return (
-                      <StackItem key={product.id} className="grid grid-cols-[1fr_auto] gap-2">
+                      <CardContent key={product.id} className="grid grid-cols-[1fr_auto] gap-2">
                         <div className="grow">
                           <h5 className="font-bold">{product.name}</h5>
                           {uses != null ? `${uses} ${uses === 1 ? "use" : "uses"}` : null}
@@ -606,11 +606,11 @@ const DiscountsPage = ({
                             <Icon name="link" />
                           </Button>
                         </CopyToClipboard>
-                      </StackItem>
+                      </CardContent>
                     );
                   })}
                 </section>
-              </Stack>
+              </Card>
             ) : null}
             <section className="grid auto-cols-fr grid-flow-row gap-4 sm:grid-flow-col">
               <Button onClick={() => setView("create")} disabled={!selectedOfferCode.can_update || isLoading}>

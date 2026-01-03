@@ -4,8 +4,8 @@ import { Button } from "$app/components/Button";
 import { Icon } from "$app/components/Icons";
 import { PriceInput } from "$app/components/PriceInput";
 import { ShippingDestination, useProductEditContext } from "$app/components/ProductEdit/state";
+import { Card, CardContent } from "$app/components/ui/Card";
 import { Placeholder } from "$app/components/ui/Placeholder";
-import { Stack, StackItem } from "$app/components/ui/Stack";
 import { WithTooltip } from "$app/components/WithTooltip";
 
 export const ShippingDestinationsEditor = ({
@@ -35,7 +35,7 @@ export const ShippingDestinationsEditor = ({
         <h2>Shipping destinations</h2>
       </header>
       {shippingDestinations.length > 0 ? (
-        <Stack>
+        <Card>
           {shippingDestinations.map((shippingDestination, index) => (
             <ShippingDestinationRow
               shippingDestination={shippingDestination}
@@ -50,13 +50,13 @@ export const ShippingDestinationsEditor = ({
               key={index}
             />
           ))}
-          <StackItem>
+          <CardContent>
             <Button onClick={addShippingDestination} className="grow basis-0">
               <Icon name="plus" />
               Add shipping destination
             </Button>
-          </StackItem>
-        </Stack>
+          </CardContent>
+        </Card>
       ) : (
         <Placeholder>
           <h2>Add shipping destinations</h2>
@@ -88,7 +88,7 @@ const ShippingDestinationRow = ({
   const updateDestination = (update: Partial<ShippingDestination>) => onChange({ ...shippingDestination, ...update });
 
   return (
-    <StackItem aria-label="Shipping destination">
+    <CardContent aria-label="Shipping destination">
       <fieldset className="grow basis-0">
         <legend>
           <label htmlFor={`${uid}-country`}>Country</label>
@@ -145,6 +145,6 @@ const ShippingDestinationRow = ({
           />
         </fieldset>
       </div>
-    </StackItem>
+    </CardContent>
   );
 };

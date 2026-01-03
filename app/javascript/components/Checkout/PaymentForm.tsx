@@ -55,7 +55,7 @@ import { useLoggedInUser } from "$app/components/LoggedInUser";
 import { PriceInput } from "$app/components/PriceInput";
 import { showAlert } from "$app/components/server-components/Alert";
 import { Alert } from "$app/components/ui/Alert";
-import { Stack, StackItem } from "$app/components/ui/Stack";
+import { Card, CardContent } from "$app/components/ui/Card";
 import { Tab, Tabs } from "$app/components/ui/Tabs";
 import { useIsDarkTheme } from "$app/components/useIsDarkTheme";
 import { useOnChangeSync } from "$app/components/useOnChange";
@@ -193,7 +193,7 @@ const ZipCodeInput = () => {
   );
 };
 
-const EmailAddress = ({ stack }: { stack: boolean }) => {
+const EmailAddress = ({ card }: { card: boolean }) => {
   const uid = React.useId();
   const loggedInUser = useLoggedInUser();
   const [state, dispatch] = useState();
@@ -217,8 +217,8 @@ const EmailAddress = ({ stack }: { stack: boolean }) => {
   };
 
   return (
-    <div className={stack ? "flex flex-wrap items-center justify-between gap-4 p-4" : ""}>
-      <div className={`flex flex-col gap-4 ${stack ? "grow" : ""}`}>
+    <div className={card ? "flex flex-wrap items-center justify-between gap-4 p-4" : ""}>
+      <div className={`flex flex-col gap-4 ${card ? "grow" : ""}`}>
         <fieldset className={cx({ danger: errors.has("email") })}>
           <legend>
             <label htmlFor={`${uid}email`}>
@@ -621,7 +621,7 @@ const CustomerDetails = ({ showCustomFields, className }: { showCustomFields: bo
   );
 };
 
-const CreditCard = ({ stack }: { stack?: boolean }) => {
+const CreditCard = ({ card }: { card?: boolean }) => {
   const [state, dispatch] = useState();
   const fail = useFail();
   const isLoggedIn = !!useLoggedInUser();
@@ -695,9 +695,9 @@ const CreditCard = ({ stack }: { stack?: boolean }) => {
   return (
     <div
       style={{ borderTop: "none", paddingTop: "0" }}
-      className={stack ? "flex flex-wrap items-center justify-between gap-4 p-4" : ""}
+      className={card ? "flex flex-wrap items-center justify-between gap-4 p-4" : ""}
     >
-      <div className={`flex flex-col gap-4 ${stack ? "grow" : ""}`}>
+      <div className={`flex flex-col gap-4 ${card ? "grow" : ""}`}>
         {!useSavedCard ? (
           <fieldset>
             <legend>
@@ -1227,19 +1227,19 @@ export const PaymentForm = ({
   }, [state.status.type]);
 
   return (
-    <Stack ref={paymentFormRef} className={className} aria-label="Payment form">
+    <Card ref={paymentFormRef} className={className} aria-label="Payment form">
       {isTestPurchase ? (
-        <StackItem>
+        <CardContent>
           <Alert variant="info" className="grow">
             This will be a test purchase as you are the creator of at least one of the products. Your payment method
             will not be charged.
           </Alert>
-        </StackItem>
+        </CardContent>
       ) : null}
-      <EmailAddress stack />
+      <EmailAddress card />
       {!isFreePurchase ? (
         <>
-          <StackItem>
+          <CardContent>
             <div className="flex grow flex-col gap-4">
               <h4 className="font-bold">Pay with</h4>
               {state.availablePaymentMethods.length > 1 ? (
@@ -1250,15 +1250,15 @@ export const PaymentForm = ({
                 </Tabs>
               ) : null}
             </div>
-          </StackItem>
+          </CardContent>
           {notice ? (
-            <StackItem>
+            <CardContent>
               <Alert variant="info" className="grow">
                 {notice}
               </Alert>
-            </StackItem>
+            </CardContent>
           ) : null}
-          <CreditCard stack />
+          <CreditCard card />
         </>
       ) : null}
       <CustomerDetails
@@ -1274,6 +1274,6 @@ export const PaymentForm = ({
         </>
       ) : null}
       {recaptcha.container}
-    </Stack>
+    </Card>
   );
 };

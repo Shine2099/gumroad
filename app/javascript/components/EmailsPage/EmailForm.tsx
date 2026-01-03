@@ -40,8 +40,8 @@ import { InvalidNameForEmailDeliveryWarning } from "$app/components/server-compo
 import { TagInput } from "$app/components/TagInput";
 import { UpsellCard } from "$app/components/TiptapExtensions/UpsellCard";
 import { Alert } from "$app/components/ui/Alert";
+import { Card, CardContent } from "$app/components/ui/Card";
 import { PageHeader } from "$app/components/ui/PageHeader";
-import { Stack, StackItem } from "$app/components/ui/Stack";
 import { useConfigureEvaporate } from "$app/components/useConfigureEvaporate";
 import { useDebouncedCallback } from "$app/components/useDebouncedCallback";
 import { useRunOnce } from "$app/components/useRunOnce";
@@ -792,8 +792,8 @@ export const EmailForm = ({ context, installment }: EmailFormProps) => {
         {currentSeller.isNameInvalidForEmailDelivery && channel.email ? <InvalidNameForEmailDeliveryWarning /> : null}
 
         <div className="grid grid-cols-1 items-start gap-x-16 gap-y-8 lg:grid-cols-[var(--grid-cols-sidebar)]">
-          <Stack>
-            <StackItem>
+          <Card>
+            <CardContent>
               <fieldset className="grow basis-0" role="group">
                 <legend>
                   <div>Audience</div>
@@ -854,8 +854,8 @@ export const EmailForm = ({ context, installment }: EmailFormProps) => {
                   </label>
                 ) : null}
               </fieldset>
-            </StackItem>
-            <StackItem>
+            </CardContent>
+            <CardContent>
               <fieldset role="group" className={classNames({ danger: invalidFields.has("channel") }, "grow basis-0")}>
                 <legend>Channel</legend>
                 {hasAudience ? (
@@ -935,9 +935,9 @@ export const EmailForm = ({ context, installment }: EmailFormProps) => {
                   )
                 ) : null}
               </fieldset>
-            </StackItem>
+            </CardContent>
             {audienceType === "affiliates" ? (
-              <StackItem>
+              <CardContent>
                 <fieldset className="grow basis-0" role="group">
                   <legend>Affiliated products</legend>
                   <label htmlFor={`${uid}-all_affiliated_products`}>
@@ -961,10 +961,10 @@ export const EmailForm = ({ context, installment }: EmailFormProps) => {
                     isDisabled={isPublished}
                   />
                 </fieldset>
-              </StackItem>
+              </CardContent>
             ) : null}
             {audienceType === "customers" || audienceType === "followers" ? (
-              <StackItem>
+              <CardContent>
                 <fieldset className="grow basis-0">
                   <legend>
                     <label htmlFor={`${uid}-bought`}>Bought</label>
@@ -978,10 +978,10 @@ export const EmailForm = ({ context, installment }: EmailFormProps) => {
                     isDisabled={isPublished}
                   />
                 </fieldset>
-              </StackItem>
+              </CardContent>
             ) : null}
             {hasAudience && audienceType !== "affiliates" ? (
-              <StackItem>
+              <CardContent>
                 <fieldset className="grow basis-0">
                   <legend>
                     <label htmlFor={`${uid}-not_bought`}>Has not yet bought</label>
@@ -997,10 +997,10 @@ export const EmailForm = ({ context, installment }: EmailFormProps) => {
                     maxTags={1}
                   />
                 </fieldset>
-              </StackItem>
+              </CardContent>
             ) : null}
             {audienceType === "customers" ? (
-              <StackItem>
+              <CardContent>
                 <div
                   style={{
                     display: "grid",
@@ -1045,10 +1045,10 @@ export const EmailForm = ({ context, installment }: EmailFormProps) => {
                     />
                   </fieldset>
                 </div>
-              </StackItem>
+              </CardContent>
             ) : null}
             {hasAudience ? (
-              <StackItem>
+              <CardContent>
                 <div
                   style={{
                     display: "grid",
@@ -1093,10 +1093,10 @@ export const EmailForm = ({ context, installment }: EmailFormProps) => {
                     <small>11:59 {context.timezone}</small>
                   </fieldset>
                 </div>
-              </StackItem>
+              </CardContent>
             ) : null}
             {audienceType === "customers" ? (
-              <StackItem>
+              <CardContent>
                 <fieldset className="grow basis-0">
                   <legend>
                     <label htmlFor={`${uid}-from_country`}>From</label>
@@ -1115,9 +1115,9 @@ export const EmailForm = ({ context, installment }: EmailFormProps) => {
                     ))}
                   </select>
                 </fieldset>
-              </StackItem>
+              </CardContent>
             ) : null}
-            <StackItem>
+            <CardContent>
               <fieldset className="grow basis-0" role="group">
                 <legend>Engagement</legend>
                 <label htmlFor={`${uid}-allow_comments`}>
@@ -1130,8 +1130,8 @@ export const EmailForm = ({ context, installment }: EmailFormProps) => {
                   />
                 </label>
               </fieldset>
-            </StackItem>
-          </Stack>
+            </CardContent>
+          </Card>
           <S3UploadConfigProvider value={s3UploadConfig}>
             <EvaporateUploaderProvider value={evaporateUploader}>
               <div className="grid gap-6">

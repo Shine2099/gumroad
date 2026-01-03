@@ -22,8 +22,8 @@ import { Icon } from "$app/components/Icons";
 import { LoadingSpinner } from "$app/components/LoadingSpinner";
 import { showAlert } from "$app/components/server-components/Alert";
 import { Alert } from "$app/components/ui/Alert";
+import { Card, CardContent } from "$app/components/ui/Card";
 import { Row, RowActions, RowContent, Rows } from "$app/components/ui/Rows";
-import { Stack, StackItem } from "$app/components/ui/Stack";
 import { useUserAgentInfo } from "$app/components/UserAgent";
 
 const ALLOWED_EXTENSIONS = ["jpeg", "jpg", "png", "pdf"];
@@ -149,18 +149,18 @@ const DisputeEvidencePage = ({ dispute_evidence, disputable, products }: Props) 
   const disputeReason = disputeReasons[dispute_evidence.dispute_reason];
 
   return (
-    <Stack className="mx-auto my-8 max-w-2xl">
-      <StackItem asChild>
+    <Card className="mx-auto my-8 max-w-2xl">
+      <CardContent asChild>
         <header>
           Dispute evidence
           <h2 className="grow">Submit additional information</h2>
         </header>
-      </StackItem>
+      </CardContent>
       {formSubmitted ? (
-        <StackItem>Thank you!</StackItem>
+        <CardContent>Thank you!</CardContent>
       ) : (
         <>
-          <StackItem>
+          <CardContent>
             {products.length > 1 ? (
               <div className="grow">
                 <p>
@@ -202,8 +202,8 @@ const DisputeEvidencePage = ({ dispute_evidence, disputable, products }: Props) 
               supporting files to our payment processor. You can't edit the response or submit additional information,
               so make sure you've assembled all of your evidence before you submit.
             </Alert>
-          </StackItem>
-          <StackItem>
+          </CardContent>
+          <CardContent>
             <fieldset className="grow basis-0">
               <legend>
                 <label htmlFor={reasonForWinningUID}>Why should you win this dispute?</label>
@@ -233,9 +233,9 @@ const DisputeEvidencePage = ({ dispute_evidence, disputable, products }: Props) 
                 />
               ) : null}
             </fieldset>
-          </StackItem>
+          </CardContent>
           {disputable.is_subscription && dispute_evidence.dispute_reason === "subscription_canceled" ? (
-            <StackItem>
+            <CardContent>
               <fieldset className="grow basis-0">
                 <legend>
                   <label htmlFor={cancellationRebuttalUID}>Why was the customer's subscription not canceled?</label>
@@ -266,10 +266,10 @@ const DisputeEvidencePage = ({ dispute_evidence, disputable, products }: Props) 
                   />
                 ) : null}
               </fieldset>
-            </StackItem>
+            </CardContent>
           ) : null}
           {"refusalRequiresExplanation" in disputeReason ? (
-            <StackItem>
+            <CardContent>
               <fieldset className="grow basis-0">
                 <legend>
                   <label htmlFor={refundRefusalExplanationUID}>Why is the customer not entitled to a refund?</label>
@@ -282,9 +282,9 @@ const DisputeEvidencePage = ({ dispute_evidence, disputable, products }: Props) 
                   onChange={(evt) => updateSellerDisputeEvidence({ refundRefusalExplanation: evt.target.value })}
                 />
               </fieldset>
-            </StackItem>
+            </CardContent>
           ) : null}
-          <StackItem>
+          <CardContent>
             <fieldset className="grow basis-0">
               <legend>
                 <label>Do you have additional evidence you'd like to provide?</label>
@@ -326,8 +326,8 @@ const DisputeEvidencePage = ({ dispute_evidence, disputable, products }: Props) 
                 </>
               ) : null}
             </fieldset>
-          </StackItem>
-          <StackItem>
+          </CardContent>
+          <CardContent>
             <Button
               color="primary"
               disabled={!isInfoProvided || isSubmitting}
@@ -342,10 +342,10 @@ const DisputeEvidencePage = ({ dispute_evidence, disputable, products }: Props) 
                 "Submit"
               )}
             </Button>
-          </StackItem>
+          </CardContent>
         </>
       )}
-    </Stack>
+    </Card>
   );
 };
 

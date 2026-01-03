@@ -5,7 +5,7 @@ import { register } from "$app/utils/serverComponentUtil";
 
 import { Button } from "$app/components/Button";
 import { showAlert } from "$app/components/server-components/Alert";
-import { Stack, StackItem } from "$app/components/ui/Stack";
+import { Card, CardContent } from "$app/components/ui/Card";
 
 type SecureRedirectPageProps = {
   message: string;
@@ -81,15 +81,15 @@ const SecureRedirectPage = ({
   };
 
   return (
-    <Stack className="single-page-form horizontal-form">
-      <StackItem asChild>
+    <Card className="single-page-form horizontal-form">
+      <CardContent asChild>
         <header>
           <h2 className="grow">Confirm access</h2>
           <p>{message}</p>
         </header>
-      </StackItem>
-      <StackItem className="mini-rule legacy-only"></StackItem>
-      <StackItem asChild>
+      </CardContent>
+      <CardContent className="mini-rule legacy-only"></CardContent>
+      <CardContent asChild>
         <form
           onSubmit={(e) => {
             void handleSubmit(e);
@@ -112,8 +112,8 @@ const SecureRedirectPage = ({
             {isSubmitting ? "Processing..." : "Continue"}
           </Button>
         </form>
-      </StackItem>
-    </Stack>
+      </CardContent>
+    </Card>
   );
 };
 

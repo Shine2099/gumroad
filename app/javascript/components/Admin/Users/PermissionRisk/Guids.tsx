@@ -6,7 +6,7 @@ import { request } from "$app/utils/request";
 
 import { LoadingSpinner } from "$app/components/LoadingSpinner";
 import { Alert } from "$app/components/ui/Alert";
-import { Stack, StackItem } from "$app/components/ui/Stack";
+import { Card, CardContent } from "$app/components/ui/Card";
 
 type UserGuids = { guid: string; user_ids: number[] }[];
 
@@ -29,13 +29,13 @@ const UserGuidsContent = ({ userGuids, isLoading }: { userGuids: UserGuids; isLo
   if (isLoading) return <LoadingSpinner />;
   if (userGuids.length > 0)
     return (
-      <Stack>
+      <Card>
         {userGuids.map(({ guid, user_ids }) => (
-          <StackItem key={guid} asChild>
+          <CardContent key={guid} asChild>
             <Guid guid={guid} user_ids={user_ids} />
-          </StackItem>
+          </CardContent>
         ))}
-      </Stack>
+      </Card>
     );
   return (
     <Alert role="status" variant="info">

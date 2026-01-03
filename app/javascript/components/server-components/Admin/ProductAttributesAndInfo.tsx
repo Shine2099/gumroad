@@ -4,7 +4,7 @@ import { createCast } from "ts-safe-cast";
 import { register } from "$app/utils/serverComponentUtil";
 
 import { Alert } from "$app/components/ui/Alert";
-import { Stack, StackItem } from "$app/components/ui/Stack";
+import { Card, CardContent } from "$app/components/ui/Card";
 import { useUserAgentInfo } from "$app/components/UserAgent";
 
 type Props = {
@@ -72,19 +72,19 @@ export const ProductAttributesAndInfo = ({ productData }: Props) => {
         </>
       ) : null}
       {hasNoAttributes ? null : (
-        <Stack>
+        <Card>
           {custom_summary ? (
-            <StackItem>
+            <CardContent>
               <p className="grow">{custom_summary}</p>
-            </StackItem>
+            </CardContent>
           ) : null}
           {file_info_attributes.concat(custom_attributes).map((fileInfoAttr, i) => (
-            <StackItem key={i}>
+            <CardContent key={i}>
               <h5 className="grow font-bold">{fileInfoAttr.name}</h5>
               <div>{fileInfoAttr.value}</div>
-            </StackItem>
+            </CardContent>
           ))}
-        </Stack>
+        </Card>
       )}
     </div>
   );

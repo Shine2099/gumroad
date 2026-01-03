@@ -77,12 +77,12 @@ import { Select } from "$app/components/Select";
 import { showAlert } from "$app/components/server-components/Alert";
 import { Toggle } from "$app/components/Toggle";
 import { Alert } from "$app/components/ui/Alert";
+import { Card, CardContent } from "$app/components/ui/Card";
 import { PageHeader } from "$app/components/ui/PageHeader";
 import { Pill } from "$app/components/ui/Pill";
 import { Placeholder, PlaceholderImage } from "$app/components/ui/Placeholder";
 import { Row, RowActions, RowContent, Rows } from "$app/components/ui/Rows";
 import { Sheet, SheetHeader } from "$app/components/ui/Sheet";
-import { Stack, StackItem } from "$app/components/ui/Stack";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "$app/components/ui/Table";
 import { useDebouncedCallback } from "$app/components/useDebouncedCallback";
 import { useOnChange } from "$app/components/useOnChange";
@@ -292,8 +292,8 @@ const CustomersPage = ({
                 </WithTooltip>
               }
             >
-              <Stack style={{ width: "35rem" }}>
-                <StackItem>
+              <Card style={{ width: "35rem" }}>
+                <CardContent>
                   <ProductSelect
                     products={products.filter(
                       (product) => !excludedItems.find((excludedItem) => product.id === excludedItem.id),
@@ -303,8 +303,8 @@ const CustomersPage = ({
                     setItems={setIncludedItems}
                     className="grow basis-0"
                   />
-                </StackItem>
-                <StackItem>
+                </CardContent>
+                <CardContent>
                   <ProductSelect
                     products={products.filter(
                       (product) => !includedItems.find((includedItem) => product.id === includedItem.id),
@@ -314,8 +314,8 @@ const CustomersPage = ({
                     setItems={setExcludedItems}
                     className="grow basis-0"
                   />
-                </StackItem>
-                <StackItem>
+                </CardContent>
+                <CardContent>
                   <div
                     style={{
                       display: "grid",
@@ -345,8 +345,8 @@ const CustomersPage = ({
                       />
                     </fieldset>
                   </div>
-                </StackItem>
-                <StackItem>
+                </CardContent>
+                <CardContent>
                   <div
                     style={{
                       display: "grid",
@@ -376,8 +376,8 @@ const CustomersPage = ({
                       <small suppressHydrationWarning>{`11:59 ${timeZoneAbbreviation}`}</small>
                     </fieldset>
                   </div>
-                </StackItem>
-                <StackItem>
+                </CardContent>
+                <CardContent>
                   <fieldset className="grow basis-0">
                     <label htmlFor={`${uid}-country`}>From</label>
                     <select
@@ -395,8 +395,8 @@ const CustomersPage = ({
                       ))}
                     </select>
                   </fieldset>
-                </StackItem>
-                <StackItem>
+                </CardContent>
+                <CardContent>
                   <h4 className="font-bold">
                     <label htmlFor={`${uid}-active-customers-only`}>Show active customers only</label>
                   </h4>
@@ -405,8 +405,8 @@ const CustomersPage = ({
                     value={activeCustomersOnly}
                     onChange={(activeCustomersOnly) => updateQuery({ activeCustomersOnly })}
                   />
-                </StackItem>
-              </Stack>
+                </CardContent>
+              </Card>
             </Popover>
             <Popover
               aria-label="Export"
@@ -525,7 +525,7 @@ const CustomersPage = ({
                         {customer.utm_link ? (
                           <WithTooltip
                             tooltipProps={{ className: "w-80 p-0" }}
-                            tip={<UtmLinkStack link={customer.utm_link} showHeader={false} />}
+                            tip={<UtmLinkCard link={customer.utm_link} showHeader={false} />}
                           >
                             <Pill size="small" className="ml-2">
                               UTM
@@ -890,9 +890,9 @@ const CustomerDrawer = ({
           }
         />
       ) : null}
-      <Stack asChild>
+      <Card asChild>
         <section>
-          <StackItem asChild>
+          <CardContent asChild>
             <h3 className="flex gap-1">
               Order information
               {!subscription && customer.transaction_url_for_seller ? (
@@ -907,22 +907,22 @@ const CustomerDrawer = ({
                 </a>
               ) : null}
             </h3>
-          </StackItem>
-          <StackItem>
+          </CardContent>
+          <CardContent>
             <h5 className="grow font-bold">Customer name</h5>
             {customer.name}
-          </StackItem>
-          <StackItem>
+          </CardContent>
+          <CardContent>
             <h5 className="grow font-bold">{customer.is_multiseat_license ? "Seats" : "Quantity"}</h5>
             {customer.quantity}
-          </StackItem>
+          </CardContent>
           {customer.download_count ? (
-            <StackItem>
+            <CardContent>
               <h5 className="grow font-bold">Download count</h5>
               {customer.download_count}
-            </StackItem>
+            </CardContent>
           ) : null}
-          <StackItem>
+          <CardContent>
             <h5 className="grow font-bold">Price</h5>
             <div>
               {customer.price.cents_before_offer_code > customer.price.cents ? (
@@ -942,15 +942,15 @@ const CustomerDrawer = ({
                 customer.price.recurrence,
               )}
             </div>
-          </StackItem>
+          </CardContent>
           {customer.price.tip_cents ? (
-            <StackItem>
+            <CardContent>
               <h5 className="grow font-bold">Tip</h5>
               {formatPrice(customer.price.tip_cents, customer.price.currency_type, customer.price.recurrence)}
-            </StackItem>
+            </CardContent>
           ) : null}
           {customer.discount && !customer.upsell ? (
-            <StackItem>
+            <CardContent>
               <h5 className="grow font-bold">Discount</h5>
               {customer.discount.code ? (
                 <div>
@@ -960,18 +960,18 @@ const CustomerDrawer = ({
               ) : (
                 `${formatDiscount(customer.discount, customer.price.currency_type)} off`
               )}
-            </StackItem>
+            </CardContent>
           ) : null}
           {customer.upsell ? (
-            <StackItem>
+            <CardContent>
               <h5 className="grow font-bold">Upsell</h5>
               {`${customer.upsell}${
                 customer.discount ? ` (${formatDiscount(customer.discount, customer.price.currency_type)} off)` : ""
               }`}
-            </StackItem>
+            </CardContent>
           ) : null}
           {subscription?.status ? (
-            <StackItem>
+            <CardContent>
               <h5 className="grow font-bold">
                 {subscription.is_installment_plan ? "Installment plan status" : "Membership status"}
               </h5>
@@ -987,29 +987,29 @@ const CustomerDrawer = ({
                   ? INSTALLMENT_PLAN_STATUS_LABELS[subscription.status]
                   : MEMBERSHIP_STATUS_LABELS[subscription.status]}
               </div>
-            </StackItem>
+            </CardContent>
           ) : null}
           {customer.referrer ? (
-            <StackItem>
+            <CardContent>
               <h5 className="grow font-bold">Referrer</h5>
               {customer.referrer}
-            </StackItem>
+            </CardContent>
           ) : null}
           {customer.physical ? (
             <>
-              <StackItem>
+              <CardContent>
                 <h5 className="grow font-bold">SKU</h5>
                 {customer.physical.sku}
-              </StackItem>
-              <StackItem>
+              </CardContent>
+              <CardContent>
                 <h5 className="grow font-bold">Order number</h5>
                 {customer.physical.order_number}
-              </StackItem>
+              </CardContent>
             </>
           ) : null}
         </section>
-      </Stack>
-      {customer.utm_link ? <UtmLinkStack link={customer.utm_link} showHeader /> : null}
+      </Card>
+      {customer.utm_link ? <UtmLinkCard link={customer.utm_link} showHeader /> : null}
       {customer.review ? (
         <ReviewSection
           review={customer.review}
@@ -1018,16 +1018,16 @@ const CustomerDrawer = ({
         />
       ) : null}
       {customer.custom_fields.length > 0 ? (
-        <Stack asChild>
+        <Card asChild>
           <section>
-            <StackItem asChild>
+            <CardContent asChild>
               <header>
                 <h3 className="grow">Information provided</h3>
               </header>
-            </StackItem>
+            </CardContent>
             {customer.custom_fields.map((field, idx) => {
               const content = (
-                <StackItem asChild>
+                <CardContent asChild>
                   <section key={idx}>
                     <h5 className="grow font-bold">{field.attribute}</h5>
                     {field.type === "text" ? (
@@ -1040,12 +1040,12 @@ const CustomerDrawer = ({
                       </Rows>
                     )}
                   </section>
-                </StackItem>
+                </CardContent>
               );
               return field.type === "file" ? <div key={idx}>{content}</div> : content;
             })}
           </section>
-        </Stack>
+        </Card>
       ) : null}
       {customer.has_options && !isCoffee && customer.product.native_type !== "call" ? (
         <OptionSection
@@ -1058,33 +1058,33 @@ const CustomerDrawer = ({
         />
       ) : null}
       {customer.is_bundle_purchase ? (
-        <Stack asChild>
+        <Card asChild>
           <section>
-            <StackItem asChild>
+            <CardContent asChild>
               <header>
                 <h3 className="grow">Content</h3>
               </header>
-            </StackItem>
+            </CardContent>
             {productPurchases.length > 0 ? (
               productPurchases.map((customer) => (
-                <StackItem asChild key={customer.id}>
+                <CardContent asChild key={customer.id}>
                   <section>
                     <h5 className="grow font-bold">{customer.product.name}</h5>
                     <Button onClick={() => setSelectedProductPurchaseId(customer.id)}>Manage</Button>
                   </section>
-                </StackItem>
+                </CardContent>
               ))
             ) : (
-              <StackItem asChild>
+              <CardContent asChild>
                 <section>
                   <div className="grow text-center">
                     <LoadingSpinner className="size-8" />
                   </div>
                 </section>
-              </StackItem>
+              </CardContent>
             )}
           </section>
-        </Stack>
+        </Card>
       ) : null}
       {license ? (
         <LicenseSection
@@ -1158,14 +1158,14 @@ const CustomerDrawer = ({
       ) : null}
       {customer.call ? <CallSection call={customer.call} onChange={(call) => onChange({ ...customer, call })} /> : null}
       {!showCharges && !customer.refunded && !customer.chargedback && customer.price.cents_refundable > 0 ? (
-        <Stack asChild>
+        <Card asChild>
           <section>
-            <StackItem asChild>
+            <CardContent asChild>
               <header>
                 <h3 className="grow">Refund</h3>
               </header>
-            </StackItem>
-            <StackItem asChild>
+            </CardContent>
+            <CardContent asChild>
               <section>
                 <RefundForm
                   purchaseId={customer.id}
@@ -1185,9 +1185,9 @@ const CustomerDrawer = ({
                   className="grow basis-0"
                 />
               </section>
-            </StackItem>
+            </CardContent>
           </section>
-        </Stack>
+        </Card>
       ) : null}
       {subscription?.status === "alive" ? (
         <SubscriptionCancellationSection
@@ -1207,13 +1207,13 @@ const CustomerDrawer = ({
         />
       ) : null}
       {canPing && !subscription ? (
-        <Stack asChild>
+        <Card asChild>
           <section>
-            <StackItem>
+            <CardContent>
               <PingButton purchaseId={customer.id} className="grow basis-0" />
-            </StackItem>
+            </CardContent>
           </section>
-        </Stack>
+        </Card>
       ) : null}
       {customer.is_access_revoked !== null && !isCoffee && !commission ? (
         <AccessSection
@@ -1237,17 +1237,17 @@ const CustomerDrawer = ({
         <CommissionSection commission={commission} onChange={(commission) => onChange({ commission })} />
       ) : null}
       {missedPosts?.length !== 0 ? (
-        <Stack asChild>
+        <Card asChild>
           <section>
-            <StackItem asChild>
+            <CardContent asChild>
               <header>
                 <h3 className="grow">Send missed posts</h3>
               </header>
-            </StackItem>
+            </CardContent>
             {missedPosts ? (
               <>
                 {missedPosts.slice(0, shownMissedPosts).map((post) => (
-                  <StackItem asChild key={post.id}>
+                  <CardContent asChild key={post.id}>
                     <section>
                       <div className="grow">
                         <h5 className="font-bold">
@@ -1265,10 +1265,10 @@ const CustomerDrawer = ({
                         {sentEmailIds.current.has(post.id) ? "Sent" : loadingId === post.id ? "Sending...." : "Send"}
                       </Button>
                     </section>
-                  </StackItem>
+                  </CardContent>
                 ))}
                 {shownMissedPosts < missedPosts.length ? (
-                  <StackItem asChild>
+                  <CardContent asChild>
                     <section>
                       <Button
                         onClick={() => setShownMissedPosts((prevShownMissedPosts) => prevShownMissedPosts + PAGE_SIZE)}
@@ -1277,33 +1277,33 @@ const CustomerDrawer = ({
                         Show more
                       </Button>
                     </section>
-                  </StackItem>
+                  </CardContent>
                 ) : null}
               </>
             ) : (
-              <StackItem asChild>
+              <CardContent asChild>
                 <section>
                   <div className="grow text-center">
                     <LoadingSpinner className="size-8" />
                   </div>
                 </section>
-              </StackItem>
+              </CardContent>
             )}
           </section>
-        </Stack>
+        </Card>
       ) : null}
       {emails?.length !== 0 ? (
-        <Stack asChild>
+        <Card asChild>
           <section>
-            <StackItem asChild>
+            <CardContent asChild>
               <header>
                 <h3 className="grow">Emails received</h3>
               </header>
-            </StackItem>
+            </CardContent>
             {emails ? (
               <>
                 {emails.slice(0, shownEmails).map((email) => (
-                  <StackItem asChild key={email.id}>
+                  <CardContent asChild key={email.id}>
                     <section>
                       <div className="grow">
                         <h5>
@@ -1343,10 +1343,10 @@ const CustomerDrawer = ({
                         </Button>
                       )}
                     </section>
-                  </StackItem>
+                  </CardContent>
                 ))}
                 {shownMissedPosts < emails.length ? (
-                  <StackItem asChild>
+                  <CardContent asChild>
                     <section>
                       <Button
                         onClick={() => setShownEmails((prevShownEmails) => prevShownEmails + PAGE_SIZE)}
@@ -1355,20 +1355,20 @@ const CustomerDrawer = ({
                         Load more
                       </Button>
                     </section>
-                  </StackItem>
+                  </CardContent>
                 ) : null}
               </>
             ) : (
-              <StackItem>
+              <CardContent>
                 <section>
                   <div className="grow text-center">
                     <LoadingSpinner className="size-8" />
                   </div>
                 </section>
-              </StackItem>
+              </CardContent>
             )}
           </section>
-        </Stack>
+        </Card>
       ) : null}
     </Sheet>
   );
@@ -1414,15 +1414,15 @@ const AddressSection = ({
   };
 
   return (
-    <Stack asChild>
+    <Card asChild>
       <section>
-        <StackItem asChild>
+        <CardContent asChild>
           <header>
             <h3 className="grow">Shipping address</h3>
           </header>
-        </StackItem>
+        </CardContent>
         {isEditing ? (
-          <StackItem>
+          <CardContent>
             <div className="flex grow flex-col gap-4">
               <fieldset>
                 <legend>
@@ -1516,9 +1516,9 @@ const AddressSection = ({
                 </Button>
               </div>
             </div>
-          </StackItem>
+          </CardContent>
         ) : (
-          <StackItem>
+          <CardContent>
             <p className="grow">
               {currentAddress.full_name}
               <br />
@@ -1531,14 +1531,14 @@ const AddressSection = ({
             <button className="underline" onClick={() => setIsEditing(true)}>
               Edit
             </button>
-          </StackItem>
+          </CardContent>
         )}
-        <StackItem>
+        <CardContent>
           <h5 className="grow font-bold">Shipping charged</h5>
           {price}
-        </StackItem>
+        </CardContent>
       </section>
-    </Stack>
+    </Card>
   );
 };
 
@@ -1559,27 +1559,27 @@ const TrackingSection = ({
   };
 
   return (
-    <Stack asChild>
+    <Card asChild>
       <section>
-        <StackItem asChild>
+        <CardContent asChild>
           <h3>Tracking information</h3>
-        </StackItem>
+        </CardContent>
         {tracking.shipped ? (
           tracking.url ? (
-            <StackItem>
+            <CardContent>
               <NavigationButton color="primary" href={tracking.url} target="_blank" className="grow">
                 Track shipment
               </NavigationButton>
-            </StackItem>
+            </CardContent>
           ) : (
-            <StackItem>
+            <CardContent>
               <Alert role="status" variant="success" className="grow">
                 Shipped
               </Alert>
-            </StackItem>
+            </CardContent>
           )
         ) : (
-          <StackItem>
+          <CardContent>
             <fieldset className="grow basis-0">
               <input
                 type="text"
@@ -1591,10 +1591,10 @@ const TrackingSection = ({
                 Mark as shipped
               </Button>
             </fieldset>
-          </StackItem>
+          </CardContent>
         )}
       </section>
-    </Stack>
+    </Card>
   );
 };
 
@@ -1633,15 +1633,15 @@ const EmailSection = ({
   };
 
   return (
-    <Stack asChild>
+    <Card asChild>
       <section>
-        <StackItem asChild>
+        <CardContent asChild>
           <header>
             <h3 className="grow">{label}</h3>
           </header>
-        </StackItem>
+        </CardContent>
         {isEditing ? (
-          <StackItem asChild>
+          <CardContent asChild>
             <fieldset>
               <input
                 type="text"
@@ -1667,9 +1667,9 @@ const EmailSection = ({
                 </Button>
               </div>
             </fieldset>
-          </StackItem>
+          </CardContent>
         ) : (
-          <StackItem asChild>
+          <CardContent asChild>
             <section>
               <h5 className="grow font-bold">{currentEmail}</h5>
               {onSave ? (
@@ -1683,10 +1683,10 @@ const EmailSection = ({
                 </small>
               )}
             </section>
-          </StackItem>
+          </CardContent>
         )}
         {onChangeCanContact ? (
-          <StackItem asChild>
+          <CardContent asChild>
             <section>
               <fieldset role="group" className="grow basis-0">
                 <label>
@@ -1703,10 +1703,10 @@ const EmailSection = ({
                 </label>
               </fieldset>
             </section>
-          </StackItem>
+          </CardContent>
         ) : null}
       </section>
-    </Stack>
+    </Card>
   );
 };
 
@@ -1828,47 +1828,47 @@ const ReviewSection = ({
   purchaseId: string;
   onChange: (review: Review) => void;
 }) => (
-  <Stack asChild>
+  <Card asChild>
     <section>
-      <StackItem asChild>
+      <CardContent asChild>
         <h3>Review</h3>
-      </StackItem>
-      <StackItem asChild>
+      </CardContent>
+      <CardContent asChild>
         <section>
           <h5 className="grow font-bold">Rating</h5>
           <div aria-label={`${review.rating} ${review.rating === 1 ? "star" : "stars"}`}>
             <RatingStars rating={review.rating} />
           </div>
         </section>
-      </StackItem>
+      </CardContent>
       {review.message ? (
-        <StackItem asChild>
+        <CardContent asChild>
           <section>
             <h5 className="grow font-bold">Message</h5>
             {review.message}
           </section>
-        </StackItem>
+        </CardContent>
       ) : null}
-      <StackItem asChild>
+      <CardContent asChild>
         <ReviewVideosSubsections review={review} onChange={onChange} className="grow" />
-      </StackItem>
+      </CardContent>
       {review.response ? (
-        <StackItem asChild>
+        <CardContent asChild>
           <section>
             <h5 className="grow font-bold">Response</h5>
             {review.response.message}
           </section>
-        </StackItem>
+        </CardContent>
       ) : null}
-      <StackItem asChild>
+      <CardContent asChild>
         <ReviewResponseForm
           message={review.response?.message}
           purchaseId={purchaseId}
           onChange={(response) => onChange({ ...review, response })}
         />
-      </StackItem>
+      </CardContent>
     </section>
-  </Stack>
+  </Card>
 );
 
 const OptionSection = ({
@@ -1923,14 +1923,14 @@ const OptionSection = ({
   const title = isSubscription ? "Tier" : "Version";
 
   return (
-    <Stack asChild>
+    <Card asChild>
       <section>
-        <StackItem asChild>
+        <CardContent asChild>
           <header>
             <h3 className="grow">{title}</h3>
           </header>
-        </StackItem>
-        <StackItem asChild>
+        </CardContent>
+        <CardContent asChild>
           <section>
             {options.length > 0 ? (
               isEditing ? (
@@ -1978,26 +1978,26 @@ const OptionSection = ({
               </div>
             )}
           </section>
-        </StackItem>
+        </CardContent>
       </section>
-    </Stack>
+    </Card>
   );
 };
 
-const UtmLinkStack = ({ link, showHeader }: { link: Customer["utm_link"]; showHeader: boolean }) => {
+const UtmLinkCard = ({ link, showHeader }: { link: Customer["utm_link"]; showHeader: boolean }) => {
   if (!link) return null;
 
   return (
-    <Stack asChild>
+    <Card asChild>
       <section>
         {showHeader ? (
           <>
-            <StackItem asChild>
+            <CardContent asChild>
               <section>
                 <h3 className="grow">UTM link</h3>
               </section>
-            </StackItem>
-            <StackItem>
+            </CardContent>
+            <CardContent>
               <Alert className="grow text-sm" role="status" variant="info">
                 This sale was driven by a{" "}
                 <a href={link.utm_url} target="_blank" rel="noreferrer">
@@ -2005,41 +2005,41 @@ const UtmLinkStack = ({ link, showHeader }: { link: Customer["utm_link"]; showHe
                 </a>
                 .
               </Alert>
-            </StackItem>
+            </CardContent>
           </>
         ) : null}
-        <StackItem>
+        <CardContent>
           <h5 className="grow font-bold">Title</h5>
           <a href={Routes.utm_links_dashboard_path({ query: link.title })} target="_blank" rel="noreferrer">
             {link.title}
           </a>
-        </StackItem>
-        <StackItem>
+        </CardContent>
+        <CardContent>
           <h5 className="grow font-bold">Source</h5>
           {link.source}
-        </StackItem>
-        <StackItem>
+        </CardContent>
+        <CardContent>
           <h5 className="grow font-bold">Medium</h5>
           {link.medium}
-        </StackItem>
-        <StackItem>
+        </CardContent>
+        <CardContent>
           <h5 className="grow font-bold">Campaign</h5>
           {link.campaign}
-        </StackItem>
+        </CardContent>
         {link.term ? (
-          <StackItem>
+          <CardContent>
             <h5 className="grow font-bold">Term</h5>
             {link.term}
-          </StackItem>
+          </CardContent>
         ) : null}
         {link.content ? (
-          <StackItem>
+          <CardContent>
             <h5 className="grow font-bold">Content</h5>
             {link.content}
-          </StackItem>
+          </CardContent>
         ) : null}
       </section>
-    </Stack>
+    </Card>
   );
 };
 
@@ -2053,19 +2053,19 @@ const LicenseSection = ({ license, onSave }: { license: License; onSave: (enable
   };
 
   return (
-    <Stack asChild>
+    <Card asChild>
       <section>
-        <StackItem asChild>
+        <CardContent asChild>
           <header>
             <h3 className="grow">License key</h3>
           </header>
-        </StackItem>
-        <StackItem>
+        </CardContent>
+        <CardContent>
           <pre className="grow">
             <code>{license.key}</code>
           </pre>
-        </StackItem>
-        <StackItem>
+        </CardContent>
+        <CardContent>
           {license.enabled ? (
             <Button color="danger" disabled={isLoading} onClick={() => void handleSave(false)} className="grow basis-0">
               Disable
@@ -2075,9 +2075,9 @@ const LicenseSection = ({ license, onSave }: { license: License; onSave: (enable
               Enable
             </Button>
           )}
-        </StackItem>
+        </CardContent>
       </section>
-    </Stack>
+    </Card>
   );
 };
 
@@ -2094,15 +2094,15 @@ const SeatSection = ({ seats: currentSeats, onSave }: { seats: number; onSave: (
   };
 
   return (
-    <Stack asChild>
+    <Card asChild>
       <section>
-        <StackItem asChild>
+        <CardContent asChild>
           <header>
             <h3 className="grow">Seats</h3>
           </header>
-        </StackItem>
+        </CardContent>
         {isEditing ? (
-          <StackItem asChild>
+          <CardContent asChild>
             <fieldset>
               <NumberInput value={seats} onChange={(seats) => setSeats(seats ?? 0)}>
                 {(props) => <input type="number" {...props} min={1} aria-label="Seats" className="grow" />}
@@ -2123,19 +2123,19 @@ const SeatSection = ({ seats: currentSeats, onSave }: { seats: number; onSave: (
                 </Button>
               </div>
             </fieldset>
-          </StackItem>
+          </CardContent>
         ) : (
-          <StackItem asChild>
+          <CardContent asChild>
             <section>
               <h5 className="grow font-bold">{seats}</h5>
               <button className="underline" onClick={() => setIsEditing(true)}>
                 Edit
               </button>
             </section>
-          </StackItem>
+          </CardContent>
         )}
       </section>
-    </Stack>
+    </Card>
   );
 };
 
@@ -2149,9 +2149,9 @@ const SubscriptionCancellationSection = ({
   const [open, setOpen] = React.useState(false);
   const constructor = isInstallmentPlan ? "installment plan" : "subscription";
   return (
-    <Stack asChild>
+    <Card asChild>
       <section>
-        <StackItem>
+        <CardContent>
           <Button color="danger" onClick={() => setOpen(true)} className="grow basis-0">
             Cancel {constructor}
           </Button>
@@ -2170,9 +2170,9 @@ const SubscriptionCancellationSection = ({
           >
             Would you like to cancel this {constructor}?
           </Modal>
-        </StackItem>
+        </CardContent>
       </section>
-    </Stack>
+    </Card>
   );
 };
 
@@ -2230,9 +2230,9 @@ const AccessSection = ({
   };
 
   return (
-    <Stack asChild>
+    <Card asChild>
       <section>
-        <StackItem>
+        <CardContent>
           {isAccessRevoked ? (
             <Button disabled={isLoading} onClick={() => void handleClick(false)} className="grow basis-0">
               Re-enable access
@@ -2247,9 +2247,9 @@ const AccessSection = ({
               Revoke access
             </Button>
           )}
-        </StackItem>
+        </CardContent>
       </section>
-    </Stack>
+    </Card>
   );
 };
 
@@ -2478,34 +2478,34 @@ const ChargesSection = ({
     onChange(charges.map((charge) => (charge.id === id ? { ...charge, ...update } : charge)));
 
   return (
-    <Stack asChild>
+    <Card asChild>
       <section>
-        <StackItem asChild>
+        <CardContent asChild>
           <header>
             <h3 className="grow">Charges</h3>
           </header>
-        </StackItem>
+        </CardContent>
         {loading ? (
-          <StackItem asChild>
+          <CardContent asChild>
             <section>
               <div className="grow text-center">
                 <LoadingSpinner className="size-8" />
               </div>
             </section>
-          </StackItem>
+          </CardContent>
         ) : charges.length > 0 ? (
           <>
             {remainingCharges !== null ? (
-              <StackItem>
+              <CardContent>
                 <section>
                   <Alert role="status" variant="info" className="grow">
                     {`${remainingCharges} ${remainingCharges > 1 ? "charges" : "charge"} remaining`}
                   </Alert>
                 </section>
-              </StackItem>
+              </CardContent>
             ) : null}
             {charges.map((charge) => (
-              <StackItem asChild key={charge.id}>
+              <CardContent asChild key={charge.id}>
                 <ChargeRow
                   purchase={charge}
                   customerEmail={customerEmail}
@@ -2513,7 +2513,7 @@ const ChargesSection = ({
                   showRefundFeeNotice={showRefundFeeNotice}
                   canPing={canPing}
                 />
-              </StackItem>
+              </CardContent>
             ))}
           </>
         ) : (
@@ -2522,7 +2522,7 @@ const ChargesSection = ({
           </section>
         )}
       </section>
-    </Stack>
+    </Card>
   );
 };
 
@@ -2544,26 +2544,26 @@ const CallSection = ({ call, onChange }: { call: Call; onChange: (call: Call) =>
   };
 
   return (
-    <Stack asChild>
+    <Card asChild>
       <section>
-        <StackItem asChild>
+        <CardContent asChild>
           <header>
             <h3 className="grow">Call</h3>
           </header>
-        </StackItem>
-        <StackItem asChild>
+        </CardContent>
+        <CardContent asChild>
           <section>
             <h5 className="grow font-bold">Start time</h5>
             {formatCallDate(new Date(call.start_time), { timeZone: { userTimeZone: currentSeller?.timeZone.name } })}
           </section>
-        </StackItem>
-        <StackItem asChild>
+        </CardContent>
+        <CardContent asChild>
           <section>
             <h5 className="grow font-bold">End time</h5>
             {formatCallDate(new Date(call.end_time), { timeZone: { userTimeZone: currentSeller?.timeZone.name } })}
           </section>
-        </StackItem>
-        <StackItem asChild>
+        </CardContent>
+        <CardContent asChild>
           <section>
             <form
               onSubmit={(evt) => {
@@ -2585,9 +2585,9 @@ const CallSection = ({ call, onChange }: { call: Call; onChange: (call: Call) =>
               </fieldset>
             </form>
           </section>
-        </StackItem>
+        </CardContent>
       </section>
-    </Stack>
+    </Card>
   );
 };
 
@@ -2713,14 +2713,14 @@ const CommissionSection = ({
   };
 
   return (
-    <Stack asChild>
+    <Card asChild>
       <section>
-        <StackItem asChild>
+        <CardContent asChild>
           <header>
             <h3 className="grow">Files</h3>
           </header>
-        </StackItem>
-        <StackItem asChild>
+        </CardContent>
+        <CardContent asChild>
           <section>
             <section className="grid grow gap-2">
               {commission.files.length ? (
@@ -2752,9 +2752,9 @@ const CommissionSection = ({
               ) : null}
             </section>
           </section>
-        </StackItem>
+        </CardContent>
       </section>
-    </Stack>
+    </Card>
   );
 };
 

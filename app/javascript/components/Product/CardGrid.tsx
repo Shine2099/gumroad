@@ -10,10 +10,10 @@ import { AbortError, assertResponseError } from "$app/utils/request";
 import { Icon } from "$app/components/Icons";
 import { NumberInput } from "$app/components/NumberInput";
 import { showAlert } from "$app/components/server-components/Alert";
+import { Card as UICard, CardContent } from "$app/components/ui/Card";
 import { Pill } from "$app/components/ui/Pill";
 import { Placeholder } from "$app/components/ui/Placeholder";
 import { ProductCardGrid } from "$app/components/ui/ProductCardGrid";
-import { Stack, StackItem } from "$app/components/ui/Stack";
 import { useDebouncedCallback } from "$app/components/useDebouncedCallback";
 import { useOnChange } from "$app/components/useOnChange";
 
@@ -234,8 +234,8 @@ export const CardGrid = ({
       )}
     >
       {hideFilters ? null : (
-        <Stack className="overflow-y-auto lg:sticky lg:inset-y-4 lg:max-h-[calc(100vh-2rem)]" aria-label="Filters">
-          <StackItem asChild>
+        <UICard className="overflow-y-auto lg:sticky lg:inset-y-4 lg:max-h-[calc(100vh-2rem)]" aria-label="Filters">
+          <CardContent asChild>
             <header>
               {title ?? "Filters"}
               {anyFilters ? (
@@ -246,10 +246,10 @@ export const CardGrid = ({
                 </div>
               ) : null}
             </header>
-          </StackItem>
+          </CardContent>
           {prependFilters}
           {hideSort ? null : (
-            <StackItem asChild details>
+            <CardContent asChild details>
               <details>
                 <summary className="grow grid-flow-col grid-cols-[1fr_auto] before:col-start-2">Sort by</summary>
                 <fieldset role="group">
@@ -267,10 +267,10 @@ export const CardGrid = ({
                   ))}
                 </fieldset>
               </details>
-            </StackItem>
+            </CardContent>
           )}
           {results?.tags_data.length || searchParams.tags?.length || tagsOpen ? (
-            <StackItem asChild details>
+            <CardContent asChild details>
               <details onToggle={() => setTagsOpen(!tagsOpen)}>
                 <summary className="grow grid-flow-col grid-cols-[1fr_auto] before:col-start-2">Tags</summary>
                 <fieldset role="group">
@@ -293,10 +293,10 @@ export const CardGrid = ({
                   ) : null}
                 </fieldset>
               </details>
-            </StackItem>
+            </CardContent>
           ) : null}
           {results?.filetypes_data.length || searchParams.filetypes?.length || filetypesOpen ? (
-            <StackItem asChild details>
+            <CardContent asChild details>
               <details onToggle={() => setFiletypesOpen(!filetypesOpen)}>
                 <summary className="grow grid-flow-col grid-cols-[1fr_auto] before:col-start-2">Contains</summary>
                 <fieldset role="group">
@@ -310,9 +310,9 @@ export const CardGrid = ({
                   ) : null}
                 </fieldset>
               </details>
-            </StackItem>
+            </CardContent>
           ) : null}
-          <StackItem asChild details>
+          <CardContent asChild details>
             <details>
               <summary className="grow grid-flow-col grid-cols-[1fr_auto] before:col-start-2">Price</summary>
               <div
@@ -359,9 +359,9 @@ export const CardGrid = ({
                 </fieldset>
               </div>
             </details>
-          </StackItem>
+          </CardContent>
           {appendFilters}
-        </Stack>
+        </UICard>
       )}
       {results?.products.length === 0 ? (
         <Placeholder>
