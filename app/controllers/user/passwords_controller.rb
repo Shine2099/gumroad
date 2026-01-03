@@ -26,8 +26,7 @@ class User::PasswordsController < Devise::PasswordsController
     user = User.find_or_initialize_with_error_by(:reset_password_token,
                                                  Devise.token_generator.digest(User, :reset_password_token, reset_password_token))
     if user.errors.present?
-      flash[:alert] = "That reset password token doesn't look valid (or may have expired)."
-      return redirect_to root_url
+      return redirect_to root_url, warning: "That reset password token doesn't look valid (or may have expired)."
     end
 
     @title = "Reset your password"
@@ -50,10 +49,9 @@ class User::PasswordsController < Devise::PasswordsController
       end
       redirect_to edit_user_password_path(reset_password_token: reset_password_token), warning: error_message
     else
-      flash[:notice] = "Your password has been reset, and you're now logged in."
       user.invalidate_active_sessions!
       sign_in user unless user.deleted?
-      redirect_to login_path_for(user), status: :see_other
+      redirect_to login_path_for(user), status: :see_other, notice: "Your password has been reset, and you're now logged in."
     end
   end
 
