@@ -15,7 +15,7 @@ import { getMimeType } from "$app/utils/mimetypes";
 import { summarizeUploadProgress } from "$app/utils/summarizeUploadProgress";
 
 import { AudioPlayer } from "$app/components/AudioPlayer";
-import { Button, NavigationButton } from "$app/components/Button";
+import { Button, NavigationButton, buttonVariants } from "$app/components/Button";
 import { connectedFileRowClassName } from "$app/components/Download/RichContent";
 import { useEvaporateUploader } from "$app/components/EvaporateUploader";
 import { FileRowContent } from "$app/components/FileRowContent";
@@ -399,7 +399,7 @@ const FileEmbedNodeView = ({ node, editor, getPos, updateAttributes }: NodeViewP
                   </button>
                   <div style={{ position: "absolute", top: "var(--spacer-5)", right: "var(--spacer-5)" }}>
                     <WithTooltip tip="Replace thumbnail">
-                      <label className="button primary" aria-label="Replace thumbnail">
+                      <label className={buttonVariants({ size: "default", color: "primary" })} aria-label="Replace thumbnail">
                         {thumbnailInput}
                         <Icon name="upload-fill" />
                       </label>
@@ -410,7 +410,7 @@ const FileEmbedNodeView = ({ node, editor, getPos, updateAttributes }: NodeViewP
             ) : (
               <div className="preview">
                 <Placeholder>
-                  <label className="button primary">
+                  <label className={buttonVariants({ size: "default", color: "primary" })}>
                     {thumbnailInput}
                     <Icon name="upload-fill" />
                     Upload a thumbnail
@@ -677,7 +677,7 @@ const FileEmbedNodeView = ({ node, editor, getPos, updateAttributes }: NodeViewP
       </Row>
       {isDropZone ? (
         <div className="absolute inset-0 bg-backdrop">
-          <div className="button primary absolute top-1/2 left-1/2 -translate-1/2">Create folder with 2 items</div>
+          <div className={buttonVariants({ size: "default", color: "primary" }) + " absolute top-1/2 left-1/2 -translate-1/2"}>Create folder with 2 items</div>
         </div>
       ) : null}
     </NodeViewWrapper>

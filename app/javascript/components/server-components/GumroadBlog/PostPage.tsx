@@ -6,6 +6,7 @@ import { createCast } from "ts-safe-cast";
 import { incrementPostViews } from "$app/data/view_event";
 import { register } from "$app/utils/serverComponentUtil";
 
+import { buttonVariants } from "$app/components/Button";
 import { Icon } from "$app/components/Icons";
 import { LoadingSpinner } from "$app/components/LoadingSpinner";
 import { useRichTextEditor } from "$app/components/RichTextEditor";
@@ -63,7 +64,7 @@ const PostPage = ({
             <div className="grid">
               <p>
                 <a
-                  className="button accent"
+                  className={buttonVariants({ size: "default", color: "accent" })}
                   href={call_to_action.url}
                   target="_blank"
                   style={{ whiteSpace: "normal" }}

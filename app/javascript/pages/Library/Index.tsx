@@ -11,7 +11,7 @@ import { asyncVoid } from "$app/utils/promise";
 import { assertResponseError } from "$app/utils/request";
 import { writeQueryParams } from "$app/utils/url";
 
-import { Button } from "$app/components/Button";
+import { Button, buttonVariants } from "$app/components/Button";
 import { useDiscoverUrl } from "$app/components/DomainSettings";
 import { Icon } from "$app/components/Icons";
 import { Layout } from "$app/components/Library/Layout";
@@ -357,7 +357,7 @@ export default function LibraryPage() {
                 <PlaceholderImage src={placeholder} />
                 <h2 className="library-header">You haven't bought anything... yet!</h2>
                 Once you do, it'll show up here so you can download, watch, read, or listen to all your purchases.
-                <a href={discoverUrl} className="button accent">
+                <a href={discoverUrl} className={buttonVariants({ size: "default", color: "accent" })}>
                   Discover products
                 </a>
               </>

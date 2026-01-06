@@ -14,7 +14,7 @@ import { ALLOWED_EXTENSIONS } from "$app/utils/file";
 import { asyncVoid } from "$app/utils/promise";
 import { AbortError, assertResponseError, request } from "$app/utils/request";
 
-import { Button } from "$app/components/Button";
+import { Button, buttonVariants } from "$app/components/Button";
 import { useCurrentSeller } from "$app/components/CurrentSeller";
 import { DateInput } from "$app/components/DateInput";
 import { useDomains } from "$app/components/DomainSettings";
@@ -711,10 +711,12 @@ export const EmailForm = ({ context, installment }: EmailFormProps) => {
                 Preview
               </Button>
             )}
-            <Link href={getCancelPath()} className="button" inert={isBusy ? true : undefined}>
-              <Icon name="x-square" />
-              Cancel
-            </Link>
+            <Button asChild>
+              <Link href={getCancelPath()} inert={isBusy ? true : undefined}>
+                <Icon name="x-square" />
+                Cancel
+              </Link>
+            </Button>
             <Popover
               trigger={
                 <Button disabled={isBusy}>

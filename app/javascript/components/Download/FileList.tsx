@@ -12,7 +12,7 @@ import { createJWPlayer } from "$app/utils/jwPlayer";
 import { asyncVoid } from "$app/utils/promise";
 import { assertResponseError, request, ResponseError } from "$app/utils/request";
 
-import { Button, NavigationButton } from "$app/components/Button";
+import { Button, NavigationButton, buttonVariants } from "$app/components/Button";
 import { FileRowContent } from "$app/components/FileRowContent";
 import { Icon } from "$app/components/Icons";
 import { LoadingSpinner } from "$app/components/LoadingSpinner";
@@ -316,7 +316,7 @@ export const FileRow = ({
           <>
             {file.kindle_data != null ? (
               <TrackClick eventName="send_to_kindle_click" resourceId={file.id}>
-                <Button className="button-kindle" onClick={toggleKindleDrawer}>
+                <Button color="kindle" onClick={toggleKindleDrawer}>
                   Send to Kindle
                 </Button>
               </TrackClick>

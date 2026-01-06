@@ -13,7 +13,7 @@ import { asyncVoid } from "$app/utils/promise";
 import { formatAmountPerRecurrence, recurrenceNames, recurrenceDurationLabels } from "$app/utils/recurringPricing";
 import { assertResponseError } from "$app/utils/request";
 
-import { Button, NavigationButton } from "$app/components/Button";
+import { Button, NavigationButton, buttonVariants } from "$app/components/Button";
 import {
   CartItem,
   CartItemFooter,
@@ -392,7 +392,7 @@ export const Checkout = ({
             <PlaceholderImage src={placeholder} />
             <h3>You haven't added anything...yet!</h3>
             <p>Once you do, it'll show up here so you can complete your purchases.</p>
-            <a className="button accent" href={discoverUrl}>
+            <a className={buttonVariants({ size: "default", color: "accent" })} href={discoverUrl}>
               Discover products
             </a>
           </Placeholder>

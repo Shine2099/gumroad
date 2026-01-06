@@ -1,5 +1,6 @@
 import React from "react";
 
+import { buttonVariants } from "$app/components/Button";
 import { type Product, type ActiveIntegration } from "$app/components/Admin/Products/Product";
 
 type JoinDiscordActionProps = {
@@ -15,7 +16,7 @@ const JoinDiscordAction = ({ product }: JoinDiscordActionProps) => {
     hasDiscordIntegration && (
       <a
         href={Routes.join_discord_redirect_admin_product_path(product.external_id)}
-        className="button small"
+        className={buttonVariants({ size: "sm" })}
         target="_blank"
         rel="noreferrer noopener"
       >

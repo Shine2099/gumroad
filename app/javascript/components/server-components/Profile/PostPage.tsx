@@ -8,6 +8,7 @@ import { incrementPostViews } from "$app/data/view_event";
 import { CreatorProfile } from "$app/parsers/profile";
 import { register } from "$app/utils/serverComponentUtil";
 
+import { buttonVariants } from "$app/components/Button";
 import { Icon } from "$app/components/Icons";
 import { LoadingSpinner } from "$app/components/LoadingSpinner";
 import { CommentsMetadataProvider, PostCommentsSection } from "$app/components/Post/PostCommentsSection";
@@ -86,7 +87,7 @@ const PostPage = ({
             {call_to_action ? (
               <p>
                 <a
-                  className="button accent"
+                  className={buttonVariants({ size: "default", color: "accent" })}
                   href={call_to_action.url}
                   target="_blank"
                   style={{ whiteSpace: "normal" }}
@@ -98,7 +99,7 @@ const PostPage = ({
             ) : null}
             {download_url ? (
               <p>
-                <a className="button accent" href={download_url}>
+                <a className={buttonVariants({ size: "default", color: "accent" })} href={download_url}>
                   View content
                 </a>
               </p>

@@ -3,6 +3,7 @@ import { subMonths } from "date-fns";
 import * as React from "react";
 import { cast } from "ts-safe-cast";
 
+import { Button, buttonVariants } from "$app/components/Button";
 import Errors from "$app/components/Admin/Form/Errors";
 import { Popover } from "$app/components/Popover";
 import { WithTooltip } from "$app/components/WithTooltip";
@@ -58,7 +59,7 @@ const NewSalesReportPopover = () => {
       aria-label="New Sales Report"
       trigger={
         <WithTooltip tip="Generate a new sales report" position="bottom">
-          <div className="button primary">New report</div>
+          <div className={buttonVariants({ size: "default", color: "primary" })}>New report</div>
         </WithTooltip>
       }
     >
@@ -137,7 +138,7 @@ const NewSalesReportPopover = () => {
             <Errors errors={errors.sales_report?.sales_type} label="Type of sales" />
           </div>
 
-          <button type="submit" className="button primary" disabled={form.processing}>
+          <Button type="submit" color="primary" disabled={form.processing}>
             {form.processing ? "Generating..." : "Generate"}
           </button>
 

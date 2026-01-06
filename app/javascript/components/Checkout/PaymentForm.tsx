@@ -14,6 +14,7 @@ import * as BraintreePaypal from "braintree-web/paypal";
 import cx from "classnames";
 import * as React from "react";
 
+import { buttonVariants } from "$app/components/Button";
 import { useBraintreeToken } from "$app/data/braintree_client_token_data";
 import { preparePaymentRequestPaymentMethodData } from "$app/data/card_payment_method_data";
 import {
@@ -863,7 +864,7 @@ const BraintreePayPal = ({ token }: { token: string }) => {
   }, [state.status.type]);
 
   return (
-    <Button className="button-paypal" onClick={() => dispatch({ type: "offer" })} disabled={isSubmitDisabled(state)}>
+    <Button color="paypal" onClick={() => dispatch({ type: "offer" })} disabled={isSubmitDisabled(state)}>
       {payLabel}
     </Button>
   );

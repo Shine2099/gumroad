@@ -3,7 +3,7 @@ import React from "react";
 
 import { EmailTab } from "$app/data/installments";
 
-import { buttonVariants } from "$app/components/Button";
+import { Button, buttonVariants } from "$app/components/Button";
 import { Icon } from "$app/components/Icons";
 import { Popover } from "$app/components/Popover";
 import { PageHeader } from "$app/components/ui/PageHeader";
@@ -86,13 +86,13 @@ export const NewEmailButton = ({ copyFrom }: { copyFrom?: string } = {}) => {
   const href = copyFrom ? Routes.new_email_path({ copy_from: copyFrom }) : Routes.new_email_path();
 
   return (
-    <Link className={copyFrom ? "button" : "button accent"} href={href}>
+    <Link className={copyFrom ? buttonVariants({ size: "default" }) : buttonVariants({ size: "default", color: "accent" })} href={href}>
       {copyFrom ? "Duplicate" : "New email"}
     </Link>
   );
 };
 export const EditEmailButton = ({ id }: { id: string }) => (
-  <Link className="button" href={Routes.edit_email_path(id)}>
+  <Link className={buttonVariants({ size: "default" })} href={Routes.edit_email_path(id)}>
     Edit
   </Link>
 );

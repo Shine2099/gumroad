@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { Button } from "$app/components/Button";
+import { Button, buttonVariants } from "$app/components/Button";
 import { Popover } from "$app/components/Popover";
 
 type Props = { iosAppUrl: string; androidAppUrl: string };
@@ -33,12 +33,12 @@ export const OpenInAppButton = ({ iosAppUrl, androidAppUrl }: Props) => (
         }}
       >
         <Button asChild>
-          <a className="button-apple" href={iosAppUrl} target="_blank" rel="noreferrer">
+          <a className={buttonVariants({ size: "default", color: "apple" })} href={iosAppUrl} target="_blank" rel="noreferrer">
             App Store
           </a>
         </Button>
         <Button asChild>
-          <a className="button-android" href={androidAppUrl} target="_blank" rel="noreferrer">
+          <a className={buttonVariants({ size: "default", color: "android" })} href={androidAppUrl} target="_blank" rel="noreferrer">
             Play Store
           </a>
         </Button>

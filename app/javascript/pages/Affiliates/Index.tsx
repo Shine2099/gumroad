@@ -417,7 +417,7 @@ export default function AffiliatesIndex() {
                         Affiliates
                         <div className="text-base">
                           <WithTooltip tip="Export" position="top">
-                            <a href={Routes.export_affiliates_path()} className="button primary" aria-label="Export">
+                            <a href={Routes.export_affiliates_path()} className={buttonVariants({ size: "default", color: "primary" })} aria-label="Export">
                               <Icon name="download" />
                             </a>
                           </WithTooltip>

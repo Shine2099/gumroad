@@ -18,7 +18,7 @@ export const TwitterShareButton = ({ url, text = "Join me on @Gumroad!" }: { url
 
   return (
     <NavigationButton
-      className="button-social-twitter button-w-i button-twitter"
+      color="twitter"
       onClick={handleClick}
       href={shareUrl}
       target="_blank"
