@@ -52,9 +52,9 @@ describe CollaboratorsController, inertia: true do
     end
 
     it "returns 404 for non-existent collaborator" do
-      expect {
+      expect do
         get :edit, params: { id: "nonexistent" }
-      }.to raise_error(ActionController::RoutingError)
+      end.to raise_error(ActionController::RoutingError)
     end
   end
 
@@ -159,18 +159,18 @@ describe CollaboratorsController, inertia: true do
     end
 
     it "removes the collaborator and redirects" do
-      expect {
+      expect do
         delete :destroy, params: { id: collaborator.external_id }
-      }.to change { collaborator.reload.deleted_at }.from(nil)
+      end.to change { collaborator.reload.deleted_at }.from(nil)
 
       expect(response).to redirect_to(collaborators_path)
       expect(flash[:notice]).to eq("Collaborator removed!")
     end
 
     it "sends email notification when seller ends collaboration" do
-      expect {
+      expect do
         delete :destroy, params: { id: collaborator.external_id }
-      }.to have_enqueued_mail(AffiliateMailer, :collaboration_ended_by_seller)
+      end.to have_enqueued_mail(AffiliateMailer, :collaboration_ended_by_seller)
     end
   end
 end

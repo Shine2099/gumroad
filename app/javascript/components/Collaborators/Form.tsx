@@ -281,7 +281,9 @@ const CollaboratorForm = ({ formData }: { formData: CollaboratorFormData }) => {
                           </div>
                         )}
                       </NumberInput>
-                      {form.errors.percent_commission ? <p className="message">{form.errors.percent_commission}</p> : null}
+                      {form.errors.percent_commission ? (
+                        <p className="message">{form.errors.percent_commission}</p>
+                      ) : null}
                     </fieldset>
                   </TableCell>
                   <TableCell>
