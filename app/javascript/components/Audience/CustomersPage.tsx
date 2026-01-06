@@ -2010,7 +2010,7 @@ const UtmLinkCard = ({ link, showHeader }: { link: Customer["utm_link"]; showHea
         ) : null}
         <CardContent>
           <h5 className="grow font-bold">Title</h5>
-          <a href={Routes.utm_links_dashboard_path({ query: link.title })} target="_blank" rel="noreferrer">
+          <a href={Routes.dashboard_utm_links_path({ query: link.title })} target="_blank" rel="noreferrer">
             {link.title}
           </a>
         </CardContent>
