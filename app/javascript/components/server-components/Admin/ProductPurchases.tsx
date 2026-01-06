@@ -103,9 +103,9 @@ const AdminProductPurchases = ({
           </Alert>
         ) : null}
         {hasMore ? (
-          <Button size="sm" onClick={() => void loadPurchases()} disabled={isLoading}>
+          <Button small onClick={() => void loadPurchases()} disabled={isLoading}>
             {isLoading ? "Loading..." : "Load more"}
-          </button>
+          </Button>
         ) : null}
       </div>
     </details>

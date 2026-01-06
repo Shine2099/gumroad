@@ -23,8 +23,8 @@ const WorkflowList = ({ workflows }: WorkflowListProps) => {
   const loggedInUser = useLoggedInUser();
   const canManageWorkflow = !!loggedInUser?.policies.workflow.create;
   const newWorkflowButton = (
-    <Button asChild>
-      <Link href={Routes.new_workflow_path()} className="accent" inert={!canManageWorkflow || undefined}>
+    <Button asChild color="accent">
+      <Link href={Routes.new_workflow_path()} inert={!canManageWorkflow || undefined}>
         New workflow
       </Link>
     </Button>

@@ -140,7 +140,7 @@ const NewSalesReportPopover = () => {
 
           <Button type="submit" color="primary" disabled={form.processing}>
             {form.processing ? "Generating..." : "Generate"}
-          </button>
+          </Button>
 
           <input type="hidden" name="authenticity_token" value={form.data.authenticity_token} />
         </form>

@@ -66,7 +66,7 @@ const Form = ({ action, header, buttonLabel }: Props) => {
 
         <Button type="submit" color="primary">
           {buttonLabel}
-        </button>
+        </Button>
       </section>
     </form>
   );

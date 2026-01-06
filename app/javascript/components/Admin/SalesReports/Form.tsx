@@ -127,7 +127,7 @@ const AdminSalesReportsForm = ({ countries, sales_types, authenticityToken }: Pr
 
         <Button type="submit" color="primary" disabled={form.processing}>
           {form.processing ? "Generating..." : "Generate report"}
-        </button>
+        </Button>
 
         <input type="hidden" name="authenticity_token" value={form.data.authenticity_token} />
       </section>

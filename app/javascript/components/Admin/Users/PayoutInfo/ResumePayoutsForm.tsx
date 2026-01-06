@@ -34,7 +34,7 @@ const AdminResumePayoutsForm = ({
           ) : null}
           <Button type="submit" className="shrink-0" disabled={isLoading}>
             {isLoading ? "Resuming Payouts" : "Resume Payouts"}
-          </button>
+          </Button>
         </div>
       </fieldset>
     )}

@@ -11,7 +11,7 @@ import { IncomingCollaborator, IncomingCollaboratorsData } from "$app/data/incom
 import { classNames } from "$app/utils/classNames";
 import { assertResponseError } from "$app/utils/request";
 
-import { Button, buttonVariants } from "$app/components/Button";
+import { Button } from "$app/components/Button";
 import { Layout } from "$app/components/Collaborators/Layout";
 import { Icon } from "$app/components/Icons";
 import { LoadingSpinner } from "$app/components/LoadingSpinner";
@@ -352,17 +352,18 @@ export const IncomingCollaborators = () => {
       showTabs
       headerActions={
         <WithTooltip position="bottom" tip={collaborators_disabled_reason}>
-          <Link
-            to="/collaborators/new"
-            className={buttonVariants({ size: "default", color: "accent" })}
-            inert={
-              !loggedInUser?.policies.collaborator.create ||
-              navigation.state !== "idle" ||
-              collaborators_disabled_reason !== null
-            }
-          >
-            Add collaborator
-          </Link>
+          <Button asChild color="accent">
+            <Link
+              to="/collaborators/new"
+              inert={
+                !loggedInUser?.policies.collaborator.create ||
+                navigation.state !== "idle" ||
+                collaborators_disabled_reason !== null
+              }
+            >
+              Add collaborator
+            </Link>
+          </Button>
         </WithTooltip>
       }
     >

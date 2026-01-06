@@ -6,7 +6,7 @@ import EmptyState from "$app/components/Admin/EmptyState";
 import PaginatedLoader, { Pagination } from "$app/components/Admin/PaginatedLoader";
 import { type RefundPolicy, RefundPolicyTitle } from "$app/components/Admin/Purchases/RefundPolicy";
 import { PurchaseStates } from "$app/components/Admin/Purchases/States";
-import { Button, buttonVariants } from "$app/components/Button";
+import { Button } from "$app/components/Button";
 import { CopyToClipboard } from "$app/components/CopyToClipboard";
 import { Icon } from "$app/components/Icons";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "$app/components/ui/Table";
@@ -76,7 +76,7 @@ export default function Purchases() {
               <Icon name="solid-search" />
             </Button>
             {data.product_title_query || data.purchase_status ? (
-              <Button asChild variant="secondary">
+              <Button asChild>
                 <Link href={Routes.admin_search_purchases_path({ query: data.query })}>Clear</Link>
               </Button>
             ) : null}

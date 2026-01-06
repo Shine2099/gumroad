@@ -88,7 +88,7 @@ const AdminSalesReportsPage = ({ countries, sales_types, job_history, form_actio
 
             <Button type="submit" color="primary" disabled={isLoading}>
               {isLoading ? "Generating..." : "Generate report"}
-            </button>
+            </Button>
 
             <input type="hidden" name="authenticity_token" value={authenticity_token} />
           </section>

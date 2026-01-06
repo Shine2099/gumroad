@@ -86,13 +86,13 @@ export const NewEmailButton = ({ copyFrom }: { copyFrom?: string } = {}) => {
   const href = copyFrom ? Routes.new_email_path({ copy_from: copyFrom }) : Routes.new_email_path();
 
   return (
-    <Link className={copyFrom ? buttonVariants({ size: "default" }) : buttonVariants({ size: "default", color: "accent" })} href={href}>
-      {copyFrom ? "Duplicate" : "New email"}
-    </Link>
+    <Button asChild color={copyFrom ? undefined : "accent"}>
+      <Link href={href}>{copyFrom ? "Duplicate" : "New email"}</Link>
+    </Button>
   );
 };
 export const EditEmailButton = ({ id }: { id: string }) => (
-  <Link className={buttonVariants({ size: "default" })} href={Routes.edit_email_path(id)}>
-    Edit
-  </Link>
+  <Button asChild>
+    <Link href={Routes.edit_email_path(id)}>Edit</Link>
+  </Button>
 );
