@@ -278,7 +278,12 @@ const MenubarItem = ({
     >
       <Popover open={menuOpen}>
         <PopoverTrigger asChild>{menuItemAnchor}</PopoverTrigger>
-        <PopoverContent className="border-0 p-0 shadow-none" arrowClassName="dark:fill-black/35" usePortal>
+        <PopoverContent
+          className="border-0 p-0 shadow-none"
+          arrowClassName="dark:fill-black/35"
+          usePortal
+          onInteractOutside={(e: Event) => e.preventDefault()}
+        >
           <ItemsList
             key={`${uid}-${menuOpen}`}
             menuId={uid}

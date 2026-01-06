@@ -54,7 +54,11 @@ export const DateRangePicker = ({
           <Icon name="outline-cheveron-down" className="ml-auto" />
         </div>
       </PopoverTrigger>
-      <PopoverContent className="p-0" matchTriggerWidth>
+      <PopoverContent
+        className="p-0"
+        matchTriggerWidth
+        onInteractOutside={(e: Event) => isCustom && e.preventDefault()}
+      >
         {isCustom ? (
           <div className="flex flex-col gap-4 p-4">
             <fieldset>

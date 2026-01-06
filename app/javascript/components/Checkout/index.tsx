@@ -456,10 +456,14 @@ const CartItemComponent = ({
   );
 
   const saveChanges = () => {
-    if (isPWYW && (selection.price.value === null || selection.price.value < priceCents))
-      return setSelection({ ...selection, price: { ...selection.price, error: true } });
-    if (selection.optionId !== item.option_id && findCartItem(cart, item.product.permalink, selection.optionId))
-      return setError("You already have this item in your cart.");
+    if (isPWYW && (selection.price.value === null || selection.price.value < priceCents)) {
+      setSelection({ ...selection, price: { ...selection.price, error: true } });
+      return;
+    }
+    if (selection.optionId !== item.option_id && findCartItem(cart, item.product.permalink, selection.optionId)) {
+      setError("You already have this item in your cart.");
+      return;
+    }
     const index = cart.items.findIndex((i) => i === item);
     const items = cart.items.slice();
     items[index] = {
@@ -551,7 +555,7 @@ const CartItemComponent = ({
                 <PopoverTrigger asChild>
                   <Button className="h-8 w-15 !p-0 !text-xs">Edit</Button>
                 </PopoverTrigger>
-                <PopoverContent>
+                <PopoverContent className="max-h-[80vh] overflow-auto">
                   <div className="flex w-96 flex-col gap-4">
                     <ConfigurationSelector
                       selection={selection}
