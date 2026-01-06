@@ -25,9 +25,7 @@ describe FollowersController, inertia: true do
         expect(inertia.component).to eq("Followers/Index")
         expect(inertia.props).to match(hash_including(
           followers: followers.map { _1.as_json(pundit_user:) },
-          per_page: FollowersController::FOLLOWERS_PER_PAGE,
-          total: 21,
-          total_filtered: 21,
+          total_count: 21,
           page: 1,
           has_more: true,
           email: "",
@@ -41,7 +39,7 @@ describe FollowersController, inertia: true do
         expect(response).to be_successful
         expect(inertia.component).to eq("Followers/Index")
         expect(inertia.props).to match(hash_including(
-          total_filtered: 1,
+          total_count: 2,
           email: "test",
         ))
         expect(inertia.props[:followers].length).to eq(1)
@@ -67,7 +65,7 @@ describe FollowersController, inertia: true do
         expect(response).to be_successful
         expect(inertia.props[:email]).to eq("test")
         expect(inertia.props[:page]).to eq(2)
-        expect(inertia.props[:total_filtered]).to eq(25)
+        expect(inertia.props[:total_count]).to eq(25)
       end
     end
 

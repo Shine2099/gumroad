@@ -70,16 +70,14 @@ type Follower = {
 
 type Props = {
   followers: Follower[];
-  per_page: number;
-  total: number;
-  total_filtered: number;
+  total_count: number;
   page: number;
   has_more: boolean;
   email: string;
 };
 
 export default function FollowersPage() {
-  const { followers, total, page, has_more, email } = cast<Props>(usePage().props);
+  const { followers, total_count, page, has_more, email } = cast<Props>(usePage().props);
   const userAgentInfo = useUserAgentInfo();
 
   const [isLoadingMore, setIsLoadingMore] = React.useState(false);
@@ -97,7 +95,7 @@ export default function FollowersPage() {
     debounce((email: string) => {
       router.reload({
         data: { email: email || undefined, page: 1 },
-        only: ["followers", "total_filtered", "page", "has_more", "email"],
+        only: ["followers", "total_count", "page", "has_more", "email"],
         preserveUrl: true,
       });
     }, 500),
@@ -116,7 +114,7 @@ export default function FollowersPage() {
     setIsLoadingMore(true);
     router.reload({
       data: { email: searchQuery || undefined, page: nextPage },
-      only: ["followers", "has_more"],
+      only: ["followers", "has_more", "page"],
       preserveUrl: true,
       onFinish: () => setIsLoadingMore(false),
     });
@@ -196,7 +194,7 @@ export default function FollowersPage() {
         {followers.length > 0 ? (
           <div>
             <Table>
-              <TableCaption>All subscribers ({total.toLocaleString(userAgentInfo.locale)})</TableCaption>
+              <TableCaption>All subscribers ({total_count.toLocaleString(userAgentInfo.locale)})</TableCaption>
               <TableHeader>
                 <TableRow>
                   <TableHead>Email</TableHead>

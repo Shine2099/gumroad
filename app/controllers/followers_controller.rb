@@ -47,9 +47,7 @@ class FollowersController < ApplicationController
 
     render inertia: "Followers/Index", props: {
       followers: followers_prop,
-      per_page: FOLLOWERS_PER_PAGE,
-      total: total_unfiltered_count,
-      total_filtered: total_count,
+      total_count: total_unfiltered_count,
       page:,
       has_more:,
       email:,
