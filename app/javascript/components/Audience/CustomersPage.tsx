@@ -65,6 +65,7 @@ import { FileKindIcon } from "$app/components/FileRowContent";
 import { Icon } from "$app/components/Icons";
 import { LoadingSpinner } from "$app/components/LoadingSpinner";
 import { Modal } from "$app/components/Modal";
+import { NavigationButtonInertia } from "$app/components/NavigationButton";
 import { NumberInput } from "$app/components/NumberInput";
 import { Pagination, PaginationProps } from "$app/components/Pagination";
 import { Popover, PopoverContent, PopoverTrigger } from "$app/components/Popover";
@@ -76,9 +77,10 @@ import { Search } from "$app/components/Search";
 import { Select } from "$app/components/Select";
 import { showAlert } from "$app/components/server-components/Alert";
 import { Toggle } from "$app/components/Toggle";
+import { Alert } from "$app/components/ui/Alert";
 import { PageHeader } from "$app/components/ui/PageHeader";
 import { Pill } from "$app/components/ui/Pill";
-import Placeholder from "$app/components/ui/Placeholder";
+import { Placeholder, PlaceholderImage } from "$app/components/ui/Placeholder";
 import { Row, RowActions, RowContent, Rows } from "$app/components/ui/Rows";
 import { Sheet, SheetHeader } from "$app/components/ui/Sheet";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "$app/components/ui/Table";
@@ -142,6 +144,7 @@ const CustomersPage = ({
       customers: prev.customers.map((customer) => (customer.id === id ? { ...customer, ...update } : customer)),
     }));
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isExportOpen, setIsExportOpen] = React.useState(false);
   const activeRequest = React.useRef<{ cancel: () => void } | null>(null);
 
   const uid = React.useId();
@@ -380,7 +383,7 @@ const CustomersPage = ({
                 </div>
               </PopoverContent>
             </Popover>
-            <Popover>
+            <Popover open={isExportOpen} onOpenChange={setIsExportOpen}>
               <PopoverTrigger aria-label="Export" asChild>
                 <Button>
                   <Icon name="download" />
@@ -395,18 +398,21 @@ const CustomersPage = ({
                       : "This will download a CSV with each purchase on its own row."}
                   </div>
                   <DateRangePicker from={from} to={to} setFrom={setFrom} setTo={setTo} />
-                  <NavigationButton
+                  <NavigationButtonInertia
                     color="primary"
-                    href={Routes.export_purchases_path({
-                      format: "csv",
+                    href={Routes.export_purchases_path()}
+                    method="post"
+                    preserveScroll
+                    data={{
                       start_time: lightFormat(from, "yyyy-MM-dd"),
                       end_time: lightFormat(to, "yyyy-MM-dd"),
                       product_ids: includedProductIds,
                       variant_ids: includedVariantIds,
-                    })}
+                    }}
+                    onSuccess={() => setIsExportOpen(false)}
                   >
                     Download
-                  </NavigationButton>
+                  </NavigationButtonInertia>
                   {count > 2000 && (
                     <div className="mt-2 text-sm text-gray-600">
                       Exports over 2,000 rows will be processed in the background and emailed to you.
@@ -531,9 +537,7 @@ const CustomersPage = ({
           </section>
         ) : (
           <Placeholder>
-            <figure>
-              <img src={placeholder} />
-            </figure>
+            <PlaceholderImage src={placeholder} />
             {searchQuery !== null ? (
               <h2>No sales found</h2>
             ) : (
@@ -773,42 +777,33 @@ const CustomerDrawer = ({
         </div>
       ) : null}
       {customer.is_additional_contribution ? (
-        <div role="status" className="info">
-          <div>
-            <strong>Additional amount: </strong>
-            This is an additional contribution, added to a previous purchase of this product.
-          </div>
-        </div>
+        <Alert role="status" variant="info">
+          <strong>Additional amount: </strong>
+          This is an additional contribution, added to a previous purchase of this product.
+        </Alert>
       ) : null}
       {customer.ppp ? (
-        <div role="status" className="info">
-          <div>
-            This customer received a purchasing power parity discount of <b>{customer.ppp.discount}</b> because they are
-            located in <b>{customer.ppp.country}</b>.
-          </div>
-        </div>
+        <Alert role="status" variant="info">
+          This customer received a purchasing power parity discount of <b>{customer.ppp.discount}</b> because they are
+          located in <b>{customer.ppp.country}</b>.
+        </Alert>
       ) : null}
       {customer.giftee_email ? (
-        <div role="status" className="info">
+        <Alert role="status" variant="info">
           {customer.email} purchased this for {customer.giftee_email}.
-        </div>
+        </Alert>
       ) : null}
       {customer.is_preorder ? (
-        <div role="status" className="info">
-          <div>
-            <strong>Pre-order: </strong>
-            This is a pre-order authorization. The customer's card has not been charged yet.
-          </div>
-        </div>
+        <Alert role="status" variant="info">
+          <strong>Pre-order: </strong>
+          This is a pre-order authorization. The customer's card has not been charged yet.
+        </Alert>
       ) : null}
       {customer.affiliate && customer.affiliate.type !== "Collaborator" ? (
-        <div role="status" className="info">
-          <div>
-            <strong>Affiliate: </strong>
-            An affiliate ({customer.affiliate.email}) helped you make this sale and received {customer.affiliate.amount}
-            .
-          </div>
-        </div>
+        <Alert role="status" variant="info">
+          <strong>Affiliate: </strong>
+          An affiliate ({customer.affiliate.email}) helped you make this sale and received {customer.affiliate.amount}.
+        </Alert>
       ) : null}
       <EmailSection
         label="Email"
@@ -1486,9 +1481,9 @@ const TrackingSection = ({
           </div>
         ) : (
           <div>
-            <div role="status" className="success">
+            <Alert role="status" variant="success">
               Shipped
-            </div>
+            </Alert>
           </div>
         )
       ) : (
@@ -1868,21 +1863,19 @@ const UtmLinkStack = ({ link, showHeader }: { link: Customer["utm_link"]; showHe
             <h3>UTM link</h3>
           </section>
           <div>
-            <small role="status" className="info">
-              <span>
-                This sale was driven by a{" "}
-                <a href={link.utm_url} target="_blank" rel="noreferrer">
-                  UTM link
-                </a>
-                .
-              </span>
-            </small>
+            <Alert className="text-sm" role="status" variant="info">
+              This sale was driven by a{" "}
+              <a href={link.utm_url} target="_blank" rel="noreferrer">
+                UTM link
+              </a>
+              .
+            </Alert>
           </div>
         </>
       ) : null}
       <div>
         <h5>Title</h5>
-        <a href={Routes.utm_links_dashboard_path({ query: link.title })} target="_blank" rel="noreferrer">
+        <a href={Routes.dashboard_utm_links_path({ query: link.title })} target="_blank" rel="noreferrer">
           {link.title}
         </a>
       </div>
@@ -2191,14 +2184,12 @@ const RefundForm = ({
           )}
         </div>
         {showRefundFeeNotice ? (
-          <div role="status" className="info">
-            <p>
-              Going forward, Gumroad does not return any fees when a payment is refunded.{" "}
-              <a href="/help/article/47-how-to-refund-a-customer" target="_blank" rel="noreferrer">
-                Learn more
-              </a>
-            </p>
-          </div>
+          <Alert role="status" variant="info">
+            Going forward, Gumroad does not return any fees when a payment is refunded.{" "}
+            <a href="/help/article/47-how-to-refund-a-customer" target="_blank" rel="noreferrer">
+              Learn more
+            </a>
+          </Alert>
         ) : null}
       </fieldset>
       <div style={{ display: "contents" }}>
@@ -2342,9 +2333,9 @@ const ChargesSection = ({
         <>
           {remainingCharges !== null ? (
             <section>
-              <div role="status" className="info">
+              <Alert role="status" variant="info">
                 {`${remainingCharges} ${remainingCharges > 1 ? "charges" : "charge"} remaining`}
-              </div>
+              </Alert>
             </section>
           ) : null}
           {charges.map((charge) => (

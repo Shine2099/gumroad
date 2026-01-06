@@ -34,7 +34,6 @@ import { asyncVoid } from "$app/utils/promise";
 import { Button } from "$app/components/Button";
 import { CreditCardInput, StripeElementsProvider } from "$app/components/Checkout/CreditCardInput";
 import { CustomFields } from "$app/components/Checkout/CustomFields";
-import { GiftForm } from "$app/components/Checkout/GiftForm";
 import {
   addressFields,
   getErrors,
@@ -57,6 +56,7 @@ import { useLoggedInUser } from "$app/components/LoggedInUser";
 import { Popover, PopoverContent, PopoverTrigger } from "$app/components/Popover";
 import { PriceInput } from "$app/components/PriceInput";
 import { showAlert } from "$app/components/server-components/Alert";
+import { Alert } from "$app/components/ui/Alert";
 import { Tab, Tabs } from "$app/components/ui/Tabs";
 import { useIsDarkTheme } from "$app/components/useIsDarkTheme";
 import { useOnChangeSync } from "$app/components/useOnChange";
@@ -594,15 +594,12 @@ const CustomerDetails = ({ showCustomFields }: { showCustomFields: boolean }) =>
       ) : null}
       {state.warning ? (
         <div>
-          <div role="status" className="warning">
+          <Alert role="status" variant="warning">
             {state.warning}
-          </div>
+          </Alert>
         </div>
       ) : null}
       {isTippingEnabled(state) ? <TipSelector /> : null}
-      {state.products.length === 1 && state.products[0]?.canGift && !state.products[0]?.payInInstallments ? (
-        <GiftForm isMembership={state.products[0]?.nativeType === "membership"} />
-      ) : null}
       {state.paymentMethod !== "paypal" && state.paymentMethod !== "stripePaymentRequest" ? (
         <div>
           <Button color="primary" onClick={() => dispatch({ type: "offer" })} disabled={isSubmitDisabled(state)}>
@@ -735,7 +732,7 @@ const TipSelector = () => {
 
   React.useEffect(() => {
     if (!showPercentageOptions && state.tip.type === "percentage")
-      dispatch({ type: "set-value", tip: { type: "fixed", amount: null } });
+      dispatch({ type: "set-value", tip: { type: "fixed", amount: 0 } });
   }, [showPercentageOptions]);
 
   const defaultOther = state.surcharges.type === "loaded" ? state.surcharges.result.subtotal * 0.3 : 5;
@@ -1215,10 +1212,10 @@ export const PaymentForm = ({
     <div ref={paymentFormRef} className={cx("stack", className)} aria-label="Payment form">
       {isTestPurchase ? (
         <div>
-          <div role="alert" className="info">
+          <Alert variant="info">
             This will be a test purchase as you are the creator of at least one of the products. Your payment method
             will not be charged.
-          </div>
+          </Alert>
         </div>
       ) : null}
       <EmailAddress />
@@ -1238,9 +1235,7 @@ export const PaymentForm = ({
           </div>
           {notice ? (
             <div>
-              <div role="alert" className="info">
-                {notice}
-              </div>
+              <Alert variant="info">{notice}</Alert>
             </div>
           ) : null}
           <CreditCard />

@@ -35,9 +35,10 @@ import { Select, Option } from "$app/components/Select";
 import { showAlert } from "$app/components/server-components/Alert";
 import { Skeleton } from "$app/components/Skeleton";
 import { TypeSafeOptionSelect } from "$app/components/TypeSafeOptionSelect";
+import { Alert } from "$app/components/ui/Alert";
 import { PageHeader } from "$app/components/ui/PageHeader";
 import { Pill } from "$app/components/ui/Pill";
-import Placeholder from "$app/components/ui/Placeholder";
+import { Placeholder, PlaceholderImage } from "$app/components/ui/Placeholder";
 import { Sheet, SheetHeader } from "$app/components/ui/Sheet";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "$app/components/ui/Table";
 import { useDebouncedCallback } from "$app/components/useDebouncedCallback";
@@ -319,18 +320,16 @@ const DiscountsPage = ({
     >
       <section className="p-4 md:p-8">
         {show_black_friday_banner && !offerCodes.some((offerCode) => offerCode.code === black_friday_code) ? (
-          <div role="status" className="mb-8 border !border-pink bg-pink/20 px-4 py-3 md:px-8">
-            <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
-              <div className="flex flex-1 flex-row items-center gap-2 md:gap-4">
-                <img src={blackFridayIllustration} alt="Black Friday" className="h-12 w-12 shrink-0" />
-                <div className="flex-1 text-sm md:text-base">
-                  <span className="font-bold">Black Friday is here!</span> Be part of it on Discover. Join Black Friday
-                  Deals to create your discount and get featured.
-                </div>
+          <Alert className="mb-8" role="status" variant="accent">
+            <div className="flex items-center gap-4">
+              <img src={blackFridayIllustration} alt="Black Friday" className="size-12" />
+              <div className="flex-1 text-sm md:text-base">
+                <span className="font-bold">Black Friday is here!</span> Be part of it on Discover. Join Black Friday
+                Deals to create your discount and get featured.
               </div>
               <Button
                 color="primary"
-                className="mt-2 shrink-0 md:mt-0"
+                className="w-max"
                 onClick={() => {
                   setIsBlackFridayMode(true);
                   setSelectedOfferCodeId(null);
@@ -340,7 +339,7 @@ const DiscountsPage = ({
                 Join Black Friday Deals
               </Button>
             </div>
-          </div>
+          </Alert>
         ) : null}
         {offerCodes.length > 0 ? (
           <section className="flex flex-col gap-4">
@@ -481,9 +480,7 @@ const DiscountsPage = ({
           </section>
         ) : (
           <Placeholder>
-            <figure>
-              <img src={placeholder} />
-            </figure>
+            <PlaceholderImage src={placeholder} />
             <div>
               <h2>No discounts yet</h2>
               <p>Use discounts to create sweet deals for your customers</p>
@@ -919,9 +916,9 @@ const Form = ({
               </Button>
             </div>
             {isBlackFridayMode ? (
-              <div role="alert" className="info" style={{ marginTop: "var(--spacer-2)" }}>
+              <Alert className="mt-2" variant="info">
                 By using this discount, your product will be featured in Black Friday Deals on Discover.
-              </div>
+              </Alert>
             ) : null}
           </fieldset>
           <fieldset className={cx({ danger: selectedProductIds.error })}>

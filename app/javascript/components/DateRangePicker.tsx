@@ -12,6 +12,8 @@ import {
 } from "date-fns";
 import * as React from "react";
 
+import { classNames } from "$app/utils/classNames";
+
 import { DateInput } from "$app/components/DateInput";
 import { Icon } from "$app/components/Icons";
 import { Popover, PopoverContent, PopoverTrigger } from "$app/components/Popover";
@@ -41,7 +43,7 @@ export const DateRangePicker = ({
   return (
     <Popover
       open={open}
-      onOpenChange={(open) => {
+      onOpenChange={(open: boolean) => {
         setIsCustom(false);
         setOpen(open);
       }}
@@ -67,7 +69,7 @@ export const DateRangePicker = ({
                 }}
               />
             </fieldset>
-            <fieldset>
+            <fieldset className={classNames({ danger: to < from })}>
               <legend>
                 <label htmlFor={`${uid}-to`}>To (including)</label>
               </legend>
@@ -77,11 +79,13 @@ export const DateRangePicker = ({
                 onChange={(date) => {
                   if (date) setTo(date);
                 }}
+                aria-invalid={to < from}
               />
+              {to < from ? <small>Must be after from date</small> : null}
             </fieldset>
           </div>
         ) : (
-          <div className="flex flex-col py-2">
+          <div className="flex flex-col py-2" role="menu">
             <div
               role="menuitem"
               className="px-4 py-2 hover:bg-foreground/10"
