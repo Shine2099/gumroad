@@ -648,6 +648,105 @@ describe UrlRedirectsController do
     end
   end
 
+  describe "GET 'mobile_download_page'" do
+    before do
+      @product = create(:product_with_pdf_file)
+      @user = create(:user)
+      @purchase = create(:purchase, purchaser: @user, email: @user.email, link: @product)
+      @url_redirect = create(:url_redirect, purchase: @purchase)
+      @token = @url_redirect.token
+      sign_in @user
+    end
+
+    it "adds X-Robots-Tag response header to avoid page indexing" do
+      get :mobile_download_page, params: { id: @token }
+      expect(response.headers["X-Robots-Tag"]).to eq("noindex")
+    end
+
+    it "renders correctly with is_mobile_app_web_view set to true" do
+      get :mobile_download_page, params: { id: @token }
+      expect(response).to be_successful
+      expect(assigns(:hide_layouts)).to eq(true)
+      expect(assigns(:react_component_props)[:is_mobile_app_web_view]).to eq(true)
+    end
+
+    it "creates consumption event" do
+      expect do
+        get :mobile_download_page, params: { id: @token }
+      end.to change(ConsumptionEvent, :count).by(1)
+
+      expect(response).to be_successful
+      event = ConsumptionEvent.last
+      expect(event.event_type).to eq(ConsumptionEvent::EVENT_TYPE_VIEW)
+      expect(event.url_redirect_id).to eq @url_redirect.id
+      expect(event.purchase_id).to eq @purchase.id
+      expect(event.link_id).to eq @product.id
+      expect(event.platform).to eq Platform::WEB
+    end
+
+    it "increments the view count on the url_redirect" do
+      expect { get :mobile_download_page, params: { id: @token } }.to change {
+        @url_redirect.reload.uses
+      }.by(1)
+    end
+
+    context "with access revoked for purchase" do
+      before do
+        @purchase.update!(is_access_revoked: true)
+      end
+
+      it "redirects to expired page" do
+        expect do
+          get :mobile_download_page, params: { id: @token }
+        end.not_to change(ConsumptionEvent, :count)
+
+        expect(response).to redirect_to(url_redirect_expired_page_path(id: @url_redirect.token))
+      end
+    end
+
+    context "with a bundle purchase" do
+      it "returns 404 without creating consumption event" do
+        bundle_purchase = create(:purchase, link: create(:product, :bundle), is_bundle_purchase: true, purchaser: @user)
+        bundle_purchase.create_url_redirect!
+
+        expect do
+          expect do
+            get :mobile_download_page, params: { id: bundle_purchase.url_redirect.token }
+          end.to raise_error(ActionController::RoutingError)
+        end.not_to change(ConsumptionEvent, :count)
+      end
+    end
+
+    context "with a coffee product" do
+      it "returns 404" do
+        coffee_purchase = create(:purchase, link: create(:coffee_product), purchaser: @user)
+        coffee_purchase.create_url_redirect!
+
+        expect do
+          get :mobile_download_page, params: { id: coffee_purchase.url_redirect.token }
+        end.to raise_error(ActionController::RoutingError)
+      end
+    end
+
+    context "with inactive membership" do
+      it "redirects to the membership inactive page" do
+        product = create(:membership_product, price_cents: 100, block_access_after_membership_cancellation: true)
+        subscription = create(:subscription, link: product, user: @user, failed_at: Time.current)
+        purchase = create(:purchase, price_cents: 100, purchaser: @user, link: product, subscription:, is_original_subscription_purchase: true)
+        url_redirect = create(:url_redirect, link: product, purchase:)
+
+        get :mobile_download_page, params: { id: url_redirect.token }
+        expect(response).to redirect_to(url_redirect_membership_inactive_page_path(id: url_redirect.token))
+      end
+    end
+
+    it "returns 404 if the url redirect is not found" do
+      expect do
+        get :mobile_download_page, params: { id: "non-existent-id" }
+      end.to raise_error(ActionController::RoutingError)
+    end
+  end
+
   describe "GET download_archive" do
     it "redirects to the download URL for the requested installment archive when the format is HTML" do
       installment = create(:follower_installment, seller: create(:follower, follower_user_id: create(:user).id).user)
@@ -1738,3 +1837,4 @@ describe UrlRedirectsController do
     end
   end
 end
+

@@ -11,22 +11,22 @@ class UrlRedirectsController < ApplicationController
   before_action :redirect_to_custom_domain_if_needed, only: :download_page
   before_action :redirect_bundle_purchase_to_library_if_needed, only: :download_page
   before_action :redirect_to_coffee_page_if_needed, only: :download_page
-  before_action :check_permissions, only: %i[show stream download_page
+  before_action :check_permissions, only: %i[show stream download_page mobile_download_page
                                              hls_playlist download_subtitle_file read
                                              download_archive latest_media_locations download_product_files audio_durations]
   before_action :hide_layouts, only: %i[
-    confirm_page membership_inactive_page expired rental_expired_page show download_page download_product_files stream smil hls_playlist download_subtitle_file read
+    confirm_page membership_inactive_page expired rental_expired_page show download_page mobile_download_page download_product_files stream smil hls_playlist download_subtitle_file read
   ]
   before_action :mark_rental_as_viewed, only: %i[smil hls_playlist]
-  after_action :register_that_user_has_downloaded_product, only: %i[download_page show stream read]
+  after_action :register_that_user_has_downloaded_product, only: %i[download_page mobile_download_page show stream read]
   after_action -> { create_consumption_event!(ConsumptionEvent::EVENT_TYPE_READ) }, only: [:read]
   after_action -> { create_consumption_event!(ConsumptionEvent::EVENT_TYPE_WATCH) }, only: [:hls_playlist, :smil]
   after_action -> { create_consumption_event!(ConsumptionEvent::EVENT_TYPE_DOWNLOAD) }, only: [:show]
-  after_action -> { create_consumption_event!(ConsumptionEvent::EVENT_TYPE_VIEW) }, only: [:download_page]
+  after_action -> { create_consumption_event!(ConsumptionEvent::EVENT_TYPE_VIEW) }, only: [:download_page, :mobile_download_page]
 
-  skip_before_action :check_suspended, only: %i[show stream confirm confirm_page download_page
+  skip_before_action :check_suspended, only: %i[show stream confirm confirm_page download_page mobile_download_page
                                                 download_subtitle_file download_archive download_product_files audio_durations]
-  before_action :set_noindex_header, only: %i[confirm_page download_page]
+  before_action :set_noindex_header, only: %i[confirm_page download_page mobile_download_page]
 
   rescue_from ActionController::RoutingError do |exception|
     if params[:action] == "read"
@@ -69,13 +69,19 @@ class UrlRedirectsController < ApplicationController
   end
 
   def download_page
-    @hide_layouts = true
-
     @body_class = "download-page responsive responsive-nav"
     @show_user_favicon = true
     @title = @url_redirect.with_product_files.name == "Untitled" ? @url_redirect.referenced_link.name : @url_redirect.with_product_files.name
     @react_component_props = UrlRedirectPresenter.new(url_redirect: @url_redirect, logged_in_user:).download_page_with_content_props(common_props)
     trigger_files_lifecycle_events
+  end
+
+  def mobile_download_page
+    e404 if redirect_download_page_to_library? || redirect_download_page_to_coffee? || logged_in_user.nil?
+
+    @react_component_props = UrlRedirectPresenter.new(url_redirect: @url_redirect, logged_in_user:).download_page_with_content_props(common_props.merge(is_mobile_app_web_view: true))
+    trigger_files_lifecycle_events
+    render :download_page
   end
 
   def download_product_files
@@ -197,6 +203,8 @@ class UrlRedirectsController < ApplicationController
       set_confirmed_redirect_cookie
       if params[:destination] == "download_page"
         redirect_to url_redirect_download_page_path(@url_redirect.token, **forwardable_query_params)
+      elsif params[:destination] == "mobile_download_page"
+        redirect_to url_redirect_mobile_download_page_path(@url_redirect.token, **forwardable_query_params)
       elsif params[:destination] == "stream"
         redirect_to url_redirect_stream_page_path(@url_redirect.token, **forwardable_query_params)
       else
@@ -300,15 +308,23 @@ class UrlRedirectsController < ApplicationController
     end
 
     def redirect_bundle_purchase_to_library_if_needed
-      return unless @url_redirect.purchase&.is_bundle_purchase?
+      return unless redirect_download_page_to_library?
 
       redirect_to library_url(bundles: @url_redirect.purchase.link.external_id, purchase_id: params[:receipt] && @url_redirect.purchase.external_id)
     end
 
+    def redirect_download_page_to_library?
+      @url_redirect.purchase&.is_bundle_purchase?
+    end
+
     def redirect_to_coffee_page_if_needed
-      return unless @url_redirect.referenced_link&.native_type == Link::NATIVE_TYPE_COFFEE
+      return unless redirect_download_page_to_coffee?
 
       redirect_to custom_domain_coffee_url(host: @url_redirect.seller.subdomain_with_protocol, purchase_email: params[:purchase_email]), allow_other_host: true
+    end
+
+    def redirect_download_page_to_coffee?
+      @url_redirect.referenced_link&.native_type == Link::NATIVE_TYPE_COFFEE
     end
 
     def register_that_user_has_downloaded_product

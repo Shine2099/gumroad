@@ -882,6 +882,7 @@ Rails.application.routes.draw do
     get "/read/:id/:product_file_id", to: "url_redirects#read", as: :url_redirect_read_for_product_file
 
     get "/d/:id", to: "url_redirects#download_page", as: :url_redirect_download_page
+    get "/mobile_download_page/:id", to: "url_redirects#mobile_download_page", as: :url_redirect_mobile_download_page
     get "/confirm", to: "url_redirects#confirm_page", as: :confirm_page
     post "/confirm-redirect", to: "url_redirects#confirm"
     post "/r/:id/send_to_kindle", to: "url_redirects#send_to_kindle", as: :send_to_kindle
