@@ -36,8 +36,6 @@ export const Nav = ({ title, current_user }: Props) => {
       title={title}
       footer={
         <DashboardNavProfilePopover user={loggedInUser}>
-          {/* role="menu" has styling from scss files and classNames don't take precedent,
-          so we need bangs until we remove the scss that applies */}
           <div role="menu" className="border-0! shadow-none! dark:border!">
             {current_user.impersonated_user ? (
               <>

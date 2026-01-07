@@ -21,8 +21,6 @@ function NavbarFooter() {
       <ClientNavLink text="Settings" icon="gear-fill" href={Routes.settings_main_url(routeParams)} />
       <NavLink text="Help" icon="book" href={Routes.help_center_root_url(routeParams)} />
       <DashboardNavProfilePopover user={currentSeller}>
-        {/* role="menu" has styling from scss files and classNames don't take precedent,
-        so we need bangs until we remove the scss that applies */}
         <div role="menu" className="border-0! shadow-none! dark:border!">
           {teamMemberships != null && teamMemberships.length > 0 ? (
             <>
