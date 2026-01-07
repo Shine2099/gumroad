@@ -26,11 +26,7 @@ export const ApiEndpoint = ({
           <Pill color="primary">{method.toUpperCase()}</Pill>
           <span>{path}</span>
         </div>
-        {typeof description === "string" ? (
-          <div dangerouslySetInnerHTML={{ __html: description }} />
-        ) : (
-          <div>{description}</div>
-        )}
+        <div>{description}</div>
         <CodeSnippet>{url}</CodeSnippet>
         {children}
       </div>
