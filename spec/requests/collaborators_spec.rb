@@ -406,6 +406,40 @@ describe "Collaborators", type: :system, js: true do
         button.hover
         expect(button).to have_tooltip(text: "Collaborators with Brazilian Stripe accounts are not supported.")
       end
+
+      it "does not add unpublished and ineligible products when adding a collaborator" do
+        unpublished_product = create(:product, user: seller, name: "Unpublished product", purchase_disabled_at: Time.current)
+
+        visit new_collaborator_path
+
+        expect(page).not_to have_content unpublished_product.name
+
+        check "Show unpublished and ineligible products"
+
+        within find(:table_row, { "Product" => unpublished_product.name }) do
+          expect(page).to have_checked_field(unpublished_product.name)
+        end
+
+        fill_in "email", with: collaborating_user.email
+
+        expect(page).to have_checked_field("All products")
+
+        uncheck "Show unpublished and ineligible products"
+
+        expect(page).not_to have_content unpublished_product.name
+
+        expect do
+          click_on "Add collaborator"
+
+          expect(page).to have_alert(text: "Changes saved!")
+          expect(page).to have_current_path(collaborators_path)
+        end.to change { seller.collaborators.count }.by(1)
+          .and change { ProductAffiliate.count }.by(3)
+
+        collaborator = seller.collaborators.last
+        expect(collaborator.products).to eq [product1, product2, product3]
+        expect(collaborator.products).not_to include(unpublished_product, product4, product5)
+      end
     end
 
     it "allows deleting a collaborator" do
