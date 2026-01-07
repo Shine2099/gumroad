@@ -5,13 +5,11 @@ import CodeSnippet from "$app/components/ui/CodeSnippet";
 import { ApiEndpoint } from "../ApiEndpoint";
 import { ApiParameter, ApiParameters } from "../ApiParameters";
 
-export const VerifyLicense: React.FC = () => (
+export const VerifyLicense = () => (
   <ApiEndpoint method="post" path="/licenses/verify" description="Verify a license">
     <ApiParameters>
       <ApiParameter name="product_id">(the unique ID of the product, available on product's edit page)</ApiParameter>
-      <br />
       <ApiParameter name="license_key">(the license key provided by your customer)</ApiParameter>
-      <br />
       <ApiParameter name="increment_uses_count">("true"/"false", optional, default: "true")</ApiParameter>
     </ApiParameters>
     <CodeSnippet caption="cURL example">
@@ -69,11 +67,10 @@ export const VerifyLicense: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const EnableLicense: React.FC = () => (
+export const EnableLicense = () => (
   <ApiEndpoint method="put" path="/licenses/enable" description="Enable a license">
     <ApiParameters>
       <ApiParameter name="product_id">(the unique ID of the product, available on product's edit page)</ApiParameter>
-      <br />
       <ApiParameter name="license_key">(the license key provided by your customer)</ApiParameter>
     </ApiParameters>
     <CodeSnippet caption="cURL example">
@@ -132,11 +129,10 @@ export const EnableLicense: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const DisableLicense: React.FC = () => (
+export const DisableLicense = () => (
   <ApiEndpoint method="put" path="/licenses/disable" description="Disable a license">
     <ApiParameters>
       <ApiParameter name="product_id">(the unique ID of the product, available on product's edit page)</ApiParameter>
-      <br />
       <ApiParameter name="license_key">(the license key provided by your customer)</ApiParameter>
     </ApiParameters>
     <CodeSnippet caption="cURL example">
@@ -195,11 +191,10 @@ export const DisableLicense: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const DecrementUsesCount: React.FC = () => (
+export const DecrementUsesCount = () => (
   <ApiEndpoint method="put" path="/licenses/decrement_uses_count" description="Decrement the uses count of a license">
     <ApiParameters>
       <ApiParameter name="product_id">(the unique ID of the product, available on product's edit page)</ApiParameter>
-      <br />
       <ApiParameter name="license_key">(the license key provided by your customer)</ApiParameter>
     </ApiParameters>
     <CodeSnippet caption="cURL example">
@@ -258,7 +253,7 @@ export const DecrementUsesCount: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const RotateLicense: React.FC = () => (
+export const RotateLicense = () => (
   <ApiEndpoint
     method="put"
     path="/licenses/rotate"
@@ -266,7 +261,6 @@ export const RotateLicense: React.FC = () => (
   >
     <ApiParameters>
       <ApiParameter name="product_id">(the unique ID of the product, available on product's edit page)</ApiParameter>
-      <br />
       <ApiParameter name="license_key">(the license key provided by your customer)</ApiParameter>
     </ApiParameters>
     <CodeSnippet caption="cURL example">

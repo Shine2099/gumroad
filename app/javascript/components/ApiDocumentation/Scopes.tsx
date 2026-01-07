@@ -28,7 +28,7 @@ const SCOPES = [
   },
 ];
 
-export const Scopes: React.FC = () => (
+export const Scopes = () => (
   <div className="stack" id="api-scopes">
     <div>
       <h2>Scopes</h2>

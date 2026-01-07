@@ -4,7 +4,7 @@ import CodeSnippet from "$app/components/ui/CodeSnippet";
 
 import { ApiEndpoint } from "../ApiEndpoint";
 
-export const GetUser: React.FC = () => (
+export const GetUser = () => (
   <ApiEndpoint method="get" path="/user" description="Retrieve the user's data.">
     <CodeSnippet caption="cURL example">
       {`curl https://api.gumroad.com/v2/user \\

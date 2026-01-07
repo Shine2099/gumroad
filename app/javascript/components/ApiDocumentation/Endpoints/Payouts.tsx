@@ -5,7 +5,7 @@ import CodeSnippet from "$app/components/ui/CodeSnippet";
 import { ApiEndpoint } from "../ApiEndpoint";
 import { ApiParameter, ApiParameters } from "../ApiParameters";
 
-export const GetPayouts: React.FC = () => (
+export const GetPayouts = () => (
   <ApiEndpoint
     method="get"
     path="/payouts"
@@ -15,15 +15,12 @@ export const GetPayouts: React.FC = () => (
       <ApiParameter name="after">
         (optional, date in form YYYY-MM-DD) - Only return payouts after this date
       </ApiParameter>
-      <br />
       <ApiParameter name="before">
         (optional, date in form YYYY-MM-DD) - Only return payouts before this date
       </ApiParameter>
-      <br />
       <ApiParameter name="page_key">
         (optional) - A key representing a page of results. It is given in the response as `next_page_key`.
       </ApiParameter>
-      <br />
       <ApiParameter name="include_upcoming">
         (optional, default: "true") - Set to "false" to exclude the upcoming payout from the response.
       </ApiParameter>
@@ -91,7 +88,7 @@ export const GetPayouts: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const GetPayout: React.FC = () => (
+export const GetPayout = () => (
   <ApiEndpoint
     method="get"
     path="/payouts/:id"

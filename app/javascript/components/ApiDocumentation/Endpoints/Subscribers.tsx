@@ -5,7 +5,7 @@ import CodeSnippet from "$app/components/ui/CodeSnippet";
 import { ApiEndpoint } from "../ApiEndpoint";
 import { ApiParameter, ApiParameters } from "../ApiParameters";
 
-export const GetSubscribers: React.FC = () => (
+export const GetSubscribers = () => (
   <ApiEndpoint
     method="get"
     path="/products/:product_id/subscribers"
@@ -28,11 +28,9 @@ export const GetSubscribers: React.FC = () => (
   >
     <ApiParameters>
       <ApiParameter name="email">(optional) - Filter subscribers by this email</ApiParameter>
-      <br />
       <ApiParameter name="paginated">
         (optional, default: "false") - Set to "true" to limit the number of subscribers returned to 100.
       </ApiParameter>
-      <br />
       <ApiParameter name="page_key">
         (optional) - A key representing a page of results. It is given in the paginated response of the previous page as
         `next_page_key`.
@@ -73,7 +71,7 @@ export const GetSubscribers: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const GetSubscriber: React.FC = () => (
+export const GetSubscriber = () => (
   <ApiEndpoint
     method="get"
     path="/subscribers/:id"

@@ -9,14 +9,14 @@ const pageNames = {
   ping: "Ping",
   api: "API",
 };
-export type Page = keyof typeof pageNames;
 
-type Props = {
-  currentPage: Page;
+export const Layout = ({
+  currentPage,
+  children,
+}: {
+  currentPage: keyof typeof pageNames;
   children: React.ReactNode;
-};
-
-export const Layout = ({ currentPage, children }: Props) => (
+}) => (
   <div>
     <PageHeader title={pageNames[currentPage]}>
       <Tabs>

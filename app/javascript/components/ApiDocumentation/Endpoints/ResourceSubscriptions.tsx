@@ -5,7 +5,7 @@ import CodeSnippet from "$app/components/ui/CodeSnippet";
 import { ApiEndpoint } from "../ApiEndpoint";
 import { ApiParameter, ApiParameters } from "../ApiParameters";
 
-const ResourceSubscriptionsDescription: React.FC = () => (
+const ResourceSubscriptionsDescription = () => (
   <>
     <p>
       Subscribe to a resource. Currently there are 8 supported resource names - "sale", "refund", "dispute",
@@ -158,7 +158,7 @@ const ResourceSubscriptionsDescription: React.FC = () => (
   </>
 );
 
-export const CreateResourceSubscription: React.FC = () => (
+export const CreateResourceSubscription = () => (
   <ApiEndpoint method="put" path="/resource_subscriptions" description={<ResourceSubscriptionsDescription />}>
     <CodeSnippet caption="cURL example">
       {`curl https://api.gumroad.com/v2/resource_subscriptions \\
@@ -180,7 +180,7 @@ export const CreateResourceSubscription: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const GetResourceSubscriptions: React.FC = () => (
+export const GetResourceSubscriptions = () => (
   <ApiEndpoint
     method="get"
     path="/resource_subscriptions"
@@ -211,7 +211,7 @@ export const GetResourceSubscriptions: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const DeleteResourceSubscription: React.FC = () => (
+export const DeleteResourceSubscription = () => (
   <ApiEndpoint
     method="delete"
     path="/resource_subscriptions/:resource_subscription_id"

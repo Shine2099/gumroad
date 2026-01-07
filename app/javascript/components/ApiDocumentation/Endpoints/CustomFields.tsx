@@ -5,7 +5,7 @@ import CodeSnippet from "$app/components/ui/CodeSnippet";
 import { ApiEndpoint } from "../ApiEndpoint";
 import { ApiParameter, ApiParameters } from "../ApiParameters";
 
-export const GetCustomFields: React.FC = () => (
+export const GetCustomFields = () => (
   <ApiEndpoint
     method="get"
     path="/products/:product_id/custom_fields"
@@ -28,7 +28,7 @@ export const GetCustomFields: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const CreateCustomField: React.FC = () => (
+export const CreateCustomField = () => (
   <ApiEndpoint
     method="post"
     path="/products/:product_id/custom_fields"
@@ -36,9 +36,7 @@ export const CreateCustomField: React.FC = () => (
   >
     <ApiParameters>
       <ApiParameter name="variant" />
-      <br />
       <ApiParameter name="name" required />
-      <br />
       <ApiParameter name="required">(true or false)</ApiParameter>
     </ApiParameters>
     <CodeSnippet caption="cURL example">
@@ -60,7 +58,7 @@ export const CreateCustomField: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const UpdateCustomField: React.FC = () => (
+export const UpdateCustomField = () => (
   <ApiEndpoint
     method="put"
     path="/products/:product_id/custom_fields/:name"
@@ -68,7 +66,6 @@ export const UpdateCustomField: React.FC = () => (
   >
     <ApiParameters>
       <ApiParameter name="variant" />
-      <br />
       <ApiParameter name="required">(true or false)</ApiParameter>
     </ApiParameters>
     <CodeSnippet caption="cURL example">
@@ -90,7 +87,7 @@ export const UpdateCustomField: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const DeleteCustomField: React.FC = () => (
+export const DeleteCustomField = () => (
   <ApiEndpoint
     method="delete"
     path="/products/:product_id/custom_fields/:name"

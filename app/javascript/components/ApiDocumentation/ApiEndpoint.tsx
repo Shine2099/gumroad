@@ -3,15 +3,19 @@ import React from "react";
 import CodeSnippet from "$app/components/ui/CodeSnippet";
 import { Pill } from "$app/components/ui/Pill";
 
-type ApiEndpointProps = {
+export const ApiEndpoint = ({
+  method,
+  path,
+  description,
+  isOAuth,
+  children,
+}: {
   method: string;
   path: string;
   description: React.ReactNode;
   isOAuth?: boolean;
   children?: React.ReactNode;
-};
-
-export const ApiEndpoint: React.FC<ApiEndpointProps> = ({ method, path, description, isOAuth, children }) => {
+}) => {
   const methodId = `${method}-${path}`;
   const url = isOAuth ? `https://gumroad.com${path}` : `https://api.gumroad.com/v2${path}`;
 

@@ -4,7 +4,7 @@ import CodeSnippet from "$app/components/ui/CodeSnippet";
 
 import { ApiEndpoint } from "../ApiEndpoint";
 
-export const GetProducts: React.FC = () => (
+export const GetProducts = () => (
   <ApiEndpoint
     method="get"
     path="/products"
@@ -84,7 +84,7 @@ export const GetProducts: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const GetProduct: React.FC = () => (
+export const GetProduct = () => (
   <ApiEndpoint method="get" path="/products/:id" description="Retrieve the details of a product.">
     <CodeSnippet caption="cURL example">
       {`curl https://api.gumroad.com/v2/products/A-m3CDDC5dlrSdKZp0RFhA== \\
@@ -160,7 +160,7 @@ export const GetProduct: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const DeleteProduct: React.FC = () => (
+export const DeleteProduct = () => (
   <ApiEndpoint method="delete" path="/products/:id" description="Permanently delete a product.">
     <CodeSnippet caption="cURL example">
       {`curl https://api.gumroad.com/v2/products/A-m3CDDC5dlrSdKZp0RFhA== \\
@@ -176,7 +176,7 @@ export const DeleteProduct: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const EnableProduct: React.FC = () => (
+export const EnableProduct = () => (
   <ApiEndpoint method="put" path="/products/:id/enable" description="Enable an existing product.">
     <CodeSnippet caption="cURL example">
       {`curl https://api.gumroad.com/v2/products/A-m3CDDC5dlrSdKZp0RFhA==/enable \\
@@ -252,7 +252,7 @@ export const EnableProduct: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const DisableProduct: React.FC = () => (
+export const DisableProduct = () => (
   <ApiEndpoint method="put" path="/products/:id/disable" description="Disable an existing product.">
     <CodeSnippet caption="cURL example">
       {`curl https://api.gumroad.com/v2/products/A-m3CDDC5dlrSdKZp0RFhA==/disable \\

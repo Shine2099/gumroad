@@ -5,7 +5,7 @@ import CodeSnippet from "$app/components/ui/CodeSnippet";
 import { ApiEndpoint } from "../ApiEndpoint";
 import { ApiParameter, ApiParameters } from "../ApiParameters";
 
-export const CreateVariantCategory: React.FC = () => (
+export const CreateVariantCategory = () => (
   <ApiEndpoint
     method="post"
     path="/products/:product_id/variant_categories"
@@ -13,7 +13,6 @@ export const CreateVariantCategory: React.FC = () => (
   >
     <ApiParameters>
       <ApiParameter name="variant_category" required />
-      <br />
       <ApiParameter name="title" required />
     </ApiParameters>
     <CodeSnippet caption="cURL example">
@@ -34,7 +33,7 @@ export const CreateVariantCategory: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const GetVariantCategory: React.FC = () => (
+export const GetVariantCategory = () => (
   <ApiEndpoint
     method="get"
     path="/products/:product_id/variant_categories/:id"
@@ -57,7 +56,7 @@ export const GetVariantCategory: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const UpdateVariantCategory: React.FC = () => (
+export const UpdateVariantCategory = () => (
   <ApiEndpoint
     method="put"
     path="/products/:product_id/variant_categories/:id"
@@ -65,7 +64,6 @@ export const UpdateVariantCategory: React.FC = () => (
   >
     <ApiParameters>
       <ApiParameter name="variant_category" required />
-      <br />
       <ApiParameter name="title" required />
     </ApiParameters>
     <CodeSnippet caption="cURL example">
@@ -86,7 +84,7 @@ export const UpdateVariantCategory: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const DeleteVariantCategory: React.FC = () => (
+export const DeleteVariantCategory = () => (
   <ApiEndpoint
     method="delete"
     path="/products/:product_id/variant_categories/:id"
@@ -106,7 +104,7 @@ export const DeleteVariantCategory: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const GetVariantCategories: React.FC = () => (
+export const GetVariantCategories = () => (
   <ApiEndpoint
     method="get"
     path="/products/:product_id/variant_categories"
@@ -129,7 +127,7 @@ export const GetVariantCategories: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const CreateVariant: React.FC = () => (
+export const CreateVariant = () => (
   <ApiEndpoint
     method="post"
     path="/products/:product_id/variant_categories/:variant_category_id/variants"
@@ -137,11 +135,8 @@ export const CreateVariant: React.FC = () => (
   >
     <ApiParameters>
       <ApiParameter name="variant" />
-      <br />
       <ApiParameter name="name" required />
-      <br />
       <ApiParameter name="price_difference_cents" />
-      <br />
       <ApiParameter name="max_purchase_count">(optional)</ApiParameter>
     </ApiParameters>
     <CodeSnippet caption="cURL example">
@@ -164,7 +159,7 @@ export const CreateVariant: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const GetVariant: React.FC = () => (
+export const GetVariant = () => (
   <ApiEndpoint
     method="get"
     path="/products/:product_id/variant_categories/:variant_category_id/variants/:id"
@@ -189,7 +184,7 @@ export const GetVariant: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const UpdateVariant: React.FC = () => (
+export const UpdateVariant = () => (
   <ApiEndpoint
     method="put"
     path="/products/:product_id/variant_categories/:variant_category_id/variants/:id"
@@ -197,11 +192,8 @@ export const UpdateVariant: React.FC = () => (
   >
     <ApiParameters>
       <ApiParameter name="variant" />
-      <br />
       <ApiParameter name="name" required />
-      <br />
       <ApiParameter name="price_difference_cents" />
-      <br />
       <ApiParameter name="max_purchase_count">(optional)</ApiParameter>
     </ApiParameters>
     <CodeSnippet caption="cURL example">
@@ -224,7 +216,7 @@ export const UpdateVariant: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const DeleteVariant: React.FC = () => (
+export const DeleteVariant = () => (
   <ApiEndpoint
     method="delete"
     path="/products/:product_id/variant_categories/:variant_category_id/variants/:id"
@@ -244,7 +236,7 @@ export const DeleteVariant: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const GetVariants: React.FC = () => (
+export const GetVariants = () => (
   <ApiEndpoint
     method="get"
     path="/products/:product_id/variant_categories/:variant_category_id/variants"

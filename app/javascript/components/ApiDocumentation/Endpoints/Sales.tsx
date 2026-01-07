@@ -5,7 +5,7 @@ import CodeSnippet from "$app/components/ui/CodeSnippet";
 import { ApiEndpoint } from "../ApiEndpoint";
 import { ApiParameter, ApiParameters } from "../ApiParameters";
 
-export const GetSales: React.FC = () => (
+export const GetSales = () => (
   <ApiEndpoint
     method="get"
     path="/sales"
@@ -13,17 +13,12 @@ export const GetSales: React.FC = () => (
   >
     <ApiParameters>
       <ApiParameter name="after">(optional, date in form YYYY-MM-DD) - Only return sales after this date</ApiParameter>
-      <br />
       <ApiParameter name="before">
         (optional, date in form YYYY-MM-DD) - Only return sales before this date
       </ApiParameter>
-      <br />
       <ApiParameter name="product_id">(optional) - Filter sales by this product</ApiParameter>
-      <br />
       <ApiParameter name="email">(optional) - Filter sales by this email</ApiParameter>
-      <br />
       <ApiParameter name="order_id">(optional) - Filter sales by this Order ID</ApiParameter>
-      <br />
       <ApiParameter name="page_key">
         (optional) - A key representing a page of results. It is given in the response as `next_page_key`.
       </ApiParameter>
@@ -112,7 +107,7 @@ export const GetSales: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const GetSale: React.FC = () => (
+export const GetSale = () => (
   <ApiEndpoint
     method="get"
     path="/sales/:id"
@@ -198,7 +193,7 @@ export const GetSale: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const MarkSaleAsShipped: React.FC = () => (
+export const MarkSaleAsShipped = () => (
   <ApiEndpoint
     method="put"
     path="/sales/:id/mark_as_shipped"
@@ -290,7 +285,7 @@ export const MarkSaleAsShipped: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const RefundSale: React.FC = () => (
+export const RefundSale = () => (
   <ApiEndpoint
     method="put"
     path="/sales/:id/refund"
@@ -372,7 +367,7 @@ export const RefundSale: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const ResendReceipt: React.FC = () => (
+export const ResendReceipt = () => (
   <ApiEndpoint
     method="post"
     path="/sales/:id/resend_receipt"

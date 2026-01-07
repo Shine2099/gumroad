@@ -32,7 +32,7 @@ const OAUTH_READING_LINKS = [
   },
 ];
 
-export const Resources: React.FC = () => (
+export const Resources = () => (
   <>
     <div className="stack" id="api-resources">
       <div>

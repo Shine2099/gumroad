@@ -1,12 +1,14 @@
 import React from "react";
 
-type ApiResourceProps = {
+export const ApiResource = ({
+  name,
+  id,
+  endpoints,
+}: {
   name: string;
   id: string;
   endpoints: React.ReactNode[];
-};
-
-export const ApiResource: React.FC<ApiResourceProps> = ({ name, id, endpoints }) => (
+}) => (
   <div className="stack" id={id}>
     <div>
       <h2>{name}</h2>

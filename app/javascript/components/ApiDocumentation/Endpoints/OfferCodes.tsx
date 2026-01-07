@@ -5,7 +5,7 @@ import CodeSnippet from "$app/components/ui/CodeSnippet";
 import { ApiEndpoint } from "../ApiEndpoint";
 import { ApiParameter, ApiParameters } from "../ApiParameters";
 
-export const GetOfferCodes: React.FC = () => (
+export const GetOfferCodes = () => (
   <ApiEndpoint
     method="get"
     path="/products/:product_id/offer_codes"
@@ -39,7 +39,7 @@ export const GetOfferCodes: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const GetOfferCode: React.FC = () => (
+export const GetOfferCode = () => (
   <ApiEndpoint
     method="get"
     path="/products/:product_id/offer_codes/:id"
@@ -67,7 +67,7 @@ export const GetOfferCode: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const CreateOfferCode: React.FC = () => (
+export const CreateOfferCode = () => (
   <ApiEndpoint
     method="post"
     path="/products/:product_id/offer_codes"
@@ -75,13 +75,9 @@ export const CreateOfferCode: React.FC = () => (
   >
     <ApiParameters>
       <ApiParameter name="name">(the coupon code used at checkout)</ApiParameter>
-      <br />
       <ApiParameter name="amount_off" />
-      <br />
       <ApiParameter name="offer_type">(optional, "cents" or "percent") Default: "cents"</ApiParameter>
-      <br />
       <ApiParameter name="max_purchase_count">(optional)</ApiParameter>
-      <br />
       <ApiParameter name="universal">(optional, true or false) Default: false</ApiParameter>
     </ApiParameters>
     <CodeSnippet caption="cURL example">
@@ -107,7 +103,7 @@ export const CreateOfferCode: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const UpdateOfferCode: React.FC = () => (
+export const UpdateOfferCode = () => (
   <ApiEndpoint
     method="put"
     path="/products/:product_id/offer_codes/:id"
@@ -115,7 +111,6 @@ export const UpdateOfferCode: React.FC = () => (
   >
     <ApiParameters>
       <ApiParameter name="offer_code" />
-      <br />
       <ApiParameter name="max_purchase_count" />
     </ApiParameters>
     <CodeSnippet caption="cURL example">
@@ -139,7 +134,7 @@ export const UpdateOfferCode: React.FC = () => (
   </ApiEndpoint>
 );
 
-export const DeleteOfferCode: React.FC = () => (
+export const DeleteOfferCode = () => (
   <ApiEndpoint
     method="delete"
     path="/products/:product_id/offer_codes/:id"

@@ -1,7 +1,7 @@
 import { Link } from "@inertiajs/react";
 import React from "react";
 
-export const Introduction: React.FC = () => (
+export const Introduction = () => (
   <div className="stack" id="api-intro">
     <div>
       <p>

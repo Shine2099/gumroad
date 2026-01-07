@@ -18,7 +18,7 @@ export default function Api() {
         <div>
           <div className="grid grid-cols-1 items-start gap-x-16 gap-y-8 lg:grid-cols-[var(--grid-cols-sidebar)]">
             <Navigation resources={API_RESOURCES} />
-            <article style={{ display: "grid", gap: "var(--spacer-6)" }}>
+            <article className="grid gap-8">
               <Introduction />
               <Authentication />
               <Scopes />

@@ -1,6 +1,6 @@
 import React from "react";
 
-export const Authentication: React.FC = () => (
+export const Authentication = () => (
   <div className="stack" id="api-authentication">
     <div>
       <h2>Authentication</h2>

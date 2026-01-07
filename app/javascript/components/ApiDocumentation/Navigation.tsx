@@ -1,15 +1,6 @@
 import React from "react";
 
-type ApiResourceNav = {
-  name: string;
-  id: string;
-};
-
-type NavigationProps = {
-  resources: ApiResourceNav[];
-};
-
-export const Navigation: React.FC<NavigationProps> = ({ resources }) => (
+export const Navigation = ({ resources }: { resources: { name: string; id: string }[] }) => (
   <div
     role="navigation"
     aria-label="API Reference"

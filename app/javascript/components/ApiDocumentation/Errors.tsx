@@ -11,7 +11,7 @@ const ERROR_CODES = [
   { code: "500, 502, 503, 504 Server Error", description: "something else went wrong on our end." },
 ];
 
-export const Errors: React.FC = () => (
+export const Errors = () => (
   <div className="stack" id="api-errors">
     <div>
       <h2>API Errors</h2>
