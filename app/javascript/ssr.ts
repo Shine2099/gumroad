@@ -23,7 +23,6 @@ import AdminSuspendForFraudForm from "$app/components/server-components/Admin/Su
 import AdminSuspendForTosForm from "$app/components/server-components/Admin/SuspendForTosForm";
 import AdminUserGuids from "$app/components/server-components/Admin/UserGuids";
 import AdminUserStats from "$app/components/server-components/Admin/UserStats";
-
 import Alert from "$app/components/server-components/Alert";
 import BundleEditPage from "$app/components/server-components/BundleEditPage";
 import CheckoutPage from "$app/components/server-components/CheckoutPage";
@@ -90,7 +89,6 @@ ReactOnRails.register({
   AdminSuspendForTosForm,
   AdminUserGuids,
   AdminUserStats,
-
   Alert,
   AdminAddCreditForm,
   HelpCenterArticlesIndexPage,
