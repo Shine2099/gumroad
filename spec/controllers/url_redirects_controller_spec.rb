@@ -655,16 +655,17 @@ describe UrlRedirectsController do
       @purchase = create(:purchase, purchaser: @user, email: @user.email, link: @product)
       @url_redirect = create(:url_redirect, purchase: @purchase)
       @token = @url_redirect.token
-      sign_in @user
+      @app = create(:oauth_application, owner: @user)
+      @access_token = create("doorkeeper/access_token", application: @app, resource_owner_id: @user.id, scopes: "mobile_api").token
     end
 
     it "adds X-Robots-Tag response header to avoid page indexing" do
-      get :mobile_download_page, params: { id: @token }
+      get :mobile_download_page, params: { id: @token, access_token: @access_token }
       expect(response.headers["X-Robots-Tag"]).to eq("noindex")
     end
 
     it "renders correctly with is_mobile_app_web_view set to true" do
-      get :mobile_download_page, params: { id: @token }
+      get :mobile_download_page, params: { id: @token, access_token: @access_token }
       expect(response).to be_successful
       expect(assigns(:hide_layouts)).to eq(true)
       expect(assigns(:react_component_props)[:is_mobile_app_web_view]).to eq(true)
@@ -672,7 +673,7 @@ describe UrlRedirectsController do
 
     it "creates consumption event" do
       expect do
-        get :mobile_download_page, params: { id: @token }
+        get :mobile_download_page, params: { id: @token, access_token: @access_token }
       end.to change(ConsumptionEvent, :count).by(1)
 
       expect(response).to be_successful
@@ -685,7 +686,7 @@ describe UrlRedirectsController do
     end
 
     it "increments the view count on the url_redirect" do
-      expect { get :mobile_download_page, params: { id: @token } }.to change {
+      expect { get :mobile_download_page, params: { id: @token, access_token: @access_token } }.to change {
         @url_redirect.reload.uses
       }.by(1)
     end
@@ -697,7 +698,7 @@ describe UrlRedirectsController do
 
       it "redirects to expired page" do
         expect do
-          get :mobile_download_page, params: { id: @token }
+          get :mobile_download_page, params: { id: @token, access_token: @access_token }
         end.not_to change(ConsumptionEvent, :count)
 
         expect(response).to redirect_to(url_redirect_expired_page_path(id: @url_redirect.token))
@@ -705,26 +706,24 @@ describe UrlRedirectsController do
     end
 
     context "with a bundle purchase" do
-      it "returns 404 without creating consumption event" do
+      it "redirects to the library page without creating consumption event" do
         bundle_purchase = create(:purchase, link: create(:product, :bundle), is_bundle_purchase: true, purchaser: @user)
         bundle_purchase.create_url_redirect!
 
         expect do
-          expect do
-            get :mobile_download_page, params: { id: bundle_purchase.url_redirect.token }
-          end.to raise_error(ActionController::RoutingError)
+          get :mobile_download_page, params: { id: bundle_purchase.url_redirect.token, access_token: @access_token }
         end.not_to change(ConsumptionEvent, :count)
+        expect(response).to redirect_to(library_url({ bundles: bundle_purchase.link.external_id }))
       end
     end
 
     context "with a coffee product" do
-      it "returns 404" do
+      it "redirects to the coffee page" do
         coffee_purchase = create(:purchase, link: create(:coffee_product), purchaser: @user)
         coffee_purchase.create_url_redirect!
 
-        expect do
-          get :mobile_download_page, params: { id: coffee_purchase.url_redirect.token }
-        end.to raise_error(ActionController::RoutingError)
+        get :mobile_download_page, params: { id: coffee_purchase.url_redirect.token, access_token: @access_token }
+        expect(response).to redirect_to(custom_domain_coffee_url(host: coffee_purchase.url_redirect.seller.subdomain_with_protocol))
       end
     end
 
@@ -735,14 +734,14 @@ describe UrlRedirectsController do
         purchase = create(:purchase, price_cents: 100, purchaser: @user, link: product, subscription:, is_original_subscription_purchase: true)
         url_redirect = create(:url_redirect, link: product, purchase:)
 
-        get :mobile_download_page, params: { id: url_redirect.token }
+        get :mobile_download_page, params: { id: url_redirect.token, access_token: @access_token }
         expect(response).to redirect_to(url_redirect_membership_inactive_page_path(id: url_redirect.token))
       end
     end
 
     it "returns 404 if the url redirect is not found" do
       expect do
-        get :mobile_download_page, params: { id: "non-existent-id" }
+        get :mobile_download_page, params: { id: "non-existent-id", access_token: @access_token }
       end.to raise_error(ActionController::RoutingError)
     end
   end

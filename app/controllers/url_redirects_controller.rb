@@ -9,8 +9,9 @@ class UrlRedirectsController < ApplicationController
     audio_durations
   ]
   before_action :redirect_to_custom_domain_if_needed, only: :download_page
-  before_action :redirect_bundle_purchase_to_library_if_needed, only: :download_page
-  before_action :redirect_to_coffee_page_if_needed, only: :download_page
+  before_action :redirect_bundle_purchase_to_library_if_needed, only: %i[download_page mobile_download_page]
+  before_action :redirect_to_coffee_page_if_needed, only: %i[download_page mobile_download_page]
+  before_action :sign_in_mobile_app_user, only: :mobile_download_page
   before_action :check_permissions, only: %i[show stream download_page mobile_download_page
                                              hls_playlist download_subtitle_file read
                                              download_archive latest_media_locations download_product_files audio_durations]
@@ -77,8 +78,6 @@ class UrlRedirectsController < ApplicationController
   end
 
   def mobile_download_page
-    e404 if redirect_download_page_to_library? || redirect_download_page_to_coffee? || logged_in_user.nil?
-
     @react_component_props = UrlRedirectPresenter.new(url_redirect: @url_redirect, logged_in_user:).download_page_with_content_props(common_props.merge(is_mobile_app_web_view: true))
     trigger_files_lifecycle_events
     render :download_page
@@ -308,23 +307,15 @@ class UrlRedirectsController < ApplicationController
     end
 
     def redirect_bundle_purchase_to_library_if_needed
-      return unless redirect_download_page_to_library?
+      return unless @url_redirect.purchase&.is_bundle_purchase?
 
       redirect_to library_url(bundles: @url_redirect.purchase.link.external_id, purchase_id: params[:receipt] && @url_redirect.purchase.external_id)
     end
 
-    def redirect_download_page_to_library?
-      @url_redirect.purchase&.is_bundle_purchase?
-    end
-
     def redirect_to_coffee_page_if_needed
-      return unless redirect_download_page_to_coffee?
+      return unless @url_redirect.referenced_link&.native_type == Link::NATIVE_TYPE_COFFEE
 
       redirect_to custom_domain_coffee_url(host: @url_redirect.seller.subdomain_with_protocol, purchase_email: params[:purchase_email]), allow_other_host: true
-    end
-
-    def redirect_download_page_to_coffee?
-      @url_redirect.referenced_link&.native_type == Link::NATIVE_TYPE_COFFEE
     end
 
     def register_that_user_has_downloaded_product
@@ -354,6 +345,12 @@ class UrlRedirectsController < ApplicationController
         @url_redirect.installment.product_or_variant_type? &&
           @url_redirect.purchase_id.present?
       e404 if !has_files && !can_view_product_download_page_without_files
+    end
+
+    def sign_in_mobile_app_user
+      doorkeeper_authorize! :mobile_api
+      e404 unless current_resource_owner.present?
+      sign_in current_resource_owner
     end
 
     def check_permissions

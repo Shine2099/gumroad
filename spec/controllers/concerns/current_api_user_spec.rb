@@ -67,4 +67,38 @@ describe CurrentApiUser, type: :controller do
       expect(controller.current_api_user).to eq(nil)
     end
   end
+
+  describe "#current_resource_owner" do
+    let(:application) { create(:oauth_application) }
+    let(:admin_user) { create(:admin_user) }
+    let(:access_token) do
+      create(
+        "doorkeeper/access_token",
+        application:,
+        resource_owner_id: admin_user.id,
+        scopes: "creator_api"
+      ).token
+    end
+    let(:params) do
+      {
+        mobile_token: Api::Mobile::BaseController::MOBILE_TOKEN,
+        access_token:
+      }
+    end
+
+    context "when impersonating a user" do
+      let(:user) { create(:user) }
+
+      before do
+        @request.params["access_token"] = access_token
+      end
+
+      it "returns the impersonated user" do
+        controller.impersonate_user(user)
+        get(:action, params:)
+
+        expect(controller.current_resource_owner).to eq(user)
+      end
+    end
+  end
 end

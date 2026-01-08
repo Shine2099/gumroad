@@ -16,4 +16,8 @@ module CurrentApiUser
   rescue ActionDispatch::Http::Parameters::ParseError
     @_current_api_user = nil
   end
+
+  def current_resource_owner
+    impersonated_user || current_api_user
+  end
 end

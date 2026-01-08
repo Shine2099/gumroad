@@ -12,10 +12,6 @@ class Api::Mobile::BaseController < ApplicationController
   # Secret token that mobile users must provide in each API call
   MOBILE_TOKEN = GlobalConfig.get("MOBILE_TOKEN")
 
-  def current_resource_owner
-    impersonated_user || current_api_user
-  end
-
   private
     def check_mobile_token
       fetch_error("Invalid request", status: :unauthorized) unless ActiveSupport::SecurityUtils.secure_compare(params[:mobile_token].to_s, MOBILE_TOKEN)
