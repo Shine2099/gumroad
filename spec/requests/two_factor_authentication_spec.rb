@@ -57,7 +57,6 @@ describe "Two-Factor Authentication", js: true, type: :system do
         # Clear the session by logging out
         first("nav[aria-label='Main'] details summary").click
         click_on "Logout"
-        login_to_app
 
         expect(page).to have_field("Email")
         fill_in "Email", with: user.email
