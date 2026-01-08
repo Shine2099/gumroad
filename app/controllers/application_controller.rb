@@ -36,8 +36,8 @@ class ApplicationController < ActionController::Base
   before_action :set_paper_trail_whodunnit
   before_action :set_recommender_model_name
   before_action :track_utm_link_visit
-  add_flash_types :warning
 
+  add_flash_types :warning
 
   def redirect_to_next
     safe_redirect_to(params[:next])
