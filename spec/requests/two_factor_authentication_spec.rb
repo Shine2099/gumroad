@@ -58,10 +58,8 @@ describe "Two-Factor Authentication", js: true, type: :system do
         first("nav[aria-label='Main'] details summary").click
         click_on "Logout"
 
-        expect(page).to have_field("Email")
-        fill_in "Email", with: user.email
-        fill_in "Password", with: user.password
-        click_on "Login"
+        expect(page).to have_content("Login")
+        login_to_app
 
         # It doesn't ask for 2FA again - goes directly to dashboard
         expect(page).to have_text("Dashboard")
