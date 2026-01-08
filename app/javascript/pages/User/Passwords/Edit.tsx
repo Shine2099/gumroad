@@ -1,10 +1,10 @@
 import { Link, useForm, usePage } from "@inertiajs/react";
 import * as React from "react";
 
+import { AuthAlert } from "$app/components/AuthAlert";
 import { Layout } from "$app/components/Authentication/Layout";
 import { Button } from "$app/components/Button";
 import { PasswordInput } from "$app/components/PasswordInput";
-import { AuthAlert } from "$app/components/AuthAlert";
 
 type PageProps = {
   reset_password_token: string;

@@ -1,10 +1,10 @@
 import { useForm, usePage } from "@inertiajs/react";
 import * as React from "react";
 
+import { AuthAlert } from "$app/components/AuthAlert";
 import { Layout } from "$app/components/Authentication/Layout";
 import { Button } from "$app/components/Button";
 import { useOriginalLocation } from "$app/components/useOriginalLocation";
-import { AuthAlert } from "$app/components/AuthAlert";
 
 type PageProps = {
   user_id: string;
@@ -63,7 +63,7 @@ function TwoFactorAuthentication() {
           <Button color="primary" type="submit" disabled={form.processing}>
             {form.processing ? "Logging in..." : "Login"}
           </Button>
-          <Button disabled={resendForm.processing} onClick={() => void resendToken()}>
+          <Button disabled={resendForm.processing} onClick={() => resendToken()}>
             Resend Authentication Token
           </Button>
         </section>
