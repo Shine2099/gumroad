@@ -339,6 +339,7 @@ Rails.application.routes.draw do
       get "/oauth/login" => "logins#new"
 
       post "login", to: "logins#create"
+      # TODO: Keeping both routes for now to support legacy GET requests until all logout links are migrated to DELETE(inertia).
       get "logout", to: "logins#destroy"
       delete "logout", to: "logins#destroy"
       scope "/users" do
