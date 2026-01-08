@@ -20,16 +20,14 @@ class HelpCenterPresenter
   end
 
   def article_props(article)
-    content = render_article_content(article)
     {
       article: {
         title: article.title,
         slug: article.slug,
-        content: content,
         category: category_data(article.category)
       },
       sidebar_categories: article.category.categories_for_same_audience.map { |cat| sidebar_category_data(cat, article.category) },
-      meta: article_meta(article, content)
+      meta: article_meta(article)
     }
   end
 
@@ -81,24 +79,9 @@ class HelpCenterPresenter
       }
     end
 
-    def render_article_content(article)
-      html = view_context.render(partial: article.to_partial_path)
-      post_process_internal_links(html)
-    end
-
-    def post_process_internal_links(html)
-      # Convert relative article links to full paths
-      # e.g., href="128-discount-codes" -> href="/help/article/128-discount-codes"
-      html.gsub(/href="(\d+-[^"]+)"/) do |_match|
-        slug = ::Regexp.last_match(1)
-        %{href="#{help_center_article_path(slug)}"}
-      end
-    end
-
-    def article_meta(article, content)
+    def article_meta(article)
       {
         title: "#{article.title} - Gumroad Help Center",
-        description: extract_description(content),
         canonical_url: help_center_article_url(article)
       }
     end
@@ -109,10 +92,5 @@ class HelpCenterPresenter
         description: "Help articles for #{category.title}",
         canonical_url: help_center_category_url(category)
       }
-    end
-
-    def extract_description(content)
-      plain_text = ActionController::Base.helpers.strip_tags(content).squish
-      plain_text.truncate(160)
     end
 end

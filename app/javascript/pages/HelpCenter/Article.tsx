@@ -2,7 +2,8 @@ import { Head, usePage } from "@inertiajs/react";
 import * as React from "react";
 import { cast } from "ts-safe-cast";
 
-import { CategorySidebar, Meta, SidebarCategory } from "$app/components/HelpCenterPage/CategorySidebar";
+import { CategorySidebar, SidebarCategory } from "$app/components/HelpCenterPage/CategorySidebar";
+import { getArticle } from "$app/components/HelpCenterPage/Articles";
 
 import { HelpCenterLayout } from "./Layout";
 
@@ -15,8 +16,12 @@ interface ArticleCategory {
 interface Article {
   title: string;
   slug: string;
-  content: string;
   category: ArticleCategory;
+}
+
+interface Meta {
+  title: string;
+  canonical_url: string;
 }
 
 interface Props {
@@ -28,28 +33,32 @@ interface Props {
 export default function HelpCenterArticle() {
   const { article, sidebar_categories, meta } = cast<Props>(usePage().props);
 
+  // Get the article component and description from the articles index
+  const articleModule = getArticle(article.slug);
+  const ArticleContent = articleModule?.component;
+  const description = articleModule?.description ?? "";
+
   return (
     <HelpCenterLayout showSearchButton>
       <Head>
         <title>{meta.title}</title>
-        <meta name="description" content={meta.description} />
+        <meta name="description" content={description} />
         <link rel="canonical" href={meta.canonical_url} />
         <meta property="og:title" content={meta.title} />
-        <meta property="og:description" content={meta.description} />
+        <meta property="og:description" content={description} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={meta.canonical_url} />
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content={meta.title} />
-        <meta name="twitter:description" content={meta.description} />
+        <meta name="twitter:description" content={description} />
       </Head>
       <div className="flex max-w-7xl flex-col-reverse gap-8 md:flex-row md:gap-16">
         <CategorySidebar categories={sidebar_categories} activeSlug={article.category.slug} />
         <div className="flex-1 grow rounded-sm border border-[rgb(var(--parent-color)/var(--border-alpha))] bg-[rgb(var(--filled))] p-8">
           <h2 className="mb-6 text-3xl font-bold">{article.title}</h2>
-          <div
-            className="scoped-tailwind-preflight prose dark:prose-invert"
-            dangerouslySetInnerHTML={{ __html: article.content }}
-          />
+          <div className="scoped-tailwind-preflight prose dark:prose-invert">
+            {ArticleContent ? <ArticleContent /> : <p>Article not found</p>}
+          </div>
         </div>
       </div>
     </HelpCenterLayout>
