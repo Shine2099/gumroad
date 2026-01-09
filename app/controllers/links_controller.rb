@@ -143,7 +143,8 @@ class LinksController < ApplicationController
       else
         "Sorry, something went wrong."
       end
-      return redirect_to new_product_path, inertia: { errors: { base: [@error_message] } }
+      flash[:error] = @error_message
+      return redirect_to new_product_path
     end
 
     create_user_event("add_product")
