@@ -31,7 +31,7 @@ export const CollabsProductsTable = (props: {
   const tableRef = React.useRef<HTMLTableElement>(null);
   const userAgentInfo = useUserAgentInfo();
   const [sort, setSort] = React.useState<Sort<ProductSortKey> | null>(props.sort);
-  const items = props.entries;
+  const products = props.entries;
 
   const onSetSort = (newSort: Sort<ProductSortKey> | null) => {
     setSort(newSort);
@@ -79,7 +79,7 @@ export const CollabsProductsTable = (props: {
         </TableHeader>
 
         <TableBody>
-          {items.map((product) => (
+          {products.map((product) => (
             <TableRow key={product.id}>
               <ProductIconCell
                 href={product.can_edit ? product.edit_url : product.url}
@@ -124,7 +124,7 @@ export const CollabsProductsTable = (props: {
           <TableRow>
             <TableCell colSpan={4}>Totals</TableCell>
             <TableCell label="Sales">
-              {items
+              {products
                 .reduce((sum, product) => sum + product.successful_sales_count, 0)
                 .toLocaleString(userAgentInfo.locale)}
             </TableCell>
@@ -132,7 +132,7 @@ export const CollabsProductsTable = (props: {
             <TableCell label="Revenue">
               {formatPriceCentsWithCurrencySymbol(
                 "usd",
-                items.reduce((sum, product) => sum + product.revenue, 0),
+                products.reduce((sum, product) => sum + product.revenue, 0),
                 { symbolFormat: "short" },
               )}
             </TableCell>
