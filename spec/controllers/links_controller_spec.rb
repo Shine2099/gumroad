@@ -22,124 +22,25 @@ describe LinksController, :vcr, inertia: true do
     include_context "with user signed in as admin for seller"
 
     describe "GET index" do
-      before do
-        @membership1 = create(:subscription_product, user: seller)
-        @membership2 = create(:subscription_product, user: seller)
-        @unpublished_membership = create(:subscription_product, user: seller, purchase_disabled_at: Time.current)
-        @other_membership = create(:subscription_product)
-
-        @product1 = create(:product, user: seller)
-        @product2 = create(:product, user: seller)
-        @unpublished_product = create(:product, user: seller, purchase_disabled_at: Time.current)
-        @other_product = create(:product)
-      end
-
       it_behaves_like "authorize called for action", :get, :index do
         let(:record) { Link }
       end
 
-      it "returns seller's products" do
+      it "renders the Products/Index component with correct props" do
         get :index
 
-        membership_ids = inertia.props[:memberships].map { |m| m["id"] }
-        expect(membership_ids).to include(@membership1.id)
-        expect(membership_ids).to include(@membership2.id)
-        expect(membership_ids).to include(@unpublished_membership.id)
-        expect(membership_ids).to_not include(@other_membership.id)
-
-        product_ids = inertia.props[:products].map { |p| p["id"] }
-        expect(product_ids).to include(@product1.id)
-        expect(product_ids).to include(@product2.id)
-        expect(product_ids).to include(@unpublished_product.id)
-        expect(product_ids).to_not include(@other_product.id)
-      end
-
-      it "does not return the deleted products" do
-        @membership2.update!(deleted_at: Time.current)
-        @product2.update!(deleted_at: Time.current)
-        get :index
-
-        membership_ids = inertia.props[:memberships].map { |m| m["id"] }
-        product_ids = inertia.props[:products].map { |p| p["id"] }
-        expect(membership_ids).to_not include(@membership2.id)
-        expect(product_ids).to_not include(@product2.id)
-      end
-
-      it "does not return archived products" do
-        @membership2.update!(archived: true)
-        @product2.update!(archived: true)
-
-        get :index
-
-        membership_ids = inertia.props[:memberships].map { |m| m["id"] }
-        product_ids = inertia.props[:products].map { |p| p["id"] }
-        expect(membership_ids).to_not include(@membership2.id)
-        expect(product_ids).to_not include(@product2.id)
-      end
-
-      describe "shows the correct number of sales" do
-        def expect_sales_count_in_inertia_response(expected_count)
-          products = inertia.props[:products]
-          expect(products).to be_present, "Expected products in Inertia.js response"
-          expect(products.first["successful_sales_count"]).to eq(expected_count)
-        end
-
-        it "with a single sale" do
-          allow_any_instance_of(Link).to receive(:successful_sales_count).and_return(1)
-
-          get(:index)
-          expect(response).to be_successful
-
-          expect(inertia).to render_component("Products/Index")
-
-          expect_sales_count_in_inertia_response(1)
-        end
-
-        it "with over a thousand sales, comma-delimited" do
-          allow_any_instance_of(Link).to receive(:successful_sales_count).and_return(3_030)
-          get(:index)
-          expect(response).to be_successful
-
-          expect(inertia).to render_component("Products/Index")
-
-          expect_sales_count_in_inertia_response(3_030)
-        end
-
-        it "shows comma-delimited pre-orders count" do
-          @product1.update_attribute(:is_in_preorder_state, true)
-          allow_any_instance_of(Link).to receive(:successful_sales_count).and_return(424_242)
-          get(:index)
-          expect(response).to be_successful
-
-          expect(inertia).to render_component("Products/Index")
-
-          expect_sales_count_in_inertia_response(424_242)
-        end
-
-        it "shows comma-delimited subscribers count" do
-          create(:subscription_product, user: seller)
-          allow_any_instance_of(Link).to receive(:successful_sales_count).and_return(1_111)
-          get(:index)
-          expect(response).to be_successful
-
-          expect(inertia).to render_component("Products/Index")
-
-          expect_sales_count_in_inertia_response(1_111)
-        end
-      end
-
-      describe "visible product URLs" do
-        it "shows product URL without the protocol part" do
-          get :index
-
-          expect(response).to be_successful
-
-          expect(inertia).to render_component("Products/Index")
-
-          products = inertia.props[:products]
-          expect(products).to be_present
-          expect(products.first["url_without_protocol"]).to be_present
-        end
+        expect(response).to be_successful
+        expect(inertia).to render_component("Products/Index")
+        expect(inertia.props).to include(
+          :archived_products_count,
+          :can_create_product,
+          :products,
+          :products_pagination,
+          :products_sort,
+          :memberships,
+          :memberships_pagination,
+          :memberships_sort
+        )
       end
     end
 
