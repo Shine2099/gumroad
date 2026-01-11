@@ -1,12 +1,10 @@
 import { Slot } from "@radix-ui/react-slot";
 import { cva } from "class-variance-authority";
 import * as React from "react";
-import { is } from "ts-safe-cast";
 
-import { assert } from "$app/utils/assert";
 import { classNames } from "$app/utils/classNames";
 
-import { ButtonColor, buttonColors } from "$app/components/design";
+import { ButtonColor } from "$app/components/design";
 
 export const brandNames = [
   "paypal",
@@ -118,30 +116,17 @@ export interface ButtonProps extends Omit<React.ComponentPropsWithoutRef<"button
   asChild?: boolean;
 }
 
-const useButtonCommon = ({
-  className,
-  color,
-  outline,
-  small,
-}: ButtonVariation & { className?: string | undefined }) => {
-  useValidateClassName(className);
-
-  const variant = outline ? "outline" : color === "danger" ? "destructive" : "default";
-  const size = small ? "sm" : "default";
-
-  const effectiveColor = color;
-
-  const classes = classNames(
-    buttonVariants({ variant, size, color: effectiveColor && !outline ? effectiveColor : undefined }),
-    className,
-  );
-
-  return { classes };
-};
-
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, color, outline, small, disabled, children, asChild = false, ...props }, ref) => {
-    const { classes } = useButtonCommon({ className, color, outline, small });
+    const variant = outline ? "outline" : color === "danger" ? "destructive" : "default";
+    const size = small ? "sm" : "default";
+
+    const effectiveColor = color;
+
+    const classes = classNames(
+      buttonVariants({ variant, size, color: effectiveColor && !outline ? effectiveColor : undefined }),
+      className,
+    );
     const Comp = asChild ? Slot : "button";
 
     return (
@@ -180,32 +165,3 @@ export const NavigationButton = React.forwardRef<HTMLAnchorElement, NavigationBu
   ),
 );
 NavigationButton.displayName = "NavigationButton";
-
-// Logs warnings whenever `className` changes, instead of on every render
-export const useValidateClassName = (className: string | undefined) => {
-  if (process.env.NODE_ENV === "production") return;
-
-  React.useEffect(() => validateClassName(className), [className]);
-};
-
-// Display warnings when trying to use color/variant/size as class name, suggesting a prop to use instead
-const validateClassName = (className: string | undefined) => {
-  if (process.env.NODE_ENV === "production") return;
-
-  if (className == null) return;
-
-  const classes = className.split(" ");
-
-  classes.forEach((cls) => {
-    assert(cls !== "button", `Button: Using '${cls}' as 'className' prop is unnecessary`);
-    assert(!is<ButtonColor>(cls), `Button: Instead of using '${cls}' as a class, use the 'color="${cls}"' prop`);
-    assert(
-      !buttonColors.some((color) => cls === `outline-${color}`),
-      `Button: Instead of using '${cls}' as a class, use the 'color="${cls.replace(
-        "outline-",
-        "",
-      )}" and the 'outline' prop`,
-    );
-    assert(cls !== "small", `Button: Instead of using '${cls}' as a class, use the 'small' prop`);
-  });
-};
