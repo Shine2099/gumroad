@@ -2,10 +2,10 @@ import { Head, usePage } from "@inertiajs/react";
 import * as React from "react";
 import { cast } from "ts-safe-cast";
 
+import { ArticleModule, getArticle } from "$app/components/HelpCenterPage/Articles";
 import { CategorySidebar, SidebarCategory } from "$app/components/HelpCenterPage/CategorySidebar";
-import { getArticle } from "$app/components/HelpCenterPage/Articles";
 
-import { HelpCenterLayout } from "./Layout";
+import { HelpCenterLayout } from "../Layout";
 
 interface ArticleCategory {
   title: string;
@@ -32,10 +32,18 @@ interface Props {
 
 export default function HelpCenterArticle() {
   const { article, sidebar_categories, meta } = cast<Props>(usePage().props);
+  const [articleModule, setArticleModule] = React.useState<ArticleModule | null>(null);
+  const [isLoading, setIsLoading] = React.useState(true);
 
-  // Get the article component and description from the articles index
-  const articleModule = getArticle(article.slug);
-  const ArticleContent = articleModule?.component;
+  React.useEffect(() => {
+    setIsLoading(true);
+    void getArticle(article.slug).then((module) => {
+      setArticleModule(module ?? null);
+      setIsLoading(false);
+    });
+  }, [article.slug]);
+
+  const ArticleComponent = articleModule?.component;
   const description = articleModule?.description ?? "";
 
   return (
@@ -57,7 +65,7 @@ export default function HelpCenterArticle() {
         <div className="flex-1 grow rounded-sm border border-[rgb(var(--parent-color)/var(--border-alpha))] bg-[rgb(var(--filled))] p-8">
           <h2 className="mb-6 text-3xl font-bold">{article.title}</h2>
           <div className="scoped-tailwind-preflight prose dark:prose-invert">
-            {ArticleContent ? <ArticleContent /> : <p>Article not found</p>}
+            {isLoading ? <p>Loading...</p> : ArticleComponent ? <ArticleComponent /> : <p>Article not found</p>}
           </div>
         </div>
       </div>

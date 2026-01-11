@@ -4,7 +4,7 @@ import { cast } from "ts-safe-cast";
 
 import { CategorySidebar, Meta, SidebarCategory } from "$app/components/HelpCenterPage/CategorySidebar";
 
-import { HelpCenterLayout } from "./Layout";
+import { HelpCenterLayout } from "../Layout";
 
 interface ArticleLink {
   title: string;

@@ -1,163 +1,4 @@
-// Auto-generated index of all help center articles
-/* eslint-disable import/order */
 import * as React from "react";
-
-import AccessibiilityStatement, { AccessibiilityStatementDescription } from "./AccessibiilityStatement";
-import AccountLoginSecurity, { AccountLoginSecurityDescription } from "./AccountLoginSecurity";
-import AddingACoverImage, { AddingACoverImageDescription } from "./AddingACoverImage";
-import AddingAProduct, { AddingAProductDescription } from "./AddingAProduct";
-import AffiliateFaq, { AffiliateFaqDescription } from "./AffiliateFaq";
-import AffiliatesOnGumroad, { AffiliatesOnGumroadDescription } from "./AffiliatesOnGumroad";
-import AGuideToBuyingOnGumroad, { AGuideToBuyingOnGumroadDescription } from "./AGuideToBuyingOnGumroad";
-import Article1099s, { Article1099sDescription } from "./Article1099s";
-import Audience, { AudienceDescription } from "./Audience";
-import CommonZapierIntegrationsWithGumroad, {
-  CommonZapierIntegrationsWithGumroadDescription,
-} from "./CommonZapierIntegrationsWithGumroad";
-import DealingWithVat, { DealingWithVatDescription } from "./DealingWithVat";
-import DesigningYourProductPage, { DesigningYourProductPageDescription } from "./DesigningYourProductPage";
-import GumroadsSubprocessors, { GumroadsSubprocessorsDescription } from "./GumroadsSubprocessors";
-import HowToCompressAVideoUsingHandbrake, {
-  HowToCompressAVideoUsingHandbrakeDescription,
-} from "./HowToCompressAVideoUsingHandbrake";
-import MobileFriendlyFiles, { MobileFriendlyFilesDescription } from "./MobileFriendlyFiles";
-import ProtectingYourPrivacyOnGumroad, {
-  ProtectingYourPrivacyOnGumroadDescription,
-} from "./ProtectingYourPrivacyOnGumroad";
-import SalesTaxOnGumroad, { SalesTaxOnGumroadDescription } from "./SalesTaxOnGumroad";
-import YourGumroadProfilePage, { YourGumroadProfilePageDescription } from "./YourGumroadProfilePage";
-import SettingUpVersionsOnADigitalProduct, {
-  SettingUpVersionsOnADigitalProductDescription,
-} from "./SettingUpVersionsOnADigitalProduct";
-import DiscountCodes, { DiscountCodesDescription } from "./DiscountCodes";
-import GettingPaid, { GettingPaidDescription } from "./GettingPaid";
-import PdfStamping, { PdfStampingDescription } from "./PdfStamping";
-import UsingWorkflowsToSendAutomatedUpdates, {
-  UsingWorkflowsToSendAutomatedUpdatesDescription,
-} from "./UsingWorkflowsToSendAutomatedUpdates";
-import PayWhatYouWantPricing, { PayWhatYouWantPricingDescription } from "./PayWhatYouWantPricing";
-import HowDoesGumroadHandleChargebacks, {
-  HowDoesGumroadHandleChargebacksDescription,
-} from "./HowDoesGumroadHandleChargebacks";
-import FindYourProductsUrl, { FindYourProductsUrlDescription } from "./FindYourProductsUrl";
-import HowToCancelYourCustomersSubscriptions, {
-  HowToCancelYourCustomersSubscriptionsDescription,
-} from "./HowToCancelYourCustomersSubscriptions";
-import SendCustomersDirectlyToYourPaymentForm, {
-  SendCustomersDirectlyToYourPaymentFormDescription,
-} from "./SendCustomersDirectlyToYourPaymentForm";
-import SettingUpACustomDomain, { SettingUpACustomDomainDescription } from "./SettingUpACustomDomain";
-import ThingsYouCantSellOnGumroad, { ThingsYouCantSellOnGumroadDescription } from "./ThingsYouCantSellOnGumroad";
-import GumroadAndAdultContent, { GumroadAndAdultContentDescription } from "./GumroadAndAdultContent";
-import Suspension, { SuspensionDescription } from "./Suspension";
-import WhatGumroadConsidersFraud, { WhatGumroadConsidersFraudDescription } from "./WhatGumroadConsidersFraud";
-import HowToSendAnUpdate, { HowToSendAnUpdateDescription } from "./HowToSendAnUpdate";
-import ThirdPartyAnalytics, { ThirdPartyAnalyticsDescription } from "./ThirdPartyAnalytics";
-import MetadataForAudioFiles, { MetadataForAudioFilesDescription } from "./MetadataForAudioFiles";
-import TheGumroadDashboardApp, { TheGumroadDashboardAppDescription } from "./TheGumroadDashboardApp";
-import SafeGumroadBuying, { SafeGumroadBuyingDescription } from "./SafeGumroadBuying";
-import HowDoIGetARefund, { HowDoIGetARefundDescription } from "./HowDoIGetARefund";
-import HowDoICancelMyMembership, { HowDoICancelMyMembershipDescription } from "./HowDoICancelMyMembership";
-import MyPurchaseIsntDownloading, { MyPurchaseIsntDownloadingDescription } from "./MyPurchaseIsntDownloading";
-import INeedAnInvoice, { INeedAnInvoiceDescription } from "./INeedAnInvoice";
-import TheresAnIssueWithMyPurchase, { TheresAnIssueWithMyPurchaseDescription } from "./TheresAnIssueWithMyPurchase";
-import ContactGumroad, { ContactGumroadDescription } from "./ContactGumroad";
-import WhyDoIHaveA1ChargeFromGumroad, {
-  WhyDoIHaveA1ChargeFromGumroadDescription,
-} from "./WhyDoIHaveA1ChargeFromGumroad";
-import YourGumroadLibrary, { YourGumroadLibraryDescription } from "./YourGumroadLibrary";
-import HowDoIAccessMyPurchase, { HowDoIAccessMyPurchaseDescription } from "./HowDoIAccessMyPurchase";
-import HowDoIContactGumroad, { HowDoIContactGumroadDescription } from "./HowDoIContactGumroad";
-import INeedAVatRefund, { INeedAVatRefundDescription } from "./INeedAVatRefund";
-import WhyDidMyPaymentFail, { WhyDidMyPaymentFailDescription } from "./WhyDidMyPaymentFail";
-import GetToKnowYourGumroadReceipt, { GetToKnowYourGumroadReceiptDescription } from "./GetToKnowYourGumroadReceipt";
-import HowToOpenZipAndRarFiles, { HowToOpenZipAndRarFilesDescription } from "./HowToOpenZipAndRarFiles";
-import HowDoISendMyGumroadPurchaseToMyKindle, {
-  HowDoISendMyGumroadPurchaseToMyKindleDescription,
-} from "./HowDoISendMyGumroadPurchaseToMyKindle";
-import HowDoICombineTwoAccounts, { HowDoICombineTwoAccountsDescription } from "./HowDoICombineTwoAccounts";
-import SendYourPurchaseToDropbox, { SendYourPurchaseToDropboxDescription } from "./SendYourPurchaseToDropbox";
-import ImNotReceivingUpdates, { ImNotReceivingUpdatesDescription } from "./ImNotReceivingUpdates";
-import INeverReceivedAReceipt, { INeverReceivedAReceiptDescription } from "./INeverReceivedAReceipt";
-import HowDoIGiveAProductAsAGift, { HowDoIGiveAProductAsAGiftDescription } from "./HowDoIGiveAProductAsAGift";
-import WhyWasIChargedByGumroad, { WhyWasIChargedByGumroadDescription } from "./WhyWasIChargedByGumroad";
-import WhenWillMyPurchaseBeShipped, { WhenWillMyPurchaseBeShippedDescription } from "./WhenWillMyPurchaseBeShipped";
-import DeleteCreditCardInformation, { DeleteCreditCardInformationDescription } from "./DeleteCreditCardInformation";
-import IHaveExtraChargesFromGumroadAfterMyPurchase, {
-  IHaveExtraChargesFromGumroadAfterMyPurchaseDescription,
-} from "./IHaveExtraChargesFromGumroadAfterMyPurchase";
-import ProductRatingsOnGumroad, { ProductRatingsOnGumroadDescription } from "./ProductRatingsOnGumroad";
-import PayoneerAndGumroad, { PayoneerAndGumroadDescription } from "./PayoneerAndGumroad";
-import WhatYourCustomersSee, { WhatYourCustomersSeeDescription } from "./WhatYourCustomersSee";
-import DeleteAProduct, { DeleteAProductDescription } from "./DeleteAProduct";
-import IncorrectRecurringCharge, { IncorrectRecurringChargeDescription } from "./IncorrectRecurringCharge";
-import MultipleAccounts, { MultipleAccountsDescription } from "./MultipleAccounts";
-import YourPayoutSettingsPage, { YourPayoutSettingsPageDescription } from "./YourPayoutSettingsPage";
-import WhyAreMyCustomersPurchasesFailing, {
-  WhyAreMyCustomersPurchasesFailingDescription,
-} from "./WhyAreMyCustomersPurchasesFailing";
-import CustomerDashboard, { CustomerDashboardDescription } from "./CustomerDashboard";
-import BalancePage, { BalancePageDescription } from "./BalancePage";
-import UrlParameters, { UrlParametersDescription } from "./UrlParameters";
-import PaypalConnect, { PaypalConnectDescription } from "./PaypalConnect";
-import GuideToMemberships, { GuideToMembershipsDescription } from "./GuideToMemberships";
-import CreateApplicationApi, { CreateApplicationApiDescription } from "./CreateApplicationApi";
-import PayoutDelays, { PayoutDelaysDescription } from "./PayoutDelays";
-import HowDoPurchasesWorkForMyCustomers, {
-  HowDoPurchasesWorkForMyCustomersDescription,
-} from "./HowDoPurchasesWorkForMyCustomers";
-import FraudulentPurchases, { FraudulentPurchasesDescription } from "./FraudulentPurchases";
-import TurningOffThirdPartyTrackers, { TurningOffThirdPartyTrackersDescription } from "./TurningOffThirdPartyTrackers";
-import HowDoIReportAGumroadCreator, { HowDoIReportAGumroadCreatorDescription } from "./HowDoIReportAGumroadCreator";
-import DmcaCounterNotices, { DmcaCounterNoticesDescription } from "./DmcaCounterNotices";
-import FileSizeLimitsOnGumroad, { FileSizeLimitsOnGumroadDescription } from "./FileSizeLimitsOnGumroad";
-import FacebookDomainVerification, { FacebookDomainVerificationDescription } from "./FacebookDomainVerification";
-import ExternalIntegration, { ExternalIntegrationDescription } from "./ExternalIntegration";
-import ProductsDashboard, { ProductsDashboardDescription } from "./ProductsDashboard";
-import IndirectTaxesOnSalesViaDiscover, {
-  IndirectTaxesOnSalesViaDiscoverDescription,
-} from "./IndirectTaxesOnSalesViaDiscover";
-import TeamsAndRoles, { TeamsAndRolesDescription } from "./TeamsAndRoles";
-import PurchasingPowerParity, { PurchasingPowerParityDescription } from "./PurchasingPowerParity";
-import CustomerModeration, { CustomerModerationDescription } from "./CustomerModeration";
-import StripeConnect, { StripeConnectDescription } from "./StripeConnect";
-import CreatingUpsells, { CreatingUpsellsDescription } from "./CreatingUpsells";
-import MoreLikeThis, { MoreLikeThisDescription } from "./MoreLikeThis";
-import CustomRefundPolicy, { CustomRefundPolicyDescription } from "./CustomRefundPolicy";
-import SingaporeanGst, { SingaporeanGstDescription } from "./SingaporeanGst";
-import ProductBundles, { ProductBundlesDescription } from "./ProductBundles";
-import Collaborations, { CollaborationsDescription } from "./Collaborations";
-import Wishlists, { WishlistsDescription } from "./Wishlists";
-import RateAndReviewYourPurchase, { RateAndReviewYourPurchaseDescription } from "./RateAndReviewYourPurchase";
-import Tipping, { TippingDescription } from "./Tipping";
-import InstallmentPlans, { InstallmentPlansDescription } from "./InstallmentPlans";
-import GumroadCommunity, { GumroadCommunityDescription } from "./GumroadCommunity";
-import HowToDeleteYourGumroadAccount, {
-  HowToDeleteYourGumroadAccountDescription,
-} from "./HowToDeleteYourGumroadAccount";
-import ContentSecurity, { ContentSecurityDescription } from "./ContentSecurity";
-import StreamingVideos, { StreamingVideosDescription } from "./StreamingVideos";
-import BuildGumroadIntoYourWebsite, { BuildGumroadIntoYourWebsiteDescription } from "./BuildGumroadIntoYourWebsite";
-import WhatCurrencyDoesGumroadUse, { WhatCurrencyDoesGumroadUseDescription } from "./WhatCurrencyDoesGumroadUse";
-import HowToRefundACustomer, { HowToRefundACustomerDescription } from "./HowToRefundACustomer";
-import WhatIsGumroadsRefundPolicy, { WhatIsGumroadsRefundPolicyDescription } from "./WhatIsGumroadsRefundPolicy";
-import WhatBrowsersDoesGumroadSupport, {
-  WhatBrowsersDoesGumroadSupportDescription,
-} from "./WhatBrowsersDoesGumroadSupport";
-import NotReceivingUpdates, { NotReceivingUpdatesDescription } from "./NotReceivingUpdates";
-import TestingAPurchase, { TestingAPurchaseDescription } from "./TestingAPurchase";
-import IsGumroadForMe, { IsGumroadForMeDescription } from "./IsGumroadForMe";
-import GumroadsFees, { GumroadsFeesDescription } from "./GumroadsFees";
-import TheSettingsMenu, { TheSettingsMenuDescription } from "./TheSettingsMenu";
-import CanISellServices, { CanISellServicesDescription } from "./CanISellServices";
-import TheAnalyticsDashboard, { TheAnalyticsDashboardDescription } from "./TheAnalyticsDashboard";
-import LicenseKeys, { LicenseKeysDescription } from "./LicenseKeys";
-import MyCustomerDidNotReceiveAReceipt, {
-  MyCustomerDidNotReceiveAReceiptDescription,
-} from "./MyCustomerDidNotReceiveAReceipt";
-import GumroadDiscover, { GumroadDiscoverDescription } from "./GumroadDiscover";
-import CustomProductUrls, { CustomProductUrlsDescription } from "./CustomProductUrls";
-import MembershipProducts, { MembershipProductsDescription } from "./MembershipProducts";
 
 export type ArticleComponent = React.ComponentType;
 
@@ -166,281 +7,623 @@ export interface ArticleModule {
   description: string;
 }
 
-export const articles: Record<string, ArticleModule> = {
-  "10-dealing-with-vat": { component: DealingWithVat, description: DealingWithVatDescription },
-  "101-designing-your-product-page": {
-    component: DesigningYourProductPage,
-    description: DesigningYourProductPageDescription,
-  },
-  "107-common-zapier-integrations-with-gumroad": {
-    component: CommonZapierIntegrationsWithGumroad,
-    description: CommonZapierIntegrationsWithGumroadDescription,
-  },
-  "110-gumroads-subprocessors": { component: GumroadsSubprocessors, description: GumroadsSubprocessorsDescription },
-  "112-mobile-friendly-files": { component: MobileFriendlyFiles, description: MobileFriendlyFilesDescription },
-  "120-protecting-your-privacy-on-gumroad": {
-    component: ProtectingYourPrivacyOnGumroad,
-    description: ProtectingYourPrivacyOnGumroadDescription,
-  },
-  "121-sales-tax-on-gumroad": { component: SalesTaxOnGumroad, description: SalesTaxOnGumroadDescription },
-  "124-your-gumroad-profile-page": {
-    component: YourGumroadProfilePage,
-    description: YourGumroadProfilePageDescription,
-  },
-  "125-how-to-compress-a-video-using-handbrake": {
-    component: HowToCompressAVideoUsingHandbrake,
-    description: HowToCompressAVideoUsingHandbrakeDescription,
-  },
-  "126-setting-up-versions-on-a-digital-product": {
-    component: SettingUpVersionsOnADigitalProduct,
-    description: SettingUpVersionsOnADigitalProductDescription,
-  },
-  "128-discount-codes": { component: DiscountCodes, description: DiscountCodesDescription },
-  "13-getting-paid": { component: GettingPaid, description: GettingPaidDescription },
-  "130-pdf-stamping": { component: PdfStamping, description: PdfStampingDescription },
-  "131-using-workflows-to-send-automated-updates": {
-    component: UsingWorkflowsToSendAutomatedUpdates,
-    description: UsingWorkflowsToSendAutomatedUpdatesDescription,
-  },
-  "133-pay-what-you-want-pricing": { component: PayWhatYouWantPricing, description: PayWhatYouWantPricingDescription },
-  "134-how-does-gumroad-handle-chargebacks": {
-    component: HowDoesGumroadHandleChargebacks,
-    description: HowDoesGumroadHandleChargebacksDescription,
-  },
-  "136-find-your-products-url": { component: FindYourProductsUrl, description: FindYourProductsUrlDescription },
-  "139-how-to-cancel-your-customers-subscriptions": {
-    component: HowToCancelYourCustomersSubscriptions,
-    description: HowToCancelYourCustomersSubscriptionsDescription,
-  },
-  "144-send-customers-directly-to-your-payment-form": {
-    component: SendCustomersDirectlyToYourPaymentForm,
-    description: SendCustomersDirectlyToYourPaymentFormDescription,
-  },
-  "149-adding-a-product": { component: AddingAProduct, description: AddingAProductDescription },
-  "15-1099s": { component: Article1099s, description: Article1099sDescription },
-  "153-setting-up-a-custom-domain": {
-    component: SettingUpACustomDomain,
-    description: SettingUpACustomDomainDescription,
-  },
-  "155-things-you-cant-sell-on-gumroad": {
-    component: ThingsYouCantSellOnGumroad,
-    description: ThingsYouCantSellOnGumroadDescription,
-  },
-  "156-gumroad-and-adult-content": {
-    component: GumroadAndAdultContent,
-    description: GumroadAndAdultContentDescription,
-  },
-  "160-suspension": { component: Suspension, description: SuspensionDescription },
-  "161-what-gumroad-considers-fraud": {
-    component: WhatGumroadConsidersFraud,
-    description: WhatGumroadConsidersFraudDescription,
-  },
-  "169-how-to-send-an-update": { component: HowToSendAnUpdate, description: HowToSendAnUpdateDescription },
-  "170-audience": { component: Audience, description: AudienceDescription },
-  "174-third-party-analytics": { component: ThirdPartyAnalytics, description: ThirdPartyAnalyticsDescription },
-  "176-metadata-for-audio-files": { component: MetadataForAudioFiles, description: MetadataForAudioFilesDescription },
-  "177-the-gumroad-dashboard-app": {
-    component: TheGumroadDashboardApp,
-    description: TheGumroadDashboardAppDescription,
-  },
-  "189-safe-gumroad-buying": { component: SafeGumroadBuying, description: SafeGumroadBuyingDescription },
-  "190-how-do-i-get-a-refund": { component: HowDoIGetARefund, description: HowDoIGetARefundDescription },
-  "191-a-guide-to-buying-on-gumroad": {
-    component: AGuideToBuyingOnGumroad,
-    description: AGuideToBuyingOnGumroadDescription,
-  },
-  "192-how-do-i-cancel-my-membership": {
-    component: HowDoICancelMyMembership,
-    description: HowDoICancelMyMembershipDescription,
-  },
-  "193-my-purchase-isnt-downloading": {
-    component: MyPurchaseIsntDownloading,
-    description: MyPurchaseIsntDownloadingDescription,
-  },
-  "194-i-need-an-invoice": { component: INeedAnInvoice, description: INeedAnInvoiceDescription },
-  "195-theres-an-issue-with-my-purchase": {
-    component: TheresAnIssueWithMyPurchase,
-    description: TheresAnIssueWithMyPurchaseDescription,
-  },
-  "196-contact-gumroad": { component: ContactGumroad, description: ContactGumroadDescription },
-  "197-why-do-i-have-a-1-charge-from-gumroad": {
-    component: WhyDoIHaveA1ChargeFromGumroad,
-    description: WhyDoIHaveA1ChargeFromGumroadDescription,
-  },
-  "198-your-gumroad-library": { component: YourGumroadLibrary, description: YourGumroadLibraryDescription },
-  "199-how-do-i-access-my-purchase": {
-    component: HowDoIAccessMyPurchase,
-    description: HowDoIAccessMyPurchaseDescription,
-  },
-  "20-how-do-i-contact-gumroad": { component: HowDoIContactGumroad, description: HowDoIContactGumroadDescription },
-  "200-i-need-a-vat-refund": { component: INeedAVatRefund, description: INeedAVatRefundDescription },
-  "203-why-did-my-payment-fail": { component: WhyDidMyPaymentFail, description: WhyDidMyPaymentFailDescription },
-  "204-get-to-know-your-gumroad-receipt": {
-    component: GetToKnowYourGumroadReceipt,
-    description: GetToKnowYourGumroadReceiptDescription,
-  },
-  "206-how-to-open-zip-and-rar-files": {
-    component: HowToOpenZipAndRarFiles,
-    description: HowToOpenZipAndRarFilesDescription,
-  },
-  "208-how-do-i-send-my-gumroad-purchase-to-my-kindle": {
-    component: HowDoISendMyGumroadPurchaseToMyKindle,
-    description: HowDoISendMyGumroadPurchaseToMyKindleDescription,
-  },
-  "209-how-do-i-combine-two-accounts": {
-    component: HowDoICombineTwoAccounts,
-    description: HowDoICombineTwoAccountsDescription,
-  },
-  "210-send-your-purchase-to-dropbox": {
-    component: SendYourPurchaseToDropbox,
-    description: SendYourPurchaseToDropboxDescription,
-  },
-  "211-im-not-receiving-updates": { component: ImNotReceivingUpdates, description: ImNotReceivingUpdatesDescription },
-  "212-i-never-received-a-receipt": {
-    component: INeverReceivedAReceipt,
-    description: INeverReceivedAReceiptDescription,
-  },
-  "213-how-do-i-give-a-product-as-a-gift": {
-    component: HowDoIGiveAProductAsAGift,
-    description: HowDoIGiveAProductAsAGiftDescription,
-  },
-  "214-why-was-i-charged-by-gumroad": {
-    component: WhyWasIChargedByGumroad,
-    description: WhyWasIChargedByGumroadDescription,
-  },
-  "215-when-will-my-purchase-be-shipped": {
-    component: WhenWillMyPurchaseBeShipped,
-    description: WhenWillMyPurchaseBeShippedDescription,
-  },
-  "216-delete-credit-card-information": {
-    component: DeleteCreditCardInformation,
-    description: DeleteCreditCardInformationDescription,
-  },
-  "217-i-have-extra-charges-from-gumroad-after-my-purchase": {
-    component: IHaveExtraChargesFromGumroadAfterMyPurchase,
-    description: IHaveExtraChargesFromGumroadAfterMyPurchaseDescription,
-  },
-  "222-product-ratings-on-gumroad": {
-    component: ProductRatingsOnGumroad,
-    description: ProductRatingsOnGumroadDescription,
-  },
-  "223-payoneer-and-gumroad": { component: PayoneerAndGumroad, description: PayoneerAndGumroadDescription },
-  "247-what-your-customers-see": { component: WhatYourCustomersSee, description: WhatYourCustomersSeeDescription },
-  "248-delete-a-product": { component: DeleteAProduct, description: DeleteAProductDescription },
-  "249-affiliate-faq": { component: AffiliateFaq, description: AffiliateFaqDescription },
-  "251-incorrect-recurring-charge": {
-    component: IncorrectRecurringCharge,
-    description: IncorrectRecurringChargeDescription,
-  },
-  "252-multiple-accounts": { component: MultipleAccounts, description: MultipleAccountsDescription },
-  "260-your-payout-settings-page": {
-    component: YourPayoutSettingsPage,
-    description: YourPayoutSettingsPageDescription,
-  },
-  "266-why-are-my-customers-purchases-failing": {
-    component: WhyAreMyCustomersPurchasesFailing,
-    description: WhyAreMyCustomersPurchasesFailingDescription,
-  },
-  "268-customer-dashboard": { component: CustomerDashboard, description: CustomerDashboardDescription },
-  "269-balance-page": { component: BalancePage, description: BalancePageDescription },
-  "270-url-parameters": { component: UrlParameters, description: UrlParametersDescription },
-  "275-paypal-connect": { component: PaypalConnect, description: PaypalConnectDescription },
-  "278-guide-to-memberships": { component: GuideToMemberships, description: GuideToMembershipsDescription },
-  "280-create-application-api": { component: CreateApplicationApi, description: CreateApplicationApiDescription },
-  "281-payout-delays": { component: PayoutDelays, description: PayoutDelaysDescription },
-  "282-how-do-purchases-work-for-my-customers": {
-    component: HowDoPurchasesWorkForMyCustomers,
-    description: HowDoPurchasesWorkForMyCustomersDescription,
-  },
-  "283-fraudulent-purchases": { component: FraudulentPurchases, description: FraudulentPurchasesDescription },
-  "285-turning-off-third-party-trackers": {
-    component: TurningOffThirdPartyTrackers,
-    description: TurningOffThirdPartyTrackersDescription,
-  },
-  "286-how-do-i-report-a-gumroad-creator": {
-    component: HowDoIReportAGumroadCreator,
-    description: HowDoIReportAGumroadCreatorDescription,
-  },
-  "288-dmca-counter-notices": { component: DmcaCounterNotices, description: DmcaCounterNoticesDescription },
-  "289-file-size-limits-on-gumroad": {
-    component: FileSizeLimitsOnGumroad,
-    description: FileSizeLimitsOnGumroadDescription,
-  },
-  "290-facebook-domain-verification": {
-    component: FacebookDomainVerification,
-    description: FacebookDomainVerificationDescription,
-  },
-  "292-account-login-security": { component: AccountLoginSecurity, description: AccountLoginSecurityDescription },
-  "295-external-integration": { component: ExternalIntegration, description: ExternalIntegrationDescription },
-  "304-products-dashboard": { component: ProductsDashboard, description: ProductsDashboardDescription },
-  "324-accessibiility-statement": {
-    component: AccessibiilityStatement,
-    description: AccessibiilityStatementDescription,
-  },
-  "325-indirect-taxes-on-sales-via-discover": {
-    component: IndirectTaxesOnSalesViaDiscover,
-    description: IndirectTaxesOnSalesViaDiscoverDescription,
-  },
-  "326-teams-and-roles": { component: TeamsAndRoles, description: TeamsAndRolesDescription },
-  "327-purchasing-power-parity": { component: PurchasingPowerParity, description: PurchasingPowerParityDescription },
-  "329-customer-moderation": { component: CustomerModeration, description: CustomerModerationDescription },
-  "330-stripe-connect": { component: StripeConnect, description: StripeConnectDescription },
-  "331-creating-upsells": { component: CreatingUpsells, description: CreatingUpsellsDescription },
-  "333-affiliates-on-gumroad": { component: AffiliatesOnGumroad, description: AffiliatesOnGumroadDescription },
-  "334-more-like-this": { component: MoreLikeThis, description: MoreLikeThisDescription },
-  "335-custom-refund-policy": { component: CustomRefundPolicy, description: CustomRefundPolicyDescription },
-  "336-singaporean-gst": { component: SingaporeanGst, description: SingaporeanGstDescription },
-  "339-product-bundles": { component: ProductBundles, description: ProductBundlesDescription },
-  "341-collaborations": { component: Collaborations, description: CollaborationsDescription },
-  "343-wishlists": { component: Wishlists, description: WishlistsDescription },
-  "344-rate-and-review-your-purchase": {
-    component: RateAndReviewYourPurchase,
-    description: RateAndReviewYourPurchaseDescription,
-  },
-  "345-tipping": { component: Tipping, description: TippingDescription },
-  "346-installment-plans": { component: InstallmentPlans, description: InstallmentPlansDescription },
-  "347-gumroad-community": { component: GumroadCommunity, description: GumroadCommunityDescription },
-  "37-how-to-delete-your-gumroad-account": {
-    component: HowToDeleteYourGumroadAccount,
-    description: HowToDeleteYourGumroadAccountDescription,
-  },
-  "42-content-security": { component: ContentSecurity, description: ContentSecurityDescription },
-  "43-streaming-videos": { component: StreamingVideos, description: StreamingVideosDescription },
-  "44-build-gumroad-into-your-website": {
-    component: BuildGumroadIntoYourWebsite,
-    description: BuildGumroadIntoYourWebsiteDescription,
-  },
-  "46-what-currency-does-gumroad-use": {
-    component: WhatCurrencyDoesGumroadUse,
-    description: WhatCurrencyDoesGumroadUseDescription,
-  },
-  "47-how-to-refund-a-customer": { component: HowToRefundACustomer, description: HowToRefundACustomerDescription },
-  "51-what-is-gumroads-refund-policy": {
-    component: WhatIsGumroadsRefundPolicy,
-    description: WhatIsGumroadsRefundPolicyDescription,
-  },
-  "53-what-browsers-does-gumroad-support": {
-    component: WhatBrowsersDoesGumroadSupport,
-    description: WhatBrowsersDoesGumroadSupportDescription,
-  },
-  "54-not-receiving-updates": { component: NotReceivingUpdates, description: NotReceivingUpdatesDescription },
-  "60-adding-a-cover-image": { component: AddingACoverImage, description: AddingACoverImageDescription },
-  "62-testing-a-purchase": { component: TestingAPurchase, description: TestingAPurchaseDescription },
-  "64-is-gumroad-for-me": { component: IsGumroadForMe, description: IsGumroadForMeDescription },
-  "66-gumroads-fees": { component: GumroadsFees, description: GumroadsFeesDescription },
-  "67-the-settings-menu": { component: TheSettingsMenu, description: TheSettingsMenuDescription },
-  "70-can-i-sell-services": { component: CanISellServices, description: CanISellServicesDescription },
-  "74-the-analytics-dashboard": { component: TheAnalyticsDashboard, description: TheAnalyticsDashboardDescription },
-  "76-license-keys": { component: LicenseKeys, description: LicenseKeysDescription },
-  "78-my-customer-did-not-receive-a-receipt": {
-    component: MyCustomerDidNotReceiveAReceipt,
-    description: MyCustomerDidNotReceiveAReceiptDescription,
-  },
-  "79-gumroad-discover": { component: GumroadDiscover, description: GumroadDiscoverDescription },
-  "81-custom-product-urls": { component: CustomProductUrls, description: CustomProductUrlsDescription },
-  "82-membership-products": { component: MembershipProducts, description: MembershipProductsDescription },
+type ArticleLoader = () => Promise<ArticleModule>;
+
+const articles: Record<string, ArticleLoader> = {
+  "10-dealing-with-vat": () =>
+    import("./DealingWithVat").then((m) => ({
+      component: m.default,
+      description: m.DealingWithVatDescription,
+    })),
+  "101-designing-your-product-page": () =>
+    import("./DesigningYourProductPage").then((m) => ({
+      component: m.default,
+      description: m.DesigningYourProductPageDescription,
+    })),
+  "107-common-zapier-integrations-with-gumroad": () =>
+    import("./CommonZapierIntegrationsWithGumroad").then((m) => ({
+      component: m.default,
+      description: m.CommonZapierIntegrationsWithGumroadDescription,
+    })),
+  "110-gumroads-subprocessors": () =>
+    import("./GumroadsSubprocessors").then((m) => ({
+      component: m.default,
+      description: m.GumroadsSubprocessorsDescription,
+    })),
+  "112-mobile-friendly-files": () =>
+    import("./MobileFriendlyFiles").then((m) => ({
+      component: m.default,
+      description: m.MobileFriendlyFilesDescription,
+    })),
+  "120-protecting-your-privacy-on-gumroad": () =>
+    import("./ProtectingYourPrivacyOnGumroad").then((m) => ({
+      component: m.default,
+      description: m.ProtectingYourPrivacyOnGumroadDescription,
+    })),
+  "121-sales-tax-on-gumroad": () =>
+    import("./SalesTaxOnGumroad").then((m) => ({
+      component: m.default,
+      description: m.SalesTaxOnGumroadDescription,
+    })),
+  "124-your-gumroad-profile-page": () =>
+    import("./YourGumroadProfilePage").then((m) => ({
+      component: m.default,
+      description: m.YourGumroadProfilePageDescription,
+    })),
+  "125-how-to-compress-a-video-using-handbrake": () =>
+    import("./HowToCompressAVideoUsingHandbrake").then((m) => ({
+      component: m.default,
+      description: m.HowToCompressAVideoUsingHandbrakeDescription,
+    })),
+  "126-setting-up-versions-on-a-digital-product": () =>
+    import("./SettingUpVersionsOnADigitalProduct").then((m) => ({
+      component: m.default,
+      description: m.SettingUpVersionsOnADigitalProductDescription,
+    })),
+  "128-discount-codes": () =>
+    import("./DiscountCodes").then((m) => ({
+      component: m.default,
+      description: m.DiscountCodesDescription,
+    })),
+  "13-getting-paid": () =>
+    import("./GettingPaid").then((m) => ({
+      component: m.default,
+      description: m.GettingPaidDescription,
+    })),
+  "130-pdf-stamping": () =>
+    import("./PdfStamping").then((m) => ({
+      component: m.default,
+      description: m.PdfStampingDescription,
+    })),
+  "131-using-workflows-to-send-automated-updates": () =>
+    import("./UsingWorkflowsToSendAutomatedUpdates").then((m) => ({
+      component: m.default,
+      description: m.UsingWorkflowsToSendAutomatedUpdatesDescription,
+    })),
+  "133-pay-what-you-want-pricing": () =>
+    import("./PayWhatYouWantPricing").then((m) => ({
+      component: m.default,
+      description: m.PayWhatYouWantPricingDescription,
+    })),
+  "134-how-does-gumroad-handle-chargebacks": () =>
+    import("./HowDoesGumroadHandleChargebacks").then((m) => ({
+      component: m.default,
+      description: m.HowDoesGumroadHandleChargebacksDescription,
+    })),
+  "136-find-your-products-url": () =>
+    import("./FindYourProductsUrl").then((m) => ({
+      component: m.default,
+      description: m.FindYourProductsUrlDescription,
+    })),
+  "139-how-to-cancel-your-customers-subscriptions": () =>
+    import("./HowToCancelYourCustomersSubscriptions").then((m) => ({
+      component: m.default,
+      description: m.HowToCancelYourCustomersSubscriptionsDescription,
+    })),
+  "144-send-customers-directly-to-your-payment-form": () =>
+    import("./SendCustomersDirectlyToYourPaymentForm").then((m) => ({
+      component: m.default,
+      description: m.SendCustomersDirectlyToYourPaymentFormDescription,
+    })),
+  "149-adding-a-product": () =>
+    import("./AddingAProduct").then((m) => ({
+      component: m.default,
+      description: m.AddingAProductDescription,
+    })),
+  "15-1099s": () =>
+    import("./Article1099s").then((m) => ({
+      component: m.default,
+      description: m.Article1099sDescription,
+    })),
+  "153-setting-up-a-custom-domain": () =>
+    import("./SettingUpACustomDomain").then((m) => ({
+      component: m.default,
+      description: m.SettingUpACustomDomainDescription,
+    })),
+  "155-things-you-cant-sell-on-gumroad": () =>
+    import("./ThingsYouCantSellOnGumroad").then((m) => ({
+      component: m.default,
+      description: m.ThingsYouCantSellOnGumroadDescription,
+    })),
+  "156-gumroad-and-adult-content": () =>
+    import("./GumroadAndAdultContent").then((m) => ({
+      component: m.default,
+      description: m.GumroadAndAdultContentDescription,
+    })),
+  "160-suspension": () =>
+    import("./Suspension").then((m) => ({
+      component: m.default,
+      description: m.SuspensionDescription,
+    })),
+  "161-what-gumroad-considers-fraud": () =>
+    import("./WhatGumroadConsidersFraud").then((m) => ({
+      component: m.default,
+      description: m.WhatGumroadConsidersFraudDescription,
+    })),
+  "169-how-to-send-an-update": () =>
+    import("./HowToSendAnUpdate").then((m) => ({
+      component: m.default,
+      description: m.HowToSendAnUpdateDescription,
+    })),
+  "170-audience": () =>
+    import("./Audience").then((m) => ({
+      component: m.default,
+      description: m.AudienceDescription,
+    })),
+  "174-third-party-analytics": () =>
+    import("./ThirdPartyAnalytics").then((m) => ({
+      component: m.default,
+      description: m.ThirdPartyAnalyticsDescription,
+    })),
+  "176-metadata-for-audio-files": () =>
+    import("./MetadataForAudioFiles").then((m) => ({
+      component: m.default,
+      description: m.MetadataForAudioFilesDescription,
+    })),
+  "177-the-gumroad-dashboard-app": () =>
+    import("./TheGumroadDashboardApp").then((m) => ({
+      component: m.default,
+      description: m.TheGumroadDashboardAppDescription,
+    })),
+  "189-safe-gumroad-buying": () =>
+    import("./SafeGumroadBuying").then((m) => ({
+      component: m.default,
+      description: m.SafeGumroadBuyingDescription,
+    })),
+  "190-how-do-i-get-a-refund": () =>
+    import("./HowDoIGetARefund").then((m) => ({
+      component: m.default,
+      description: m.HowDoIGetARefundDescription,
+    })),
+  "191-a-guide-to-buying-on-gumroad": () =>
+    import("./AGuideToBuyingOnGumroad").then((m) => ({
+      component: m.default,
+      description: m.AGuideToBuyingOnGumroadDescription,
+    })),
+  "192-how-do-i-cancel-my-membership": () =>
+    import("./HowDoICancelMyMembership").then((m) => ({
+      component: m.default,
+      description: m.HowDoICancelMyMembershipDescription,
+    })),
+  "193-my-purchase-isnt-downloading": () =>
+    import("./MyPurchaseIsntDownloading").then((m) => ({
+      component: m.default,
+      description: m.MyPurchaseIsntDownloadingDescription,
+    })),
+  "194-i-need-an-invoice": () =>
+    import("./INeedAnInvoice").then((m) => ({
+      component: m.default,
+      description: m.INeedAnInvoiceDescription,
+    })),
+  "195-theres-an-issue-with-my-purchase": () =>
+    import("./TheresAnIssueWithMyPurchase").then((m) => ({
+      component: m.default,
+      description: m.TheresAnIssueWithMyPurchaseDescription,
+    })),
+  "196-contact-gumroad": () =>
+    import("./ContactGumroad").then((m) => ({
+      component: m.default,
+      description: m.ContactGumroadDescription,
+    })),
+  "197-why-do-i-have-a-1-charge-from-gumroad": () =>
+    import("./WhyDoIHaveA1ChargeFromGumroad").then((m) => ({
+      component: m.default,
+      description: m.WhyDoIHaveA1ChargeFromGumroadDescription,
+    })),
+  "198-your-gumroad-library": () =>
+    import("./YourGumroadLibrary").then((m) => ({
+      component: m.default,
+      description: m.YourGumroadLibraryDescription,
+    })),
+  "199-how-do-i-access-my-purchase": () =>
+    import("./HowDoIAccessMyPurchase").then((m) => ({
+      component: m.default,
+      description: m.HowDoIAccessMyPurchaseDescription,
+    })),
+  "20-how-do-i-contact-gumroad": () =>
+    import("./HowDoIContactGumroad").then((m) => ({
+      component: m.default,
+      description: m.HowDoIContactGumroadDescription,
+    })),
+  "200-i-need-a-vat-refund": () =>
+    import("./INeedAVatRefund").then((m) => ({
+      component: m.default,
+      description: m.INeedAVatRefundDescription,
+    })),
+  "203-why-did-my-payment-fail": () =>
+    import("./WhyDidMyPaymentFail").then((m) => ({
+      component: m.default,
+      description: m.WhyDidMyPaymentFailDescription,
+    })),
+  "204-get-to-know-your-gumroad-receipt": () =>
+    import("./GetToKnowYourGumroadReceipt").then((m) => ({
+      component: m.default,
+      description: m.GetToKnowYourGumroadReceiptDescription,
+    })),
+  "206-how-to-open-zip-and-rar-files": () =>
+    import("./HowToOpenZipAndRarFiles").then((m) => ({
+      component: m.default,
+      description: m.HowToOpenZipAndRarFilesDescription,
+    })),
+  "208-how-do-i-send-my-gumroad-purchase-to-my-kindle": () =>
+    import("./HowDoISendMyGumroadPurchaseToMyKindle").then((m) => ({
+      component: m.default,
+      description: m.HowDoISendMyGumroadPurchaseToMyKindleDescription,
+    })),
+  "209-how-do-i-combine-two-accounts": () =>
+    import("./HowDoICombineTwoAccounts").then((m) => ({
+      component: m.default,
+      description: m.HowDoICombineTwoAccountsDescription,
+    })),
+  "210-send-your-purchase-to-dropbox": () =>
+    import("./SendYourPurchaseToDropbox").then((m) => ({
+      component: m.default,
+      description: m.SendYourPurchaseToDropboxDescription,
+    })),
+  "211-im-not-receiving-updates": () =>
+    import("./ImNotReceivingUpdates").then((m) => ({
+      component: m.default,
+      description: m.ImNotReceivingUpdatesDescription,
+    })),
+  "212-i-never-received-a-receipt": () =>
+    import("./INeverReceivedAReceipt").then((m) => ({
+      component: m.default,
+      description: m.INeverReceivedAReceiptDescription,
+    })),
+  "213-how-do-i-give-a-product-as-a-gift": () =>
+    import("./HowDoIGiveAProductAsAGift").then((m) => ({
+      component: m.default,
+      description: m.HowDoIGiveAProductAsAGiftDescription,
+    })),
+  "214-why-was-i-charged-by-gumroad": () =>
+    import("./WhyWasIChargedByGumroad").then((m) => ({
+      component: m.default,
+      description: m.WhyWasIChargedByGumroadDescription,
+    })),
+  "215-when-will-my-purchase-be-shipped": () =>
+    import("./WhenWillMyPurchaseBeShipped").then((m) => ({
+      component: m.default,
+      description: m.WhenWillMyPurchaseBeShippedDescription,
+    })),
+  "216-delete-credit-card-information": () =>
+    import("./DeleteCreditCardInformation").then((m) => ({
+      component: m.default,
+      description: m.DeleteCreditCardInformationDescription,
+    })),
+  "217-i-have-extra-charges-from-gumroad-after-my-purchase": () =>
+    import("./IHaveExtraChargesFromGumroadAfterMyPurchase").then((m) => ({
+      component: m.default,
+      description: m.IHaveExtraChargesFromGumroadAfterMyPurchaseDescription,
+    })),
+  "222-product-ratings-on-gumroad": () =>
+    import("./ProductRatingsOnGumroad").then((m) => ({
+      component: m.default,
+      description: m.ProductRatingsOnGumroadDescription,
+    })),
+  "223-payoneer-and-gumroad": () =>
+    import("./PayoneerAndGumroad").then((m) => ({
+      component: m.default,
+      description: m.PayoneerAndGumroadDescription,
+    })),
+  "247-what-your-customers-see": () =>
+    import("./WhatYourCustomersSee").then((m) => ({
+      component: m.default,
+      description: m.WhatYourCustomersSeeDescription,
+    })),
+  "248-delete-a-product": () =>
+    import("./DeleteAProduct").then((m) => ({
+      component: m.default,
+      description: m.DeleteAProductDescription,
+    })),
+  "249-affiliate-faq": () =>
+    import("./AffiliateFaq").then((m) => ({
+      component: m.default,
+      description: m.AffiliateFaqDescription,
+    })),
+  "251-incorrect-recurring-charge": () =>
+    import("./IncorrectRecurringCharge").then((m) => ({
+      component: m.default,
+      description: m.IncorrectRecurringChargeDescription,
+    })),
+  "252-multiple-accounts": () =>
+    import("./MultipleAccounts").then((m) => ({
+      component: m.default,
+      description: m.MultipleAccountsDescription,
+    })),
+  "260-your-payout-settings-page": () =>
+    import("./YourPayoutSettingsPage").then((m) => ({
+      component: m.default,
+      description: m.YourPayoutSettingsPageDescription,
+    })),
+  "266-why-are-my-customers-purchases-failing": () =>
+    import("./WhyAreMyCustomersPurchasesFailing").then((m) => ({
+      component: m.default,
+      description: m.WhyAreMyCustomersPurchasesFailingDescription,
+    })),
+  "268-customer-dashboard": () =>
+    import("./CustomerDashboard").then((m) => ({
+      component: m.default,
+      description: m.CustomerDashboardDescription,
+    })),
+  "269-balance-page": () =>
+    import("./BalancePage").then((m) => ({
+      component: m.default,
+      description: m.BalancePageDescription,
+    })),
+  "270-url-parameters": () =>
+    import("./UrlParameters").then((m) => ({
+      component: m.default,
+      description: m.UrlParametersDescription,
+    })),
+  "275-paypal-connect": () =>
+    import("./PaypalConnect").then((m) => ({
+      component: m.default,
+      description: m.PaypalConnectDescription,
+    })),
+  "278-guide-to-memberships": () =>
+    import("./GuideToMemberships").then((m) => ({
+      component: m.default,
+      description: m.GuideToMembershipsDescription,
+    })),
+  "280-create-application-api": () =>
+    import("./CreateApplicationApi").then((m) => ({
+      component: m.default,
+      description: m.CreateApplicationApiDescription,
+    })),
+  "281-payout-delays": () =>
+    import("./PayoutDelays").then((m) => ({
+      component: m.default,
+      description: m.PayoutDelaysDescription,
+    })),
+  "282-how-do-purchases-work-for-my-customers": () =>
+    import("./HowDoPurchasesWorkForMyCustomers").then((m) => ({
+      component: m.default,
+      description: m.HowDoPurchasesWorkForMyCustomersDescription,
+    })),
+  "283-fraudulent-purchases": () =>
+    import("./FraudulentPurchases").then((m) => ({
+      component: m.default,
+      description: m.FraudulentPurchasesDescription,
+    })),
+  "285-turning-off-third-party-trackers": () =>
+    import("./TurningOffThirdPartyTrackers").then((m) => ({
+      component: m.default,
+      description: m.TurningOffThirdPartyTrackersDescription,
+    })),
+  "286-how-do-i-report-a-gumroad-creator": () =>
+    import("./HowDoIReportAGumroadCreator").then((m) => ({
+      component: m.default,
+      description: m.HowDoIReportAGumroadCreatorDescription,
+    })),
+  "288-dmca-counter-notices": () =>
+    import("./DmcaCounterNotices").then((m) => ({
+      component: m.default,
+      description: m.DmcaCounterNoticesDescription,
+    })),
+  "289-file-size-limits-on-gumroad": () =>
+    import("./FileSizeLimitsOnGumroad").then((m) => ({
+      component: m.default,
+      description: m.FileSizeLimitsOnGumroadDescription,
+    })),
+  "290-facebook-domain-verification": () =>
+    import("./FacebookDomainVerification").then((m) => ({
+      component: m.default,
+      description: m.FacebookDomainVerificationDescription,
+    })),
+  "292-account-login-security": () =>
+    import("./AccountLoginSecurity").then((m) => ({
+      component: m.default,
+      description: m.AccountLoginSecurityDescription,
+    })),
+  "295-external-integration": () =>
+    import("./ExternalIntegration").then((m) => ({
+      component: m.default,
+      description: m.ExternalIntegrationDescription,
+    })),
+  "304-products-dashboard": () =>
+    import("./ProductsDashboard").then((m) => ({
+      component: m.default,
+      description: m.ProductsDashboardDescription,
+    })),
+  "324-accessibiility-statement": () =>
+    import("./AccessibiilityStatement").then((m) => ({
+      component: m.default,
+      description: m.AccessibiilityStatementDescription,
+    })),
+  "325-indirect-taxes-on-sales-via-discover": () =>
+    import("./IndirectTaxesOnSalesViaDiscover").then((m) => ({
+      component: m.default,
+      description: m.IndirectTaxesOnSalesViaDiscoverDescription,
+    })),
+  "326-teams-and-roles": () =>
+    import("./TeamsAndRoles").then((m) => ({
+      component: m.default,
+      description: m.TeamsAndRolesDescription,
+    })),
+  "327-purchasing-power-parity": () =>
+    import("./PurchasingPowerParity").then((m) => ({
+      component: m.default,
+      description: m.PurchasingPowerParityDescription,
+    })),
+  "329-customer-moderation": () =>
+    import("./CustomerModeration").then((m) => ({
+      component: m.default,
+      description: m.CustomerModerationDescription,
+    })),
+  "330-stripe-connect": () =>
+    import("./StripeConnect").then((m) => ({
+      component: m.default,
+      description: m.StripeConnectDescription,
+    })),
+  "331-creating-upsells": () =>
+    import("./CreatingUpsells").then((m) => ({
+      component: m.default,
+      description: m.CreatingUpsellsDescription,
+    })),
+  "333-affiliates-on-gumroad": () =>
+    import("./AffiliatesOnGumroad").then((m) => ({
+      component: m.default,
+      description: m.AffiliatesOnGumroadDescription,
+    })),
+  "334-more-like-this": () =>
+    import("./MoreLikeThis").then((m) => ({
+      component: m.default,
+      description: m.MoreLikeThisDescription,
+    })),
+  "335-custom-refund-policy": () =>
+    import("./CustomRefundPolicy").then((m) => ({
+      component: m.default,
+      description: m.CustomRefundPolicyDescription,
+    })),
+  "336-singaporean-gst": () =>
+    import("./SingaporeanGst").then((m) => ({
+      component: m.default,
+      description: m.SingaporeanGstDescription,
+    })),
+  "339-product-bundles": () =>
+    import("./ProductBundles").then((m) => ({
+      component: m.default,
+      description: m.ProductBundlesDescription,
+    })),
+  "341-collaborations": () =>
+    import("./Collaborations").then((m) => ({
+      component: m.default,
+      description: m.CollaborationsDescription,
+    })),
+  "343-wishlists": () =>
+    import("./Wishlists").then((m) => ({
+      component: m.default,
+      description: m.WishlistsDescription,
+    })),
+  "344-rate-and-review-your-purchase": () =>
+    import("./RateAndReviewYourPurchase").then((m) => ({
+      component: m.default,
+      description: m.RateAndReviewYourPurchaseDescription,
+    })),
+  "345-tipping": () =>
+    import("./Tipping").then((m) => ({
+      component: m.default,
+      description: m.TippingDescription,
+    })),
+  "346-installment-plans": () =>
+    import("./InstallmentPlans").then((m) => ({
+      component: m.default,
+      description: m.InstallmentPlansDescription,
+    })),
+  "347-gumroad-community": () =>
+    import("./GumroadCommunity").then((m) => ({
+      component: m.default,
+      description: m.GumroadCommunityDescription,
+    })),
+  "37-how-to-delete-your-gumroad-account": () =>
+    import("./HowToDeleteYourGumroadAccount").then((m) => ({
+      component: m.default,
+      description: m.HowToDeleteYourGumroadAccountDescription,
+    })),
+  "42-content-security": () =>
+    import("./ContentSecurity").then((m) => ({
+      component: m.default,
+      description: m.ContentSecurityDescription,
+    })),
+  "43-streaming-videos": () =>
+    import("./StreamingVideos").then((m) => ({
+      component: m.default,
+      description: m.StreamingVideosDescription,
+    })),
+  "44-build-gumroad-into-your-website": () =>
+    import("./BuildGumroadIntoYourWebsite").then((m) => ({
+      component: m.default,
+      description: m.BuildGumroadIntoYourWebsiteDescription,
+    })),
+  "46-what-currency-does-gumroad-use": () =>
+    import("./WhatCurrencyDoesGumroadUse").then((m) => ({
+      component: m.default,
+      description: m.WhatCurrencyDoesGumroadUseDescription,
+    })),
+  "47-how-to-refund-a-customer": () =>
+    import("./HowToRefundACustomer").then((m) => ({
+      component: m.default,
+      description: m.HowToRefundACustomerDescription,
+    })),
+  "51-what-is-gumroads-refund-policy": () =>
+    import("./WhatIsGumroadsRefundPolicy").then((m) => ({
+      component: m.default,
+      description: m.WhatIsGumroadsRefundPolicyDescription,
+    })),
+  "53-what-browsers-does-gumroad-support": () =>
+    import("./WhatBrowsersDoesGumroadSupport").then((m) => ({
+      component: m.default,
+      description: m.WhatBrowsersDoesGumroadSupportDescription,
+    })),
+  "54-not-receiving-updates": () =>
+    import("./NotReceivingUpdates").then((m) => ({
+      component: m.default,
+      description: m.NotReceivingUpdatesDescription,
+    })),
+  "60-adding-a-cover-image": () =>
+    import("./AddingACoverImage").then((m) => ({
+      component: m.default,
+      description: m.AddingACoverImageDescription,
+    })),
+  "62-testing-a-purchase": () =>
+    import("./TestingAPurchase").then((m) => ({
+      component: m.default,
+      description: m.TestingAPurchaseDescription,
+    })),
+  "64-is-gumroad-for-me": () =>
+    import("./IsGumroadForMe").then((m) => ({
+      component: m.default,
+      description: m.IsGumroadForMeDescription,
+    })),
+  "66-gumroads-fees": () =>
+    import("./GumroadsFees").then((m) => ({
+      component: m.default,
+      description: m.GumroadsFeesDescription,
+    })),
+  "67-the-settings-menu": () =>
+    import("./TheSettingsMenu").then((m) => ({
+      component: m.default,
+      description: m.TheSettingsMenuDescription,
+    })),
+  "70-can-i-sell-services": () =>
+    import("./CanISellServices").then((m) => ({
+      component: m.default,
+      description: m.CanISellServicesDescription,
+    })),
+  "74-the-analytics-dashboard": () =>
+    import("./TheAnalyticsDashboard").then((m) => ({
+      component: m.default,
+      description: m.TheAnalyticsDashboardDescription,
+    })),
+  "76-license-keys": () =>
+    import("./LicenseKeys").then((m) => ({
+      component: m.default,
+      description: m.LicenseKeysDescription,
+    })),
+  "78-my-customer-did-not-receive-a-receipt": () =>
+    import("./MyCustomerDidNotReceiveAReceipt").then((m) => ({
+      component: m.default,
+      description: m.MyCustomerDidNotReceiveAReceiptDescription,
+    })),
+  "79-gumroad-discover": () =>
+    import("./GumroadDiscover").then((m) => ({
+      component: m.default,
+      description: m.GumroadDiscoverDescription,
+    })),
+  "81-custom-product-urls": () =>
+    import("./CustomProductUrls").then((m) => ({
+      component: m.default,
+      description: m.CustomProductUrlsDescription,
+    })),
+  "82-membership-products": () =>
+    import("./MembershipProducts").then((m) => ({
+      component: m.default,
+      description: m.MembershipProductsDescription,
+    })),
 };
 
-export function getArticle(slug: string): ArticleModule | undefined {
-  return articles[slug];
+export async function getArticle(slug: string): Promise<ArticleModule | undefined> {
+  const loader = articles[slug];
+  if (!loader) return undefined;
+  return loader();
 }

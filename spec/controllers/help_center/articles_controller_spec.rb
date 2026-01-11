@@ -14,6 +14,7 @@ describe HelpCenter::ArticlesController, inertia: true do
       expect(inertia.props[:categories]).to be_an(Array)
       expect(inertia.props[:categories]).not_to be_empty
       expect(inertia.props[:categories].first).to include(:title, :url, :audience, :articles)
+      expect(inertia.props[:meta]).to include(:title, :description, :canonical_url)
     end
 
     it "includes all categories with their articles" do
@@ -33,7 +34,7 @@ describe HelpCenter::ArticlesController, inertia: true do
     it "returns successful response with Inertia page data" do
       get :show, params: { slug: article.slug }
       expect(response).to be_successful
-      expect(inertia.component).to eq("HelpCenter/Article")
+      expect(inertia.component).to eq("HelpCenter/Article/Show")
       expect(inertia.props[:article]).to include(
         title: article.title,
         slug: article.slug
@@ -44,7 +45,7 @@ describe HelpCenter::ArticlesController, inertia: true do
     it "includes sidebar categories" do
       get :show, params: { slug: article.slug }
       expect(inertia.props[:sidebar_categories]).to be_an(Array)
-      expect(inertia.props[:sidebar_categories].first).to include(:title, :slug, :url, :is_active)
+      expect(inertia.props[:sidebar_categories].first).to include(:title, :slug, :url)
     end
 
     it "includes meta information" do

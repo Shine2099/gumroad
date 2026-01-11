@@ -18,8 +18,15 @@ interface Category {
   articles: Article[];
 }
 
-interface Props {
+interface Meta {
+  title: string;
+  description: string;
+  canonical_url: string;
+}
+
+interface ArticlesIndexPageProps {
   categories: Category[];
+  meta: Meta;
 }
 
 const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
@@ -65,7 +72,7 @@ const CategoryArticles = ({ category, searchTerm }: { category: Category; search
 };
 
 export default function HelpCenterIndex() {
-  const { categories } = cast<Props>(usePage().props);
+  const { categories, meta } = cast<ArticlesIndexPageProps>(usePage().props);
   const [searchTerm, setSearchTerm] = React.useState("");
 
   const filteredCategories = searchTerm
@@ -78,8 +85,9 @@ export default function HelpCenterIndex() {
   return (
     <HelpCenterLayout>
       <Head>
-        <title>Gumroad Help Center</title>
-        <meta name="description" content="Common questions and support documentation" />
+        <title>{meta.title}</title>
+        <meta name="description" content={meta.description} />
+        <link rel="canonical" href={meta.canonical_url} />
       </Head>
       <input
         type="text"

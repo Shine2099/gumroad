@@ -11,9 +11,7 @@ class HelpCenter::BaseController < ApplicationController
     {
       helper_widget_host: helper_widget_host,
       helper_session: helper_session,
-      recaptcha_site_key: user_signed_in? ? nil : GlobalConfig.get("RECAPTCHA_LOGIN_SITE_KEY"),
-      is_logged_in: user_signed_in?,
-      new_ticket_url: user_signed_in? ? support_index_path(new_ticket: true) : help_center_root_path(new_ticket: true)
+      recaptcha_site_key: user_signed_in? ? nil : GlobalConfig.get("RECAPTCHA_LOGIN_SITE_KEY")
     }
   end
 
@@ -23,6 +21,6 @@ class HelpCenter::BaseController < ApplicationController
     end
 
     def help_center_presenter
-      @help_center_presenter ||= HelpCenterPresenter.new(view_context: view_context)
+      @help_center_presenter ||= HelpCenterPresenter.new
     end
 end
