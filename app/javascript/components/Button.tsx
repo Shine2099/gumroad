@@ -121,10 +121,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const variant = outline ? "outline" : color === "danger" ? "destructive" : "default";
     const size = small ? "sm" : "default";
 
-    const effectiveColor = color;
-
     const classes = classNames(
-      buttonVariants({ variant, size, color: effectiveColor && !outline ? effectiveColor : undefined }),
+      buttonVariants({ variant, size, color: color || undefined }),
       className,
     );
     const Comp = asChild ? Slot : "button";
