@@ -47,14 +47,14 @@ export const ProductsPageProductsTable = (props: {
         products_sort_direction: newSort?.direction,
         products_page: undefined,
       },
-      only: ["products", "products_pagination", "products_sort"],
+      only: ["products_data"],
       onFinish: () => setIsLoading(false),
     });
   };
 
   const thProps = useSortingTableDriver<SortKey>(sort, onSetSort);
 
-  const loadProducts = (page: number) => {
+  const loadProducts = (page: number = 1) => {
     setIsLoading(true);
     router.reload({
       data: {
@@ -63,7 +63,7 @@ export const ProductsPageProductsTable = (props: {
         products_sort_direction: sort?.direction,
         query: props.query || undefined,
       },
-      only: ["products", "products_pagination", "products_sort"],
+      only: ["products_data"],
       onFinish: () => {
         setIsLoading(false);
         tableRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -159,7 +159,7 @@ export const ProductsPageProductsTable = (props: {
                   <div className="flex flex-wrap gap-3 lg:justify-end">
                     <ActionsPopover
                       product={product}
-                      onDuplicate={() => loadProducts(1)}
+                      onDuplicate={() => loadProducts()}
                       onDelete={() => reloadProducts()}
                       onArchive={() => {
                         props.setEnableArchiveTab?.(true);

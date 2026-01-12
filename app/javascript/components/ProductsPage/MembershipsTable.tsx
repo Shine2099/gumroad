@@ -47,14 +47,14 @@ export const ProductsPageMembershipsTable = (props: {
         memberships_sort_direction: newSort?.direction,
         memberships_page: undefined,
       },
-      only: ["memberships", "memberships_pagination", "memberships_sort"],
+      only: ["memberships_data"],
       onFinish: () => setIsLoading(false),
     });
   };
 
   const thProps = useSortingTableDriver<SortKey>(sort, onSetSort);
 
-  const loadMemberships = (page: number) => {
+  const loadMemberships = (page: number = 1) => {
     setIsLoading(true);
     router.reload({
       data: {
@@ -63,7 +63,7 @@ export const ProductsPageMembershipsTable = (props: {
         memberships_sort_direction: sort?.direction,
         query: props.query || undefined,
       },
-      only: ["memberships", "memberships_pagination", "memberships_sort"],
+      only: ["memberships_data"],
       onFinish: () => {
         setIsLoading(false);
         tableRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -168,7 +168,7 @@ export const ProductsPageMembershipsTable = (props: {
                 <TableCell>
                   <ActionsPopover
                     product={membership}
-                    onDuplicate={() => loadMemberships(1)}
+                    onDuplicate={() => loadMemberships()}
                     onDelete={() => reloadMemberships()}
                     onArchive={() => {
                       props.setEnableArchiveTab?.(true);
