@@ -34,13 +34,11 @@ describe LinksController, :vcr, inertia: true do
         expect(inertia.props).to include(
           :archived_products_count,
           :can_create_product,
-          :products,
-          :products_pagination,
-          :products_sort,
-          :memberships,
-          :memberships_pagination,
-          :memberships_sort
+          :products_data,
+          :memberships_data
         )
+        expect(inertia.props[:products_data]).to include(:products, :pagination, :sort)
+        expect(inertia.props[:memberships_data]).to include(:memberships, :pagination, :sort)
       end
     end
 

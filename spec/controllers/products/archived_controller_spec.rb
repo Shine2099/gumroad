@@ -40,13 +40,11 @@ describe Products::ArchivedController, inertia: true do
       expect(inertia).to render_component("Products/Archived/Index")
       expect(inertia.props).to include(
         :can_create_product,
-        :products,
-        :products_pagination,
-        :products_sort,
-        :memberships,
-        :memberships_pagination,
-        :memberships_sort
+        :products_data,
+        :memberships_data
       )
+      expect(inertia.props[:products_data]).to include(:products, :pagination, :sort)
+      expect(inertia.props[:memberships_data]).to include(:memberships, :pagination, :sort)
     end
 
     context "when there are no archived products" do
