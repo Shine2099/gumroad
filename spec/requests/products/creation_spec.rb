@@ -301,7 +301,7 @@ describe "Product creation", type: :system, js: true do
   end
 
   describe "form validations" do
-    it "focuses on name field on submit if name is not filled" do
+    it "shows error state when name is not filled" do
       visit new_product_path
       fill_in("Price", with: 1)
       click_on("Next: Customize")
@@ -309,9 +309,10 @@ describe "Product creation", type: :system, js: true do
       name_field = find_field("Name")
       expect(page.active_element).to eq(name_field)
       expect(name_field.ancestor("fieldset.danger")).to be_truthy
+      expect(seller.links.count).to eq(0)
     end
 
-    it "focuses on price field on submit if price is not filled" do
+    it "shows error state when price is not filled" do
       visit new_product_path
       fill_in("Name", with: "Digital product")
       choose("Digital product")
@@ -320,6 +321,32 @@ describe "Product creation", type: :system, js: true do
       price_field = find_field("Price")
       expect(page.active_element).to eq(price_field)
       expect(price_field.ancestor("fieldset.danger")).to be_truthy
+      expect(seller.links.count).to eq(0)
+    end
+  end
+
+  describe "error handling" do
+    it "shows error message when backend validation fails" do
+      visit new_product_path
+      fill_in("Name", with: "Test Product")
+      fill_in("Price", with: 1)
+
+      # Simulate backend validation failure
+      allow_any_instance_of(Link).to receive(:save!).and_raise(ActiveRecord::RecordInvalid.new)
+
+      click_on("Next: Customize")
+      wait_for_ajax
+
+      expect(page).to have_current_path(new_product_path)
+      expect(page).to have_alert(text: "Sorry, something went wrong.")
+      expect(seller.links.count).to eq(0)
+    end
+
+    it "prevents creating physical products when feature is disabled" do
+      seller.update!(can_create_physical_products: false)
+
+      visit new_product_path
+      expect(page).not_to have_radio_button("Physical good")
     end
   end
 
