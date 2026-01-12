@@ -18,12 +18,16 @@ class Products::ArchivedController < Sellers::BaseController
 
     render inertia: "Products/Archived/Index", props: {
       can_create_product: -> { archived_products_page_presenter.page_props[:can_create_product] },
-      products: -> { archived_products_page_presenter.products_table_props[:products] },
-      products_pagination: -> { archived_products_page_presenter.products_table_props[:products_pagination] },
-      products_sort: -> { archived_products_page_presenter.products_sort },
-      memberships: -> { archived_products_page_presenter.memberships_table_props[:memberships] },
-      memberships_pagination: -> { archived_products_page_presenter.memberships_table_props[:memberships_pagination] },
-      memberships_sort: -> { archived_products_page_presenter.memberships_sort },
+      products_data: {
+        products: -> { archived_products_page_presenter.products_table_props[:products] },
+        pagination: -> { archived_products_page_presenter.products_table_props[:products_pagination] },
+        sort: -> { archived_products_page_presenter.products_sort },
+      },
+      memberships_data: {
+        memberships: -> { archived_products_page_presenter.memberships_table_props[:memberships] },
+        pagination: -> { archived_products_page_presenter.memberships_table_props[:memberships_pagination] },
+        sort: -> { archived_products_page_presenter.memberships_sort },
+      },
     }
   end
 

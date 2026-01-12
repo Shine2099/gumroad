@@ -16,23 +16,23 @@ import ProductsPage from "./ProductsPage";
 import placeholder from "$assets/images/product_nudge.svg";
 
 export type ProductsDashboardPageProps = {
-  memberships: Membership[];
-  memberships_pagination: PaginationProps;
-  memberships_sort?: Sort<SortKey> | null | undefined;
-  products: Product[];
-  products_pagination: PaginationProps;
-  products_sort?: Sort<SortKey> | null | undefined;
+  products_data: {
+    products: Product[];
+    pagination: PaginationProps;
+    sort?: Sort<SortKey> | null | undefined;
+  };
+  memberships_data: {
+    memberships: Membership[];
+    pagination: PaginationProps;
+    sort?: Sort<SortKey> | null | undefined;
+  };
   archived_products_count: number;
   can_create_product: boolean;
 };
 
 export const ProductsDashboardPage = ({
-  memberships,
-  memberships_pagination: membershipsPagination,
-  memberships_sort: membershipsSort,
-  products,
-  products_pagination: productsPagination,
-  products_sort: productsSort,
+  products_data: { products, pagination: productsPagination, sort: productsSort },
+  memberships_data: { memberships, pagination: membershipsPagination, sort: membershipsSort },
   archived_products_count: archivedProductsCount,
   can_create_product: canCreateProduct,
 }: ProductsDashboardPageProps) => {
