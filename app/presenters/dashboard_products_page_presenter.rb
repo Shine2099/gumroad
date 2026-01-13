@@ -91,9 +91,9 @@ class DashboardProductsPagePresenter
       products = seller
         .products
         .includes([
-          thumbnail: { file_attachment: { blob: { variant_records: { image_attachment: :blob } } } },
-          thumbnail_alive: { file_attachment: { blob: { variant_records: { image_attachment: :blob } } } },
-        ])
+                    thumbnail: { file_attachment: { blob: { variant_records: { image_attachment: :blob } } } },
+                    thumbnail_alive: { file_attachment: { blob: { variant_records: { image_attachment: :blob } } } },
+                  ])
         .non_membership
         .visible
       products = archived? ? products.archived : products.not_archived
