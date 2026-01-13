@@ -96,9 +96,7 @@ const CollabsPage = ({
                 <CollabsMembershipsTable entries={memberships} pagination={membershipsPagination} />
               ) : null}
 
-              {products.length ? (
-                <CollabsProductsTable entries={products} pagination={productsPagination} />
-              ) : null}
+              {products.length ? <CollabsProductsTable entries={products} pagination={productsPagination} /> : null}
             </div>
           </div>
         )}

@@ -20,10 +20,7 @@ import {
 import { useUserAgentInfo } from "$app/components/UserAgent";
 import { useClientSortingTableDriver } from "$app/components/useSortingTableDriver";
 
-export const CollabsProductsTable = (props: {
-  entries: Product[];
-  pagination: PaginationProps;
-}) => {
+export const CollabsProductsTable = (props: { entries: Product[]; pagination: PaginationProps }) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const tableRef = React.useRef<HTMLTableElement>(null);
   const userAgentInfo = useUserAgentInfo();
