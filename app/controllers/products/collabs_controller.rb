@@ -20,12 +20,20 @@ class Products::CollabsController < Sellers::BaseController
       stats: -> { presenter.initial_page_props[:stats] },
       archived_tab_visible: -> { presenter.initial_page_props[:archived_tab_visible] },
       collaborators_disabled_reason: -> { presenter.initial_page_props[:collaborators_disabled_reason] },
-      products: -> { presenter.products_table_props[:products] },
-      products_pagination: -> { presenter.products_table_props[:products_pagination] },
-      products_sort: -> { presenter.products_sort },
-      memberships: -> { presenter.memberships_table_props[:memberships] },
-      memberships_pagination: -> { presenter.memberships_table_props[:memberships_pagination] },
-      memberships_sort: -> { presenter.memberships_sort },
+      products_data: -> {
+        {
+          products: presenter.products_table_props[:products],
+          pagination: presenter.products_table_props[:products_pagination],
+          sort: presenter.products_sort,
+        }
+      },
+      memberships_data: -> {
+        {
+          memberships: presenter.memberships_table_props[:memberships],
+          pagination: presenter.memberships_table_props[:memberships_pagination],
+          sort: presenter.memberships_sort,
+        }
+      },
     }
   end
 
