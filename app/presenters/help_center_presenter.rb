@@ -3,6 +3,12 @@
 class HelpCenterPresenter
   include Rails.application.routes.url_helpers
 
+  attr_reader :view_context
+
+  def initialize(view_context:)
+    @view_context = view_context
+  end
+
   def default_url_options
     { host: DOMAIN, protocol: PROTOCOL }
   end
@@ -15,14 +21,16 @@ class HelpCenterPresenter
   end
 
   def article_props(article)
+    content = render_article_content(article)
     {
       article: {
         title: article.title,
         slug: article.slug,
+        content: content,
         category: category_data(article.category)
       },
       sidebar_categories: article.category.categories_for_same_audience.map { |cat| sidebar_category_data(cat) },
-      meta: article_meta(article)
+      meta: article_meta(article, content)
     }
   end
 
@@ -73,11 +81,21 @@ class HelpCenterPresenter
       }
     end
 
-    def article_meta(article)
+    def render_article_content(article)
+      view_context.render(article)
+    end
+
+    def article_meta(article, content)
       {
         title: "#{article.title} - Gumroad Help Center",
+        description: extract_description(content),
         canonical_url: help_center_article_url(article)
       }
+    end
+
+    def extract_description(html)
+      text = ActionView::Base.full_sanitizer.sanitize(html)
+      text.squish.truncate(160)
     end
 
     def category_meta(category)

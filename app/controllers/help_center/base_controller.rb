@@ -21,6 +21,6 @@ class HelpCenter::BaseController < ApplicationController
     end
 
     def help_center_presenter
-      @help_center_presenter ||= HelpCenterPresenter.new
+      @help_center_presenter ||= HelpCenterPresenter.new(view_context: view_context)
     end
 end

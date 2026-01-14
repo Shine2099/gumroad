@@ -3,7 +3,8 @@
 require "spec_helper"
 
 describe HelpCenterPresenter do
-  subject(:presenter) { described_class.new }
+  let(:view_context) { ApplicationController.new.view_context }
+  subject(:presenter) { described_class.new(view_context: view_context) }
 
   describe "#index_props" do
     it "returns categories with articles and meta" do
@@ -27,13 +28,15 @@ describe HelpCenterPresenter do
   describe "#article_props" do
     let(:article) { HelpCenter::Article.first }
 
-    it "returns article data with category" do
+    it "returns article data with category and content" do
       props = presenter.article_props(article)
 
       expect(props[:article]).to include(
         title: article.title,
         slug: article.slug
       )
+      expect(props[:article][:content]).to be_a(String)
+      expect(props[:article][:content]).not_to be_empty
       expect(props[:article][:category]).to include(:title, :slug, :url)
     end
 
@@ -44,10 +47,12 @@ describe HelpCenterPresenter do
       expect(props[:sidebar_categories].first).to include(:title, :slug, :url)
     end
 
-    it "returns meta information" do
+    it "returns meta information with description" do
       props = presenter.article_props(article)
 
       expect(props[:meta][:title]).to eq("#{article.title} - Gumroad Help Center")
+      expect(props[:meta][:description]).to be_a(String)
+      expect(props[:meta][:description].length).to be <= 160
       expect(props[:meta][:canonical_url]).to include(article.slug)
     end
   end
