@@ -163,7 +163,7 @@ function AuthenticatedHelpCenterContent({
 }) {
   const [isNewTicketOpen, setIsNewTicketOpen] = React.useState(false);
 
-  const handleTicketCreated = (_slug: string) => {
+  const onTicketCreated = (_slug: string) => {
     setIsNewTicketOpen(false);
     router.visit(Routes.support_index_path());
   };
