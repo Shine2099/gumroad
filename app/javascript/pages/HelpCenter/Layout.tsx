@@ -111,11 +111,11 @@ function HelpCenterHeader({
       );
     }
 
-    if (hasHelperSession && onOpenNewTicket) {
+    if (hasHelperSession) {
       return (
         <>
           <ReportBugButton />
-          <Button color="accent" onClick={onOpenNewTicket}>
+          <Button color="accent" onClick={() => onOpenNewTicket?.()}>
             New ticket
           </Button>
         </>
@@ -177,11 +177,7 @@ function AuthenticatedHelpCenterContent({
         onOpenNewTicket={() => setIsNewTicketOpen(true)}
       />
       <section className="p-4 md:p-8">{children}</section>
-      <NewTicketModal
-        open={isNewTicketOpen}
-        onClose={() => setIsNewTicketOpen(false)}
-        onCreated={handleTicketCreated}
-      />
+      <NewTicketModal open={isNewTicketOpen} onClose={() => setIsNewTicketOpen(false)} onCreated={onTicketCreated} />
     </>
   );
 }
