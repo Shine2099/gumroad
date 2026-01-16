@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cast, createCast } from "ts-safe-cast";
 
-import { getFolderArchiveDownloadUrl, getProductFileDownloadInfos } from "$app/data/products";
+import { getFolderArchiveDownloadUrl, getProductFileDownloadInfos, saveLastContentPage } from "$app/data/products";
 import { RichContent, RichContentPage } from "$app/parsers/richContent";
 import { assertDefined } from "$app/utils/assert";
 import FileUtils from "$app/utils/file";
@@ -217,28 +217,15 @@ const WithContent = ({
   const [activePageIndex, setActivePageIndex] = React.useState(getInitialPageIndex);
   const activePage = pages[activePageIndex];
 
-  const saveLastContentPage = React.useCallback(
-    async (pageId: string) => {
-      if (!props.purchase) return;
-      await request({
-        url: Routes.url_redirect_save_last_content_page_path(props.token),
-        method: "POST",
-        accept: "json",
-        data: { page_id: pageId },
-      });
-    },
-    [props.token, props.purchase],
-  );
-
   const handlePageChange = React.useCallback(
     (newIndex: number) => {
       setActivePageIndex(newIndex);
       const newPage = pages[newIndex];
-      if (newPage) {
-        void saveLastContentPage(newPage.page_id);
+      if (newPage && props.purchase) {
+        void saveLastContentPage(props.token, newPage.page_id);
       }
     },
-    [pages, saveLastContentPage],
+    [pages, props.token, props.purchase],
   );
   const showPageList = pages.length > 1 || (pages.length === 1 && (pages[0]?.title ?? "").trim() !== "");
   const hasPreviousPage = activePageIndex > 0;
