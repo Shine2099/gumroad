@@ -292,7 +292,7 @@ export const Checkout = ({
                             tip="This discount is applied based on the cost of living in your country."
                             position="top"
                           >
-                            <Pill asChild size="small" className="cursor-pointer">
+                            <Pill asChild size="small" className="font-inherit cursor-pointer">
                               <button
                                 onClick={() => updateCart({ rejectPppDiscount: true })}
                                 aria-label="Purchasing power parity discount"

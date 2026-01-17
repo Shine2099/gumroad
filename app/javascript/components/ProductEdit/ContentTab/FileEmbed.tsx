@@ -385,7 +385,7 @@ const FileEmbedNodeView = ({ node, editor, getPos, updateAttributes }: NodeViewP
                     }}
                   />
                   <button
-                    className="underline"
+                    className="cursor-pointer underline all-unset"
                     style={{
                       position: "absolute",
                       top: "50%",
@@ -473,7 +473,7 @@ const FileEmbedNodeView = ({ node, editor, getPos, updateAttributes }: NodeViewP
 
                 {file.is_streamable && isComplete ? (
                   <li>
-                    <button className="underline" onClick={() => setExpanded(!expanded)}>
+                    <button className="cursor-pointer underline all-unset" onClick={() => setExpanded(!expanded)}>
                       {file.subtitle_files.length}{" "}
                       {file.subtitle_files.length === 1 ? "closed caption" : "closed captions"}
                     </button>

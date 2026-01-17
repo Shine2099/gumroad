@@ -657,7 +657,7 @@ const AbandonedCartProductListNodeView = (props: NodeViewProps) => {
       </WithTooltip>
       {abandonedCartProducts.length > shownProductCount ? (
         <button
-          className="link"
+          className="link cursor-pointer all-unset"
           onClick={() =>
             setShownProductCount(
               shownProductCount + ABANDONED_CART_PRODUCTS_TO_LOAD_PER_PAGE > abandonedCartProducts.length

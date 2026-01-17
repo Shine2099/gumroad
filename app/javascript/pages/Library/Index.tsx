@@ -383,7 +383,7 @@ export default function LibraryPage() {
             You have {archivedCount} archived purchase{archivedCount === 1 ? "" : "s"}.{" "}
             <button
               type="button"
-              className="underline"
+              className="cursor-pointer underline all-unset"
               onClick={() => dispatch({ type: "update-search", search: { showArchivedOnly: true } })}
             >
               Click here to view
@@ -406,7 +406,10 @@ export default function LibraryPage() {
                       : "No products found"}
                   </div>
                   {isDesktop ? null : (
-                    <button className="underline" onClick={() => setMobileFiltersExpanded(!mobileFiltersExpanded)}>
+                    <button
+                      className="cursor-pointer underline all-unset"
+                      onClick={() => setMobileFiltersExpanded(!mobileFiltersExpanded)}
+                    >
                       Filter
                     </button>
                   )}
@@ -507,7 +510,10 @@ export default function LibraryPage() {
                       ))}
                       <div>
                         {creators.length > 5 && !showingAllCreators ? (
-                          <button className="underline" onClick={() => setShowingAllCreators(true)}>
+                          <button
+                            className="cursor-pointer underline all-unset"
+                            onClick={() => setShowingAllCreators(true)}
+                          >
                             Show more
                           </button>
                         ) : null}

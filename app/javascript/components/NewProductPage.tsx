@@ -309,7 +309,7 @@ const NewProductPage = ({
                         Learn more
                       </a>
                     </div>
-                    <button className="underline" onClick={() => void dismissAiPromo()}>
+                    <button className="cursor-pointer underline all-unset" onClick={() => void dismissAiPromo()}>
                       close
                     </button>
                   </div>

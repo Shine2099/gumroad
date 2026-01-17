@@ -97,7 +97,7 @@ function LoginPage() {
               autoComplete="current-password"
             />
           </fieldset>
-          <Button color="filled" type="submit" disabled={form.processing}>
+          <Button color="primary" type="submit" disabled={form.processing}>
             {form.processing ? "Logging in..." : "Login"}
           </Button>
         </section>

@@ -22,7 +22,7 @@ export const brandNames = [
 export type BrandName = (typeof brandNames)[number];
 
 export const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 cursor-pointer border border-border rounded bg-transparent font-inherit no-underline transition-transform hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[0.25rem_0.25rem_0_currentColor] active:translate-x-0 active:translate-y-0 active:shadow-none disabled:opacity-30 disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-none",
+  "inline-flex items-center justify-center gap-2 cursor-pointer border border-border rounded bg-transparent text-current font-[inherit] no-underline transition-transform hover:-translate-1 hover:shadow active:translate-0 active:shadow-none disabled:opacity-30 disabled:hover:translate-0 disabled:hover:shadow-none",
   {
     variants: {
       variant: {
@@ -36,10 +36,10 @@ export const buttonVariants = cva(
         sm: "p-2 text-sm leading-[1.3]",
       },
       color: {
-        primary: "bg-black text-white hover:bg-accent hover:text-accent-foreground",
+        primary: "bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground",
         black: "bg-black text-white",
         accent: "bg-accent text-accent-foreground",
-        filled: "bg-white text-black hover:bg-pink hover:text-black",
+        filled: "bg-background text-foreground",
         success: "bg-success text-white",
         danger: "bg-danger text-white",
         warning: "bg-warning text-black",

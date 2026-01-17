@@ -4,7 +4,7 @@ import FileUtils from "$app/utils/file";
 import { getMimeType } from "$app/utils/mimetypes";
 import { summarizeUploadProgress } from "$app/utils/summarizeUploadProgress";
 
-import { Button, buttonVariants } from "$app/components/Button";
+import { Button } from "$app/components/Button";
 import { useEvaporateUploader } from "$app/components/EvaporateUploader";
 import { FileRowContent } from "$app/components/FileRowContent";
 import { Icon } from "$app/components/Icons";
@@ -212,11 +212,13 @@ export const EmailAttachments = ({
           ))}
         </Rows>
       ) : null}
-      <label className={buttonVariants({ size: "default", color: "primary" })}>
-        <input type="file" name="file" tabIndex={-1} multiple onChange={(e) => onAttachFiles(e.target)} />
-        <Icon name="paperclip" />
-        Attach files
-      </label>
+      <Button color="primary" asChild>
+        <label>
+          <input type="file" name="file" tabIndex={-1} multiple onChange={(e) => onAttachFiles(e.target)} />
+          <Icon name="paperclip" />
+          Attach files
+        </label>
+      </Button>
       {hasStreamableFiles ? (
         <Toggle value={isStreamOnly} onChange={setIsStreamOnly}>
           Disable file downloads (stream only)
