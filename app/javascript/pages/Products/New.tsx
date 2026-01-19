@@ -56,8 +56,8 @@ type FormErrors = {
     price_range?: string[];
     base?: string[];
   };
-  'link.name'?: string | undefined;
-  'link.price_range'?: string | undefined;
+  "link.name"?: string | undefined;
+  "link.price_range"?: string | undefined;
 };
 
 type NewProductPageProps = {
@@ -217,17 +217,23 @@ const NewProductPage = () => {
   const nameInputRef = React.useRef<HTMLInputElement>(null);
   const priceInputRef = React.useRef<HTMLInputElement>(null);
 
-  const getClientErrors = (attribute: string) => {
-    return [
-      ...(errors[`link.${attribute}` as keyof FormErrors] ? [errors[`link.${attribute}` as keyof FormErrors]] : []),
-    ] as string[];
+  type LinkErrorAttribute = "name" | "price_range" | "base";
+
+  const getClientErrors = (attribute: LinkErrorAttribute): string[] => {
+    const clientErrors = cast<Record<string, string | undefined>>(errors);
+    const clientError = clientErrors[`link.${attribute}`];
+    return clientError ? [clientError] : [];
   };
 
-  const getServerErrors = (attribute: string) => {
-    return errors.link?.[attribute as keyof typeof errors.link] ? [errors.link?.[attribute as keyof typeof errors.link]] : [];
+  const getServerErrors = (attribute: LinkErrorAttribute): string[] => {
+    const linkErrors = cast<Record<string, string[] | undefined>>(errors.link ?? {});
+    return linkErrors[attribute] ?? [];
   };
 
-  const getErrors = (attribute: string) => [...getClientErrors(attribute), ...getServerErrors(attribute)] as string[];
+  const getErrors = (attribute: LinkErrorAttribute): string[] => [
+    ...getClientErrors(attribute),
+    ...getServerErrors(attribute),
+  ];
 
   const saveProduct = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
