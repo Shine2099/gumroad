@@ -3,8 +3,8 @@ import { subMonths } from "date-fns";
 import * as React from "react";
 import { cast } from "ts-safe-cast";
 
-import Errors from "$app/components/Form/Errors";
 import { Button } from "$app/components/Button";
+import Errors from "$app/components/Form/Errors";
 
 type Props = {
   countries: [string, string][];
