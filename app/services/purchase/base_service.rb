@@ -96,15 +96,22 @@ class Purchase::BaseService
 
       return nil if email.blank?
 
-      base_scope.find { |s| s.email&.downcase == email.downcase }
+      original_purchase_flag = Purchase.flag_mapping["flags"][:is_original_subscription_purchase]
+      base_scope
+        .joins("INNER JOIN purchases ON purchases.subscription_id = subscriptions.id AND (purchases.flags & #{original_purchase_flag}) != 0")
+        .where("LOWER(purchases.email) = ?", email.downcase)
+        .first
     end
 
     def restart_existing_subscription(subscription, giftee_purchase)
       is_gift = purchase.is_gift_sender_purchase
 
-      subscription.credit_card = purchase.credit_card unless is_gift
-      subscription.resubscribe!
-      subscription.purchases << [purchase, giftee_purchase].compact
+      ActiveRecord::Base.transaction do
+        subscription.credit_card = purchase.credit_card unless is_gift
+        subscription.resubscribe!
+        subscription.purchases << [purchase, giftee_purchase].compact
+      end
+
       subscription.send_restart_notifications!
     end
 
