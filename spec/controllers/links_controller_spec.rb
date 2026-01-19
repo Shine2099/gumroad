@@ -2944,7 +2944,7 @@ describe LinksController, :vcr, inertia: true do
 
           expect(service_double).to have_received(:generate_cover_image)
           expect(service_double).to have_received(:generate_rich_content_pages)
-          expect(response).to redirect_to(edit_link_path(Link.last, anchor: "ai-generated"))
+          expect(response).to redirect_to(edit_link_path(Link.last, ai_generated: true))
 
           link = Link.last
           expect(link.name).to eq("UX design mastery using Figma")

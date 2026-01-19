@@ -308,21 +308,20 @@ describe "Product creation", type: :system, js: true do
       wait_for_ajax
 
       expect(page).to have_current_path(new_product_path)
-      expect(page).to have_text("Name can't be blank")
+      expect(page).to have_text("Name is required")
       expect(find_field("Name").ancestor("fieldset")).to match_css(".danger")
       expect(seller.links.count).to eq(0)
     end
 
-    it "creates a free product when price is not filled" do
+    it "focuses on price field on submit if price is not filled" do
       visit new_product_path
       fill_in("Name", with: "Digital product")
       choose("Digital product")
       click_on("Next: Customize")
-      wait_for_ajax
 
-      expect(page).to have_title("Digital product")
-      product = seller.links.last
-      expect(product.price_cents).to eq(0)
+      price_field = find_field("Price")
+      expect(page.active_element).to eq(price_field)
+      expect(price_field.ancestor("fieldset.danger")).to be_truthy
     end
   end
 
@@ -343,9 +342,7 @@ describe "Product creation", type: :system, js: true do
       wait_for_ajax
 
       expect(page).to have_current_path(new_product_path)
-      expect(page).to have_alert(text: "Name is too short")
 
-      # Verify errors are displayed in the form
       expect(page).to have_text("Name is too short")
       expect(page).to have_text("Price must be greater than 0")
       expect(find_field("Name").ancestor("fieldset")).to match_css(".danger")

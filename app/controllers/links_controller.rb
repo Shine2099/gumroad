@@ -99,14 +99,7 @@ class LinksController < ApplicationController
         generate_product_details_using_ai
       end
     rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid, Link::LinkInvalid
-      @error_message = if @product&.errors&.any?
-        @product.errors.full_messages.first
-      elsif @preorder_link&.errors&.any?
-        @preorder_link.errors.full_messages[0]
-      else
-        "Sorry, something went wrong."
-      end
-      return redirect_to new_product_path, alert: @error_message, inertia: { errors: { link: @product&.errors } }
+      return redirect_to new_product_path, alert: @product.errors.to_hash.transform_values(&:to_sentence).first, inertia: inertia_errors(@product)
     end
 
     create_user_event("add_product")
