@@ -287,7 +287,7 @@ const NewProductPage = () => {
                     />
                   </fieldset>
                   <div className="mt-3 flex justify-end gap-2">
-                    <Button onClick={() => void setAiPopoverOpen(false)} disabled={isGeneratingUsingAi}>
+                    <Button onClick={() => setAiPopoverOpen(false)} disabled={isGeneratingUsingAi}>
                       Cancel
                     </Button>
                     <Button
