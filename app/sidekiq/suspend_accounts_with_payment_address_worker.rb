@@ -46,7 +46,8 @@ class SuspendAccountsWithPaymentAddressWorker
       )
       user.suspend_for_fraud(
         author_name: "suspend_sellers_other_accounts",
-        content: "Suspended for fraud automatically on #{Time.current.to_fs(:formatted_date_full_month)} because of usage of #{identifier_type} #{identifier_value} (from User##{suspended_user.id})"
+        content: "Suspended for fraud automatically on #{Time.current.to_fs(:formatted_date_full_month)} because of usage of #{identifier_type} #{identifier_value} (from User##{suspended_user.id})",
+        skip_transition_callback: :suspend_sellers_other_accounts
       )
     end
 end
