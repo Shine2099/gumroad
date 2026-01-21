@@ -45,7 +45,7 @@ export type AnalyticsConfig = GoogleAnalytics.GoogleAnalyticsConfig &
 const configs = new Map<string, AnalyticsConfig>();
 
 export function startTrackingForSeller(id: string, data: AnalyticsData) {
-  if (configs.has(id) || !(data.google_analytics_id || data.facebook_pixel_id)) return;
+  if (configs.has(id) || !(data.google_analytics_id || data.facebook_pixel_id || data.tiktok_pixel_id)) return;
   const config: AnalyticsConfig = {
     id,
     facebookPixelId: data.facebook_pixel_id,

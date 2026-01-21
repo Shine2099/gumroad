@@ -105,6 +105,10 @@
   <meta property="gr:google_analytics:enabled" content="<%= third_party_analytics_enabled.to_s %>">
   <meta property="gr:fb_pixel:enabled" content="<%= third_party_analytics_enabled.to_s %>">
   <meta property="gr:tiktok_pixel:enabled" content="<%= third_party_analytics_enabled.to_s %>">
+  <% if third_party_analytics_enabled && @user&.tiktok_pixel_id.present? %>
+    <meta property="gr:tiktok_pixel:id" content="<%= @user.tiktok_pixel_id %>">
+    <%= javascript_include_tag "tiktok_pixel_head" %>
+  <% end %>
   <meta property="gr:logged_in_user:id" content="<%= logged_in_user.present? ? logged_in_user.external_id : "" %>">
   <meta property="gr:environment" value="<%= Rails.env %>">
   <meta property="gr:page:type" content="<%= @is_on_product_page ? "product" : "" %>">

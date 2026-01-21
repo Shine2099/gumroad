@@ -17,6 +17,7 @@ declare const ttq: {
   load: (id: string, config?: Record<string, unknown>) => void;
   page: () => void;
   track: (event: string, props?: Record<string, unknown>) => void;
+  _i?: Record<string, unknown>;
   instance: (id: string) => {
     page: () => void;
     track: (event: string, props?: Record<string, unknown>) => void;

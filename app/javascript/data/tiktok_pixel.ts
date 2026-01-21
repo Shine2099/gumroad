@@ -11,8 +11,11 @@ function shouldTrack() {
 export function startTrackingForSeller(data: TikTokPixelConfig) {
   if (!shouldTrack() || !data.tiktokPixelId || initializedPixels.has(data.tiktokPixelId)) return;
 
-  loadTiktokPixelScript();
-  ttq.load(data.tiktokPixelId);
+  const hasLoadedPixel = typeof ttq !== "undefined" && ttq._i && ttq._i[data.tiktokPixelId];
+  if (!hasLoadedPixel) {
+    loadTiktokPixelScript();
+    ttq.load(data.tiktokPixelId);
+  }
   ttq.instance(data.tiktokPixelId).page();
   initializedPixels.add(data.tiktokPixelId);
 }
