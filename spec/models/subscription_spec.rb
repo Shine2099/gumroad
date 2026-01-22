@@ -1002,7 +1002,7 @@ describe Subscription, :vcr do
         end
 
         context "when the discount is no longer valid" do
-          it "charges the full price", :vcr do
+          it "charges the full price" do
             subscription.charge!
 
             purchase = Purchase.last
@@ -1018,7 +1018,7 @@ describe Subscription, :vcr do
             subscription.original_purchase.purchase_offer_code_discount.update!(duration_in_billing_cycles: 2)
           end
 
-          it "charges the discounted price", :vcr do
+          it "charges the discounted price" do
             subscription.charge!
 
             purchase = Purchase.last
@@ -1046,7 +1046,7 @@ describe Subscription, :vcr do
         end
 
         context "when the discount is no longer valid" do
-          it "charges the full price", :vcr do
+          it "charges the full price" do
             subscription.charge!
 
             purchase = Purchase.last
@@ -1062,7 +1062,7 @@ describe Subscription, :vcr do
             subscription.original_purchase.purchase_offer_code_discount.update!(duration_in_billing_cycles: 2)
           end
 
-          it "charges the discounted price", :vcr do
+          it "charges the discounted price" do
             subscription.charge!
 
             purchase = Purchase.last
