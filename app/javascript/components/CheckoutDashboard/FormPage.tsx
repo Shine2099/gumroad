@@ -70,6 +70,7 @@ const FormPage = ({
   const key = () => (--lastKey).toString();
   const addKey = (field: CustomField): CustomFieldWithKey => ({ ...field, key: field.id ? field.id : key() });
   const uid = React.useId();
+  const [invalidFields, setInvalidFields] = React.useState<Set<string>>(() => new Set());
 
   const form = useForm<FormData>({
     user: {
@@ -85,8 +86,12 @@ const FormPage = ({
   const setCustomFields = (fields: CustomFieldWithKey[]) => form.setData("custom_fields", fields);
 
   const updateCustomField = (index: number, value: Partial<CustomField>) => {
-    if ("name" in value) form.clearErrors(`custom_fields.${index}.name`);
-    if ("products" in value || "global" in value) form.clearErrors(`custom_fields.${index}.products`);
+    setInvalidFields((prev) => {
+      const next = new Set(prev);
+      if ("name" in value) next.delete(`custom_fields.${index}.name`);
+      if ("products" in value || "global" in value) next.delete(`custom_fields.${index}.products`);
+      return next;
+    });
 
     const newValue = [...customFields];
     newValue[index] = { ...assertDefined(customFields[index], "Invalid index"), ...value };
@@ -96,25 +101,27 @@ const FormPage = ({
   const updateUserData = (update: Partial<FormData["user"]>) => form.setData("user", { ...form.data.user, ...update });
 
   const handleSave = () => {
-    form.clearErrors();
+    const newInvalidFields = new Set<string>();
 
     customFields.forEach((field, index) => {
       if (!field.name) {
-        form.setError(`custom_fields.${index}.name`, "Name is required");
+        newInvalidFields.add(`custom_fields.${index}.name`);
       }
       if (field.type === "terms") {
         try {
           new URL(field.name);
         } catch {
-          form.setError(`custom_fields.${index}.name`, "Must be a valid URL");
+          newInvalidFields.add(`custom_fields.${index}.name`);
         }
       }
       if (!field.global && !field.products.length) {
-        form.setError(`custom_fields.${index}.products`, "At least one product required");
+        newInvalidFields.add(`custom_fields.${index}.products`);
       }
     });
 
-    if (form.hasErrors) {
+    setInvalidFields(newInvalidFields);
+
+    if (newInvalidFields.size > 0) {
       showAlert("Please complete all required fields.", "error");
       return;
     }
@@ -211,7 +218,7 @@ const FormPage = ({
                           </label>
                         ) : null}
                       </fieldset>
-                      <fieldset className={cx({ danger: form.errors[`custom_fields.${i}.name`] })}>
+                      <fieldset className={cx({ danger: invalidFields.has(`custom_fields.${i}.name`) })}>
                         <legend>
                           <label htmlFor={`${uid}-${field.key}-name`}>
                             {field.type === "terms" ? "Terms URL" : "Label"}
@@ -220,11 +227,11 @@ const FormPage = ({
                         <input
                           id={`${uid}-${field.key}-name`}
                           value={field.name}
-                          aria-invalid={!!form.errors[`custom_fields.${i}.name`]}
+                          aria-invalid={invalidFields.has(`custom_fields.${i}.name`)}
                           onChange={(e) => updateCustomField(i, { name: e.target.value })}
                         />
                       </fieldset>
-                      <fieldset className={cx({ danger: form.errors[`custom_fields.${i}.products`] })}>
+                      <fieldset className={cx({ danger: invalidFields.has(`custom_fields.${i}.products`) })}>
                         <legend>
                           <label htmlFor={`${uid}-${field.key}-products`}>Products</label>
                         </legend>
@@ -235,7 +242,7 @@ const FormPage = ({
                           value={products
                             .filter((product) => field.global || field.products.includes(product.id))
                             .map((product) => ({ id: product.id, label: product.name }))}
-                          aria-invalid={!!form.errors[`custom_fields.${i}.products`]}
+                          aria-invalid={invalidFields.has(`custom_fields.${i}.products`)}
                           isMulti
                           isClearable
                           onChange={(items) =>
