@@ -146,12 +146,16 @@ export async function getProductFileDownloadInfos(request_url: string) {
 }
 
 export async function saveLastContentPage(token: string, pageId: string) {
-  const res = await request({
-    method: "POST",
-    accept: "json",
-    url: Routes.url_redirect_save_last_content_page_path(token),
-    data: { page_id: pageId },
-  });
-  if (!res.ok) throw new ResponseError();
-  return cast<{ success: boolean }>(await res.json());
+  try {
+    const res = await request({
+      method: "POST",
+      accept: "json",
+      url: Routes.url_redirect_save_last_content_page_path(token),
+      data: { page_id: pageId },
+    });
+    if (!res.ok) return { success: false };
+    return cast<{ success: boolean }>(await res.json());
+  } catch {
+    return { success: false };
+  }
 }
