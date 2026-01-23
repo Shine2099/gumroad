@@ -3799,11 +3799,13 @@ describe LinksController, :vcr, inertia: true do
     end
 
     describe "GET cart_items_count" do
-      it "assigns the correct instance variables and excludes third-party analytics scripts" do
+      it "renders the Inertia page and excludes third-party analytics scripts" do
         get :cart_items_count
 
         expect(assigns(:hide_layouts)).to eq(true)
         expect(assigns(:disable_third_party_analytics)).to eq(true)
+        expect(inertia.component).to eq("Links/CartItemsCount")
+        expect(inertia.props[:cart]).to be_nil
 
         html = Nokogiri::HTML.parse(response.body)
         [
