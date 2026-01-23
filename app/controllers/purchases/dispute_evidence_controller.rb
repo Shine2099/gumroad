@@ -4,11 +4,10 @@ class Purchases::DisputeEvidenceController < ApplicationController
   before_action :set_purchase, :set_dispute_evidence, :check_if_needs_redirect
 
   def show
-    @dispute_evidence_page_presenter = DisputeEvidencePagePresenter.new(@dispute_evidence)
     @title = "Submit additional information"
-
-    @hide_layouts = true
     set_noindex_header
+
+    render inertia: "Purchases/DisputeEvidence/Show", props: DisputeEvidencePagePresenter.new(@dispute_evidence).props
   end
 
   def update
@@ -24,9 +23,9 @@ class Purchases::DisputeEvidenceController < ApplicationController
     @dispute_evidence.update_as_seller_submitted!
 
     FightDisputeJob.perform_async(@dispute_evidence.dispute.id)
-    render json: { success: true }
+    render inertia: "Purchases/DisputeEvidence/Show", props: { submitted: true }
   rescue ActiveRecord::RecordInvalid
-    render json: { success: false, error: @dispute_evidence.errors.full_messages.to_sentence }
+    redirect_to purchase_dispute_evidence_path(@purchase), alert: @dispute_evidence.errors.full_messages.to_sentence
   end
 
   private

@@ -52,12 +52,8 @@ describe Purchases::DisputeEvidenceController do
 
         expect(response).to be_successful
         expect(assigns[:title]).to eq("Submit additional information")
-        expect(assigns[:hide_layouts]).to be(true)
-
         expect(assigns[:dispute_evidence]).to eq(dispute_evidence)
         expect(assigns[:purchase]).to eq(purchase)
-        dispute_evidence_page_presenter = assigns(:dispute_evidence_page_presenter)
-        expect(dispute_evidence_page_presenter.send(:purchase)).to eq(purchase)
       end
     end
 
@@ -108,7 +104,7 @@ describe Purchases::DisputeEvidenceController do
       expect(dispute_evidence.refund_refusal_explanation).to eq("Refusal explanation")
       expect(dispute_evidence.seller_submitted?).to be(true)
 
-      expect(response.parsed_body).to eq({ "success" => true })
+      expect(response).to be_successful
     end
 
     context "when a signed_id for a PNG file is provided" do
@@ -126,7 +122,7 @@ describe Purchases::DisputeEvidenceController do
         expect(dispute_evidence.customer_communication_file.filename.to_s).to eq("receipt_image.jpg")
         expect(dispute_evidence.customer_communication_file.content_type).to eq("image/jpeg")
 
-        expect(response.parsed_body).to eq({ "success" => true })
+        expect(response).to be_successful
       end
     end
 
@@ -143,18 +139,19 @@ describe Purchases::DisputeEvidenceController do
         expect(dispute_evidence.customer_communication_file.filename.to_s).to eq("test.pdf")
         expect(dispute_evidence.customer_communication_file.content_type).to eq("application/pdf")
 
-        expect(response.parsed_body).to eq({ "success" => true })
+        expect(response).to be_successful
       end
     end
 
     context "when the dispute evidence is invalid" do
-      it "returns errors" do
+      it "redirects with error message" do
         put :update, params: { purchase_id: purchase.external_id, dispute_evidence: { cancellation_rebuttal: "a" * 3_001 } }
 
         dispute_evidence = assigns(:dispute_evidence)
         expect(dispute_evidence.valid?).to be(false)
 
-        expect(response.parsed_body).to eq({ "success" => false, "error" => "Cancellation rebuttal is too long (maximum is 3000 characters)" })
+        expect(response).to redirect_to(purchase_dispute_evidence_path(purchase))
+        expect(flash[:alert]).to eq("Cancellation rebuttal is too long (maximum is 3000 characters)")
       end
     end
   end
