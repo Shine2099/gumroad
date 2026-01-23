@@ -15,4 +15,5 @@ const CartItemsCount = ({ cart }: { cart: CartState | null }) => {
   return null;
 };
 
+CartItemsCount.disableLayout = true;
 export default CartItemsCount;
