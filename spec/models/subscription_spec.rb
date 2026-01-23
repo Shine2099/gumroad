@@ -3872,7 +3872,6 @@ describe Subscription, :vcr do
         it "falls back to live offer code" do
           purchase = create(:membership_purchase, link: product, offer_code: offer_code, purchaser: buyer, variant_attributes: [product.alive_variants.first])
           subscription = purchase.subscription
-          # Explicitly remove the cached discount to simulate legacy purchase
           subscription.original_purchase.purchase_offer_code_discount&.destroy
 
           new_purchase = subscription.build_purchase
