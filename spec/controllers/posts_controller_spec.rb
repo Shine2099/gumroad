@@ -2,8 +2,9 @@
 
 require "spec_helper"
 require "shared_examples/authorize_called"
+require "inertia_rails/rspec"
 
-describe PostsController do
+describe PostsController, type: :controller, inertia: true do
   let(:seller) { create(:named_seller) }
 
   context "within seller area" do
@@ -116,6 +117,10 @@ describe PostsController do
         installment = create(:published_installment, link: @product, installment_type: "product", shown_on_profile: false)
         get :show, params: { username: @user.username, slug: installment.slug, purchase_id: @purchase.external_id }
         expect(response).to be_successful
+        expect(inertia).to render_component("Posts/Show")
+        expect(inertia.props[:subject]).to eq(installment.subject)
+        expect(inertia.props[:slug]).to eq(installment.slug)
+        expect(inertia.props[:external_id]).to eq(installment.external_id)
       end
 
       it "sets @on_posts_page instance variable to make nav item active" do
@@ -147,6 +152,7 @@ describe PostsController do
         installment = create(:published_installment, installment_type: Installment::AUDIENCE_TYPE, seller: @user, shown_on_profile: true)
         get :show, params: { username: @user.username, slug: installment.slug }
         expect(response).to be_successful
+        expect(inertia).to render_component("Posts/Show")
       end
 
       it "does not render a non-public installment if it doesn't have a valid purchase_id" do
@@ -195,6 +201,8 @@ describe PostsController do
 
           expect(assigns[:post]).to eq @post
           expect(response).to be_successful
+          expect(inertia).to render_component("Posts/Show")
+          expect(inertia.props[:subject]).to eq(@post.subject)
         end
       end
 
