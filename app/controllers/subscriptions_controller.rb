@@ -6,9 +6,11 @@ class SubscriptionsController < ApplicationController
   after_action :verify_authorized, except: PUBLIC_ACTIONS
 
   before_action :fetch_subscription, only: %i[unsubscribe_by_seller unsubscribe_by_user magic_link send_magic_link]
-  before_action :hide_layouts, only: [:manage, :magic_link, :send_magic_link]
+  before_action :hide_layouts, only: [:magic_link, :send_magic_link]
   before_action :set_noindex_header, only: [:manage]
   before_action :check_can_manage, only: [:manage, :unsubscribe_by_user]
+
+  layout "inertia", only: [:manage]
 
   SUBSCRIPTION_COOKIE_EXPIRY = 1.week
 
@@ -27,14 +29,14 @@ class SubscriptionsController < ApplicationController
   end
 
   def manage
-    @product = @subscription.link
-    @card = @subscription.credit_card_to_charge
-    @card_data_handling_mode = CardDataHandlingMode.get_card_data_handling_mode(@product.user)
     @title = @subscription.is_installment_plan ? "Manage installment plan" : "Manage membership"
     @body_id = "product_page"
-    @is_on_product_page = true
 
     set_subscription_confirmed_redirect_cookie
+
+    render inertia: "Subscriptions/Manage",
+           props: CheckoutPresenter.new(logged_in_user: logged_in_user, ip: request.remote_ip)
+                    .subscription_manager_props(subscription: @subscription)
   end
 
   def magic_link
