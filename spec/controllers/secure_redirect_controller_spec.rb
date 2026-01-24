@@ -45,6 +45,16 @@ describe SecureRedirectController, type: :controller, inertia: true do
         expect(inertia.props[:error_message]).to eq(error_message)
         expect(inertia.props[:encrypted_payload]).to eq(encrypted_payload)
       end
+      
+      it "uses default values when optional params are missing" do
+        get :new, params: {
+          encrypted_payload: encrypted_payload
+        }
+
+        expect(inertia.props[:message]).to eq("Please enter the confirmation text to continue to your destination.")
+        expect(inertia.props[:field_name]).to eq("Confirmation text")
+        expect(inertia.props[:error_message]).to eq("Confirmation text does not match")
+      end
 
       it "includes flash alert in props when present" do
         get :new, params: {
@@ -60,16 +70,6 @@ describe SecureRedirectController, type: :controller, inertia: true do
         }
 
         expect(inertia.props[:flash]).to be_nil
-      end
-
-      it "uses default values when optional params are missing" do
-        get :new, params: {
-          encrypted_payload: encrypted_payload
-        }
-
-        expect(inertia.props[:message]).to eq("Please enter the confirmation text to continue to your destination.")
-        expect(inertia.props[:field_name]).to eq("Confirmation text")
-        expect(inertia.props[:error_message]).to eq("Confirmation text does not match")
       end
     end
 
