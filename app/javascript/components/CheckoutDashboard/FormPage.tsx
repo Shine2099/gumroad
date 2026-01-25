@@ -86,10 +86,13 @@ const FormPage = ({
   const setCustomFields = (fields: CustomFieldWithKey[]) => form.setData("custom_fields", fields);
 
   const updateCustomField = (index: number, value: Partial<CustomField>) => {
+    const fieldKey = customFields[index]?.key;
     setInvalidFields((prev) => {
       const next = new Set(prev);
-      if ("name" in value) next.delete(`custom_fields.${index}.name`);
-      if ("products" in value || "global" in value) next.delete(`custom_fields.${index}.products`);
+      if (fieldKey) {
+        if ("name" in value) next.delete(`custom_fields.${fieldKey}.name`);
+        if ("products" in value || "global" in value) next.delete(`custom_fields.${fieldKey}.products`);
+      }
       return next;
     });
 
@@ -103,19 +106,19 @@ const FormPage = ({
   const handleSave = () => {
     const newInvalidFields = new Set<string>();
 
-    customFields.forEach((field, index) => {
+    customFields.forEach((field) => {
       if (!field.name) {
-        newInvalidFields.add(`custom_fields.${index}.name`);
+        newInvalidFields.add(`custom_fields.${field.key}.name`);
       }
       if (field.type === "terms") {
         try {
           new URL(field.name);
         } catch {
-          newInvalidFields.add(`custom_fields.${index}.name`);
+          newInvalidFields.add(`custom_fields.${field.key}.name`);
         }
       }
       if (!field.global && !field.products.length) {
-        newInvalidFields.add(`custom_fields.${index}.products`);
+        newInvalidFields.add(`custom_fields.${field.key}.products`);
       }
     });
 
@@ -218,7 +221,7 @@ const FormPage = ({
                           </label>
                         ) : null}
                       </fieldset>
-                      <fieldset className={cx({ danger: invalidFields.has(`custom_fields.${i}.name`) })}>
+                      <fieldset className={cx({ danger: invalidFields.has(`custom_fields.${field.key}.name`) })}>
                         <legend>
                           <label htmlFor={`${uid}-${field.key}-name`}>
                             {field.type === "terms" ? "Terms URL" : "Label"}
@@ -227,11 +230,11 @@ const FormPage = ({
                         <input
                           id={`${uid}-${field.key}-name`}
                           value={field.name}
-                          aria-invalid={invalidFields.has(`custom_fields.${i}.name`)}
+                          aria-invalid={invalidFields.has(`custom_fields.${field.key}.name`)}
                           onChange={(e) => updateCustomField(i, { name: e.target.value })}
                         />
                       </fieldset>
-                      <fieldset className={cx({ danger: invalidFields.has(`custom_fields.${i}.products`) })}>
+                      <fieldset className={cx({ danger: invalidFields.has(`custom_fields.${field.key}.products`) })}>
                         <legend>
                           <label htmlFor={`${uid}-${field.key}-products`}>Products</label>
                         </legend>
@@ -242,7 +245,7 @@ const FormPage = ({
                           value={products
                             .filter((product) => field.global || field.products.includes(product.id))
                             .map((product) => ({ id: product.id, label: product.name }))}
-                          aria-invalid={invalidFields.has(`custom_fields.${i}.products`)}
+                          aria-invalid={invalidFields.has(`custom_fields.${field.key}.products`)}
                           isMulti
                           isClearable
                           onChange={(items) =>
