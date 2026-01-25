@@ -22,10 +22,11 @@ class SubscriptionsController < ApplicationController
   end
 
   def unsubscribe_by_user
+    subscription_entity = @subscription.is_installment_plan ? "installment plan" : "membership"
     @subscription.cancel!(by_seller: false)
-    render json: { success: true }
+    redirect_to manage_subscription_path(@subscription.external_id), notice: "Your #{subscription_entity} has been cancelled."
   rescue ActiveRecord::RecordInvalid => e
-    render json: { success: false, error: e.message }
+    redirect_to manage_subscription_path(@subscription.external_id), alert: e.message
   end
 
   def manage

@@ -1,9 +1,9 @@
-import { usePage } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import { parseISO } from "date-fns";
 import * as React from "react";
 
 import { confirmLineItem } from "$app/data/purchase";
-import { cancelSubscriptionByUser, updateSubscription } from "$app/data/subscription";
+import { updateSubscription } from "$app/data/subscription";
 import { SavedCreditCard } from "$app/parsers/card";
 import { Discount } from "$app/parsers/checkout";
 import { CustomFieldDescriptor, ProductNativeType } from "$app/parsers/product";
@@ -13,9 +13,7 @@ import {
   formatUSDCentsWithExpandedCurrencySymbol,
   getMinPriceCents,
 } from "$app/utils/currency";
-import { asyncVoid } from "$app/utils/promise";
 import { recurrenceLabels, RecurrenceId } from "$app/utils/recurringPricing";
-import { assertResponseError } from "$app/utils/request";
 
 import { Button } from "$app/components/Button";
 import { Creator } from "$app/components/Checkout/cartState";
@@ -113,7 +111,6 @@ export default function SubscriptionsManage() {
 
   const subscriptionEntity = subscription.is_installment_plan ? "installment plan" : "membership";
   const restartable = !subscription.alive || subscription.pending_cancellation;
-  const [cancelled, setCancelled] = React.useState(restartable);
   const initialSelection = {
     recurrence: subscription.recurrence,
     rent: false,
@@ -209,7 +206,7 @@ export default function SubscriptionsManage() {
     nativeType: product.native_type,
     canGift: false,
   };
-  const payLabel = cancelled ? `Restart ${subscriptionEntity}` : `Update ${subscriptionEntity}`;
+  const payLabel = restartable ? `Restart ${subscriptionEntity}` : `Update ${subscriptionEntity}`;
   const { require_email_typo_acknowledgment } = useFeatureFlags();
   const reducer = createReducer({
     country: contact_info.country,
@@ -268,10 +265,10 @@ export default function SubscriptionsManage() {
     });
     if (result.type === "done") {
       showAlert(result.message, "success");
-      setCancelled(false);
-      setCancellationStatus("initial");
       if (result.next != null) {
         window.location.href = result.next;
+      } else {
+        router.visit(window.location.href, { preserveScroll: true });
       }
     } else if (result.type === "requires_card_action") {
       await confirmLineItem({
@@ -282,8 +279,7 @@ export default function SubscriptionsManage() {
       }).then((itemResult) => {
         if (itemResult.success) {
           showAlert(`Your ${subscriptionEntity} has been updated.`, "success");
-          setCancelled(false);
-          setCancellationStatus("initial");
+          router.visit(window.location.href, { preserveScroll: true });
         }
       });
     } else {
@@ -300,20 +296,22 @@ export default function SubscriptionsManage() {
     if (state.status.type === "offering") dispatchAction({ type: "validate" });
   }, [state.status.type]);
 
-  const [cancellationStatus, setCancellationStatus] = React.useState<"initial" | "processing" | "done">("initial");
-  const handleCancel = asyncVoid(async () => {
-    if (cancellationStatus === "processing" || cancellationStatus === "done") return;
+  const [cancellationStatus, setCancellationStatus] = React.useState<"initial" | "processing">("initial");
+  const handleCancel = () => {
+    if (cancellationStatus === "processing") return;
     setCancellationStatus("processing");
-    try {
-      await cancelSubscriptionByUser(subscription.id);
-      setCancellationStatus("done");
-      setCancelled(true);
-    } catch (e) {
-      assertResponseError(e);
-      setCancellationStatus("initial");
-      showAlert("Sorry, something went wrong.", "error");
-    }
-  });
+    router.post(
+      Routes.unsubscribe_by_user_subscription_path(subscription.id),
+      {},
+      {
+        preserveScroll: true,
+        onError: () => {
+          setCancellationStatus("initial");
+          showAlert("Sorry, something went wrong.", "error");
+        },
+      },
+    );
+  };
 
   const hasSavedCard = state.savedCreditCard != null;
   const isPendingFirstGifteePayment = subscription.is_gift && subscription.successful_purchases_count === 1;
@@ -379,10 +377,10 @@ export default function SubscriptionsManage() {
             color="danger"
             outline
             onClick={handleCancel}
-            disabled={cancellationStatus === "processing" || cancellationStatus === "done"}
+            disabled={cancellationStatus === "processing"}
             className="grow basis-0"
           >
-            {cancellationStatus === "done" ? "Cancelled" : `Cancel ${subscriptionEntity}`}
+            {`Cancel ${subscriptionEntity}`}
           </Button>
         </CardContent>
       ) : null}

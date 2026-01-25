@@ -2,9 +2,8 @@
 
 require "spec_helper"
 require "shared_examples/authorize_called"
-require "inertia_rails/rspec"
 
-describe SubscriptionsController, inertia: true do
+describe SubscriptionsController do
   let(:seller) { create(:named_seller) }
   let(:subscriber) { create(:user) }
 
@@ -67,9 +66,10 @@ describe SubscriptionsController, inertia: true do
         post :unsubscribe_by_user, params: { id: @subscription.external_id }
       end
 
-      it "returns json success" do
+      it "redirects to manage page with success notice" do
         post :unsubscribe_by_user, params: { id: @subscription.external_id }
-        expect(response.parsed_body["success"]).to be(true)
+        expect(response).to redirect_to(manage_subscription_path(@subscription.external_id))
+        expect(flash[:notice]).to eq("Your membership has been cancelled.")
       end
 
       it "is not allowed for installment plans" do
@@ -80,8 +80,8 @@ describe SubscriptionsController, inertia: true do
 
         post :unsubscribe_by_user, params: { id: subscription.external_id }
 
-        expect(response.parsed_body["success"]).to be(false)
-        expect(response.parsed_body["error"]).to include("Installment plans cannot be cancelled by the customer")
+        expect(response).to redirect_to(manage_subscription_path(subscription.external_id))
+        expect(flash[:alert]).to include("Installment plans cannot be cancelled by the customer")
       end
 
       context "when the encrypted cookie is not present" do
@@ -210,43 +210,6 @@ describe SubscriptionsController, inertia: true do
         get :manage, params: { id: @subscription.external_id }
 
         expect(response.headers["X-Robots-Tag"]).to eq "noindex"
-      end
-
-      context "inertia rendering" do
-        before do
-          cookies.encrypted[@subscription.cookie_key] = @subscription.external_id
-        end
-
-        it "renders the Subscriptions/Manage inertia component" do
-          get :manage, params: { id: @subscription.external_id }
-
-          expect_inertia.to render_component("Subscriptions/Manage")
-        end
-
-        it "includes required props for the subscription manager" do
-          get :manage, params: { id: @subscription.external_id }
-
-          expect(inertia.props).to have_key(:product)
-          expect(inertia.props).to have_key(:subscription)
-          expect(inertia.props).to have_key(:contact_info)
-          expect(inertia.props).to have_key(:countries)
-          expect(inertia.props).to have_key(:recaptcha_key)
-          expect(inertia.props).to have_key(:paypal_client_id)
-        end
-
-        it "includes correct product information" do
-          get :manage, params: { id: @subscription.external_id }
-
-          expect(inertia.props[:product][:name]).to eq(@product.name)
-          expect(inertia.props[:product][:permalink]).to eq(@product.unique_permalink)
-        end
-
-        it "includes correct subscription information" do
-          get :manage, params: { id: @subscription.external_id }
-
-          expect(inertia.props[:subscription][:id]).to eq(@subscription.external_id)
-          expect(inertia.props[:subscription][:alive]).to eq(@subscription.alive?)
-        end
       end
     end
 
