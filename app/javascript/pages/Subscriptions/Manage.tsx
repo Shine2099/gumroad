@@ -268,7 +268,7 @@ export default function SubscriptionsManage() {
       if (result.next != null) {
         router.visit(result.next);
       } else {
-        router.visit(window.location.href, { preserveScroll: true });
+        router.get(window.location.href, {}, { preserveScroll: true });
       }
     } else if (result.type === "requires_card_action") {
       await confirmLineItem({
@@ -279,7 +279,7 @@ export default function SubscriptionsManage() {
       }).then((itemResult) => {
         if (itemResult.success) {
           showAlert(`Your ${subscriptionEntity} has been updated.`, "success");
-          router.visit(window.location.href, { preserveScroll: true });
+          router.get(window.location.href, {}, { preserveScroll: true });
         }
       });
     } else {
