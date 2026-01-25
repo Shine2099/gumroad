@@ -266,7 +266,7 @@ export default function SubscriptionsManage() {
     if (result.type === "done") {
       showAlert(result.message, "success");
       if (result.next != null) {
-        window.location.href = result.next;
+        router.visit(result.next);
       } else {
         router.visit(window.location.href, { preserveScroll: true });
       }
