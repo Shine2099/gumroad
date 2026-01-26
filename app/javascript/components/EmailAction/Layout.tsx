@@ -1,4 +1,4 @@
-import { Head, usePage } from "@inertiajs/react";
+import { Head, usePage, Link } from "@inertiajs/react";
 import * as React from "react";
 
 import { classNames } from "$app/utils/classNames";
@@ -28,13 +28,13 @@ export const Layout = ({ heading, children }: { heading: string; children: React
               <h2 className="grow">{heading}</h2>
             </header>
           </CardContent>
-          <CardContent asChild>
-            <p className="justify-start gap-1.5!">{children}</p>
+          <CardContent asChild details>
+            <p>{children}</p>
           </CardContent>
         </Card>
         <footer className="p-4 text-center">
           Powered by&ensp;
-          <a href={Routes.root_url({ host: rootDomain })} className="logo-full" aria-label="Gumroad" />
+          <Link href={Routes.root_url({ host: rootDomain })} className="logo-full" aria-label="Gumroad" />
         </footer>
       </main>
     </div>
