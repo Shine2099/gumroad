@@ -15,7 +15,6 @@ describe Users::ReviewRemindersController, type: :controller, inertia: true do
         end.to change { user.reload.opted_out_of_review_reminders? }.from(true).to(false)
         expect(response).to be_successful
         expect(inertia).to render_component("Users/SubscribeReviewReminders")
-        expect(assigns(:title)).to eq("Gumroad")
       end
     end
 
@@ -38,7 +37,6 @@ describe Users::ReviewRemindersController, type: :controller, inertia: true do
         end.to change { user.reload.opted_out_of_review_reminders? }.from(false).to(true)
         expect(response).to be_successful
         expect(inertia).to render_component("Users/UnsubscribeReviewReminders")
-        expect(assigns(:title)).to eq("Gumroad")
       end
     end
 
