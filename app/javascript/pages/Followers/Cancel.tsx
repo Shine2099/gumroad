@@ -1,14 +1,20 @@
 import * as React from "react";
 
-import { PageHeader } from "$app/components/ui/PageHeader";
+import { PoweredByFooter } from "$app/components/PoweredByFooter";
 
-export default function FollowersCancelPage() {
+function FollowersCancelPage() {
   return (
-    <div>
-      <PageHeader title="You have been unsubscribed." />
-      <main className="p-4 md:p-8">
-        <p>You will no longer get posts from this creator.</p>
+    <div className="flex min-h-screen flex-col justify-between">
+      <main className="stack single-page-form">
+        <header>
+          <h2>You have been unsubscribed.</h2>
+          <p>You will no longer get posts from this creator.</p>
+        </header>
       </main>
+      <PoweredByFooter />
     </div>
   );
 }
+
+FollowersCancelPage.disableLayout = true;
+export default FollowersCancelPage;
