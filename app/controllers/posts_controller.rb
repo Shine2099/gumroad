@@ -3,6 +3,9 @@
 class PostsController < ApplicationController
   include CustomDomainConfig
 
+  include PageMeta::Favicon
+  include PageMeta::Post
+
   layout "inertia", only: [:show]
 
   before_action :authenticate_user!, only: %i[send_for_purchase]
@@ -16,12 +19,9 @@ class PostsController < ApplicationController
     # Skip fetching post again if it's already fetched in check_if_needs_redirect
     @post || fetch_post(false)
 
-    @title = "#{@post.name} - #{@post.user.name_or_username}"
-    @show_user_favicon = true
+    @hide_layouts = true
     @body_class = "post-page"
     @body_id = "post_page"
-
-    @on_posts_page = true
 
     # Set @user instance variable to apply third-party analytics config in layouts/_head partial.
     @user = @post.seller
@@ -35,9 +35,11 @@ class PostsController < ApplicationController
       purchase_id_param: params[:purchase_id]
     )
 
-    e404 if post_presenter.e404?
+    set_meta_tag(title: "#{@post.name} - #{@post.user.name_or_username}")
+    set_post_page_meta(@post, post_presenter)
+    set_favicon_meta_tags(@user)
 
-    @post_presenter = post_presenter
+    e404 if post_presenter.e404?
 
     render inertia: "Posts/Show", props: post_presenter.post_component_props
   end
