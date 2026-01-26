@@ -186,7 +186,6 @@ export const ProductPreview = ({ showRefundPolicyModal }: { showRefundPolicyModa
             error: false,
           },
         }}
-        className="mx-auto w-full max-w-6xl lg:px-0"
       />
     </ProfileLayout>
   ) : (
