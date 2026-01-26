@@ -65,7 +65,7 @@ function ReadPage() {
         timestamp: new Date(),
       })}`;
     },
-    [pageNumber, pageCount, purchase_id, url_redirect_id, product_file_id, read_id],
+    [pageNumber, pageCount],
   );
 
   const zoomIn = () => {
