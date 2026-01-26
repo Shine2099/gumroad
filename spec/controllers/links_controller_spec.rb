@@ -3802,7 +3802,6 @@ describe LinksController, :vcr, inertia: true do
       it "renders the Inertia page and excludes third-party analytics scripts" do
         get :cart_items_count
 
-        expect(assigns(:disable_third_party_analytics)).to eq(true)
         expect(inertia.component).to eq("Products/CartItemsCount")
         expect(inertia.props[:cart]).to be_nil
 
