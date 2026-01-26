@@ -1,9 +1,11 @@
+import { usePage } from "@inertiajs/react";
 import type { PDFSinglePageViewer } from "pdfjs-dist/legacy/web/pdf_viewer.mjs";
 import * as React from "react";
-import { cast, createCast, is } from "ts-safe-cast";
+import { cast, is } from "ts-safe-cast";
+
+import "pdfjs-dist/legacy/web/pdf_viewer.css";
 
 import { trackMediaLocationChanged } from "$app/data/media_location";
-import { register } from "$app/utils/serverComponentUtil";
 
 import { Button } from "$app/components/Button";
 import { Icon } from "$app/components/Icons";
@@ -14,15 +16,7 @@ import { WithTooltip } from "$app/components/WithTooltip";
 const zoomLevelMin = 0.1;
 const zoomLevelMax = 5.0;
 
-export const PdfReaderPage = ({
-  read_id,
-  url,
-  url_redirect_id,
-  purchase_id,
-  product_file_id,
-  latest_media_location,
-  title,
-}: {
+type PageProps = {
   read_id: string;
   url: string;
   url_redirect_id: string;
@@ -30,7 +24,12 @@ export const PdfReaderPage = ({
   product_file_id: string;
   latest_media_location: { location: number; timestamp: string } | null;
   title: string;
-}) => {
+};
+
+function ReadPage() {
+  const { read_id, url, url_redirect_id, purchase_id, product_file_id, latest_media_location, title } =
+    usePage<PageProps>().props;
+
   const [pageNumber, setPageNumber] = React.useState(1);
   const [pageCount, setPageCount] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -66,7 +65,7 @@ export const PdfReaderPage = ({
         timestamp: new Date(),
       })}`;
     },
-    [pageNumber, pageCount],
+    [pageNumber, pageCount, purchase_id, url_redirect_id, product_file_id, read_id],
   );
 
   const zoomIn = () => {
@@ -186,7 +185,7 @@ export const PdfReaderPage = ({
           <h3>One moment while we prepare your reading experience</h3>
         </div>
       ) : null}
-      <div role="application" className="scoped-tailwind-preflight flex h-full flex-col">
+      <div role="application" className="scoped-tailwind-preflight flex min-h-screen flex-col">
         <div role="menubar" className="flex text-sm md:text-base">
           <div className="border-r">
             <button aria-label="Back" onClick={() => history.back()} className="cursor-pointer p-4 all-unset">
@@ -271,6 +270,7 @@ export const PdfReaderPage = ({
       </div>
     </div>
   );
-};
+}
 
-export default register({ component: PdfReaderPage, propParser: createCast() });
+ReadPage.disableLayout = true;
+export default ReadPage;

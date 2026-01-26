@@ -20,7 +20,6 @@ import GumroadBlogIndexPage from "$app/components/server-components/GumroadBlog/
 import GumroadBlogPostPage from "$app/components/server-components/GumroadBlog/PostPage";
 import HelpCenterArticlesIndexPage from "$app/components/server-components/HelpCenter/ArticlesIndexPage";
 import Nav from "$app/components/server-components/Nav";
-import PdfReaderPage from "$app/components/server-components/PdfReaderPage";
 import ProductPage from "$app/components/server-components/Product";
 import ProductIframePage from "$app/components/server-components/Product/IframePage";
 import ProductEditPage from "$app/components/server-components/ProductEditPage";
@@ -66,7 +65,6 @@ ReactOnRails.register({
   GumroadBlogIndexPage,
   GumroadBlogPostPage,
   Nav,
-  PdfReaderPage,
   Pill,
   ProductEditPage,
   ProductIframePage,

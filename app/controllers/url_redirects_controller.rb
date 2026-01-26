@@ -4,6 +4,8 @@ class UrlRedirectsController < ApplicationController
   include SignedUrlHelper
   include ProductsHelper
 
+  layout "inertia", only: [:read]
+
   before_action :fetch_url_redirect, except: %i[
     show stream download_subtitle_file read download_archive latest_media_locations download_product_files
     audio_durations
@@ -16,7 +18,7 @@ class UrlRedirectsController < ApplicationController
                                              download_archive latest_media_locations download_product_files audio_durations
                                              save_last_content_page]
   before_action :hide_layouts, only: %i[
-    confirm_page membership_inactive_page expired rental_expired_page show download_page download_product_files stream smil hls_playlist download_subtitle_file read
+    confirm_page membership_inactive_page expired rental_expired_page show download_page download_product_files stream smil hls_playlist download_subtitle_file
   ]
   before_action :mark_rental_as_viewed, only: %i[smil hls_playlist]
   after_action :register_that_user_has_downloaded_product, only: %i[download_page show stream read]
@@ -56,15 +58,25 @@ class UrlRedirectsController < ApplicationController
 
     s3_retrievable = @product_file
     @title = @product_file.with_product_files_owner.name
-    @read_id = @product_file.external_id
-    @read_url = signed_download_url_for_s3_key_and_filename(s3_retrievable.s3_key, s3_retrievable.s3_filename, cache_group: "read")
+    read_id = @product_file.external_id
+    read_url = signed_download_url_for_s3_key_and_filename(s3_retrievable.s3_key, s3_retrievable.s3_filename, cache_group: "read")
 
     # Used for tracking page turns:
-    @url_redirect_id = @url_redirect.external_id
-    @purchase_id = @url_redirect.purchase.try(:external_id)
-    @product_file_id = @product_file.try(:external_id)
-    @latest_media_location = @product_file.latest_media_location_for(@url_redirect.purchase)
+    url_redirect_id = @url_redirect.external_id
+    purchase_id = @url_redirect.purchase.try(:external_id)
+    product_file_id = @product_file.try(:external_id)
+    latest_media_location = @product_file.latest_media_location_for(@url_redirect.purchase)
     trigger_files_lifecycle_events
+
+    render inertia: "UrlRedirects/Read", props: {
+      read_id:,
+      url: read_url,
+      url_redirect_id:,
+      purchase_id:,
+      product_file_id:,
+      latest_media_location:,
+      title: @title,
+    }
   rescue ArgumentError
     redirect_to(library_path)
   end
