@@ -15,5 +15,5 @@ function UnsubscribeReviewRemindersPage() {
   );
 }
 
-UnsubscribeReviewRemindersPage.disableLayout = true;
+UnsubscribeReviewRemindersPage.authenticationLayout = true;
 export default UnsubscribeReviewRemindersPage;

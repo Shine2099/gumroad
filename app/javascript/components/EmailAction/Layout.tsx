@@ -1,4 +1,4 @@
-import { Head, usePage, Link } from "@inertiajs/react";
+import { Link } from "@inertiajs/react";
 import * as React from "react";
 
 import { classNames } from "$app/utils/classNames";
@@ -8,18 +8,12 @@ import LoadingSkeleton from "$app/components/LoadingSkeleton";
 import { Card, CardContent } from "$app/components/ui/Card";
 import useRouteLoading from "$app/components/useRouteLoading";
 
-type PageProps = {
-  title: string;
-};
-
 export const Layout = ({ heading, children }: { heading: string; children: React.ReactNode }) => {
-  const { title } = usePage<PageProps>().props;
   const { rootDomain } = useDomains();
   const isRouteLoading = useRouteLoading();
 
   return (
     <div id="inertia-shell" className="flex h-screen flex-col lg:flex-row">
-      <Head title={title} />
       {isRouteLoading ? <LoadingSkeleton /> : null}
       <main className={classNames("flex-1 overflow-y-auto", { hidden: isRouteLoading })}>
         <Card>

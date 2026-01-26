@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class Users::ReviewRemindersController < ApplicationController
-  before_action :authenticate_user!
   layout "inertia"
+
+  before_action :authenticate_user!
 
   def subscribe
     logged_in_user.update!(opted_out_of_review_reminders: false)
