@@ -90,9 +90,10 @@ class FollowersController < ApplicationController
   def cancel
     follower_id = @follower.external_id
     @follower.mark_deleted!
-    @hide_layouts = true
     respond_to do |format|
-      format.html
+      format.html do
+        render inertia: "Followers/Cancel"
+      end
       format.json do
         render json: {
           success: true,
