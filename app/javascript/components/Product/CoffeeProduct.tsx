@@ -1,30 +1,10 @@
 import * as React from "react";
-import { createCast } from "ts-safe-cast";
 
-import { CreatorProfile } from "$app/parsers/profile";
 import { classNames } from "$app/utils/classNames";
-import { register } from "$app/utils/serverComponentUtil";
 
-import { Product, Props as ProductProps, Purchase } from "$app/components/Product";
+import { Product, Purchase } from "$app/components/Product";
 import { ConfigurationSelector, PriceSelection } from "$app/components/Product/ConfigurationSelector";
 import { CtaButton, getCtaName } from "$app/components/Product/CtaButton";
-import { Layout as ProfileLayout } from "$app/components/Profile/Layout";
-
-type Props = ProductProps & {
-  creator_profile: CreatorProfile;
-  selection?: Partial<PriceSelection>;
-};
-
-export const CoffeePage = ({ creator_profile, selection: selectionOverride, ...props }: Props) => (
-  <ProfileLayout creatorProfile={creator_profile} hideFollowForm>
-    <CoffeeProduct
-      product={props.product}
-      purchase={props.purchase}
-      selection={selectionOverride ?? null}
-      className="mx-auto w-full max-w-6xl lg:px-0"
-    />
-  </ProfileLayout>
-);
 
 export const CoffeeProduct = ({
   product,
@@ -69,6 +49,7 @@ export const CoffeeProduct = ({
       />
     </>
   );
+
   return (
     <section className={classNames("grid grow content-center gap-12 px-4", className)}>
       <section className="grid gap-8">
@@ -97,4 +78,3 @@ export const CoffeeProduct = ({
     </section>
   );
 };
-export default register({ component: CoffeePage, propParser: createCast() });

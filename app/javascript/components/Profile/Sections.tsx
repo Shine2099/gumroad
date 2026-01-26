@@ -20,7 +20,7 @@ import { CardGrid, useSearchReducer } from "$app/components/Product/CardGrid";
 import { PriceSelection } from "$app/components/Product/ConfigurationSelector";
 import { FollowForm } from "$app/components/Profile/FollowForm";
 import { useRichTextEditor } from "$app/components/RichTextEditor";
-import { CoffeeProduct } from "$app/components/server-components/Profile/CoffeePage";
+import { CoffeeProduct } from "$app/components/Product/CoffeeProduct";
 import { formatPostDate } from "$app/components/server-components/Profile/PostPage";
 import { CardContent } from "$app/components/ui/Card";
 import { useUserAgentInfo } from "$app/components/UserAgent";
