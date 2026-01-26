@@ -3799,7 +3799,7 @@ describe LinksController, :vcr, inertia: true do
     end
 
     describe "GET cart_items_count" do
-      it "renders the Inertia page and excludes third-party analytics scripts" do
+      it "renders the Inertia page" do
         get :cart_items_count
 
         expect(inertia.component).to eq("Products/CartItemsCount")
