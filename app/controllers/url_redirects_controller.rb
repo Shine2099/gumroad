@@ -4,6 +4,8 @@ class UrlRedirectsController < ApplicationController
   include SignedUrlHelper
   include ProductsHelper
 
+  layout "inertia", only: %i[expired rental_expired_page membership_inactive_page]
+
   before_action :fetch_url_redirect, except: %i[
     show stream download_subtitle_file read download_archive latest_media_locations download_product_files
     audio_durations
@@ -165,18 +167,15 @@ class UrlRedirectsController < ApplicationController
   end
 
   def expired
-    @content_unavailability_reason_code = UrlRedirectPresenter::CONTENT_UNAVAILABILITY_REASON_CODES[:access_expired]
-    render_unavailable_page(title_suffix: "Access expired")
+    render inertia: "UrlRedirects/Expired", props: unavailable_page_props
   end
 
   def rental_expired_page
-    @content_unavailability_reason_code = UrlRedirectPresenter::CONTENT_UNAVAILABILITY_REASON_CODES[:rental_expired]
-    render_unavailable_page(title_suffix: "Your rental has expired")
+    render inertia: "UrlRedirects/RentalExpired", props: unavailable_page_props
   end
 
   def membership_inactive_page
-    @content_unavailability_reason_code = UrlRedirectPresenter::CONTENT_UNAVAILABILITY_REASON_CODES[:inactive_membership]
-    render_unavailable_page(title_suffix: "Your membership is inactive")
+    render inertia: "UrlRedirects/MembershipInactive", props: unavailable_page_props
   end
 
   def change_purchaser
@@ -402,11 +401,17 @@ class UrlRedirectsController < ApplicationController
       }
     end
 
-    def render_unavailable_page(title_suffix:)
-      @title = "#{@url_redirect.referenced_link.name} - #{title_suffix}"
-      @react_component_props = UrlRedirectPresenter.new(url_redirect: @url_redirect, logged_in_user:).download_page_without_content_props(common_props)
+    def unavailable_page_props
+      add_to_library_option = if @url_redirect.purchase && @url_redirect.purchase.purchaser.nil?
+        logged_in_user.present? ? AddToLibraryOption::ADD_TO_LIBRARY_BUTTON : AddToLibraryOption::SIGNUP_FORM
+      else
+        AddToLibraryOption::NONE
+      end
 
-      render :unavailable
+      UrlRedirectPresenter.new(url_redirect: @url_redirect, logged_in_user:).download_page_without_content_props({
+        is_mobile_app_web_view: params[:display] == "mobile_app",
+        add_to_library_option:,
+      })
     end
 
     def common_props
