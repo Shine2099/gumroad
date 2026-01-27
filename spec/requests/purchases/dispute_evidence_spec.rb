@@ -160,13 +160,11 @@ describe("Dispute evidence page", type: :system, js: true) do
         choose("Other")
       end
 
-      # Remove maxLength attribute to allow typing more than 3000 characters
       page.execute_script("document.querySelector('textarea').removeAttribute('maxLength')")
 
       fill_in("Why should you win this dispute?", with: "a" * 3001)
       click_on("Submit")
 
-      # Validation error should be shown as a toast notification (matching original behavior)
       expect(page).to have_alert(text: "Reason for winning is too long")
     end
   end
