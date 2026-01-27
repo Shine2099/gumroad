@@ -3,8 +3,13 @@
 require "spec_helper"
 
 describe HelpCenterPresenter do
-  let(:view_context) { ApplicationController.new.view_context }
-  subject(:presenter) { described_class.new(view_context: view_context) }
+  let(:view_context) do
+    controller = ApplicationController.new
+    controller.request = ActionDispatch::TestRequest.create
+    controller.request.host = DOMAIN
+    controller.view_context
+  end
+  subject(:presenter) { described_class.new(view_context:) }
 
   describe "#index_props" do
     it "returns categories with articles" do
