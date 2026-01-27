@@ -29,11 +29,7 @@ module Products
         flash[:notice] = "Your changes have been saved!"
         check_offer_codes_validity
 
-        if request.inertia?
-          redirect_to edit_link_path(id: @product.unique_permalink)
-        else
-          render json: { success: true }
-        end
+        redirect_to edit_link_path(id: @product.unique_permalink)
       end
 
       private

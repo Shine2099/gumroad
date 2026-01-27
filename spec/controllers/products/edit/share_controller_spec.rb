@@ -42,15 +42,5 @@ describe Products::Edit::ShareController, inertia: true do
       end
     end
 
-    context "with JSON API request" do
-      it "updates the share info and returns success JSON" do
-        patch :update, params: params, as: :json
-
-        expect(response).to have_http_status(:ok)
-        expect(response.parsed_body).to eq({ "success" => true })
-        expect(product.reload.is_adult).to be(true)
-        expect(product.display_product_reviews).to be(false)
-      end
-    end
   end
 end

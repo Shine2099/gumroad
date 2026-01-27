@@ -2,10 +2,7 @@ import { Link, router, usePage } from "@inertiajs/react";
 import cx from "classnames";
 import * as React from "react";
 
-import { saveProduct } from "$app/data/product_edit";
-import { setProductPublished } from "$app/data/publish_product";
 import { classNames } from "$app/utils/classNames";
-import { assertResponseError } from "$app/utils/request";
 
 import { Button, NavigationButton } from "$app/components/Button";
 import { CopyToClipboard } from "$app/components/CopyToClipboard";
@@ -137,7 +134,7 @@ export const Layout = ({
   showBorder?: boolean;
   showNavigationButton?: boolean;
 }) => {
-  const { id, product, updateProduct, uniquePermalink, saving, save, currencyType } = useProductEditContext();
+  const { product, updateProduct, uniquePermalink, saving, save } = useProductEditContext();
   const rootPath = `/products/${uniquePermalink}/edit`;
 
   const url = useProductUrl();
@@ -157,23 +154,30 @@ export const Layout = ({
 
   const [isPublishing, setIsPublishing] = React.useState(false);
   const setPublished = async (published: boolean) => {
+    setIsPublishing(true);
     try {
-      setIsPublishing(true);
-      await saveProduct(uniquePermalink, id, product, currencyType);
-      await setProductPublished(uniquePermalink, published);
-      updateProduct({ is_published: published });
-      showAlert(published ? "Published!" : "Unpublished!", "success");
-      if (tab === "share") {
-        if (product.native_type === "coffee") navigate.current(rootPath);
-        else navigate.current(`${rootPath}/content`);
-      } else if (published) {
-        navigate.current(`${rootPath}/share`);
-      }
-    } catch (e) {
-      assertResponseError(e);
-      showAlert(e.message, "error", { html: true });
+      await save();
+    } catch {
+      setIsPublishing(false);
+      return;
     }
-    setIsPublishing(false);
+
+    const publishUrl = published ? Routes.publish_link_path(uniquePermalink) : Routes.unpublish_link_path(uniquePermalink);
+    let redirectUrl = rootPath;
+    if (tab === "share") {
+      redirectUrl = product.native_type === "coffee" ? rootPath : `${rootPath}/content`;
+    } else if (published) {
+      redirectUrl = `${rootPath}/share`;
+    }
+
+    router.post(publishUrl, {}, {
+      preserveScroll: true,
+      onSuccess: () => {
+        updateProduct({ is_published: published });
+        router.visit(redirectUrl);
+      },
+      onFinish: () => setIsPublishing(false),
+    });
   };
 
   const isUploadingFile = (file: FileEntry | SubtitleFile) =>

@@ -91,50 +91,56 @@ export default function ProductEditLayout({ children }: { children: React.ReactN
     });
   };
 
-  const save = async () => {
-    const editor = new Editor(baseEditorOptions(extensions(id)));
-    const richContents =
-      form.data.product.has_same_rich_content_for_all_variants || !form.data.product.variants.length
-        ? form.data.product.rich_content
-        : form.data.product.variants.flatMap((variant) => variant.rich_content);
+  const save = (): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      const editor = new Editor(baseEditorOptions(extensions(id)));
+      const richContents =
+        form.data.product.has_same_rich_content_for_all_variants || !form.data.product.variants.length
+          ? form.data.product.rich_content
+          : form.data.product.variants.flatMap((variant) => variant.rich_content);
 
-    const fileIds = new Set(
-      richContents.flatMap((content) =>
-        findChildren(
-          editor.schema.nodeFromJSON(content.description),
-          (node) => node.type.name === FileEmbed.name,
-        ).map<unknown>((child) => child.node.attrs.id),
-      ),
-    );
-    editor.destroy();
+      const fileIds = new Set(
+        richContents.flatMap((content) =>
+          findChildren(
+            editor.schema.nodeFromJSON(content.description),
+            (node) => node.type.name === FileEmbed.name,
+          ).map<unknown>((child) => child.node.attrs.id),
+        ),
+      );
+      editor.destroy();
 
-    const productToSave = {
-      ...form.data.product,
-      files: form.data.product.files.filter((file) => fileIds.has(file.id)),
-    };
+      const productToSave = {
+        ...form.data.product,
+        files: form.data.product.files.filter((file) => fileIds.has(file.id)),
+      };
 
-    form.transform((data) => ({
-      ...productToSave,
-      price_currency_type: data.currencyType,
-      covers: productToSave.covers?.map(({ id }) => id) || [],
-      variants: productToSave.variants.map(({ newlyAdded, ...variant }) => (newlyAdded ? { ...variant, id: null } : variant)),
-      availabilities: productToSave.availabilities.map(({ newlyAdded, ...availability }) =>
-        newlyAdded ? { ...availability, id: null } : availability,
-      ),
-      installment_plan: productToSave.allow_installment_plan ? productToSave.installment_plan : null,
-    }));
+      form.transform((data) => ({
+        ...productToSave,
+        price_currency_type: data.currencyType,
+        covers: productToSave.covers?.map(({ id }) => id) || [],
+        variants: productToSave.variants.map(({ newlyAdded, ...variant }) => (newlyAdded ? { ...variant, id: null } : variant)),
+        availabilities: productToSave.availabilities.map(({ newlyAdded, ...availability }) =>
+          newlyAdded ? { ...availability, id: null } : availability,
+        ),
+        installment_plan: productToSave.allow_installment_plan ? productToSave.installment_plan : null,
+      }));
 
-    const inertiaUrl = window.location.pathname;
-    let updateUrl = Routes.edit_link_path(uniquePermalink);
-    if (inertiaUrl.includes("/edit/content")) updateUrl = Routes.products_edit_content_path(uniquePermalink);
-    else if (inertiaUrl.includes("/edit/receipt")) updateUrl = Routes.products_edit_receipt_path(uniquePermalink);
-    else if (inertiaUrl.includes("/edit/share")) updateUrl = Routes.products_edit_share_path(uniquePermalink);
+      const inertiaUrl = window.location.pathname;
+      let updateUrl = Routes.edit_link_path(uniquePermalink);
+      if (inertiaUrl.includes("/edit/content")) updateUrl = Routes.products_edit_content_path(uniquePermalink);
+      else if (inertiaUrl.includes("/edit/receipt")) updateUrl = Routes.products_edit_receipt_path(uniquePermalink);
+      else if (inertiaUrl.includes("/edit/share")) updateUrl = Routes.products_edit_share_path(uniquePermalink);
 
-    form.patch(updateUrl, {
-      preserveScroll: true,
-      onSuccess: () => {
-        lastSavedProductRef.current = structuredClone(form.data.product);
-      },
+      form.patch(updateUrl, {
+        preserveScroll: true,
+        onSuccess: () => {
+          lastSavedProductRef.current = structuredClone(form.data.product);
+          resolve();
+        },
+        onError: (errors) => {
+          reject(new Error(Object.values(errors)[0] || "Failed to save product"));
+        },
+      });
     });
   };
 

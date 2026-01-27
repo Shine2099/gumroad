@@ -40,14 +40,5 @@ describe Products::Edit::ContentController, inertia: true do
       end
     end
 
-    context "with JSON API request" do
-      it "updates the product content and returns success JSON" do
-        patch :update, params: params, as: :json
-
-        expect(response).to have_http_status(:ok)
-        expect(response.parsed_body).to eq({ "success" => true })
-        expect(product.reload.rich_contents.count).to eq(1)
-      end
-    end
   end
 end

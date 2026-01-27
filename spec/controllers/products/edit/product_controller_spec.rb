@@ -54,15 +54,5 @@ describe Products::Edit::ProductController, inertia: true do
       end
     end
 
-    context "with JSON API request" do
-      it "updates the product and returns success JSON" do
-        patch :update, params: params, as: :json
-
-        expect(product.reload.name).to eq("Updated Name")
-        expect(product.description).to eq("Updated Description")
-        expect(response).to have_http_status(:ok)
-        expect(response.parsed_body).to eq({ "success" => true })
-      end
-    end
   end
 end

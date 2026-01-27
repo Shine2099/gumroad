@@ -277,26 +277,55 @@ class LinksController < ApplicationController
     authorize @product
 
     @product.unpublish!
-    render json: { success: true }
+
+    if request.inertia?
+      flash[:notice] = "Unpublished!"
+      redirect_back fallback_location: edit_link_path(@product.unique_permalink)
+    else
+      render json: { success: true }
+    end
   end
 
   def publish
     authorize @product
 
     if @product.user.email.blank?
-      return render json: { success: false, error_message: "<span>To publish a product, we need you to have an email. <a href=\"#{settings_main_url}\">Set an email</a> to continue.</span>" }
+      error_message = "<span>To publish a product, we need you to have an email. <a href=\"#{settings_main_url}\">Set an email</a> to continue.</span>"
+      if request.inertia?
+        flash[:error] = error_message
+        return redirect_back fallback_location: edit_link_path(@product.unique_permalink)
+      else
+        return render json: { success: false, error_message: }
+      end
     end
 
     begin
       @product.publish!
     rescue Link::LinkInvalid, ActiveRecord::RecordInvalid
-      return render json: { success: false, error_message: @product.errors.full_messages[0] }
+      error_message = @product.errors.full_messages[0]
+      if request.inertia?
+        flash[:error] = error_message
+        return redirect_back fallback_location: edit_link_path(@product.unique_permalink)
+      else
+        return render json: { success: false, error_message: }
+      end
     rescue => e
       Bugsnag.notify(e)
-      return render json: { success: false, error_message: "Something broke. We're looking into what happened. Sorry about this!" }
+      error_message = "Something broke. We're looking into what happened. Sorry about this!"
+      if request.inertia?
+        flash[:error] = error_message
+        return redirect_back fallback_location: edit_link_path(@product.unique_permalink)
+      else
+        return render json: { success: false, error_message: }
+      end
     end
 
-    render json: { success: true }
+    if request.inertia?
+      flash[:notice] = "Published!"
+      redirect_back fallback_location: edit_link_path(@product.unique_permalink)
+    else
+      render json: { success: true }
+    end
   end
 
   def destroy
