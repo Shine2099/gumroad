@@ -9,10 +9,9 @@ class BundlePresenter
     @bundle = bundle
   end
 
-  def bundle_props
-    refund_policy = bundle.find_or_initialize_product_refund_policy
-    profile_sections = bundle.user.seller_profile_products_sections
+  def shared_props
     collaborator = bundle.collaborator_for_display
+    refund_policy = bundle.find_or_initialize_product_refund_policy
     {
       bundle: {
         name: bundle.name,
@@ -48,7 +47,7 @@ class BundlePresenter
         display_product_reviews: bundle.display_product_reviews,
         is_adult: bundle.is_adult,
         discover_fee_per_thousand: bundle.discover_fee_per_thousand,
-        section_ids: profile_sections.filter_map { |section| section.external_id if section.shown_products.include?(bundle.id) },
+        section_ids: bundle.user.seller_profile_products_sections.filter_map { |section| section.external_id if section.shown_products.include?(bundle.id) },
         is_published: !bundle.draft && bundle.alive?,
         products: bundle.bundle_products.alive.in_order.includes(:variant, product: ProductPresenter::ASSOCIATIONS_FOR_CARD).map { self.class.bundle_product(product: _1.product, quantity: _1.quantity, selected_variant_id: _1.variant&.external_id) },
         collaborating_user: collaborator.present? ? UserPresenter.new(user: collaborator).author_byline_props : nil,
@@ -57,10 +56,41 @@ class BundlePresenter
       },
       id: bundle.external_id,
       unique_permalink: bundle.unique_permalink,
+      is_bundle: bundle.is_bundle?,
+    }
+  end
+
+  def edit_product_props
+    shared_props.merge(
       currency_type: bundle.price_currency_type,
       thumbnail: bundle.thumbnail&.alive&.as_json,
       sales_count_for_inventory: bundle.sales_count_for_inventory,
       ratings: bundle.rating_stats,
+      refund_policies: bundle.user
+        .product_refund_policies
+        .for_visible_and_not_archived_products
+        .where.not(product_id: bundle.id)
+        .order(updated_at: :desc)
+        .select("refund_policies.*", "links.name")
+        .as_json,
+      seller_refund_policy_enabled: bundle.user.account_level_refund_policy_enabled?,
+      seller_refund_policy: {
+        title: bundle.user.refund_policy.title,
+        fine_print: bundle.user.refund_policy.fine_print,
+      },
+    )
+  end
+
+  def edit_content_props
+    shared_props.merge(
+      products_count: bundle.user.products.alive.not_archived.not_is_recurring_billing.not_is_bundle.not_call.count,
+      has_outdated_purchases: bundle.has_outdated_purchases,
+    )
+  end
+
+  def edit_share_props
+    profile_sections = bundle.user.seller_profile_products_sections
+    shared_props.merge(
       taxonomies: Discover::TaxonomyPresenter.new.taxonomies_for_nav,
       profile_sections: profile_sections.map do |section|
         {
@@ -70,22 +100,15 @@ class BundlePresenter
           default: section.add_new_products,
         }
       end,
-      refund_policies: bundle.user
-        .product_refund_policies
-        .for_visible_and_not_archived_products
-        .where.not(product_id: bundle.id)
-        .order(updated_at: :desc)
-        .select("refund_policies.*", "links.name")
-        .as_json,
-      products_count: bundle.user.products.alive.not_archived.not_is_recurring_billing.not_is_bundle.not_call.count,
-      is_bundle: bundle.is_bundle?,
-      has_outdated_purchases: bundle.has_outdated_purchases,
+      currency_type: bundle.price_currency_type,
+      sales_count_for_inventory: bundle.sales_count_for_inventory,
+      ratings: bundle.rating_stats,
       seller_refund_policy_enabled: bundle.user.account_level_refund_policy_enabled?,
       seller_refund_policy: {
         title: bundle.user.refund_policy.title,
         fine_print: bundle.user.refund_policy.fine_print,
       },
-    }
+    )
   end
 
   def self.bundle_product(product:, quantity: 1, selected_variant_id: nil)
