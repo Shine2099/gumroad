@@ -24,4 +24,3 @@ class Bundle::UpdateShareService
     @bundle
   end
 end
-
