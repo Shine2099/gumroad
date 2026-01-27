@@ -30,10 +30,15 @@ export default function HelpCenterArticle() {
     // Intercept clicks on internal help links to use Inertia navigation instead of full page reload
     const onLinkClick = (e: MouseEvent) => {
       if (!(e.target instanceof HTMLElement)) return;
-      const anchor = e.target.closest("a");
-      if (!anchor) return;
+      const linkElement = e.target.closest("a");
+      if (!linkElement) return;
 
-      const resolvedUrl = new URL(anchor.href);
+      const resolvedUrl = new URL(linkElement.href);
+
+      const isSamePath = resolvedUrl.pathname === usePage().url;
+      const hasAnchor = resolvedUrl.hash.length > 0;
+      if (isSamePath && hasAnchor) return;
+
       if (resolvedUrl.origin === window.location.origin && resolvedUrl.pathname.startsWith("/help/")) {
         e.preventDefault();
         router.get(resolvedUrl.pathname);
