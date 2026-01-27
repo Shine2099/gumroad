@@ -1,4 +1,4 @@
-import { router, usePage } from "@inertiajs/react";
+import { router, useForm, usePage } from "@inertiajs/react";
 import * as React from "react";
 
 import { Layout } from "$app/components/Authentication/Layout";
@@ -19,23 +19,17 @@ type Props = {
 export default function SubscriptionsMagicLink() {
   const { product_name, subscription_id, is_installment_plan, user_emails, email_sent } = usePage<Props>().props;
 
-  const [loading, setLoading] = React.useState(false);
   const hasSentEmail = email_sent !== null;
-  const defaultSelectedEmail = user_emails.find((e) => e.source === email_sent) ?? user_emails[0];
-  const [selectedEmail, setSelectedEmail] = React.useState(defaultSelectedEmail);
+  const defaultEmailSource = email_sent ?? user_emails[0].source;
+  const form = useForm({ email_source: defaultEmailSource });
+  const selectedEmail = user_emails.find((e) => e.source === form.data.email_source) ?? user_emails[0];
 
   const subscriptionEntity = is_installment_plan ? "installment plan" : "membership";
   const invalid = new URL(useOriginalLocation()).searchParams.get("invalid") === "true";
 
-  const handleSendMagicLink = () => {
-    setLoading(true);
-    router.post(
-      Routes.magic_link_subscription_path(subscription_id),
-      { email_source: selectedEmail.source },
-      {
-        onFinish: () => setLoading(false),
-      },
-    );
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    form.post(Routes.send_magic_link_subscription_path(subscription_id));
   };
 
   const title = hasSentEmail
@@ -59,12 +53,12 @@ export default function SubscriptionsMagicLink() {
       }
       headerActions={<a href={Routes.login_path()}>Log in</a>}
     >
-      <form>
+      <form onSubmit={handleSubmit}>
         <section>
           {hasSentEmail ? (
             <>
-              <Button color="primary" onClick={handleSendMagicLink} disabled={loading}>
-                {loading ? <LoadingSpinner /> : null}
+              <Button color="primary" type="submit" disabled={form.processing}>
+                {form.processing ? <LoadingSpinner /> : null}
                 Resend magic link
               </Button>
               <p>
@@ -95,7 +89,7 @@ export default function SubscriptionsMagicLink() {
                         type="radio"
                         name="email_source"
                         value={userEmail.source}
-                        onChange={() => setSelectedEmail(userEmail)}
+                        onChange={() => form.setData("email_source", userEmail.source)}
                         checked={userEmail.source === selectedEmail.source}
                       />
                       {userEmail.email}
@@ -103,8 +97,8 @@ export default function SubscriptionsMagicLink() {
                   ))}
                 </fieldset>
               ) : null}
-              <Button color="primary" onClick={handleSendMagicLink} disabled={loading}>
-                {loading ? <LoadingSpinner /> : null}
+              <Button color="primary" type="submit" disabled={form.processing}>
+                {form.processing ? <LoadingSpinner /> : null}
                 Send magic link
               </Button>
             </>
