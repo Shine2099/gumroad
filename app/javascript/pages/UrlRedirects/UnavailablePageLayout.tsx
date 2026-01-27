@@ -32,8 +32,10 @@ export const UnavailablePageLayout = ({
   );
 };
 
+const fullHeightPlaceholderClassName = "flex-1 content-center";
+
 export const AccessExpiredContent = () => (
-  <Placeholder>
+  <Placeholder className={fullHeightPlaceholderClassName}>
     <PlaceholderImage src={placeholderImage} />
     <h2>Access expired</h2>
     <p>It looks like your access to this product has expired. Please contact the creator for further assistance.</p>
@@ -41,7 +43,7 @@ export const AccessExpiredContent = () => (
 );
 
 export const RentalExpiredContent = () => (
-  <Placeholder>
+  <Placeholder className={fullHeightPlaceholderClassName}>
     <PlaceholderImage src={placeholderImage} />
     <h2>Your rental has expired</h2>
     <p>Rentals expire 30 days after purchase or 72 hours after you've begun watching it.</p>
@@ -60,7 +62,7 @@ export const MembershipInactiveContent = ({
     subscription_id: string;
   } | null;
 }) => (
-  <Placeholder>
+  <Placeholder className={fullHeightPlaceholderClassName}>
     <PlaceholderImage src={placeholderImage} />
     <h2>Your membership is inactive</h2>
     <p>You cannot access the content of {product_name} because your membership is no longer active.</p>
@@ -88,7 +90,7 @@ export const InstallmentPlanInactiveContent = ({
     is_alive_or_restartable: boolean | null;
   };
 }) => (
-  <Placeholder>
+  <Placeholder className={fullHeightPlaceholderClassName}>
     <PlaceholderImage src={placeholderImage} />
     <h2>Your installment plan is inactive</h2>
     {installment_plan.is_alive_or_restartable ? (
