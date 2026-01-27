@@ -93,9 +93,7 @@ class FollowersController < ApplicationController
     follower_id = @follower.external_id
     @follower.mark_deleted!
     respond_to do |format|
-      format.html do
-        render inertia: "Followers/Cancel"
-      end
+      format.html { render inertia: "Followers/Cancel" }
       format.json do
         render json: {
           success: true,
