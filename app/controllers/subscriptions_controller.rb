@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class SubscriptionsController < ApplicationController
+  include PageMeta::Product
+
   PUBLIC_ACTIONS = %i[manage unsubscribe_by_user magic_link send_magic_link].freeze
   before_action :authenticate_user!, except: PUBLIC_ACTIONS
   after_action :verify_authorized, except: PUBLIC_ACTIONS
@@ -30,8 +32,14 @@ class SubscriptionsController < ApplicationController
   end
 
   def manage
-    @title = @subscription.is_installment_plan ? "Manage installment plan" : "Manage membership"
+    @product = @subscription.link
+    @card = @subscription.credit_card_to_charge
+    @card_data_handling_mode = CardDataHandlingMode.get_card_data_handling_mode(@product.user)
+
     @body_id = "product_page"
+
+    set_meta_tag(title: @subscription.is_installment_plan ? "Manage installment plan" : "Manage membership")
+    set_product_page_meta(@product)
 
     set_subscription_confirmed_redirect_cookie
 
