@@ -7,7 +7,7 @@ class Bundles::BaseController < Sellers::BaseController
 
   before_action :set_bundle
   before_action :authorize_bundle
-  before_action :set_title
+  before_action :set_default_page_title
 
   protected
     def set_bundle
@@ -18,7 +18,7 @@ class Bundles::BaseController < Sellers::BaseController
       authorize @bundle
     end
 
-    def set_title
-      @title = @bundle.name
+    def set_default_page_title
+      set_meta_tag(title: @bundle.name)
     end
 end

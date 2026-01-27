@@ -62,7 +62,7 @@ describe BundlePresenter do
 
     it "returns shared props with minimal bundle data" do
       presenter = described_class.new(bundle:)
-      props = presenter.shared_props
+      props = presenter.send(:shared_props)
 
       expect(props.keys).to match_array([:bundle, :id, :unique_permalink, :is_bundle])
       expect(props[:bundle]).to include(:name, :description, :custom_permalink, :is_published)

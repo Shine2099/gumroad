@@ -47,7 +47,6 @@ class Bundles::ShareController < Bundles::BaseController
       return if @bundle.published?
 
       redirect_to edit_bundle_content_path(@bundle.external_id),
-                  alert: "Not yet! You've got to publish your awesome product before you can share it with your audience and the world.",
-                  status: :see_other
+                  alert: "Not yet! You've got to publish your awesome product before you can share it with your audience and the world."
     end
 end

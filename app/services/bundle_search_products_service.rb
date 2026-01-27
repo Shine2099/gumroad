@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class BundleSearchProductsService
-  include Pagy::Backend
-
   PER_PAGE = 10
 
   attr_reader :bundle, :query, :page, :all, :seller

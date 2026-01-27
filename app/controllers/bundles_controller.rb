@@ -7,9 +7,7 @@ class BundlesController < Sellers::BaseController
     bundle = Link.can_be_bundle.find_by_external_id!(params[:id])
     authorize bundle
 
-    set_meta_tag(title: bundle.name)
-
-    @props = BundlePresenter.new(bundle:).bundle_props
+    redirect_to edit_bundle_product_path(bundle.external_id), status: :moved_permanently
   end
 
   def create_from_email

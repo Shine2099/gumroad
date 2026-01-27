@@ -12,12 +12,20 @@ describe Bundles::ProductController, inertia: true do
   include_context "with user signed in as admin for seller"
 
   describe "GET edit" do
-    it "renders the Bundles/Product/Edit Inertia component with bundle props and sets the title" do
+    it "renders the Bundles/Product/Edit Inertia component with expected props" do
       get :edit, params: { bundle_id: bundle.external_id }
       expect(response).to be_successful
       expect(inertia.component).to eq("Bundles/Product/Edit")
-      expect(inertia.props).to have_key(:bundle)
-      expect(assigns(:title)).to eq(bundle.name)
+      expect(controller.send(:page_title)).to eq(bundle.name)
+
+      expect(inertia.props[:id]).to eq(bundle.external_id)
+      expect(inertia.props[:unique_permalink]).to eq(bundle.unique_permalink)
+      expect(inertia.props[:currency_type]).to eq(bundle.price_currency_type)
+      expect(inertia.props[:bundle][:name]).to eq(bundle.name)
+      expect(inertia.props[:bundle][:price_cents]).to eq(bundle.price_cents)
+      expect(inertia.props[:bundle][:products]).to be_an(Array)
+      expect(inertia.props).to have_key(:ratings)
+      expect(inertia.props).to have_key(:refund_policies)
     end
 
     context "when the bundle doesn't exist" do

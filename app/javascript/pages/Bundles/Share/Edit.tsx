@@ -2,13 +2,14 @@ import { useForm, usePage } from "@inertiajs/react";
 import * as React from "react";
 import { cast } from "ts-safe-cast";
 
-import { AssetPreview, CardProduct, CustomButtonTextOption, RatingsWithPercentages } from "$app/parsers/product";
+import { AssetPreview, CustomButtonTextOption, RatingsWithPercentages } from "$app/parsers/product";
 import { CurrencyCode } from "$app/utils/currency";
 import { Taxonomy } from "$app/utils/discover";
 
 import { BundleEditLayout, useProductUrl } from "$app/components/BundleEdit/Layout";
 import { ProductPreview } from "$app/components/BundleEdit/ProductPreview";
 import { MarketingEmailStatus } from "$app/components/BundleEdit/ShareTab/MarketingEmailStatus";
+import { BundleProduct } from "$app/components/BundleEdit/types";
 import { Button } from "$app/components/Button";
 import { CopyToClipboard } from "$app/components/CopyToClipboard";
 import { useCurrentSeller } from "$app/components/CurrentSeller";
@@ -23,20 +24,6 @@ import { TaxonomyEditor } from "$app/components/ProductEdit/ShareTab/TaxonomyEdi
 import { ProfileSection, PublicFileWithStatus } from "$app/components/ProductEdit/state";
 import { Toggle } from "$app/components/Toggle";
 import { TwitterShareButton } from "$app/components/TwitterShareButton";
-
-type BundleProduct = CardProduct & {
-  is_quantity_enabled: boolean;
-  quantity: number;
-  variants: {
-    selected_id: string;
-    list: {
-      id: string;
-      name: string;
-      description: string;
-      price_difference: number;
-    }[];
-  } | null;
-};
 
 type SharePageProps = {
   bundle: {
@@ -140,6 +127,7 @@ export default function BundlesShareEdit() {
           bundle={bundle}
           id={id}
           uniquePermalink={unique_permalink}
+          currencyType={currency_type}
           salesCountForInventory={sales_count_for_inventory}
           ratings={ratings}
           sellerRefundPolicyEnabled={seller_refund_policy_enabled}

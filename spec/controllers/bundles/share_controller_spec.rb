@@ -13,12 +13,19 @@ describe Bundles::ShareController, inertia: true do
 
   describe "GET edit" do
     context "when bundle is published" do
-      it "renders the Bundles/Share/Edit Inertia component" do
+      it "renders the Bundles/Share/Edit Inertia component with expected props" do
         get :edit, params: { bundle_id: bundle.external_id }
         expect(response).to be_successful
         expect(inertia.component).to eq("Bundles/Share/Edit")
-        expect(inertia.props).to have_key(:bundle)
-        expect(assigns(:title)).to eq(bundle.name)
+        expect(controller.send(:page_title)).to eq(bundle.name)
+
+        expect(inertia.props[:id]).to eq(bundle.external_id)
+        expect(inertia.props[:unique_permalink]).to eq(bundle.unique_permalink)
+        expect(inertia.props[:currency_type]).to eq(bundle.price_currency_type)
+        expect(inertia.props[:bundle][:name]).to eq(bundle.name)
+        expect(inertia.props[:bundle][:products]).to be_an(Array)
+        expect(inertia.props[:taxonomies]).to be_an(Array)
+        expect(inertia.props[:profile_sections]).to be_an(Array)
       end
     end
 

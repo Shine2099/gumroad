@@ -1,4 +1,4 @@
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 import * as React from "react";
 
 import { Button } from "$app/components/Button";
@@ -24,10 +24,12 @@ export const useProductUrl = (uniquePermalink: string, customPermalink?: string 
 };
 
 const useCurrentTab = (): "product" | "content" | "share" => {
-  const pathname = typeof window !== "undefined" ? window.location.pathname : "";
-  if (pathname.includes("/content")) return "content";
-  if (pathname.includes("/share")) return "share";
-  return "product";
+  const componentToTab: Record<string, "product" | "content" | "share"> = {
+    "Bundles/Product/Edit": "product",
+    "Bundles/Content/Edit": "content",
+    "Bundles/Share/Edit": "share",
+  };
+  return componentToTab[usePage().component] ?? "product";
 };
 
 type BundleEditLayoutProps = {
@@ -189,7 +191,3 @@ export const BundleEditLayout = ({
     </>
   );
 };
-
-// Keep the old Layout export for backward compatibility during migration
-// TODO: Remove this after all pages are migrated
-export { BundleEditLayout as Layout };

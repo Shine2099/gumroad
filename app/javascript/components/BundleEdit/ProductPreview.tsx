@@ -1,13 +1,21 @@
 import * as React from "react";
 
 import { AssetPreview, CustomButtonTextOption, RatingsWithPercentages } from "$app/parsers/product";
+import { CurrencyCode } from "$app/utils/currency";
 
 import { useProductUrl } from "$app/components/BundleEdit/Layout";
+import { BundleProduct } from "$app/components/BundleEdit/types";
 import { useCurrentSeller } from "$app/components/CurrentSeller";
 import { Product, Seller } from "$app/components/Product";
 import { Attribute } from "$app/components/ProductEdit/ProductTab/AttributesEditor";
 import { RefundPolicy, RefundPolicyModalPreview } from "$app/components/ProductEdit/RefundPolicy";
 import { PublicFileWithStatus } from "$app/components/ProductEdit/state";
+
+const computeStandalonePrice = (bundleProduct: BundleProduct) =>
+  (bundleProduct.price_cents +
+    (bundleProduct.variants?.list.find(({ id }) => id === bundleProduct.variants?.selected_id)?.price_difference ??
+      0)) *
+  bundleProduct.quantity;
 
 type ProductPreviewBundle = {
   name: string;
@@ -31,12 +39,14 @@ type ProductPreviewBundle = {
   audio_previews_enabled: boolean;
   is_published: boolean;
   custom_permalink?: string | null;
+  products: BundleProduct[];
 };
 
 type ProductPreviewProps = {
   bundle: ProductPreviewBundle;
   id: string;
   uniquePermalink: string;
+  currencyType: CurrencyCode;
   salesCountForInventory: number;
   ratings: RatingsWithPercentages;
   sellerRefundPolicyEnabled: boolean;
@@ -48,6 +58,7 @@ export const ProductPreview = ({
   bundle,
   id,
   uniquePermalink,
+  currencyType,
   salesCountForInventory,
   ratings,
   sellerRefundPolicyEnabled,
@@ -77,7 +88,7 @@ export const ProductPreview = ({
           main_cover_id: bundle.covers[0]?.id ?? null,
           quantity_remaining:
             bundle.max_purchase_count !== null ? Math.max(bundle.max_purchase_count - salesCountForInventory, 0) : null,
-          currency_code: "usd",
+          currency_code: currencyType,
           long_url: url,
           duration_in_months: null,
           is_sales_limited: bundle.max_purchase_count !== null,
@@ -130,7 +141,12 @@ export const ProductPreview = ({
                 fine_print: bundle.refund_policy.fine_print ?? "",
                 updated_at: "",
               },
-          bundle_products: [],
+          bundle_products: bundle.products.map((bundleProduct) => ({
+            ...bundleProduct,
+            price: computeStandalonePrice(bundleProduct),
+            variant:
+              bundleProduct.variants?.list.find(({ id }) => id === bundleProduct.variants?.selected_id)?.name ?? null,
+          })),
           public_files: bundle.public_files,
           audio_previews_enabled: bundle.audio_previews_enabled,
         }}

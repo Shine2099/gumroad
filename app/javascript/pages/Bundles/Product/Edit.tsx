@@ -14,6 +14,7 @@ import { CurrencyCode } from "$app/utils/currency";
 
 import { BundleEditLayout, useProductUrl } from "$app/components/BundleEdit/Layout";
 import { ProductPreview } from "$app/components/BundleEdit/ProductPreview";
+import { BundleProduct } from "$app/components/BundleEdit/types";
 import { useCurrentSeller } from "$app/components/CurrentSeller";
 import { Seller } from "$app/components/Product";
 import { Attribute, AttributesEditor } from "$app/components/ProductEdit/ProductTab/AttributesEditor";
@@ -55,6 +56,7 @@ type ProductPageProps = {
     public_files: PublicFileWithStatus[];
     audio_previews_enabled: boolean;
     is_published: boolean;
+    products: BundleProduct[];
   };
   id: string;
   unique_permalink: string;
@@ -210,6 +212,7 @@ export default function BundlesProductEdit() {
           bundle={previewBundle}
           id={id}
           uniquePermalink={unique_permalink}
+          currencyType={currency_type}
           salesCountForInventory={sales_count_for_inventory}
           ratings={ratings}
           sellerRefundPolicyEnabled={seller_refund_policy_enabled}
