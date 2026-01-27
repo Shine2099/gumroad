@@ -690,7 +690,7 @@ describe UsersController do
       expect(response).to be_successful
       expect(inertia.component).to eq("SubscribePreview/Show")
       expect(inertia.props[:title]).to eq(creator.name_or_username)
-      expect(inertia.props[:avatar_url]).to be_present
+      expect(inertia.props[:avatar_url]).to end_with(".png")
       expect(inertia.props[:custom_styles]).to eq(creator.seller_profile.custom_styles)
     end
   end
