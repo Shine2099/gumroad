@@ -4,8 +4,6 @@ class CheckPaymentAddressWorker
   include Sidekiq::Job
   sidekiq_options retry: 0, queue: :default
 
-  SUSPENDED_STATES = %w[suspended_for_tos_violation suspended_for_fraud].freeze
-
   def perform(user_id)
     user = User.find_by(id: user_id)
     return unless user&.can_flag_for_fraud?
@@ -22,7 +20,7 @@ class CheckPaymentAddressWorker
 
       banned_accounts_with_same_payment_address = User.where(
         payment_address: user.payment_address,
-        user_risk_state: SUSPENDED_STATES
+        user_risk_state: User::Risk::SUSPENDED_STATES
       )
 
       blocked_email = BlockedObject.find_active_object(user.payment_address)
@@ -31,17 +29,17 @@ class CheckPaymentAddressWorker
     end
 
     def stripe_fingerprint_matches_suspended_account?(user)
-      fingerprints = user.alive_bank_accounts.where.not(stripe_fingerprint: [nil, ""]).pluck(:stripe_fingerprint).uniq
+      fingerprints = user.alive_bank_accounts.where.not(stripe_fingerprint: [nil, ""]).distinct.pluck(:stripe_fingerprint)
       return false if fingerprints.empty?
 
       suspended_accounts_with_same_fingerprint = BankAccount
         .joins(:user)
         .where(stripe_fingerprint: fingerprints)
         .where.not(user_id: user.id)
-        .where(users: { user_risk_state: SUSPENDED_STATES })
+        .where(users: { user_risk_state: User::Risk::SUSPENDED_STATES })
 
-      blocked_fingerprints = fingerprints.any? { |fp| BlockedObject.find_active_object(fp).present? }
+      return true if suspended_accounts_with_same_fingerprint.exists?
 
-      suspended_accounts_with_same_fingerprint.exists? || blocked_fingerprints
+      BlockedObject.find_active_objects(fingerprints).present?
     end
 end

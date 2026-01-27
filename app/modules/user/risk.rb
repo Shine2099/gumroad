@@ -6,6 +6,7 @@ module User::Risk
   IFFY_ENDPOINT = "http://internal-production-iffy-live-internal-1668548970.us-east-1.elb.amazonaws.com"
 
   PAYMENT_REMINDER_RISK_STATES = %w[flagged_for_tos_violation not_reviewed compliant].freeze
+  SUSPENDED_STATES = %w[suspended_for_tos_violation suspended_for_fraud].freeze
   INCREMENTAL_ENQUEUE_BALANCE = 100_00
   COUNTRIES_THAT_DO_NOT_HAVE_ZIPCODES = [
     # Country Codes: http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
@@ -146,14 +147,14 @@ module User::Risk
   end
 
   def enable_accounts_with_same_stripe_fingerprint
-    fingerprints = bank_accounts.where.not(stripe_fingerprint: [nil, ""]).pluck(:stripe_fingerprint).uniq
+    fingerprints = bank_accounts.where.not(stripe_fingerprint: [nil, ""]).distinct.pluck(:stripe_fingerprint)
     return if fingerprints.empty?
 
     user_ids_with_same_fingerprint = BankAccount.alive
       .where(stripe_fingerprint: fingerprints)
       .where.not(user_id: id)
+      .distinct
       .pluck(:user_id)
-      .uniq
 
     User.where(id: user_ids_with_same_fingerprint).each do |user|
       matching_fingerprint = (fingerprints & user.alive_bank_accounts.pluck(:stripe_fingerprint)).first

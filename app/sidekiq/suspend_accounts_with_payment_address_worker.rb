@@ -24,14 +24,14 @@ class SuspendAccountsWithPaymentAddressWorker
     end
 
     def suspend_users_with_same_stripe_fingerprint(suspended_user)
-      fingerprints = suspended_user.bank_accounts.where.not(stripe_fingerprint: [nil, ""]).pluck(:stripe_fingerprint).uniq
+      fingerprints = suspended_user.bank_accounts.where.not(stripe_fingerprint: [nil, ""]).distinct.pluck(:stripe_fingerprint)
       return if fingerprints.empty?
 
       user_ids_with_same_fingerprint = BankAccount.alive
         .where(stripe_fingerprint: fingerprints)
         .where.not(user_id: suspended_user.id)
+        .distinct
         .pluck(:user_id)
-        .uniq
 
       User.not_suspended.where(id: user_ids_with_same_fingerprint).find_each do |user|
         matching_fingerprint = (fingerprints & user.alive_bank_accounts.pluck(:stripe_fingerprint)).first
