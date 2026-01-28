@@ -19,7 +19,6 @@ type PageProps = LayoutProps & {
 };
 
 function ConfirmPage() {
-  const props = usePage<PageProps>().props;
   const {
     confirmation_info,
     content_unavailability_reason_code,
@@ -31,7 +30,7 @@ function ConfirmPage() {
     add_to_library_option,
     installment,
     purchase,
-  } = props;
+  } = cast<PageProps>(usePage().props); // use cast to enforce types
 
   return (
     <Layout
