@@ -8,7 +8,7 @@ type Props = {
 };
 
 const CartItemsCount = () => {
-  const { cart } = usePage<Props>().props;
+  const { cart } = cast<Props>(usePage().props);
 
   React.useEffect(() => {
     void document.hasStorageAccess().then((hasAccess) =>
