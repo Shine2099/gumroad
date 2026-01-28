@@ -1,5 +1,6 @@
 import { Head, useForm, usePage } from "@inertiajs/react";
 import * as React from "react";
+import { cast } from "ts-safe-cast";
 
 import { Button } from "$app/components/Button";
 import { PoweredByFooter } from "$app/components/PoweredByFooter";
@@ -13,10 +14,15 @@ type SecureRedirectPageProps = {
   encrypted_payload: string;
 };
 
-const New = () => {
-  const { message, field_name, encrypted_payload, error_message } = usePage<SecureRedirectPageProps>().props;
+type SecureRedirectFormData = {
+  confirmation_text: string;
+  encrypted_payload: string;
+};
 
-  const form = useForm({
+const New = () => {
+  const { message, field_name, encrypted_payload, error_message } = cast<SecureRedirectPageProps>(usePage().props);
+
+  const form = useForm<SecureRedirectFormData>({
     confirmation_text: "",
     encrypted_payload,
   });
