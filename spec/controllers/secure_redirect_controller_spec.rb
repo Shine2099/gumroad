@@ -45,7 +45,7 @@ describe SecureRedirectController, type: :controller, inertia: true do
         expect(inertia.props[:error_message]).to eq(error_message)
         expect(inertia.props[:encrypted_payload]).to eq(encrypted_payload)
       end
-      
+
       it "uses default values when optional params are missing" do
         get :new, params: {
           encrypted_payload: encrypted_payload
@@ -176,8 +176,13 @@ describe SecureRedirectController, type: :controller, inertia: true do
           confirmation_text: "nomatch@example.com"
         )
 
-        expect(response).to redirect_to(secure_url_redirect_path(encrypted_payload: encrypted_payload_multiple))
-        expect(session[:inertia_errors][:confirmation_text]).to eq(error_message)
+        expect(response).to redirect_to(secure_url_redirect_path(
+          encrypted_payload: encrypted_payload_multiple,
+          message: message,
+          field_name: field_name,
+          error_message: error_message
+        ))
+        expect(flash[:alert]).to eq(error_message)
       end
 
       it "works with single confirmation text (backward compatibility)" do
@@ -213,22 +218,37 @@ describe SecureRedirectController, type: :controller, inertia: true do
       it "redirects back with errors" do
         post :create, params: valid_params.merge(confirmation_text: "")
 
-        expect(response).to redirect_to(secure_url_redirect_path(encrypted_payload: encrypted_payload))
-        expect(session[:inertia_errors][:confirmation_text]).to eq("Please enter the confirmation text")
+        expect(response).to redirect_to(secure_url_redirect_path(
+          encrypted_payload: encrypted_payload,
+          message: message,
+          field_name: field_name,
+          error_message: error_message
+        ))
+        expect(flash[:alert]).to eq("Please enter the confirmation text")
       end
 
       it "redirects back when confirmation text is nil" do
         post :create, params: valid_params.except(:confirmation_text)
 
-        expect(response).to redirect_to(secure_url_redirect_path(encrypted_payload: encrypted_payload))
-        expect(session[:inertia_errors][:confirmation_text]).to eq("Please enter the confirmation text")
+        expect(response).to redirect_to(secure_url_redirect_path(
+          encrypted_payload: encrypted_payload,
+          message: message,
+          field_name: field_name,
+          error_message: error_message
+        ))
+        expect(flash[:alert]).to eq("Please enter the confirmation text")
       end
 
       it "redirects back when confirmation text is whitespace only" do
         post :create, params: valid_params.merge(confirmation_text: "   ")
 
-        expect(response).to redirect_to(secure_url_redirect_path(encrypted_payload: encrypted_payload))
-        expect(session[:inertia_errors][:confirmation_text]).to eq("Please enter the confirmation text")
+        expect(response).to redirect_to(secure_url_redirect_path(
+          encrypted_payload: encrypted_payload,
+          message: message,
+          field_name: field_name,
+          error_message: error_message
+        ))
+        expect(flash[:alert]).to eq("Please enter the confirmation text")
       end
     end
 
@@ -236,16 +256,26 @@ describe SecureRedirectController, type: :controller, inertia: true do
       it "redirects back with custom error message" do
         post :create, params: valid_params.merge(confirmation_text: "wrong@example.com")
 
-        expect(response).to redirect_to(secure_url_redirect_path(encrypted_payload: encrypted_payload))
-        expect(session[:inertia_errors][:confirmation_text]).to eq(error_message)
+        expect(response).to redirect_to(secure_url_redirect_path(
+          encrypted_payload: encrypted_payload,
+          message: message,
+          field_name: field_name,
+          error_message: error_message
+        ))
+        expect(flash[:alert]).to eq(error_message)
       end
 
       it "uses default error message when not provided" do
         params_without_error_message = valid_params.except(:error_message).merge(confirmation_text: "wrong@example.com")
         post :create, params: params_without_error_message
 
-        expect(response).to redirect_to(secure_url_redirect_path(encrypted_payload: encrypted_payload))
-        expect(session[:inertia_errors][:confirmation_text]).to eq("Confirmation text does not match")
+        expect(response).to redirect_to(secure_url_redirect_path(
+          encrypted_payload: encrypted_payload,
+          message: message,
+          field_name: field_name,
+          error_message: "Confirmation text does not match"
+        ))
+        expect(flash[:alert]).to eq("Confirmation text does not match")
       end
     end
 
@@ -254,16 +284,26 @@ describe SecureRedirectController, type: :controller, inertia: true do
         tampered_encrypted = encrypted_payload + "tamper"
         post :create, params: valid_params.merge(encrypted_payload: tampered_encrypted)
 
-        expect(response).to redirect_to(secure_url_redirect_path(encrypted_payload: tampered_encrypted))
-        expect(session[:inertia_errors][:confirmation_text]).to eq("Invalid request")
+        expect(response).to redirect_to(secure_url_redirect_path(
+          encrypted_payload: tampered_encrypted,
+          message: message,
+          field_name: field_name,
+          error_message: error_message
+        ))
+        expect(flash[:alert]).to eq("Invalid request")
       end
 
       it "redirects back with error when encrypted_payload is invalid JSON" do
         invalid_payload = SecureEncryptService.encrypt("invalid json")
         post :create, params: valid_params.merge(encrypted_payload: invalid_payload)
 
-        expect(response).to redirect_to(secure_url_redirect_path(encrypted_payload: invalid_payload))
-        expect(session[:inertia_errors][:confirmation_text]).to eq("Invalid request")
+        expect(response).to redirect_to(secure_url_redirect_path(
+          encrypted_payload: invalid_payload,
+          message: message,
+          field_name: field_name,
+          error_message: error_message
+        ))
+        expect(flash[:alert]).to eq("Invalid request")
       end
     end
 
@@ -280,8 +320,13 @@ describe SecureRedirectController, type: :controller, inertia: true do
       it "redirects back with error when payload is expired" do
         post :create, params: valid_params.merge(encrypted_payload: expired_encrypted_payload)
 
-        expect(response).to redirect_to(secure_url_redirect_path(encrypted_payload: expired_encrypted_payload))
-        expect(session[:inertia_errors][:confirmation_text]).to eq("This link has expired")
+        expect(response).to redirect_to(secure_url_redirect_path(
+          encrypted_payload: expired_encrypted_payload,
+          message: message,
+          field_name: field_name,
+          error_message: error_message
+        ))
+        expect(flash[:alert]).to eq("This link has expired")
       end
     end
 
@@ -306,8 +351,13 @@ describe SecureRedirectController, type: :controller, inertia: true do
       it "redirects back with invalid destination error" do
         post :create, params: valid_params.merge(encrypted_payload: empty_destination_encrypted_payload)
 
-        expect(response).to redirect_to(secure_url_redirect_path(encrypted_payload: empty_destination_encrypted_payload))
-        expect(session[:inertia_errors][:confirmation_text]).to eq("Invalid destination")
+        expect(response).to redirect_to(secure_url_redirect_path(
+          encrypted_payload: empty_destination_encrypted_payload,
+          message: message,
+          field_name: field_name,
+          error_message: error_message
+        ))
+        expect(flash[:alert]).to eq("Invalid destination")
       end
     end
   end

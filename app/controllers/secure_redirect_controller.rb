@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 class SecureRedirectController < ApplicationController
+  layout "inertia"
 
   before_action :validate_params, only: [:new, :create]
   before_action :set_encrypted_params, only: [:new, :create]
 
   def new
-    @title = "Confirm access"
     render inertia: "SecureRedirect/New", props: {
       message: @message,
       field_name: @field_name,
@@ -19,16 +19,26 @@ class SecureRedirectController < ApplicationController
     confirmation_text = params[:confirmation_text]
 
     if confirmation_text.blank?
-      return redirect_to secure_url_redirect_path(encrypted_payload: @encrypted_payload),
-                         inertia: { errors: { confirmation_text: "Please enter the confirmation text" } }
+      flash[:alert] = "Please enter the confirmation text"
+      return redirect_to secure_url_redirect_path(
+        encrypted_payload: @encrypted_payload,
+        message: @message,
+        field_name: @field_name,
+        error_message: @error_message
+      )
     end
 
     # Decrypt and parse the bundled payload
     begin
       payload_json = SecureEncryptService.decrypt(@encrypted_payload)
       if payload_json.nil?
-        return redirect_to secure_url_redirect_path(encrypted_payload: @encrypted_payload),
-                           inertia: { errors: { confirmation_text: "Invalid request" } }
+        flash[:alert] = "Invalid request"
+        return redirect_to secure_url_redirect_path(
+          encrypted_payload: @encrypted_payload,
+          message: @message,
+          field_name: @field_name,
+          error_message: @error_message
+        )
       end
 
       payload = JSON.parse(payload_json)
@@ -38,13 +48,23 @@ class SecureRedirectController < ApplicationController
 
       # Verify the payload is recent (within 24 hours)
       if payload["created_at"] && Time.current.to_i - payload["created_at"] > 24.hours
-        return redirect_to secure_url_redirect_path(encrypted_payload: @encrypted_payload),
-                           inertia: { errors: { confirmation_text: "This link has expired" } }
+        flash[:alert] = "This link has expired"
+        return redirect_to secure_url_redirect_path(
+          encrypted_payload: @encrypted_payload,
+          message: @message,
+          field_name: @field_name,
+          error_message: @error_message
+        )
       end
 
     rescue JSON::ParserError, NoMethodError
-      return redirect_to secure_url_redirect_path(encrypted_payload: @encrypted_payload),
-                         inertia: { errors: { confirmation_text: "Invalid request" } }
+      flash[:alert] = "Invalid request"
+      return redirect_to secure_url_redirect_path(
+        encrypted_payload: @encrypted_payload,
+        message: @message,
+        field_name: @field_name,
+        error_message: @error_message
+      )
     end
 
     # Check if confirmation text matches any of the allowed texts
@@ -62,14 +82,24 @@ class SecureRedirectController < ApplicationController
       end
 
       if destination.present?
-        redirect_to destination, allow_other_host: true
+        redirect_to destination, allow_other_host: true, status: :see_other
       else
-        redirect_to secure_url_redirect_path(encrypted_payload: @encrypted_payload),
-                    inertia: { errors: { confirmation_text: "Invalid destination" } }
+        flash[:alert] = "Invalid destination"
+        redirect_to secure_url_redirect_path(
+          encrypted_payload: @encrypted_payload,
+          message: @message,
+          field_name: @field_name,
+          error_message: @error_message
+        )
       end
     else
-      redirect_to secure_url_redirect_path(encrypted_payload: @encrypted_payload),
-                  inertia: { errors: { confirmation_text: @error_message } }
+      flash[:alert] = @error_message
+      redirect_to secure_url_redirect_path(
+        encrypted_payload: @encrypted_payload,
+        message: @message,
+        field_name: @field_name,
+        error_message: @error_message
+      )
     end
   end
 
