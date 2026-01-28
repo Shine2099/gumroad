@@ -1,22 +1,20 @@
 # frozen_string_literal: true
 
 class Purchases::InvoicesController < ApplicationController
-  layout "inertia", only: [:new]
+  layout "inertia", only: [:new, :confirm]
 
-  include RequireInvoiceEmailConfirmation
-
-  before_action :set_purchase
-  before_action :set_noindex_header, only: [:new]
-  before_action :require_email_confirmation
+  before_action :set_purchase, except: [:confirm]
+  before_action :set_noindex_header, only: [:new, :confirm]
+  before_action :require_email_confirmation, except: [:confirm]
   before_action :check_for_successful_purchase_for_vat_refund, only: [:create]
   before_action :set_chargeable, only: [:create, :new]
 
-  def new
-    render inertia: "Purchases/Invoices/New", props: {
-      form_data: -> { invoice_presenter.invoice_generation_form_data_props },
-      form_metadata: -> { invoice_presenter.invoice_generation_form_metadata_props },
-      invoice_file_url: InertiaRails.optional { session.delete("invoice_file_url_#{@purchase.external_id}") },
-    }
+  def confirm
+    render inertia: "Purchases/Invoices/Confirm"
+  end
+
+  def confirm_email
+    redirect_to generate_invoice_by_buyer_path(@purchase.external_id, email: params[:email]), status: :see_other
   end
 
   def create
@@ -27,16 +25,51 @@ class Purchases::InvoicesController < ApplicationController
 
     begin
       @chargeable.refund_gumroad_taxes!(refunding_user_id: logged_in_user&.id, note: address_fields.to_json, business_vat_id:) if business_vat_id
-      pdf = PDFKit.new(render_to_string(locals: { invoice_presenter: }, formats: [:pdf], layout: false), page_size: "Letter").to_pdf
-      session["invoice_file_url_#{@purchase.external_id}"] = @chargeable.upload_invoice_pdf(pdf).presigned_url(:get, expires_in: SignedUrlHelper::SIGNED_S3_URL_VALID_FOR_MAXIMUM.to_i)
-      redirect_to generate_invoice_by_buyer_path(@purchase.external_id, email: params[:email]), status: :see_other, notice: tax_refund_message(business_vat_id)
-      rescue StandardError => e
-        Rails.logger.error("Chargeable #{@chargeable.class.name} (#{@chargeable.external_id}) invoice generation failed due to: #{e.inspect}")
-        Rails.logger.error(e.message)
-        Rails.logger.error(e.backtrace.join("\n"))
 
-        redirect_to generate_invoice_by_buyer_path(@purchase.external_id, email: create_permitted_params[:email]), status: :see_other, alert: "Sorry, something went wrong."
+      invoice_html = render_to_string(locals: { invoice_presenter: }, formats: [:pdf], layout: false)
+      pdf = PDFKit.new(invoice_html, page_size: "Letter").to_pdf
+      s3_obj = @chargeable.upload_invoice_pdf(pdf)
+
+      message = +"The invoice will be downloaded automatically."
+      if business_vat_id
+        notice =
+          if @chargeable.purchase_sales_tax_info.present? &&
+             (Compliance::Countries::GST_APPLICABLE_COUNTRY_CODES.include?(@chargeable.purchase_sales_tax_info.country_code) ||
+             Compliance::Countries::IND.alpha2 == @chargeable.purchase_sales_tax_info.country_code)
+            "GST has also been refunded."
+          elsif @chargeable.purchase_sales_tax_info.present? &&
+                Compliance::Countries::CAN.alpha2 == @chargeable.purchase_sales_tax_info.country_code
+            "QST has also been refunded."
+          elsif @chargeable.purchase_sales_tax_info.present? &&
+            Compliance::Countries::MYS.alpha2 == @chargeable.purchase_sales_tax_info.country_code
+            "Service tax has also been refunded."
+          elsif @chargeable.purchase_sales_tax_info.present? &&
+            Compliance::Countries::JPN.alpha2 == @chargeable.purchase_sales_tax_info.country_code
+            "CT has also been refunded."
+          else
+            "VAT has also been refunded."
+          end
+        message << " " << notice
+      end
+      session["invoice_file_url_#{@purchase.external_id}"] = s3_obj.presigned_url(:get, expires_in: SignedUrlHelper::SIGNED_S3_URL_VALID_FOR_MAXIMUM.to_i)
+      redirect_to generate_invoice_by_buyer_path(@purchase.external_id, email: create_permitted_params[:email]), status: :see_other, notice: message
+    rescue StandardError => e
+      Rails.logger.error("Chargeable #{@chargeable.class.name} (#{@chargeable.external_id}) invoice generation failed due to: #{e.inspect}")
+      Rails.logger.error(e.message)
+      Rails.logger.error(e.backtrace.join("\n"))
+
+      redirect_to generate_invoice_by_buyer_path(@purchase.external_id, email: create_permitted_params[:email]), status: :see_other, alert: "Sorry, something went wrong."
     end
+  end
+
+  def new
+    set_meta_tag(title: "Generate invoice")
+
+    render inertia: "Purchases/Invoices/New", props: {
+      form_data: -> { invoice_presenter.invoice_generation_form_data_props },
+      form_metadata: -> { invoice_presenter.invoice_generation_form_metadata_props },
+      invoice_file_url: InertiaRails.optional { session.delete("invoice_file_url_#{@purchase.external_id}") },
+    }
   end
 
   private
@@ -65,32 +98,15 @@ class Purchases::InvoicesController < ApplicationController
       RegionalVatIdValidationService.new(raw_vat_id, country_code:, state_code:).process
     end
 
-    def tax_refund_message(business_vat_id)
-      message = "The invoice will be downloaded automatically."
-      return message unless business_vat_id
+    def require_email_confirmation
+      return if ActiveSupport::SecurityUtils.secure_compare(@purchase.email, params[:email].to_s)
 
-      tax_info = @chargeable.purchase_sales_tax_info
-      return message unless tax_info.present?
-
-      country_code = tax_info.country_code
-
-      notice = if Compliance::Countries::GST_APPLICABLE_COUNTRY_CODES.include?(country_code) ||
-                   Compliance::Countries::IND.alpha2 == country_code
-        "GST has also been refunded."
-      elsif Compliance::Countries::CAN.alpha2 == country_code
-        "QST has also been refunded."
-      elsif Compliance::Countries::MYS.alpha2 == country_code
-        "Service tax has also been refunded."
-      elsif Compliance::Countries::JPN.alpha2 == country_code
-        "CT has also been refunded."
+      if params[:email].blank?
+        flash[:warning] = "Please enter the purchase's email address to generate the invoice."
       else
-        "VAT has also been refunded."
+        flash[:alert] = "Incorrect email address. Please try again."
       end
 
-      "#{message} #{notice}"
-    end
-
-    def set_title
-      @title = "Generate invoice"
+      redirect_to confirm_purchase_invoice_path(@purchase.external_id), status: :see_other
     end
 end

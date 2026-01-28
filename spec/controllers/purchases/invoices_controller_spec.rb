@@ -24,6 +24,7 @@ describe Purchases::InvoicesController, :vcr, type: :controller, inertia: true d
           expect(assigns(:_invoice_presenter).send(:chargeable)).to eq(purchase)
           expect(inertia.props[:form_data]).to eq(invoice_presenter.invoice_generation_form_data_props)
           expect(inertia.props[:form_metadata]).to eq(invoice_presenter.invoice_generation_form_metadata_props)
+          expect(controller.send(:page_title)).to eq("Generate invoice")
         end
       end
 
@@ -57,7 +58,7 @@ describe Purchases::InvoicesController, :vcr, type: :controller, inertia: true d
             it "redirects to email confirmation path" do
               get :new, params: { id: purchase.external_id }
 
-              expect(response).to redirect_to(purchase_invoice_confirmation_path(purchase.external_id))
+              expect(response).to redirect_to(confirm_purchase_invoice_path(purchase.external_id))
               expect(flash[:warning]).to eq("Please enter the purchase's email address to generate the invoice.")
             end
           end
@@ -66,7 +67,7 @@ describe Purchases::InvoicesController, :vcr, type: :controller, inertia: true d
             it "redirects to email confirmation path" do
               get :new, params: { id: purchase.external_id, email: "wrong-email@example.com" }
 
-              expect(response).to redirect_to(purchase_invoice_confirmation_path(purchase.external_id))
+              expect(response).to redirect_to(confirm_purchase_invoice_path(purchase.external_id))
               expect(flash[:alert]).to eq("Incorrect email address. Please try again.")
             end
           end
@@ -349,7 +350,7 @@ describe Purchases::InvoicesController, :vcr, type: :controller, inertia: true d
           it "redirects to the email confirmation path" do
             post :create, params: payload.except(:email)
 
-            expect(response).to redirect_to(purchase_invoice_confirmation_path(purchase.external_id))
+            expect(response).to redirect_to(confirm_purchase_invoice_path(purchase.external_id))
             expect(flash[:warning]).to eq("Please enter the purchase's email address to generate the invoice.")
           end
         end
@@ -581,6 +582,41 @@ describe Purchases::InvoicesController, :vcr, type: :controller, inertia: true d
             end
           end
         end
+      end
+    end
+
+    describe "GET confirm" do
+      let(:purchase) { create(:purchase) }
+
+      it "returns success" do
+        get :confirm, params: { purchase_id: purchase.external_id }
+
+        expect(response).to be_successful
+        expect(inertia.component).to eq("Purchases/Invoices/Confirm")
+      end
+    end
+
+    describe "POST confirm_email" do
+      let(:purchase) { create(:purchase) }
+
+      it "redirects to invoice page with correct email" do
+        post :confirm_email, params: { purchase_id: purchase.external_id, email: purchase.email }
+
+        expect(response).to redirect_to(generate_invoice_by_buyer_path(purchase.external_id, email: purchase.email))
+      end
+
+      it "redirects back with error for incorrect email" do
+        post :confirm_email, params: { purchase_id: purchase.external_id, email: "wrong@example.com" }
+
+        expect(response).to redirect_to(confirm_purchase_invoice_path(purchase.external_id))
+        expect(flash[:alert]).to eq("Incorrect email address. Please try again.")
+      end
+
+      it "redirects back with warning when email is missing" do
+        post :confirm_email, params: { purchase_id: purchase.external_id }
+
+        expect(response).to redirect_to(confirm_purchase_invoice_path(purchase.external_id))
+        expect(flash[:warning]).to eq("Please enter the purchase's email address to generate the invoice.")
       end
     end
   end

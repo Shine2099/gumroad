@@ -3,6 +3,7 @@ import cx from "classnames";
 import * as React from "react";
 import { cast } from "ts-safe-cast";
 
+import { StandaloneLayout } from "$app/inertia/layout";
 import { classNames } from "$app/utils/classNames";
 
 import { Button } from "$app/components/Button";
@@ -46,7 +47,7 @@ type NewInvoicePageProps = {
   invoice_file_url?: string | null;
 };
 
-const NewInvoicePage = () => {
+const PurchaseNewInvoicePage = () => {
   const { form_data, form_metadata, invoice_file_url } = cast<NewInvoicePageProps>(usePage().props);
   const { supplier_info, seller_info, order_info, countries } = form_metadata;
 
@@ -279,4 +280,5 @@ const NewInvoicePage = () => {
   );
 };
 
-export default NewInvoicePage;
+PurchaseNewInvoicePage.layout = (page: React.ReactNode) => <StandaloneLayout>{page}</StandaloneLayout>;
+export default PurchaseNewInvoicePage;
