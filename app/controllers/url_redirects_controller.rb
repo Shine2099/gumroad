@@ -410,9 +410,9 @@ class UrlRedirectsController < ApplicationController
       end
 
       UrlRedirectPresenter.new(url_redirect: @url_redirect, logged_in_user:).download_page_without_content_props({
-        is_mobile_app_web_view: params[:display] == "mobile_app",
-        add_to_library_option:,
-      })
+                                                                                                                   is_mobile_app_web_view: params[:display] == "mobile_app",
+                                                                                                                   add_to_library_option:,
+                                                                                                                 })
     end
 
     def common_props
