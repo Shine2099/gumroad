@@ -49,6 +49,7 @@ const New = () => {
               id="confirmation_text"
               name="confirmation_text"
               type="text"
+              required
               placeholder={field_name}
               value={form.data.confirmation_text}
               onChange={(e) => form.setData("confirmation_text", e.target.value)}
