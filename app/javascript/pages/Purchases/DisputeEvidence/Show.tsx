@@ -3,6 +3,8 @@ import { DirectUpload } from "@rails/activestorage";
 import * as React from "react";
 import { cast } from "ts-safe-cast";
 
+import { StandaloneLayout } from "$app/inertia/layout";
+
 import {
   CancellationRebuttalOption,
   DisputeReason,
@@ -424,4 +426,4 @@ const Files = ({
   );
 };
 
-Show.publicLayout = true;
+Show.layout = (page: React.ReactNode) => <StandaloneLayout>{page}</StandaloneLayout>;

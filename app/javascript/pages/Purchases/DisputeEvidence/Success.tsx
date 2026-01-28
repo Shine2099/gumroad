@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import { StandaloneLayout } from "$app/inertia/layout";
+
 import { Card, CardContent } from "$app/components/ui/Card";
 
 export default function Success() {
@@ -16,4 +18,4 @@ export default function Success() {
   );
 }
 
-Success.publicLayout = true;
+Success.layout = (page: React.ReactNode) => <StandaloneLayout>{page}</StandaloneLayout>;
