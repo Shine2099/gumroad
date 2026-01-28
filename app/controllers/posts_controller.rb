@@ -19,9 +19,6 @@ class PostsController < ApplicationController
     # Skip fetching post again if it's already fetched in check_if_needs_redirect
     @post || fetch_post(false)
 
-    @body_class = "post-page"
-    @body_id = "post_page"
-
     # Set @user instance variable to apply third-party analytics config in layouts/_head partial.
     @user = @post.seller
     seller_context = SellerContext.new(
