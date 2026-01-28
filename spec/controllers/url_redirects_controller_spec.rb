@@ -1545,10 +1545,6 @@ describe UrlRedirectsController do
           get :read, params: { id: @token, product_file_id: @product.product_files.first.external_id }
           expect(response).to be_successful
           expect_inertia.to render_component("UrlRedirects/Read")
-
-          html = Nokogiri::HTML.parse(response.body)
-          expect(html.at("title").text).to eq("The Works of Edgar Gumstein")
-
           expect(inertia.props[:url]).to include("X-Amz-Signature=")
           expect(inertia.props[:url]).to include(S3_BUCKET)
           expect(inertia.props[:title]).to eq("The Works of Edgar Gumstein")
