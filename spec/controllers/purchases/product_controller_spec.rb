@@ -12,10 +12,10 @@ describe Purchases::ProductController, type: :controller, inertia: true do
 
       expect(response).to be_successful
       expect_inertia.to render_component "PurchaseProductPage"
-      purchase_product_presenter = assigns(:purchase_product_presenter)
-      expect(purchase_product_presenter.product).to eq(purchase.link)
-      product_props = assigns(:product_props)
-      expect(product_props).to eq(ProductPresenter.new(product: purchase.link, request:).product_props(seller_custom_domain_url: nil).deep_merge(purchase_product_presenter.product_props))
+
+      expected_custom_css = purchase.link.user.seller_profile.custom_styles.to_s
+      expect(inertia.props[:custom_css]).to eq(expected_custom_css)
+      expect(inertia.props[:product][:id]).to eq(purchase.link.external_id)
     end
 
     it "404s for an invalid purchase id" do
