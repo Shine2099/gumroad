@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class SecureRedirectController < ApplicationController
-  include InertiaRendering
 
   before_action :validate_params, only: [:new, :create]
   before_action :set_encrypted_params, only: [:new, :create]
