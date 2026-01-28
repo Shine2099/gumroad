@@ -1,7 +1,8 @@
-import * as React from "react";
 import { usePage } from "@inertiajs/react";
-import { CartState, newCartState } from "$app/components/Checkout/cartState";
+import * as React from "react";
 import { cast } from "ts-safe-cast";
+
+import { CartState, newCartState } from "$app/components/Checkout/cartState";
 
 type Props = {
   cart: CartState | null;
