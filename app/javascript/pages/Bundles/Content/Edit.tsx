@@ -40,6 +40,7 @@ type ContentFormData = {
   products: BundleProduct[];
   publish?: boolean;
   unpublish?: boolean;
+  redirect_to?: string;
 };
 
 export default function BundlesContentEdit() {
@@ -156,6 +157,11 @@ export default function BundlesContentEdit() {
   const handlePreview = () => {
     window.open(url);
   };
+  const handleBeforeNavigate = (targetPath: string) => {
+    if (!form.isDirty) return false;
+    submitForm({ redirect_to: targetPath });
+    return true;
+  };
 
   const updateProducts = (newProducts: BundleProduct[]) => {
     form.setData("products", newProducts);
@@ -212,6 +218,7 @@ export default function BundlesContentEdit() {
       {...(!bundle.is_published && { onPublish: handlePublish })}
       {...(bundle.is_published && { onPreview: handlePreview })}
       isProcessing={form.processing}
+      onBeforeNavigate={handleBeforeNavigate}
     >
       <form onSubmit={(evt) => evt.preventDefault()} ref={formRef}>
         <section className="p-4! md:p-8!">

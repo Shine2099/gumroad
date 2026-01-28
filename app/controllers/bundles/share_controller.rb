@@ -29,7 +29,7 @@ class Bundles::ShareController < Bundles::BaseController
     end
 
     if params[:unpublish].present?
-      redirect_to edit_bundle_product_path(bundle.external_id), notice: "Unpublished!", status: :see_other
+      redirect_to edit_bundle_content_path(bundle.external_id), notice: "Unpublished!", status: :see_other
     else
       redirect_back fallback_location: edit_bundle_share_path(bundle.external_id), notice: "Changes saved!", status: :see_other
     end

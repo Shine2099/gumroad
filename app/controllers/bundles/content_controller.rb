@@ -19,6 +19,8 @@ class Bundles::ContentController < Bundles::BaseController
 
     bundle = nil
     ActiveRecord::Base.transaction do
+      @bundle.is_bundle = true
+      @bundle.native_type = Link::NATIVE_TYPE_BUNDLE
       bundle = Bundle::UpdateProductsService.new(bundle: @bundle, products: content_permitted_params).perform
 
       bundle.publish! if should_publish
@@ -29,6 +31,8 @@ class Bundles::ContentController < Bundles::BaseController
       redirect_to edit_bundle_share_path(bundle.external_id), notice: "Published!", status: :see_other
     elsif should_unpublish
       redirect_back fallback_location: edit_bundle_content_path(bundle.external_id), notice: "Unpublished!", status: :see_other
+    elsif params[:redirect_to].present?
+      redirect_to params[:redirect_to], notice: "Changes saved!", status: :see_other
     else
       redirect_back fallback_location: edit_bundle_content_path(bundle.external_id), notice: "Changes saved!", status: :see_other
     end
@@ -43,6 +47,7 @@ class Bundles::ContentController < Bundles::BaseController
       return
     end
 
+    @bundle.update!(has_outdated_purchases: false)
     UpdateBundlePurchasesContentJob.perform_async(@bundle.id)
 
     redirect_to edit_bundle_content_path(@bundle.external_id), notice: "Queued an update to the content of all outdated purchases.", status: :see_other

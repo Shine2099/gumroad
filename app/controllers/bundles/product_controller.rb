@@ -43,6 +43,8 @@ class Bundles::ProductController < Bundles::BaseController
 
     if should_unpublish
       redirect_back fallback_location: edit_bundle_product_path(@bundle.external_id), notice: "Unpublished!", status: :see_other
+    elsif params[:redirect_to].present?
+      redirect_to params[:redirect_to], notice: "Changes saved!", status: :see_other
     elsif was_published
       redirect_back fallback_location: edit_bundle_product_path(@bundle.external_id), notice: "Changes saved!", status: :see_other
     else

@@ -89,6 +89,7 @@ type ProductFormData = {
   allow_installment_plan: boolean;
   installment_plan: { number_of_installments: number } | null;
   unpublish?: boolean;
+  redirect_to?: string;
 };
 
 export default function BundlesProductEdit() {
@@ -114,8 +115,17 @@ export default function BundlesProductEdit() {
   const [thumbnail, setThumbnail] = React.useState(initialThumbnail ?? null);
   const [initialBundle] = React.useState(bundle);
   const [showRefundPolicyPreview, setShowRefundPolicyPreview] = React.useState(false);
+  const [publicFiles, setPublicFiles] = React.useState(bundle.public_files);
 
   const { isUploading, setImagesUploading } = useImageUpload();
+
+  const updatePublicFiles = React.useCallback((updater: (prev: typeof publicFiles) => void) => {
+    setPublicFiles((prev) => {
+      const next = [...prev];
+      updater(next);
+      return next;
+    });
+  }, []);
 
   const form = useForm<ProductFormData>({
     name: bundle.name,
@@ -180,6 +190,11 @@ export default function BundlesProductEdit() {
       onSuccess: () => window.open(url),
     });
   };
+  const handleBeforeNavigate = (targetPath: string) => {
+    if (!form.isDirty) return false;
+    submitForm({ redirect_to: targetPath });
+    return true;
+  };
 
   // Build preview bundle from form data
   const previewBundle = {
@@ -197,6 +212,7 @@ export default function BundlesProductEdit() {
     custom_summary: form.data.custom_summary,
     custom_attributes: form.data.custom_attributes,
     refund_policy: form.data.refund_policy,
+    public_files: publicFiles,
   };
 
   return (
@@ -206,7 +222,7 @@ export default function BundlesProductEdit() {
       customPermalink={form.data.custom_permalink}
       uniquePermalink={unique_permalink}
       isPublished={bundle.is_published}
-      publicFiles={bundle.public_files}
+      publicFiles={publicFiles}
       preview={
         <ProductPreview
           bundle={previewBundle}
@@ -226,6 +242,7 @@ export default function BundlesProductEdit() {
       {...(bundle.is_published && { onUnpublish: handleUnpublish })}
       {...(!bundle.is_published && { onSaveAndContinue: handleSaveAndContinue })}
       onPreview={handlePreview}
+      onBeforeNavigate={handleBeforeNavigate}
     >
       <form>
         <section className="p-4! md:p-8!">
@@ -243,8 +260,8 @@ export default function BundlesProductEdit() {
             initialDescription={initialBundle.description}
             onChange={(description) => form.setData("description", description)}
             setImagesUploading={setImagesUploading}
-            publicFiles={bundle.public_files}
-            updatePublicFiles={() => {}}
+            publicFiles={publicFiles}
+            updatePublicFiles={updatePublicFiles}
             audioPreviewsEnabled={bundle.audio_previews_enabled}
           />
           <CustomPermalinkInput

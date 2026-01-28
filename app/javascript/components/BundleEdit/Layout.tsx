@@ -48,6 +48,7 @@ type BundleEditLayoutProps = {
   onUnpublish?: () => void;
   onSaveAndContinue?: () => void;
   onPreview?: () => void;
+  onBeforeNavigate?: (targetPath: string) => boolean;
 };
 
 export const BundleEditLayout = ({
@@ -66,6 +67,7 @@ export const BundleEditLayout = ({
   onUnpublish,
   onSaveAndContinue,
   onPreview,
+  onBeforeNavigate,
 }: BundleEditLayoutProps) => {
   const tab = useCurrentTab();
 
@@ -95,7 +97,7 @@ export const BundleEditLayout = ({
     </WithTooltip>
   ) : null;
 
-  const handleTabClick = (e: React.MouseEvent) => {
+  const handleTabClick = (e: React.MouseEvent<HTMLAnchorElement>, targetPath: string) => {
     const message = isUploadingFiles
       ? "Some files are still uploading, please wait..."
       : isUploadingFilesOrImages
@@ -105,6 +107,11 @@ export const BundleEditLayout = ({
     if (message) {
       e.preventDefault();
       showAlert(message, "warning");
+      return;
+    }
+
+    if (onBeforeNavigate?.(targetPath)) {
+      e.preventDefault();
     }
   };
 
@@ -144,7 +151,7 @@ export const BundleEditLayout = ({
               {onPublish ? (
                 <WithTooltip tip={saveButtonTooltip}>
                   <Button color="accent" disabled={isBusy} onClick={onPublish}>
-                    {isProcessing ? "Publishing..." : "Publish"}
+                    {isProcessing ? "Publishing..." : "Publish and continue"}
                   </Button>
                 </WithTooltip>
               ) : null}
@@ -154,17 +161,17 @@ export const BundleEditLayout = ({
       >
         <Tabs style={{ gridColumn: 1 }}>
           <Tab asChild isSelected={tab === "product"}>
-            <Link href={rootPath} onClick={handleTabClick}>
+            <Link href={rootPath} onClick={(e) => handleTabClick(e, rootPath)}>
               Product
             </Link>
           </Tab>
           <Tab asChild isSelected={tab === "content"}>
-            <Link href={Routes.edit_bundle_content_path(id)} onClick={handleTabClick}>
+            <Link href={Routes.edit_bundle_content_path(id)} onClick={(e) => handleTabClick(e, Routes.edit_bundle_content_path(id))}>
               Content
             </Link>
           </Tab>
           <Tab asChild isSelected={tab === "share"}>
-            <Link href={Routes.edit_bundle_share_path(id)} onClick={handleTabClick}>
+            <Link href={Routes.edit_bundle_share_path(id)} onClick={(e) => handleTabClick(e, Routes.edit_bundle_share_path(id))}>
               Share
             </Link>
           </Tab>

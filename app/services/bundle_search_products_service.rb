@@ -39,7 +39,7 @@ class BundleSearchProductsService
         is_call: false,
         exclude_ids: [ObfuscateIds.decrypt(bundle.external_id)],
       }
-      params[:size] = PER_PAGE unless all
+      params[:size] = all ? 1000 : PER_PAGE
       params
     end
 end
