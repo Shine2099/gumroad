@@ -278,22 +278,24 @@ Rails.application.routes.draw do
   get "/s3_utility/generate_multipart_signature", to: "s3_utility#generate_multipart_signature"
 
   constraints GumroadDomainConstraint do
-    get "/products/:id/edit", to: "products/edit/product#edit", as: :edit_link
-
     resources :products, only: [], param: :id do
       scope module: "products" do
-        resource :product, only: [:edit, :update], path: "", controller: "edit/product"
-        get "edit/content", to: "edit/content#edit", as: :edit_content
-        patch "edit/content", to: "edit/content#update"
-        put "edit/content", to: "edit/content#update"
-        get "edit/receipt", to: "edit/receipt#edit", as: :edit_receipt
-        patch "edit/receipt", to: "edit/receipt#update"
-        put "edit/receipt", to: "edit/receipt#update"
-        get "edit/share", to: "edit/share#edit", as: :edit_share
-        patch "edit/share", to: "edit/share#update"
-        put "edit/share", to: "edit/share#update"
+        resource :product, only: [:edit, :update], path: "product", controller: "edit/product"
+        resource :content, only: [:edit, :update], controller: "edit/content"
+        resource :receipt, only: [:edit, :update], controller: "edit/receipt"
+        resource :share, only: [:edit, :update], controller: "edit/share"
+      end
+
+      # Backward compatibility redirects for old product edit URLs (like bundles)
+      member do
+        get :edit, to: redirect("/products/%{id}/product/edit"), as: nil
+        get "edit/content", to: redirect("/products/%{id}/content/edit")
+        get "edit/receipt", to: redirect("/products/%{id}/receipt/edit")
+        get "edit/share", to: redirect("/products/%{id}/share/edit")
       end
     end
+
+    get "/products/:id/edit", to: redirect("/products/%{id}/product/edit"), as: :edit_link
 
     get "/about", to: "home#about"
     get "/features", to: "home#features"

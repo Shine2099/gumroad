@@ -10,24 +10,37 @@ module Products
       end
 
       def update
-        begin
-          ActiveRecord::Base.transaction do
-            update_product_attributes
-          end
-        rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid, Link::LinkInvalid => e
-          if @product.errors.details[:custom_fields].present?
-            error_message = "You must add titles to all of your inputs"
-          else
-            error_message = @product.errors.full_messages.first || e.message
-          end
-          flash[:alert] = error_message
-          return redirect_back fallback_location: edit_product_product_path(@product.external_id)
+        authorize @product
+
+        should_unpublish = params[:unpublish].present? && @product.published?
+        was_published = @product.published?
+
+        if should_unpublish
+          @product.unpublish!
+          check_offer_codes_validity
+          return redirect_back fallback_location: edit_product_product_path(@product.unique_permalink), notice: "Unpublished!", status: :see_other
         end
 
-        flash[:notice] = "Your changes have been saved!"
+        ActiveRecord::Base.transaction do
+          update_product_attributes
+        end
+
         check_offer_codes_validity
 
-        redirect_to edit_product_product_path(@product.unique_permalink)
+        if params[:redirect_to].present?
+          redirect_to params[:redirect_to], notice: "Changes saved!", status: :see_other
+        elsif was_published
+          redirect_back fallback_location: edit_product_product_path(@product.unique_permalink), notice: "Changes saved!", status: :see_other
+        else
+          redirect_to edit_product_content_path(@product.unique_permalink), notice: "Changes saved!", status: :see_other
+        end
+      rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid, Link::LinkInvalid => e
+        error_message = if @product.errors.details[:custom_fields].present?
+          "You must add titles to all of your inputs"
+        else
+          @product.errors.full_messages.first || e.message
+        end
+        redirect_to edit_product_product_path(@product.unique_permalink), alert: error_message, status: :see_other
       end
 
       private

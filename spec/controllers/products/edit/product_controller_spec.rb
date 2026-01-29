@@ -21,7 +21,7 @@ describe Products::Edit::ProductController, inertia: true do
       get :edit, params: { product_id: product.unique_permalink }
 
       expect(response).to be_successful
-      expect(inertia).to render_component("Products/Edit/Product")
+      expect(inertia.component).to eq("Products/Edit/Product")
       expect(inertia.props.keys).to include(:id, :unique_permalink, :product, :seller)
       expect(inertia.props[:id]).to eq(product.external_id)
       expect(inertia.props[:unique_permalink]).to eq(product.unique_permalink)
@@ -75,7 +75,7 @@ describe Products::Edit::ProductController, inertia: true do
       }
     end
 
-    it_behaves_like "authorize called for action", :patch, :update do
+    it_behaves_like "authorize called for action", :put, :update do
       let(:record) { product }
       let(:request_params) { params }
       let(:request_format) { :html }
@@ -84,23 +84,23 @@ describe Products::Edit::ProductController, inertia: true do
     context "with Inertia request" do
       before { request.headers["X-Inertia"] = "true" }
 
-      it_behaves_like "collaborator can access", :patch, :update do
+      it_behaves_like "collaborator can access", :put, :update do
         let(:request_params) { params }
-        let(:response_status) { 302 }
+        let(:response_status) { 303 }
       end
 
       it "updates the product and redirects to edit path" do
-        patch :update, params: params
+        put :update, params: params
 
         expect(product.reload.name).to eq("Updated Name")
         expect(product.description).to eq("Updated Description")
         expect(response).to redirect_to(edit_product_product_path(product.unique_permalink))
-        expect(flash[:notice]).to eq("Your changes have been saved!")
+        expect(flash[:notice]).to eq("Changes saved!")
       end
 
       it "marks the product as allowing display of sales count when should_show_sales_count is true" do
         product.update!(should_show_sales_count: false)
-        patch :update, params: {
+        put :update, params: {
           product_id: product.unique_permalink,
           product: { name: product.name, should_show_sales_count: true }
         }
@@ -110,7 +110,7 @@ describe Products::Edit::ProductController, inertia: true do
 
       it "marks the product as not allowing display of sales count when should_show_sales_count is false" do
         product.update!(should_show_sales_count: true)
-        patch :update, params: {
+        put :update, params: {
           product_id: product.unique_permalink,
           product: { name: product.name, should_show_sales_count: false }
         }
@@ -136,7 +136,7 @@ describe Products::Edit::ProductController, inertia: true do
       before { request.headers["X-Inertia"] = "true" }
 
       it "updates shipping destinations" do
-        patch :update, params: update_params
+        put :update, params: update_params
         expect(physical_product.reload.shipping_destinations.count).to eq(1)
         expect(physical_product.shipping_destinations.first.country_code).to eq("ELSEWHERE")
         expect(response).to redirect_to(edit_product_product_path(physical_product.unique_permalink))
@@ -148,7 +148,7 @@ describe Products::Edit::ProductController, inertia: true do
 
       it "enables product-level refund policy when product_refund_policy_enabled is true" do
         product.update!(product_refund_policy_enabled: false)
-        patch :update, params: {
+        put :update, params: {
           product_id: product.unique_permalink,
           product: { name: product.name, product_refund_policy_enabled: true }
         }
@@ -158,7 +158,7 @@ describe Products::Edit::ProductController, inertia: true do
 
       it "disables product-level refund policy when product_refund_policy_enabled is false" do
         product.update!(product_refund_policy_enabled: true)
-        patch :update, params: {
+        put :update, params: {
           product_id: product.unique_permalink,
           product: { name: product.name, product_refund_policy_enabled: false }
         }
@@ -171,7 +171,7 @@ describe Products::Edit::ProductController, inertia: true do
       before { request.headers["X-Inertia"] = "true" }
 
       it "saves custom attributes and filters out entries with blank name and value" do
-        patch :update, params: {
+        put :update, params: {
           product_id: product.unique_permalink,
           product: {
             name: product.name,
@@ -200,7 +200,7 @@ describe Products::Edit::ProductController, inertia: true do
       end
 
       it "updates which profile sections show the product" do
-        patch :update, params: {
+        put :update, params: {
           product_id: product.unique_permalink,
           product: { name: product.name, section_ids: [profile_section2.external_id] }
         }
@@ -217,7 +217,7 @@ describe Products::Edit::ProductController, inertia: true do
       before { request.headers["X-Inertia"] = "true" }
 
       it "sets suggested_price_cents from the max price_difference_cents of variants" do
-        patch :update, params: {
+        put :update, params: {
           product_id: coffee_product.unique_permalink,
           product: {
             name: coffee_product.name,

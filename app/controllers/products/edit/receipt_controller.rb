@@ -14,14 +14,12 @@ module Products
           end
         rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid, Link::LinkInvalid => e
           error_message = @product.errors.full_messages.first || e.message
-          flash[:alert] = error_message
-          return redirect_back fallback_location: product_edit_receipt_path(@product.external_id)
+          return redirect_to edit_product_receipt_path(@product.unique_permalink), alert: error_message, status: :see_other
         end
 
-        flash[:notice] = "Your changes have been saved!"
         check_offer_codes_validity
 
-        redirect_to product_edit_receipt_path(@product.unique_permalink)
+        redirect_to edit_product_receipt_path(@product.unique_permalink), notice: "Changes saved!", status: :see_other
       end
 
       private

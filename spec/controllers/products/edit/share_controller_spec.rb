@@ -23,7 +23,7 @@ describe Products::Edit::ShareController, inertia: true do
         get :edit, params: { product_id: product.unique_permalink }
 
         expect(response).to be_successful
-        expect(inertia).to render_component("Products/Edit/Share")
+        expect(inertia.component).to eq("Products/Edit/Share")
         expect(inertia.props.keys).to include(:id, :unique_permalink, :product, :seller)
         expect(inertia.props[:id]).to eq(product.external_id)
         expect(inertia.props[:unique_permalink]).to eq(product.unique_permalink)
@@ -39,7 +39,7 @@ describe Products::Edit::ShareController, inertia: true do
       it "redirects to product or content tab with alert" do
         get :edit, params: { product_id: product.unique_permalink }
 
-        expect(response).to redirect_to(product_edit_content_path(product.unique_permalink))
+        expect(response).to redirect_to(edit_product_content_path(product.unique_permalink))
         expect(flash[:alert]).to include("publish")
       end
     end
@@ -60,52 +60,67 @@ describe Products::Edit::ShareController, inertia: true do
       before { request.headers["X-Inertia"] = "true" }
 
       it "updates the share info and redirects" do
-        patch :update, params: params
+        put :update, params: params
 
-        expect(response).to redirect_to(product_edit_share_path(product.unique_permalink))
-        expect(flash[:notice]).to eq("Your changes have been saved!")
+        expect(response).to redirect_to(edit_product_share_path(product.unique_permalink))
+        expect(flash[:notice]).to eq("Changes saved!")
         expect(product.reload.is_adult).to be(true)
         expect(product.display_product_reviews).to be(false)
       end
 
       it "sets is_adult to true when product is_adult is true" do
         product.update!(is_adult: false)
-        patch :update, params: {
+        put :update, params: {
           product_id: product.unique_permalink,
           product: { is_adult: true }
         }
         expect(product.reload.is_adult).to be(true)
-        expect(response).to redirect_to(product_edit_share_path(product.unique_permalink))
+        expect(response).to redirect_to(edit_product_share_path(product.unique_permalink))
       end
 
       it "sets is_adult to false when product is_adult is false" do
         product.update!(is_adult: true)
-        patch :update, params: {
+        put :update, params: {
           product_id: product.unique_permalink,
           product: { is_adult: false }
         }
         expect(product.reload.is_adult).to be(false)
-        expect(response).to redirect_to(product_edit_share_path(product.unique_permalink))
+        expect(response).to redirect_to(edit_product_share_path(product.unique_permalink))
       end
 
       it "sets display_product_reviews to true when display_product_reviews is true" do
         product.update!(display_product_reviews: false)
-        patch :update, params: {
+        put :update, params: {
           product_id: product.unique_permalink,
           product: { display_product_reviews: true }
         }
         expect(product.reload.display_product_reviews).to be(true)
-        expect(response).to redirect_to(product_edit_share_path(product.unique_permalink))
+        expect(response).to redirect_to(edit_product_share_path(product.unique_permalink))
       end
 
       it "sets display_product_reviews to false when display_product_reviews is false" do
         product.update!(display_product_reviews: true)
-        patch :update, params: {
+        put :update, params: {
           product_id: product.unique_permalink,
           product: { display_product_reviews: false }
         }
         expect(product.reload.display_product_reviews).to be(false)
-        expect(response).to redirect_to(product_edit_share_path(product.unique_permalink))
+        expect(response).to redirect_to(edit_product_share_path(product.unique_permalink))
+      end
+
+      context "when unpublishing" do
+        before { product.publish! }
+
+        it "unpublishes and redirects to content tab" do
+          put :update, params: {
+            product_id: product.unique_permalink,
+            unpublish: true
+          }
+
+          expect(response).to redirect_to(edit_product_content_path(product.unique_permalink))
+          expect(flash[:notice]).to eq("Unpublished!")
+          expect(product.reload.purchase_disabled_at).to be_present
+        end
       end
     end
 

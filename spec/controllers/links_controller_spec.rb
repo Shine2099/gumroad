@@ -79,7 +79,7 @@ describe LinksController, :vcr, inertia: true do
         it "publishes and redirects with flash notice" do
           post :publish, params: { id: @disabled_link.unique_permalink }
 
-          expect(response).to redirect_to(product_edit_share_path(@disabled_link.unique_permalink))
+          expect(response).to redirect_to(edit_product_share_path(@disabled_link.unique_permalink))
           expect(flash[:notice]).to eq("Published!")
           expect(@disabled_link.reload.purchase_disabled_at).to be_nil
         end
@@ -185,7 +185,7 @@ describe LinksController, :vcr, inertia: true do
 
           post :unpublish, params: { id: product.unique_permalink }
 
-          expect(response).to redirect_to(edit_link_path(product.unique_permalink))
+          expect(response).to redirect_to(edit_product_product_path(product.unique_permalink))
           expect(flash[:notice]).to eq("Unpublished!")
           expect(product.reload.purchase_disabled_at).to be_present
         end

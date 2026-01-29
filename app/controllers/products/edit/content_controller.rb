@@ -8,20 +8,34 @@ module Products
       end
 
       def update
-        begin
-          ActiveRecord::Base.transaction do
-            update_content_attributes
-          end
-        rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid, Link::LinkInvalid => e
-          error_message = @product.errors.full_messages.first || e.message
-          flash[:alert] = error_message
-          return redirect_back fallback_location: product_edit_content_path(@product.external_id)
+        authorize @product
+
+        should_publish = params[:publish].present? && !@product.published?
+        should_unpublish = params[:unpublish].present? && @product.published?
+
+        if should_unpublish
+          @product.unpublish!
+          check_offer_codes_validity
+          return redirect_back fallback_location: edit_product_content_path(@product.unique_permalink), notice: "Unpublished!", status: :see_other
         end
 
-        flash[:notice] = "Your changes have been saved!"
+        ActiveRecord::Base.transaction do
+          update_content_attributes
+          @product.publish! if should_publish
+        end
+
         check_offer_codes_validity
 
-        redirect_to product_edit_content_path(@product.unique_permalink)
+        if should_publish
+          redirect_to edit_product_share_path(@product.unique_permalink), notice: "Published!", status: :see_other
+        elsif params[:redirect_to].present?
+          redirect_to params[:redirect_to], notice: "Changes saved!", status: :see_other
+        else
+          redirect_back fallback_location: edit_product_content_path(@product.unique_permalink), notice: "Changes saved!", status: :see_other
+        end
+      rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid, Link::LinkInvalid => e
+        error_message = @product.errors.full_messages.first || e.message
+        redirect_to edit_product_content_path(@product.unique_permalink), alert: error_message, status: :see_other
       end
 
       private

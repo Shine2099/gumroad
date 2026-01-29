@@ -21,7 +21,7 @@ describe Products::Edit::ReceiptController, inertia: true do
       get :edit, params: { product_id: product.unique_permalink }
 
       expect(response).to be_successful
-      expect(inertia).to render_component("Products/Edit/Receipt")
+      expect(inertia.component).to eq("Products/Edit/Receipt")
       expect(inertia.props.keys).to include(:id, :unique_permalink, :product, :seller)
       expect(inertia.props[:id]).to eq(product.external_id)
       expect(inertia.props[:unique_permalink]).to eq(product.unique_permalink)
@@ -45,16 +45,16 @@ describe Products::Edit::ReceiptController, inertia: true do
     context "with Inertia request" do
       before { request.headers["X-Inertia"] = "true" }
 
-      it_behaves_like "collaborator can access", :patch, :update do
+      it_behaves_like "collaborator can access", :put, :update do
         let(:request_params) { params }
-        let(:response_status) { 302 }
+        let(:response_status) { 303 }
       end
 
       it "updates the receipt info and redirects" do
-        patch :update, params: params
+        put :update, params: params
 
-        expect(response).to redirect_to(product_edit_receipt_path(product.unique_permalink))
-        expect(flash[:notice]).to eq("Your changes have been saved!")
+        expect(response).to redirect_to(edit_product_receipt_path(product.unique_permalink))
+        expect(flash[:notice]).to eq("Changes saved!")
         expect(product.reload.custom_receipt_text).to eq("Thanks for buying!")
         expect(product.custom_view_content_button_text).to eq("Download Now")
       end

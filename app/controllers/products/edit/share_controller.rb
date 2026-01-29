@@ -10,20 +10,23 @@ module Products
       end
 
       def update
-        begin
-          ActiveRecord::Base.transaction do
-            update_share_attributes
-          end
-        rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid, Link::LinkInvalid => e
-          error_message = @product.errors.full_messages.first || e.message
-          flash[:alert] = error_message
-          return redirect_back fallback_location: product_edit_share_path(@product.external_id)
+        authorize @product
+
+        ActiveRecord::Base.transaction do
+          update_share_attributes
+          @product.unpublish! if params[:unpublish].present? && @product.published?
         end
 
-        flash[:notice] = "Your changes have been saved!"
         check_offer_codes_validity
 
-        redirect_to product_edit_share_path(@product.unique_permalink)
+        if params[:unpublish].present?
+          redirect_to edit_product_content_path(@product.unique_permalink), notice: "Unpublished!", status: :see_other
+        else
+          redirect_back fallback_location: edit_product_share_path(@product.unique_permalink), notice: "Changes saved!", status: :see_other
+        end
+      rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid, Link::LinkInvalid => e
+        error_message = @product.errors.full_messages.first || e.message
+        redirect_to edit_product_share_path(@product.unique_permalink), alert: error_message, status: :see_other
       end
 
       private
@@ -31,9 +34,8 @@ module Products
         def ensure_published_for_share
           return if !@product.draft && @product.alive?
 
-          flash[:alert] = "Not yet! You've got to publish your awesome product before you can share it with your audience and the world."
-          redirect_path = @product.native_type == Link::NATIVE_TYPE_COFFEE ? edit_product_product_path(@product.unique_permalink) : product_edit_content_path(@product.unique_permalink)
-          redirect_to redirect_path
+          redirect_path = @product.native_type == Link::NATIVE_TYPE_COFFEE ? edit_product_product_path(@product.unique_permalink) : edit_product_content_path(@product.unique_permalink)
+          redirect_to redirect_path, alert: "Not yet! You've got to publish your awesome product before you can share it with your audience and the world."
         end
 
         def update_share_attributes
@@ -55,7 +57,7 @@ module Products
         end
 
         def product_permitted_params
-          params.require(:product).permit(policy(@product).share_tab_permitted_attributes)
+          params.fetch(:product, {}).permit(policy(@product).share_tab_permitted_attributes)
         end
     end
   end

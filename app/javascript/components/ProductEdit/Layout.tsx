@@ -135,7 +135,6 @@ export const Layout = ({
   showNavigationButton?: boolean;
 }) => {
   const { product, updateProduct, uniquePermalink, saving, save } = useProductEditContext();
-  const rootPath = Routes.edit_product_product_path(uniquePermalink);
 
   const url = useProductUrl();
   const checkoutUrl = useProductUrl({ wanted: true });
@@ -164,15 +163,36 @@ export const Layout = ({
       }
     }
 
-    const publishUrl = published ? Routes.publish_link_path(uniquePermalink) : Routes.unpublish_link_path(uniquePermalink);
-
-    router.post(publishUrl, {}, {
-      preserveScroll: true,
-      onSuccess: () => {
-        updateProduct({ is_published: published });
-      },
-      onFinish: () => setIsPublishing(false),
-    });
+    if (published) {
+      router.post(Routes.publish_link_path(uniquePermalink), {}, {
+        preserveScroll: true,
+        onSuccess: () => updateProduct({ is_published: true }),
+        onFinish: () => setIsPublishing(false),
+      });
+    } else {
+      // Unpublish: use current tab's update URL with unpublish (like bundles)
+      if (tab === "product" || tab === "content" || tab === "share") {
+        const unpublishUrl =
+          tab === "product"
+            ? Routes.product_product_path(uniquePermalink)
+            : tab === "content"
+              ? Routes.product_content_path(uniquePermalink)
+              : Routes.product_share_path(uniquePermalink);
+        router.visit(unpublishUrl, {
+          method: "patch",
+          data: { unpublish: true },
+          preserveScroll: true,
+          onSuccess: () => updateProduct({ is_published: false }),
+          onFinish: () => setIsPublishing(false),
+        });
+      } else {
+        router.post(Routes.unpublish_link_path(uniquePermalink), {}, {
+          preserveScroll: true,
+          onSuccess: () => updateProduct({ is_published: false }),
+          onFinish: () => setIsPublishing(false),
+        });
+      }
+    }
   };
 
   const isUploadingFile = (file: FileEntry | SubtitleFile) =>
@@ -257,7 +277,7 @@ export const Layout = ({
             <Button
               color="primary"
               disabled={isBusy}
-              onClick={() => void save().then(() => navigate.current(`${rootPath}/content`))}
+              onClick={() => void save().then(() => navigate.current(Routes.edit_product_content_path(uniquePermalink)))}
             >
               {saving ? "Saving changes..." : "Save and continue"}
             </Button>
@@ -287,18 +307,18 @@ export const Layout = ({
             </Tab>
             {!isCoffee ? (
               <Tab asChild isSelected={tab === "content"}>
-                <Link href={Routes.product_edit_content_path(uniquePermalink)} onClick={onTabClick}>
+                <Link href={Routes.edit_product_content_path(uniquePermalink)} onClick={onTabClick}>
                   Content
                 </Link>
               </Tab>
             ) : null}
             <Tab asChild isSelected={tab === "receipt"}>
-              <Link href={Routes.product_edit_receipt_path(uniquePermalink)} onClick={onTabClick}>
+              <Link href={Routes.edit_product_receipt_path(uniquePermalink)} onClick={onTabClick}>
                 Receipt
               </Link>
             </Tab>
             <Tab asChild isSelected={tab === "share"}>
-              <Link href={Routes.product_edit_share_path(uniquePermalink)} onClick={onTabClick}>
+              <Link href={Routes.edit_product_share_path(uniquePermalink)} onClick={onTabClick}>
                 Share
               </Link>
             </Tab>

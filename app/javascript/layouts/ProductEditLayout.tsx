@@ -130,9 +130,9 @@ export default function ProductEditLayout({ children }: { children: React.ReactN
 
       const pathname = window.location.pathname;
       let updateUrl: string;
-      if (pathname.includes("/edit/content")) updateUrl = Routes.product_edit_content_path(uniquePermalink);
-      else if (pathname.includes("/edit/receipt")) updateUrl = Routes.product_edit_receipt_path(uniquePermalink);
-      else if (pathname.includes("/edit/share")) updateUrl = Routes.product_edit_share_path(uniquePermalink);
+      if (pathname.includes("/content/edit")) updateUrl = Routes.product_content_path(uniquePermalink);
+      else if (pathname.includes("/receipt/edit")) updateUrl = Routes.product_receipt_path(uniquePermalink);
+      else if (pathname.includes("/share/edit")) updateUrl = Routes.product_share_path(uniquePermalink);
       else updateUrl = Routes.product_product_path(uniquePermalink);
 
       form.patch(updateUrl, {
