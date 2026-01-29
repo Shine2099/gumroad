@@ -12,20 +12,20 @@ import placeholderImage from "$assets/images/placeholders/comic-stars.png";
 
 type Props = UnavailablePageProps;
 
-const ExpiredPage = () => {
+const RentalExpired = () => {
   const props = cast<Props>(usePage().props);
 
   return (
-    <UnavailablePageLayout {...props} titleSuffix="Access expired" contentUnavailabilityReasonCode="access_expired">
+    <UnavailablePageLayout {...props} contentUnavailabilityReasonCode="rental_expired">
       <Placeholder className="flex-1 content-center">
         <PlaceholderImage src={placeholderImage} />
-        <h2>Access expired</h2>
-        <p>It looks like your access to this product has expired. Please contact the creator for further assistance.</p>
+        <h2>Your rental has expired</h2>
+        <p>Rentals expire 30 days after purchase or 72 hours after you've begun watching it.</p>
       </Placeholder>
     </UnavailablePageLayout>
   );
 };
 
-ExpiredPage.layout = (page: React.ReactNode) => <StandaloneLayout>{page}</StandaloneLayout>;
+RentalExpired.layout = (page: React.ReactNode) => <StandaloneLayout>{page}</StandaloneLayout>;
 
-export default ExpiredPage;
+export default RentalExpired;

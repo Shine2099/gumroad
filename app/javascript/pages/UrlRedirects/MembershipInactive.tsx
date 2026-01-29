@@ -13,7 +13,7 @@ import placeholderImage from "$assets/images/placeholders/comic-stars.png";
 
 type Props = UnavailablePageProps;
 
-const MembershipInactivePage = () => {
+const MembershipInactive = () => {
   const props = cast<Props>(usePage().props);
 
   const isInstallmentPlan = props.purchase?.membership?.is_installment_plan ?? false;
@@ -32,11 +32,7 @@ const MembershipInactivePage = () => {
   };
 
   return (
-    <UnavailablePageLayout
-      {...props}
-      titleSuffix="Your membership is inactive"
-      contentUnavailabilityReasonCode="inactive_membership"
-    >
+    <UnavailablePageLayout {...props} contentUnavailabilityReasonCode="inactive_membership">
       {isInstallmentPlan ? (
         <Placeholder className="flex-1 content-center">
           <PlaceholderImage src={placeholderImage} />
@@ -74,6 +70,6 @@ const MembershipInactivePage = () => {
   );
 };
 
-MembershipInactivePage.layout = (page: React.ReactNode) => <StandaloneLayout>{page}</StandaloneLayout>;
+MembershipInactive.layout = (page: React.ReactNode) => <StandaloneLayout>{page}</StandaloneLayout>;
 
-export default MembershipInactivePage;
+export default MembershipInactive;
