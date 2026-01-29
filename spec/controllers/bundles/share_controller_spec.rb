@@ -85,7 +85,7 @@ describe Bundles::ShareController, inertia: true do
     end
 
     context "when unpublishing" do
-      it "unpublishes and redirects to product page" do
+      it "unpublishes and redirects to content page" do
         expect do
           put :update, params: {
             bundle_id: bundle.external_id,
@@ -94,7 +94,7 @@ describe Bundles::ShareController, inertia: true do
           bundle.reload
         end.to change { bundle.published? }.from(true).to(false)
 
-        expect(response).to redirect_to(edit_bundle_product_path(bundle.external_id))
+        expect(response).to redirect_to(edit_bundle_content_path(bundle.external_id))
         expect(flash[:notice]).to eq("Unpublished!")
       end
     end
