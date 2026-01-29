@@ -84,7 +84,7 @@ Rails.application.routes.draw do
     end
 
     resources :purchases, only: [] do
-      resource :invoice, only: [:create], path: "generate_invoice", controller: "purchases/invoices" do
+      resource :invoice, only: [:create], path: "generate_invoice" do
         get :confirm, to: "purchases/invoices#confirm"
         post "confirm", to: "purchases/invoices#confirm_email"
       end

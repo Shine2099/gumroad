@@ -17,13 +17,12 @@ class Purchases::InvoicesController < ApplicationController
   end
 
   def create
-    return redirect_to generate_invoice_by_buyer_path(@purchase.external_id, email: create_permitted_params[:email]),
-                       status: :see_other, alert: "Your purchase has not been completed by PayPal yet. Please try again soon." if create_permitted_params["vat_id"].present? && !@purchase.successful?
+    return redirect_to generate_invoice_by_buyer_path(@purchase.external_id, email: invoice_params[:email]), alert: "Your purchase has not been completed by PayPal yet. Please try again soon." if invoice_params["vat_id"].present? && !@purchase.successful?
 
-    address_fields = create_permitted_params[:address_fields]
-    address_fields[:country] = ISO3166::Country[create_permitted_params[:address_fields][:country_code]]&.common_name
-    business_vat_id = create_permitted_params[:vat_id] if is_vat_id_valid?(create_permitted_params[:vat_id])
-    invoice_presenter = InvoicePresenter.new(@chargeable, address_fields:, additional_notes: create_permitted_params[:additional_notes]&.strip, business_vat_id:)
+    address_fields = invoice_params[:address_fields]
+    address_fields[:country] = ISO3166::Country[invoice_params[:address_fields][:country_code]]&.common_name
+    business_vat_id = invoice_params[:vat_id] if is_vat_id_valid?(invoice_params[:vat_id])
+    invoice_presenter = InvoicePresenter.new(@chargeable, address_fields:, additional_notes: invoice_params[:additional_notes]&.strip, business_vat_id:)
 
     begin
       @chargeable.refund_gumroad_taxes!(refunding_user_id: logged_in_user&.id, note: address_fields.to_json, business_vat_id:) if business_vat_id
@@ -53,14 +52,14 @@ class Purchases::InvoicesController < ApplicationController
           end
         message << " " << notice
       end
-      session["invoice_file_url_#{@purchase.external_id}"] = s3_obj.presigned_url(:get, expires_in: SignedUrlHelper::SIGNED_S3_URL_VALID_FOR_MAXIMUM.to_i)
-      redirect_to generate_invoice_by_buyer_path(@purchase.external_id, email: create_permitted_params[:email]), status: :see_other, notice: message
+      session[invoice_file_url_session_key] = s3_obj.presigned_url(:get, expires_in: SignedUrlHelper::SIGNED_S3_URL_VALID_FOR_MAXIMUM.to_i)
+      redirect_to generate_invoice_by_buyer_path(@purchase.external_id, email: invoice_params[:email]), notice: message
     rescue StandardError => e
       Rails.logger.error("Chargeable #{@chargeable.class.name} (#{@chargeable.external_id}) invoice generation failed due to: #{e.inspect}")
       Rails.logger.error(e.message)
       Rails.logger.error(e.backtrace.join("\n"))
 
-      redirect_to generate_invoice_by_buyer_path(@purchase.external_id, email: create_permitted_params[:email]), status: :see_other, alert: "Sorry, something went wrong."
+      redirect_to generate_invoice_by_buyer_path(@purchase.external_id, email: invoice_params[:email]), alert: "Sorry, something went wrong."
     end
   end
 
@@ -70,16 +69,20 @@ class Purchases::InvoicesController < ApplicationController
     render inertia: "Purchases/Invoices/New", props: {
       form_data: -> { new_invoice_presenter.invoice_generation_form_data_props },
       form_metadata: -> { new_invoice_presenter.invoice_generation_form_metadata_props },
-      invoice_file_url: InertiaRails.optional { session.delete("invoice_file_url_#{@purchase.external_id}") },
+      invoice_file_url: InertiaRails.optional { session.delete(invoice_file_url_session_key) },
     }
   end
 
   private
-    def new_invoice_presenter
-      @_invoice_presenter ||= InvoicePresenter.new(@chargeable)
+    def invoice_file_url_session_key
+      "invoice_file_url_#{@purchase.external_id}"
     end
 
-    def create_permitted_params
+    def new_invoice_presenter
+      @_new_invoice_presenter ||= InvoicePresenter.new(@chargeable)
+    end
+
+    def invoice_params
       params.permit(:email, :vat_id, :additional_notes, address_fields: [:full_name, :street_address, :city, :state, :zip_code, :country_code])
     end
 
@@ -96,6 +99,6 @@ class Purchases::InvoicesController < ApplicationController
     def require_email_confirmation
       return if ActiveSupport::SecurityUtils.secure_compare(@purchase.email, params[:email].to_s)
 
-      redirect_to confirm_purchase_invoice_path(@purchase.external_id), status: :see_other, **(params[:email].blank? ? { warning: "Please enter the purchase's email address to generate the invoice." } : { alert: "Incorrect email address. Please try again." })
+      redirect_to confirm_purchase_invoice_path(@purchase.external_id), **(params[:email].blank? ? { warning: "Please enter the purchase's email address to generate the invoice." } : { alert: "Incorrect email address. Please try again." })
     end
 end
