@@ -132,4 +132,15 @@ describe Bundles::ContentController, inertia: true do
       end
     end
   end
+
+  describe "PUT update_purchases_content" do
+    it "updates the purchases content and redirects" do
+      bundle.update!(has_outdated_purchases: true)
+      put :update_purchases_content, params: { bundle_id: bundle.external_id }
+      expect(bundle.reload.has_outdated_purchases).to be(false)
+      expect(response).to redirect_to(edit_bundle_content_path(bundle.external_id))
+      expect(flash[:notice]).to eq("Queued an update to the content of all outdated purchases.")
+      expect(UpdateBundlePurchasesContentJob).to have_enqueued_sidekiq_job(bundle.id)
+    end
+  end
 end

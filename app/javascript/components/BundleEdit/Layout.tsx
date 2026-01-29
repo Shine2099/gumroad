@@ -17,9 +17,10 @@ import { WithTooltip } from "$app/components/WithTooltip";
 
 export const useProductUrl = (uniquePermalink: string, customPermalink?: string | null) => {
   const currentSeller = useCurrentSeller();
-  const { appDomain } = useDomains();
+  const { appDomain, scheme } = useDomains();
   return Routes.short_link_url(customPermalink ?? uniquePermalink, {
     host: currentSeller?.subdomain ?? appDomain,
+    protocol: scheme,
   });
 };
 
@@ -72,7 +73,6 @@ export const BundleEditLayout = ({
   const tab = useCurrentTab();
 
   const url = useProductUrl(uniquePermalink, customPermalink);
-  const rootPath = Routes.edit_bundle_product_path(id);
 
   const isDesktop = useIsAboveBreakpoint("lg");
 
@@ -97,7 +97,7 @@ export const BundleEditLayout = ({
     </WithTooltip>
   ) : null;
 
-  const handleTabClick = (e: React.MouseEvent<HTMLAnchorElement>, targetPath: string) => {
+  const handleTabClick = (e: React.MouseEvent<Element, MouseEvent>, targetPath: string) => {
     const message = isUploadingFiles
       ? "Some files are still uploading, please wait..."
       : isUploadingFilesOrImages
@@ -161,7 +161,7 @@ export const BundleEditLayout = ({
       >
         <Tabs style={{ gridColumn: 1 }}>
           <Tab asChild isSelected={tab === "product"}>
-            <Link href={rootPath} onClick={(e) => handleTabClick(e, rootPath)}>
+            <Link href={Routes.edit_bundle_product_path(id)} onClick={(e) => handleTabClick(e, Routes.edit_bundle_product_path(id))}>
               Product
             </Link>
           </Tab>

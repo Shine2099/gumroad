@@ -42,15 +42,13 @@ class Bundles::ContentController < Bundles::BaseController
   end
 
   def update_purchases_content
-    unless @bundle.has_outdated_purchases?
-      redirect_to edit_bundle_content_path(@bundle.external_id), alert: "This bundle has no purchases with outdated content.", status: :see_other
-      return
+    if @bundle.has_outdated_purchases?
+      @bundle.update!(has_outdated_purchases: false)
+      UpdateBundlePurchasesContentJob.perform_async(@bundle.id)
+      redirect_to edit_bundle_content_path(@bundle.external_id), notice: "Queued an update to the content of all outdated purchases.", status: :see_other
+    else
+      redirect_to edit_bundle_content_path(@bundle.external_id), alert: "This bundle has no purchases with outdated content."
     end
-
-    @bundle.update!(has_outdated_purchases: false)
-    UpdateBundlePurchasesContentJob.perform_async(@bundle.id)
-
-    redirect_to edit_bundle_content_path(@bundle.external_id), notice: "Queued an update to the content of all outdated purchases.", status: :see_other
   end
 
   private

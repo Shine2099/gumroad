@@ -325,6 +325,9 @@ describe("Bundle edit page", type: :system, js: true) do
   end
 
   describe "share tab" do
+    let!(:three_d) { Taxonomy.find_or_create_by!(slug: "3d") }
+    let!(:three_d_modeling) { Taxonomy.find_or_create_by!(slug: "3d-modeling", parent: three_d) }
+
     it "updates the bundle share settings" do
       visit edit_bundle_share_path(bundle.external_id)
 
@@ -334,6 +337,8 @@ describe("Bundle edit page", type: :system, js: true) do
       expect(page).to have_button("Copy URL")
 
       within_fieldset "Category" do
+        find(:combo_box, "Category").click
+        expect(page).to have_combo_box "Category", expanded: true, with_options: ["3D > 3D Modeling"]
         select_combo_box_option search: "3D > 3D Modeling", from: "Category"
       end
 
@@ -417,6 +422,7 @@ describe("Bundle edit page", type: :system, js: true) do
     expect(page).to have_alert(text: "Not yet! You've got to publish your awesome product before you can share it with your audience and the world.")
 
     select_tab "Product"
+    fill_in "name", with: ""
     fill_in "Name", with: "New bundle"
     select_tab "Content"
 
