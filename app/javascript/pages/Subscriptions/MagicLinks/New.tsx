@@ -107,6 +107,6 @@ function SubscriptionsMagicLink() {
   );
 }
 
-SubscriptionsMagicLink.authenticationLayout = true;
+SubscriptionsMagicLink.publicLayout = true;
 
 export default SubscriptionsMagicLink;
