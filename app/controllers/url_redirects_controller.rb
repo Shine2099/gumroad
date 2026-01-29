@@ -164,15 +164,18 @@ class UrlRedirectsController < ApplicationController
   end
 
   def expired
-    render inertia: "UrlRedirects/ExpiredPage", props: url_redirect_presenter.unavailable_page_props
+    set_meta_tag(title: "#{@url_redirect.referenced_link.name} - Access expired")
+    render inertia: "UrlRedirects/Expired", props: url_redirect_presenter.unavailable_page_props
   end
 
   def rental_expired_page
-    render inertia: "UrlRedirects/RentalExpiredPage", props: url_redirect_presenter.unavailable_page_props
+    set_meta_tag(title: "#{@url_redirect.referenced_link.name} - Your rental has expired")
+    render inertia: "UrlRedirects/RentalExpired", props: url_redirect_presenter.unavailable_page_props
   end
 
   def membership_inactive_page
-    render inertia: "UrlRedirects/MembershipInactivePage", props: url_redirect_presenter.unavailable_page_props
+    set_meta_tag(title: "#{@url_redirect.referenced_link.name} - Your membership is inactive")
+    render inertia: "UrlRedirects/MembershipInactive", props: url_redirect_presenter.unavailable_page_props
   end
 
   def change_purchaser
