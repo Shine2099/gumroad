@@ -14,16 +14,15 @@ import { useIsAboveBreakpoint } from "$app/components/useIsAboveBreakpoint";
 
 const UserActionButtons: React.FC = () => {
   const currentSeller = useCurrentSeller();
-  const { scheme, appDomain } = useDomains();
 
   if (currentSeller) {
     return (
       <>
-        <NavigationButton href={Routes.library_url({ protocol: scheme, host: appDomain })} className="flex-1 lg:flex-none">
+        <NavigationButton href={Routes.library_url()} className="flex-1 lg:flex-none">
           <Icon name="bookmark-heart-fill" /> Library
         </NavigationButton>
         {currentSeller.has_published_products ? null : (
-          <NavigationButton href={Routes.products_url({ protocol: scheme, host: appDomain })} color="primary" className="flex-1 lg:flex-none">
+          <NavigationButton href={Routes.products_url()} color="primary" className="flex-1 lg:flex-none">
             Start selling
           </NavigationButton>
         )}
@@ -33,10 +32,10 @@ const UserActionButtons: React.FC = () => {
 
   return (
     <>
-      <NavigationButton href={Routes.login_url({ protocol: scheme, host: appDomain })} className="flex-1 lg:flex-none">
+      <NavigationButton href={Routes.login_url()} className="flex-1 lg:flex-none">
         Log in
       </NavigationButton>
-      <NavigationButton href={Routes.signup_url({ protocol: scheme, host: appDomain })} color="primary" className="flex-1 lg:flex-none">
+      <NavigationButton href={Routes.signup_url()} color="primary" className="flex-1 lg:flex-none">
         Start selling
       </NavigationButton>
     </>
@@ -120,25 +119,25 @@ export const Layout: React.FC<{
   children,
   forceDomain = false,
 }) => {
-  const { scheme, discoverDomain, appDomain } = useDomains();
+  const { discoverDomain, appDomain } = useDomains();
   const isDesktop = useIsAboveBreakpoint("lg");
   const currentSeller = useCurrentSeller();
 
   const rootTaxonomy = getRootTaxonomy(taxonomyPath);
 
-  setQuery ??= (query) => (window.location.href = Routes.discover_url({ protocol: scheme, host: discoverDomain, query }));
+  setQuery ??= (query) => (window.location.href = Routes.discover_url({ host: discoverDomain, query }));
 
   onTaxonomyChange ??= (newTaxonomyPath) => {
     window.location.href = forceDomain
       ? newTaxonomyPath || Routes.discover_path()
-      : Routes.discover_url({ protocol: scheme, host: discoverDomain, taxonomy: newTaxonomyPath });
+      : Routes.discover_url({ host: discoverDomain, taxonomy: newTaxonomyPath });
   };
 
   const userActionButtons = <UserActionButtons />;
 
   const logoLink = (
     <a
-      href={Routes.discover_url({ protocol: scheme, host: discoverDomain })}
+      href={Routes.discover_url({ host: discoverDomain })}
       className="logo-full flex aspect-157/22 w-[245px]! shrink-0 items-center"
       aria-label="Gumroad"
     />
@@ -150,7 +149,7 @@ export const Layout: React.FC<{
   );
   const cartButton = <CartNavigationButton className="link-button shrink-0" />;
   const avatarElement = currentSeller ? (
-    <a href={Routes.dashboard_url({ protocol: scheme, host: appDomain })} aria-label="Dashboard" className="shrink-0">
+    <a href={Routes.dashboard_url({ host: appDomain })} aria-label="Dashboard" className="shrink-0">
       <img className="user-avatar" src={currentSeller.avatarUrl} />
     </a>
   ) : null;

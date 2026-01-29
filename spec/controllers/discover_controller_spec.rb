@@ -27,6 +27,7 @@ describe DiscoverController, inertia: true do
       expect(inertia.props[:currency_code]).to eq(@buyer.currency_type)
       expect(inertia.props[:taxonomies_for_nav]).to be_an(Array)
       expect(inertia.props[:recommended_products]).to be_an(Array)
+      expect(inertia.props[:recommended_wishlists]).to be_an(Array)
       expect(inertia.props[:curated_product_ids]).to be_an(Array)
       expect(inertia.props[:show_black_friday_hero]).to be_in([true, false])
       expect(inertia.props[:black_friday_offer_code]).to eq("BLACKFRIDAY2025")

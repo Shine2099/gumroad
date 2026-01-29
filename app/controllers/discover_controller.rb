@@ -15,7 +15,6 @@ class DiscoverController < ApplicationController
     format_search_params!
 
     @hide_layouts = true
-    @card_data_handling_mode = CardDataHandlingMode.get_card_data_handling_mode(logged_in_user)
 
     if params[:sort].blank? && curated_products.present?
       params[:sort] = ProductSortKey::CURATED
@@ -56,6 +55,7 @@ class DiscoverController < ApplicationController
       currency_code: logged_in_user&.currency_type || "usd",
       taxonomies_for_nav:,
       recommended_products: -> { recommendations },
+      recommended_wishlists: -> { recommended_wishlists_data },
       curated_product_ids: curated_products.map { _1.product.external_id },
       search_offset: params[:from] || 0,
       show_black_friday_hero: -> { black_friday_feature_active? },
@@ -136,30 +136,9 @@ class DiscoverController < ApplicationController
       set_meta_tag(property: "og:site_name", content: "Gumroad")
       set_meta_tag(tag_name: "link", rel: "canonical", href: Discover::CanonicalUrlPresenter.canonical_url(params), head_key: "canonical")
 
-      title_parts = []
-      if params[:query].present?
-        title_parts << "Search results for \"#{params[:query]}\""
-      elsif params[:tags].present?
-        if taxonomy.present?
-          tags_title = Array(params[:tags]).map { |t| t.squish.gsub(/[-\s]+/, " ") }.join(", ")
-          title_parts << tags_title
-        else
-          presenter = Discover::TagPageMetaPresenter.new(Array(params[:tags]), @search_results[:total])
-          title_parts << presenter.title
-        end
-      end
-      if taxonomy.present?
-        taxonomy_labels = Discover::TaxonomyPresenter::TAXONOMY_LABELS
-        taxonomy_title = taxonomy.self_and_ancestors.reverse.map do |t|
-          taxonomy_labels[t.slug] || t.slug.titleize
-        end.join(" » ")
-        title_parts << taxonomy_title
-      end
-      title_parts << "Gumroad"
-      set_meta_tag(title: title_parts.join(" | "))
-
       if !params[:taxonomy].present? && !params[:query].present? && params[:tags].present?
         presenter = Discover::TagPageMetaPresenter.new(params[:tags], @search_results[:total])
+        set_meta_tag(title: "#{presenter.title} | Gumroad")
         set_meta_tag(name: "description", content: presenter.meta_description)
         set_meta_tag(property: "og:description", content: presenter.meta_description)
       else
@@ -172,4 +151,20 @@ class DiscoverController < ApplicationController
     def black_friday_feature_active?
       Feature.active?(:offer_codes_search) || (params[:feature_key].present? && ActiveSupport::SecurityUtils.secure_compare(params[:feature_key].to_s, ENV["SECRET_FEATURE_KEY"].to_s))
     end
+
+    def recommended_wishlists_data
+      wishlists = RecommendedWishlistsService.fetch(
+        limit: 4,
+        current_seller:,
+        curated_product_ids: curated_products.map { _1.product.id },
+        taxonomy_id: taxonomy&.id
+      )
+      WishlistPresenter.cards_props(
+        wishlists:,
+        pundit_user:,
+        layout: Product::Layout::DISCOVER,
+        recommended_by: RecommendationType::GUMROAD_DISCOVER_WISHLIST_RECOMMENDATION,
+      )
+    end
+
 end

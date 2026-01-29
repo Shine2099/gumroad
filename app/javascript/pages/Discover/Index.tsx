@@ -6,6 +6,7 @@ import { is } from "ts-safe-cast";
 import { SearchResults, SearchRequest } from "$app/data/search";
 import { useScrollToElement } from "$app/hooks/useScrollToElement";
 import { CardProduct } from "$app/parsers/product";
+import { CardWishlist } from "$app/components/Wishlist/Card";
 import { last } from "$app/utils/array";
 import { classNames } from "$app/utils/classNames";
 import { CurrencyCode, formatPriceCentsWithCurrencySymbol } from "$app/utils/currency";
@@ -30,6 +31,7 @@ type DiscoverPageProps = {
   search_results: SearchResults;
   taxonomies_for_nav: Taxonomy[];
   recommended_products: CardProduct[];
+  recommended_wishlists: CardWishlist[];
   curated_product_ids: string[];
   show_black_friday_hero: boolean;
   is_black_friday_page: boolean;
@@ -473,8 +475,7 @@ function DiscoverIndex() {
           </section>
           {showRecommendedSections ? (
             <RecommendedWishlists
-              taxonomy={taxonomyPath ?? null}
-              curatedProductIds={props.curated_product_ids}
+              wishlists={props.recommended_wishlists}
               title={
                 taxonomyPath
                   ? `Wishlists for ${props.taxonomies_for_nav.find((t) => t.slug === last(taxonomyPath.split("/")))?.label}`

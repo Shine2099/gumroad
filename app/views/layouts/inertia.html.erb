@@ -19,7 +19,6 @@
     <% end %>
     <%= javascript_include_tag "application" %>
     <%= load_pack("base") unless @hide_layouts %>
-    <%= load_pack("inertia") %>
     <%= yield :script %>
   </body>
 </html>
