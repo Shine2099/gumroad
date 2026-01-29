@@ -3,7 +3,6 @@ import * as React from "react";
 
 import { getAutocompleteSearchResults, AutocompleteSearchResults, deleteAutocompleteSearch } from "$app/data/discover";
 import { escapeRegExp } from "$app/utils";
-import { asyncVoid } from "$app/utils/promise";
 import { assertResponseError } from "$app/utils/request";
 
 import { ComboBox } from "$app/components/ComboBox";
@@ -14,30 +13,47 @@ import { useOnChange } from "$app/components/useOnChange";
 
 import thumbnailPlaceholder from "$assets/images/placeholders/product-cover.png";
 
-export const Search = ({ query, setQuery }: { query?: string | undefined; setQuery: (query: string) => void }) => {
+export const Search = ({
+  query,
+  setQuery,
+  autocompleteData,
+}: {
+  query?: string | undefined;
+  setQuery: (query: string) => void;
+  autocompleteData?: AutocompleteSearchResults | null;
+}) => {
   const [enteredQuery, setEnteredQuery] = React.useState(query ?? "");
-  useOnChange(() => setEnteredQuery(query ?? ""), [query]);
-
-  const cancelAutocomplete = React.useRef<() => void>();
-  const fetchAutocomplete = useDebouncedCallback(
-    asyncVoid(async () => {
-      try {
-        const abortController = new AbortController();
-        cancelAutocomplete.current = () => abortController.abort();
-        setResults(await getAutocompleteSearchResults({ query: enteredQuery }, abortController.signal));
-      } catch (e) {
-        assertResponseError(e);
-        showAlert("Sorry, something went wrong. Please try again.", "error");
-      }
-    }),
-    300,
-  );
-  const [results, setResults] = React.useState<AutocompleteSearchResults | null>(null);
+  const [results, setResults] = React.useState<AutocompleteSearchResults | null>(autocompleteData ?? null);
   const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
 
-  useOnChange(() => fetchAutocomplete(), [enteredQuery]);
+  useOnChange(() => setEnteredQuery(query ?? ""), [query]);
+
   useOnChange(() => {
-    if (autocompleteOpen && !results) fetchAutocomplete();
+    if (autocompleteData) {
+      setResults(autocompleteData);
+    }
+  }, [autocompleteData]);
+
+  const fetchAutocomplete = useDebouncedCallback(async (searchQuery: string) => {
+    try {
+      const data = await getAutocompleteSearchResults({ query: searchQuery });
+      setResults(data);
+    } catch (e) {
+      assertResponseError(e);
+      showAlert("Sorry, something went wrong. Please try again.", "error");
+    }
+  }, 300);
+
+  useOnChange(() => {
+    if (enteredQuery) {
+      void fetchAutocomplete(enteredQuery);
+    }
+  }, [enteredQuery]);
+
+  useOnChange(() => {
+    if (autocompleteOpen && !results && enteredQuery) {
+      void fetchAutocomplete(enteredQuery);
+    }
   }, [autocompleteOpen]);
 
   const highlightQuery = (text: string) => {
@@ -52,9 +68,14 @@ export const Search = ({ query, setQuery }: { query?: string | undefined; setQue
     );
   };
 
-  const deleteRecentSearch = (query: string) => {
-    void deleteAutocompleteSearch({ query });
-    if (results) setResults({ ...results, recent_searches: results.recent_searches.filter((q) => q !== query) });
+  const deleteRecentSearch = (searchQuery: string) => {
+    void deleteAutocompleteSearch({ query: searchQuery });
+    if (results) {
+      setResults({
+        ...results,
+        recent_searches: results.recent_searches.filter((q) => q !== searchQuery),
+      });
+    }
   };
 
   const options = results ? [...results.recent_searches, ...results.products] : [];
@@ -79,7 +100,6 @@ export const Search = ({ query, setQuery }: { query?: string | undefined; setQue
               if (e.key === "Enter") {
                 setQuery(enteredQuery);
                 fetchAutocomplete.cancel();
-                cancelAutocomplete.current?.();
               }
             }}
             onChange={(e) => {

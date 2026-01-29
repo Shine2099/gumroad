@@ -1,8 +1,9 @@
-import { Link, router, usePage } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 import { range } from "lodash-es";
 import * as React from "react";
 import { is } from "ts-safe-cast";
 
+import { getRecommendedProducts } from "$app/data/discover";
 import { SearchResults, SearchRequest } from "$app/data/search";
 import { useScrollToElement } from "$app/hooks/useScrollToElement";
 import { CardProduct } from "$app/parsers/product";
@@ -230,36 +231,43 @@ function DiscoverIndex() {
 
   const resultsRef = useScrollToElement(isBlackFridayPage && props.show_black_friday_hero, undefined, [state.params]);
 
-  const fromUrl = React.useRef(false);
+  const isFromPopstate = React.useRef(false);
+
   React.useEffect(() => {
-    if (!fromUrl.current) {
-      const url = new URL(window.location.href);
-      if (state.params.taxonomy) {
-        url.pathname = state.params.taxonomy;
-      } else if (url.pathname !== Routes.discover_path()) {
-        url.pathname = Routes.discover_path();
+    const url = new URL(window.location.href);
+    if (state.params.taxonomy) {
+      url.pathname = state.params.taxonomy;
+    } else if (url.pathname !== Routes.discover_path()) {
+      url.pathname = Routes.discover_path();
+    }
+    const serializeParams = <T extends keyof SearchRequest>(
+      keys: T[],
+      transform: (value: NonNullable<SearchRequest[T]>) => string,
+    ) => {
+      for (const key of keys) {
+        const value = state.params[key];
+        if (value && (!Array.isArray(value) || value.length)) url.searchParams.set(key, transform(value));
+        else url.searchParams.delete(key);
       }
-      const serializeParams = <T extends keyof SearchRequest>(
-        keys: T[],
-        transform: (value: NonNullable<SearchRequest[T]>) => string,
-      ) => {
-        for (const key of keys) {
-          const value = state.params[key];
-          if (value && (!Array.isArray(value) || value.length)) url.searchParams.set(key, transform(value));
-          else url.searchParams.delete(key);
-        }
-      };
-      serializeParams(["sort", "query", "offer_code"], (value) => value);
-      serializeParams(["min_price", "max_price", "rating"], (value) => value.toString());
-      serializeParams(["filetypes", "tags"], (value) => value.join(","));
+    };
+    serializeParams(["sort", "query", "offer_code"], (value) => value);
+    serializeParams(["min_price", "max_price", "rating"], (value) => value.toString());
+    serializeParams(["filetypes", "tags"], (value) => value.join(","));
+
+    const urlString = url.pathname + url.search;
+    const currentUrlString = window.location.pathname + window.location.search;
+    if (isFromPopstate.current || urlString === currentUrlString) {
+      window.history.replaceState(state.params, "", url);
+      isFromPopstate.current = false;
+    } else {
       window.history.pushState(state.params, "", url);
-    } else fromUrl.current = false;
+    }
     document.title = discoverTitleGenerator(state.params, props.taxonomies_for_nav);
   }, [state.params, props.taxonomies_for_nav, defaultSortOrder]);
 
   React.useEffect(() => {
     const parseUrl = () => {
-      fromUrl.current = true;
+      isFromPopstate.current = true;
       const newParams = parseUrlParams(window.location.href, props.curated_product_ids, defaultSortOrder);
       dispatch({
         type: "set-params",
@@ -272,29 +280,42 @@ function DiscoverIndex() {
 
   const taxonomyPath = state.params.taxonomy;
 
+  const [recommendedProducts, setRecommendedProducts] = React.useState<CardProduct[]>(props.recommended_products);
+  const initialTaxonomy = React.useRef(
+    window.location.pathname === Routes.discover_path() ? undefined : window.location.pathname.replace("/", ""),
+  );
+
+  React.useEffect(() => {
+    if (taxonomyPath !== initialTaxonomy.current) {
+      getRecommendedProducts({ taxonomy: taxonomyPath })
+        .then(setRecommendedProducts)
+        .catch(() => setRecommendedProducts([]));
+    } else {
+      setRecommendedProducts(props.recommended_products);
+    }
+  }, [taxonomyPath, props.recommended_products]);
+
   const updateParams = (newParams: Partial<SearchRequest>) =>
     dispatch({ type: "set-params", params: { ...state.params, from: undefined, ...newParams } });
 
   const hasOfferCode = !!state.params.offer_code;
 
   const isCuratedProducts =
-    props.recommended_products[0] &&
-    new URL(props.recommended_products[0].url).searchParams.get("recommended_by") === "products_for_you";
+    recommendedProducts[0] &&
+    new URL(recommendedProducts[0].url).searchParams.get("recommended_by") === "products_for_you";
 
-  const showRecommendedSections = props.recommended_products.length > 0 && !state.params.query && !hasOfferCode;
+  const showRecommendedSections = recommendedProducts.length > 0 && !state.params.query && !hasOfferCode;
 
   const handleTaxonomyChange = (newTaxonomyPath: string | undefined) => {
-    const currentUrl = new URL(window.location.href);
-    const currentOfferCode = currentUrl.searchParams.get("offer_code");
-
-    const url = newTaxonomyPath ? Routes.discover_taxonomy_path(newTaxonomyPath) : Routes.discover_path();
-
-    const params: Record<string, string> = {};
-    if (newTaxonomyPath && currentOfferCode) {
-      params.offer_code = currentOfferCode;
-    }
-
-    router.get(url, params);
+    const currentOfferCode = state.params.offer_code;
+    dispatch({
+      type: "set-params",
+      params: addInitialOffset({
+        taxonomy: newTaxonomyPath,
+        curated_product_ids: newTaxonomyPath ? [] : props.curated_product_ids.slice(recommendedProductsCount),
+        offer_code: newTaxonomyPath && currentOfferCode ? currentOfferCode : undefined,
+      }),
+    });
   };
 
   return (
@@ -359,7 +380,7 @@ function DiscoverIndex() {
         <div className="grid gap-16! px-4 py-16 lg:ps-16 lg:pe-16">
           {showRecommendedSections ? (
             <ProductsCarousel
-              products={props.recommended_products}
+              products={recommendedProducts}
               title={isCuratedProducts ? "Recommended" : "Featured products"}
             />
           ) : null}

@@ -14,8 +14,6 @@ class DiscoverController < ApplicationController
   def index
     format_search_params!
 
-    @hide_layouts = true
-
     if params[:sort].blank? && curated_products.present?
       params[:sort] = ProductSortKey::CURATED
       params[:curated_product_ids] = (curated_products[RECOMMENDED_PRODUCTS_COUNT..] || []).map { _1.product.id }
@@ -56,6 +54,7 @@ class DiscoverController < ApplicationController
       taxonomies_for_nav:,
       recommended_products: -> { recommendations },
       recommended_wishlists: -> { recommended_wishlists_data },
+      autocomplete_data: -> { autocomplete_data },
       curated_product_ids: curated_products.map { _1.product.external_id },
       search_offset: params[:from] || 0,
       show_black_friday_hero: -> { black_friday_feature_active? },
@@ -136,9 +135,24 @@ class DiscoverController < ApplicationController
       set_meta_tag(property: "og:site_name", content: "Gumroad")
       set_meta_tag(tag_name: "link", rel: "canonical", href: Discover::CanonicalUrlPresenter.canonical_url(params), head_key: "canonical")
 
+      title_parts = []
+      if params[:query].present?
+        title_parts << "Search results for \"#{params[:query]}\""
+      elsif params[:tags].present? && !params[:taxonomy].present?
+        presenter = Discover::TagPageMetaPresenter.new(params[:tags], @search_results[:total])
+        title_parts << presenter.title
+      elsif params[:tags].present?
+        tags = params[:tags].is_a?(Array) ? params[:tags] : params[:tags].split(",")
+        title_parts << tags.map { |t| t.strip.gsub(/[-\s]+/, " ") }.join(", ")
+      end
+      if params[:taxonomy].present?
+        title_parts << params[:taxonomy].split("/").map { |slug| Discover::TaxonomyPresenter::TAXONOMY_LABELS[slug] || slug }.join(" » ")
+      end
+      title_parts << "Gumroad"
+      set_meta_tag(title: title_parts.join(" | "))
+
       if !params[:taxonomy].present? && !params[:query].present? && params[:tags].present?
         presenter = Discover::TagPageMetaPresenter.new(params[:tags], @search_results[:total])
-        set_meta_tag(title: "#{presenter.title} | Gumroad")
         set_meta_tag(name: "description", content: presenter.meta_description)
         set_meta_tag(property: "og:description", content: presenter.meta_description)
       else
@@ -167,4 +181,11 @@ class DiscoverController < ApplicationController
       )
     end
 
+    def autocomplete_data
+      Discover::AutocompletePresenter.new(
+        query: params[:query],
+        user: logged_in_user,
+        browser_guid: cookies[:_gumroad_guid]
+      ).props
+    end
 end

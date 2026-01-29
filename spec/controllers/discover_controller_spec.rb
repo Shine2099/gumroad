@@ -4,8 +4,6 @@ require "spec_helper"
 require "inertia_rails/rspec"
 
 describe DiscoverController, inertia: true do
-  render_views
-
   let(:discover_domain_with_protocol) { UrlService.discover_domain_with_protocol }
 
   before do
@@ -28,50 +26,10 @@ describe DiscoverController, inertia: true do
       expect(inertia.props[:taxonomies_for_nav]).to be_an(Array)
       expect(inertia.props[:recommended_products]).to be_an(Array)
       expect(inertia.props[:recommended_wishlists]).to be_an(Array)
+      expect(inertia.props[:autocomplete_data]).to include(:recent_searches, :products)
       expect(inertia.props[:curated_product_ids]).to be_an(Array)
       expect(inertia.props[:show_black_friday_hero]).to be_in([true, false])
       expect(inertia.props[:black_friday_offer_code]).to eq("BLACKFRIDAY2025")
-    end
-
-    it "renders the proper meta tags with no extra parameters" do
-      get :index
-
-      expect(response.body).to have_selector("title:contains('Gumroad')", visible: false)
-      expect(response.body).to have_selector("meta[property='og:type'][content='website']", visible: false)
-      expect(response.body).to have_selector("meta[property='og:description'][content='Browse over 1.6 million free and premium digital products in education, tech, design, and more categories from Gumroad creators and online entrepreneurs.']", visible: false)
-      expect(response.body).to have_selector("meta[name='description'][content='Browse over 1.6 million free and premium digital products in education, tech, design, and more categories from Gumroad creators and online entrepreneurs.']", visible: false)
-      expect(response.body).to have_selector("link[rel='canonical'][href='#{discover_domain_with_protocol}/']", visible: false)
-    end
-
-    it "renders the proper meta tags when a search query was submitted" do
-      get :index, params: { query: "tests" }
-
-      expect(response.body).to have_selector("title:contains('Gumroad')", visible: false)
-      expect(response.body).to have_selector("meta[property='og:description'][content='Browse over 1.6 million free and premium digital products in education, tech, design, and more categories from Gumroad creators and online entrepreneurs.']", visible: false)
-      expect(response.body).to have_selector("meta[name='description'][content='Browse over 1.6 million free and premium digital products in education, tech, design, and more categories from Gumroad creators and online entrepreneurs.']", visible: false)
-      expect(response.body).to have_selector("link[rel='canonical'][href='#{discover_domain_with_protocol}/?query=tests']", visible: false)
-    end
-
-    it "renders the proper meta tags when a specific tag has been selected" do
-      get :index, params: { tags: "3d models" }
-
-      description = "Browse over 0 3D assets including 3D models, CG textures, HDRI environments & more" \
-                    " for VFX, game development, AR/VR, architecture, and animation."
-      expect(response.body).to have_selector("title:contains('Professional 3D Modeling Assets | Gumroad')", visible: false)
-      expect(response.body).to have_selector("meta[property='og:description'][content='#{description}']", visible: false)
-      expect(response.body).to have_selector("meta[name='description'][content='#{description}']", visible: false)
-      expect(response.body).to have_selector("link[rel='canonical'][href='#{discover_domain_with_protocol}/?tags=3d+models']", visible: false)
-    end
-
-    it "renders the proper meta tags when a specific tag has been selected" do
-      get :index, params: { tags: "3d      - mODELs" }
-
-      description = "Browse over 0 3D assets including 3D models, CG textures, HDRI environments & more" \
-                    " for VFX, game development, AR/VR, architecture, and animation."
-      expect(response.body).to have_selector("title:contains('Professional 3D Modeling Assets | Gumroad')", visible: false)
-      expect(response.body).to have_selector("meta[property='og:description'][content='#{description}']", visible: false)
-      expect(response.body).to have_selector("meta[name='description'][content='#{description}']", visible: false)
-      expect(response.body).to have_selector("link[rel='canonical'][href='#{discover_domain_with_protocol}/?tags=3d+models']", visible: false)
     end
 
     it "stores the search query" do
@@ -92,24 +50,71 @@ describe DiscoverController, inertia: true do
       expect(DiscoverSearch.last!.discover_search_suggestion).to be_present
     end
 
-    context "meta description total count" do
-      let(:total_products) { Link::RECOMMENDED_PRODUCTS_PER_PAGE + 2 }
+    context "meta tags" do
+      let(:default_description) { "Browse over 1.6 million free and premium digital products in education, tech, design, and more categories from Gumroad creators and online entrepreneurs." }
 
-      before do
-        total_products.times do |i|
-          product = create(:product, :recommendable)
-          product.tag!("3d models")
-        end
-        Link.import(refresh: true, force: true)
+      def meta_tags
+        controller.send(:meta_tags)
       end
 
-      it "renders the correct total search result size in the meta description" do
+      it "sets the proper meta tags with no extra parameters" do
+        get :index
+
+        expect(meta_tags["meta-property-og-type"][:content]).to eq("website")
+        expect(meta_tags["meta-property-og-description"][:content]).to eq(default_description)
+        expect(meta_tags["meta-name-description"][:content]).to eq(default_description)
+        expect(meta_tags["canonical"][:href]).to eq("#{discover_domain_with_protocol}/")
+      end
+
+      it "sets the proper meta tags when a search query was submitted" do
+        get :index, params: { query: "tests" }
+
+        expect(meta_tags["meta-property-og-description"][:content]).to eq(default_description)
+        expect(meta_tags["meta-name-description"][:content]).to eq(default_description)
+        expect(meta_tags["canonical"][:href]).to eq("#{discover_domain_with_protocol}/?query=tests")
+      end
+
+      it "sets the proper meta tags when a specific tag has been selected" do
         get :index, params: { tags: "3d models" }
 
-        description = "Browse over #{total_products} 3D assets including 3D models, CG textures, HDRI environments & more" \
+        description = "Browse over 0 3D assets including 3D models, CG textures, HDRI environments & more" \
                       " for VFX, game development, AR/VR, architecture, and animation."
-        expect(response.body).to have_selector("meta[property='og:description'][content='#{description}']", visible: false)
-        expect(response.body).to have_selector("meta[name='description'][content='#{description}']", visible: false)
+        expect(meta_tags["title"][:inner_content]).to eq("Professional 3D Modeling Assets | Gumroad")
+        expect(meta_tags["meta-property-og-description"][:content]).to eq(description)
+        expect(meta_tags["meta-name-description"][:content]).to eq(description)
+        expect(meta_tags["canonical"][:href]).to eq("#{discover_domain_with_protocol}/?tags=3d+models")
+      end
+
+      it "sets the proper meta tags when a specific tag has been selected with different formatting" do
+        get :index, params: { tags: "3d      - mODELs" }
+
+        description = "Browse over 0 3D assets including 3D models, CG textures, HDRI environments & more" \
+                      " for VFX, game development, AR/VR, architecture, and animation."
+        expect(meta_tags["title"][:inner_content]).to eq("Professional 3D Modeling Assets | Gumroad")
+        expect(meta_tags["meta-property-og-description"][:content]).to eq(description)
+        expect(meta_tags["meta-name-description"][:content]).to eq(description)
+        expect(meta_tags["canonical"][:href]).to eq("#{discover_domain_with_protocol}/?tags=3d+models")
+      end
+
+      context "meta description total count" do
+        let(:total_products) { Link::RECOMMENDED_PRODUCTS_PER_PAGE + 2 }
+
+        before do
+          total_products.times do |i|
+            product = create(:product, :recommendable)
+            product.tag!("3d models")
+          end
+          Link.import(refresh: true, force: true)
+        end
+
+        it "sets the correct total search result size in the meta description" do
+          get :index, params: { tags: "3d models" }
+
+          description = "Browse over #{total_products} 3D assets including 3D models, CG textures, HDRI environments & more" \
+                        " for VFX, game development, AR/VR, architecture, and animation."
+          expect(meta_tags["meta-property-og-description"][:content]).to eq(description)
+          expect(meta_tags["meta-name-description"][:content]).to eq(description)
+        end
       end
     end
   end

@@ -17,6 +17,6 @@ class Discover::SearchAutocompleteController < ApplicationController
       .by_user_or_browser(user: logged_in_user, browser_guid: cookies[:_gumroad_guid])
       .where(discover_searches: { query: params[:query] })
       .each(&:mark_deleted!)
-    head :ok
+    head :no_content
   end
 end

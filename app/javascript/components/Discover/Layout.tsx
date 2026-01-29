@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import { AutocompleteSearchResults } from "$app/data/discover";
 import { classNames } from "$app/utils/classNames";
 import { getRootTaxonomy, getRootTaxonomyCss, Taxonomy } from "$app/utils/discover";
 
@@ -105,6 +106,7 @@ export const Layout: React.FC<{
   onTaxonomyChange?: (newTaxonomyPath?: string) => void;
   query?: string | undefined;
   setQuery?: (query: string) => void;
+  autocompleteData?: AutocompleteSearchResults | null;
   className?: string;
   children: React.ReactNode;
   forceDomain?: boolean;
@@ -115,6 +117,7 @@ export const Layout: React.FC<{
   onTaxonomyChange,
   query,
   setQuery,
+  autocompleteData,
   className,
   children,
   forceDomain = false,
@@ -144,7 +147,7 @@ export const Layout: React.FC<{
   );
   const searchBar = (
     <div className="min-w-0 grow">
-      <Search query={query} setQuery={setQuery} />
+      <Search query={query} setQuery={setQuery} autocompleteData={autocompleteData ?? null} />
     </div>
   );
   const cartButton = <CartNavigationButton className="link-button shrink-0" />;
