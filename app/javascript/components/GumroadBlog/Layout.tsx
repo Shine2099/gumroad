@@ -1,7 +1,7 @@
 import React from "react";
 
-import { BlogFooter } from "$app/components/GumroadBlog/Footer";
-import { BlogNav } from "$app/components/GumroadBlog/Nav";
+import { BlogFooter } from "$app/components/Home/Footer";
+import { BlogNav } from "$app/components/Home/Nav";
 
 type Props = {
   children: React.ReactNode;
