@@ -10,7 +10,7 @@ type Props = {
   custom_styles: string;
 };
 
-export default function Show() {
+export default function SubscribePreview() {
   const { custom_styles, avatar_url, title } = cast<Props>(usePage().props);
 
   return (
@@ -33,4 +33,4 @@ export default function Show() {
   );
 }
 
-Show.loggedInUserLayout = true;
+SubscribePreview.loggedInUserLayout = true;
