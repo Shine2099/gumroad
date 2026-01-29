@@ -4,7 +4,7 @@ import * as React from "react";
 import { cast } from "ts-safe-cast";
 
 import { incrementPostViews } from "$app/data/view_event";
-import { formatPostDate } from "$app/components/server-components/Profile/PostPage";
+import { formatPostDate } from "$app/utils/date";
 import { useRichTextEditor } from "$app/components/RichTextEditor";
 import { useUserAgentInfo } from "$app/components/UserAgent";
 import { useRunOnce } from "$app/components/useRunOnce";
