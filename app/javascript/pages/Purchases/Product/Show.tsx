@@ -13,9 +13,7 @@ const PurchaseProductShowPage = () => {
 
   return (
     <>
-      <Head>
-        {props.custom_styles ? <style>{props.custom_styles}</style> : null}
-      </Head>
+      {props.custom_styles ? <Head><style>{props.custom_styles}</style></Head> : null}
       <div>
         <section>
           <Product {...props} selection={selection} setSelection={setSelection} />
