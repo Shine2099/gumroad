@@ -688,7 +688,7 @@ describe UsersController do
     it "assigns subscribe preview props for the react component" do
       get :subscribe_preview, params: { username: creator.username }
       expect(response).to be_successful
-      expect(inertia.component).to eq("User/SubscribePreview/Show")
+      expect(inertia.component).to eq("Users/SubscribePreview/Show")
       expect(inertia.props[:title]).to eq(creator.name_or_username)
       expect(inertia.props[:avatar_url]).to end_with(".png")
       expect(inertia.props[:custom_styles]).to eq(creator.seller_profile.custom_styles)
