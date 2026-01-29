@@ -15,7 +15,7 @@ describe Purchases::ProductController, type: :controller, inertia: true do
       expect(response).to be_successful
       expect_inertia.to render_component "Purchases/Product/Show"
 
-      expect(inertia.props[:custom_styles]).to eq(seller.seller_profile.custom_styles.to_s)xs
+      expect(inertia.props[:custom_styles]).to eq(seller.seller_profile.custom_styles.to_s)
       expect(inertia.props[:product][:id]).to eq(product.external_id)
       expect(inertia.props[:product][:name]).to eq(product.name)
       expect(inertia.props[:product][:long_url]).to eq(product.long_url)
