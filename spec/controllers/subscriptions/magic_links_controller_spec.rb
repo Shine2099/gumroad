@@ -15,10 +15,10 @@ describe Subscriptions::MagicLinksController, inertia: true do
 
   describe "GET new" do
     it "renders the magic link page with correct component and props" do
-      get :new, params: { id: @subscription.external_id }
+      get :new, params: { subscription_id: @subscription.external_id }
 
       expect(response).to be_successful
-      expect(inertia.component).to eq("Subscriptions/MagicLink")
+      expect(inertia.component).to eq("Subscriptions/MagicLinks/New")
 
       expected_props = Subscriptions::MagicLinkPresenter.new(subscription: @subscription).magic_link_props
       expect(inertia.props).to include(expected_props)
@@ -27,7 +27,7 @@ describe Subscriptions::MagicLinksController, inertia: true do
 
     context "when email_sent param is present" do
       it "passes email_sent prop to the page" do
-        get :new, params: { id: @subscription.external_id, email_sent: "user" }
+        get :new, params: { subscription_id: @subscription.external_id, email_sent: "user" }
 
         expect(response).to be_successful
         expect(inertia.props[:email_sent]).to eq("user")
@@ -37,7 +37,7 @@ describe Subscriptions::MagicLinksController, inertia: true do
     context "when subscription does not exist" do
       it "returns 404" do
         expect do
-          get :new, params: { id: "non_existent_id" }
+          get :new, params: { subscription_id: "non_existent_id" }
         end.to raise_error(ActionController::RoutingError, "Not Found")
       end
     end
@@ -47,20 +47,20 @@ describe Subscriptions::MagicLinksController, inertia: true do
     context "when subscription does not exist" do
       it "returns 404" do
         expect do
-          post :create, params: { id: "non_existent_id", email_source: "user" }
+          post :create, params: { subscription_id: "non_existent_id", email_source: "user" }
         end.to raise_error(ActionController::RoutingError, "Not Found")
       end
     end
 
     it "sets up the token in the subscription" do
       expect(@subscription.token).to be_nil
-      post :create, params: { id: @subscription.external_id, email_source: "user" }
+      post :create, params: { subscription_id: @subscription.external_id, email_source: "user" }
       expect(@subscription.reload.token).to_not be_nil
     end
 
     it "sets the token to expire in 24 hours" do
       expect(@subscription.token_expires_at).to be_nil
-      post :create, params: { id: @subscription.external_id, email_source: "user" }
+      post :create, params: { subscription_id: @subscription.external_id, email_source: "user" }
       expect(@subscription.reload.token_expires_at).to be_within(1.second).of(24.hours.from_now)
     end
 
@@ -68,9 +68,9 @@ describe Subscriptions::MagicLinksController, inertia: true do
       mail_double = double
       allow(mail_double).to receive(:deliver_later)
       expect(CustomerMailer).to receive(:subscription_magic_link).and_return(mail_double)
-      post :create, params: { id: @subscription.external_id, email_source: "user" }
+      post :create, params: { subscription_id: @subscription.external_id, email_source: "user" }
 
-      expect(response).to redirect_to(magic_link_subscription_path(@subscription.external_id, email_sent: "user"))
+      expect(response).to redirect_to(new_subscription_magic_link_path(@subscription.external_id, email_sent: "user"))
       expect(flash[:notice]).to include("Magic link sent")
     end
 
@@ -86,9 +86,9 @@ describe Subscriptions::MagicLinksController, inertia: true do
           mail_double = double
           allow(mail_double).to receive(:deliver_later)
           expect(CustomerMailer).to receive(:subscription_magic_link).with(@subscription.id, @original_purchasing_user_email).and_return(mail_double)
-          post :create, params: { id: @subscription.external_id, email_source: "user" }
+          post :create, params: { subscription_id: @subscription.external_id, email_source: "user" }
 
-          expect(response).to redirect_to(magic_link_subscription_path(@subscription.external_id, email_sent: "user"))
+          expect(response).to redirect_to(new_subscription_magic_link_path(@subscription.external_id, email_sent: "user"))
         end
       end
 
@@ -97,9 +97,9 @@ describe Subscriptions::MagicLinksController, inertia: true do
           mail_double = double
           allow(mail_double).to receive(:deliver_later)
           expect(CustomerMailer).to receive(:subscription_magic_link).with(@subscription.id, "purchase@email.com").and_return(mail_double)
-          post :create, params: { id: @subscription.external_id, email_source: "purchase" }
+          post :create, params: { subscription_id: @subscription.external_id, email_source: "purchase" }
 
-          expect(response).to redirect_to(magic_link_subscription_path(@subscription.external_id, email_sent: "purchase"))
+          expect(response).to redirect_to(new_subscription_magic_link_path(@subscription.external_id, email_sent: "purchase"))
         end
       end
 
@@ -108,16 +108,16 @@ describe Subscriptions::MagicLinksController, inertia: true do
           mail_double = double
           allow(mail_double).to receive(:deliver_later)
           expect(CustomerMailer).to receive(:subscription_magic_link).with(@subscription.id, "subscriber@email.com").and_return(mail_double)
-          post :create, params: { id: @subscription.external_id, email_source: "subscription" }
+          post :create, params: { subscription_id: @subscription.external_id, email_source: "subscription" }
 
-          expect(response).to redirect_to(magic_link_subscription_path(@subscription.external_id, email_sent: "subscription"))
+          expect(response).to redirect_to(new_subscription_magic_link_path(@subscription.external_id, email_sent: "subscription"))
         end
       end
 
       context "when the email source is not valid" do
         it "raises a 404 error" do
           expect do
-            post :create, params: { id: @subscription.external_id, email_source: "invalid source" }
+            post :create, params: { subscription_id: @subscription.external_id, email_source: "invalid source" }
           end.to raise_error(ActionController::RoutingError, "Not Found")
         end
       end

@@ -55,12 +55,12 @@ class SubscriptionsController < ApplicationController
       token = params[:token]
       if token.present?
         return if @subscription.token.present? && ActiveSupport::SecurityUtils.secure_compare(token, @subscription.token) && @subscription.token_expires_at > Time.current
-        return redirect_to magic_link_subscription_path(params[:id], invalid: true)
+        return redirect_to new_subscription_magic_link_path(params[:id], invalid: true)
       end
 
       respond_to do |format|
-        format.html { redirect_to magic_link_subscription_path(params[:id]) }
-        format.json { render json: { success: false, redirect_to: magic_link_subscription_path(params[:id]) } }
+        format.html { redirect_to new_subscription_magic_link_path(params[:id]) }
+        format.json { render json: { success: false, redirect_to: new_subscription_magic_link_path(params[:id]) } }
       end
     end
 

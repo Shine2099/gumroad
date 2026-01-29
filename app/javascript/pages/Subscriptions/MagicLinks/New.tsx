@@ -1,9 +1,9 @@
-import { router, useForm, usePage } from "@inertiajs/react";
+import { Link, useForm, usePage } from "@inertiajs/react";
 import * as React from "react";
+import { cast } from "ts-safe-cast";
 
 import { Layout } from "$app/components/Authentication/Layout";
 import { Button } from "$app/components/Button";
-import { StandaloneLayout } from "$app/inertia/layout";
 import { LoadingSpinner } from "$app/components/LoadingSpinner";
 import { useOriginalLocation } from "$app/components/useOriginalLocation";
 
@@ -18,7 +18,7 @@ type Props = {
 };
 
 function SubscriptionsMagicLink() {
-  const { product_name, subscription_id, is_installment_plan, user_emails, email_sent } = usePage<Props>().props;
+  const { product_name, subscription_id, is_installment_plan, user_emails, email_sent } = cast<Props>(usePage().props);
 
   const hasSentEmail = email_sent !== null;
   const defaultEmailSource = email_sent ?? user_emails[0].source;
@@ -28,12 +28,10 @@ function SubscriptionsMagicLink() {
   const subscriptionEntity = is_installment_plan ? "installment plan" : "membership";
   const invalid = new URL(useOriginalLocation()).searchParams.get("invalid") === "true";
 
-  const handleSendMagicLink = (e: React.FormEvent) => {
+  const sendMagicLink = (e: React.FormEvent) => {
     e.preventDefault();
-    form.post(Routes.send_magic_link_subscription_path(subscription_id));
+    form.post(Routes.subscription_magic_link_path(subscription_id));
   };
-
-  const handleChooseAnotherEmail = () => router.get(Routes.magic_link_subscription_path(subscription_id));
 
   const title = hasSentEmail
     ? `We've sent a link to ${selectedEmail.email}.`
@@ -56,7 +54,7 @@ function SubscriptionsMagicLink() {
       }
       headerActions={<a href={Routes.login_path()}>Log in</a>}
     >
-      <form onSubmit={handleSendMagicLink}>
+      <form onSubmit={sendMagicLink}>
         <section>
           {hasSentEmail ? (
             <>
@@ -68,12 +66,9 @@ function SubscriptionsMagicLink() {
                 {user_emails.length > 1 ? (
                   <>
                     Can't see the email? Please check your spam folder.{" "}
-                    <button
-                      className="cursor-pointer underline all-unset"
-                      onClick={handleChooseAnotherEmail}
-                    >
+                    <Link href={Routes.new_subscription_magic_link_path(subscription_id)} className="underline">
                       Click here to choose another email
-                    </button>{" "}
+                    </Link>{" "}
                     or try resending the link above.
                   </>
                 ) : (
@@ -112,6 +107,6 @@ function SubscriptionsMagicLink() {
   );
 }
 
-SubscriptionsMagicLink.layout = (page: React.ReactNode) => <StandaloneLayout>{page}</StandaloneLayout>;
+SubscriptionsMagicLink.authenticationLayout = true;
 
 export default SubscriptionsMagicLink;

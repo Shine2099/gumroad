@@ -94,7 +94,7 @@ describe SubscriptionsController do
           end.to_not change { @subscription.reload.user_requested_cancellation_at }
 
           expect(response.parsed_body["success"]).to be(false)
-          expect(response.parsed_body["redirect_to"]).to eq(magic_link_subscription_path(@subscription.external_id))
+          expect(response.parsed_body["redirect_to"]).to eq(new_subscription_magic_link_path(@subscription.external_id))
         end
       end
     end
@@ -183,7 +183,7 @@ describe SubscriptionsController do
         it "redirects to the magic link page" do
           get :manage, params: { id: @subscription.external_id, token: "not_valid_token" }
 
-          expect(response).to redirect_to(magic_link_subscription_path(@subscription.external_id, invalid: true))
+          expect(response).to redirect_to(new_subscription_magic_link_path(@subscription.external_id, invalid: true))
         end
       end
 
@@ -192,7 +192,7 @@ describe SubscriptionsController do
           @subscription.update!(token: "valid_token", token_expires_at: 1.day.ago)
           get :manage, params: { id: @subscription.external_id, token: "valid_token" }
 
-          expect(response).to redirect_to(magic_link_subscription_path(@subscription.external_id, invalid: true))
+          expect(response).to redirect_to(new_subscription_magic_link_path(@subscription.external_id, invalid: true))
         end
       end
 

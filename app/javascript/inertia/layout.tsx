@@ -53,6 +53,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export function AuthenticationLayout({ children }: { children: React.ReactNode }) {
+  const { flash } = usePage<PageProps>().props;
+
+  useFlashMessage(flash);
+
   return (
     <div>
       <MetaTags />
