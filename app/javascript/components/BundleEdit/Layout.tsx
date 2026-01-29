@@ -97,7 +97,7 @@ export const BundleEditLayout = ({
     </WithTooltip>
   ) : null;
 
-  const handleTabClick = (e: React.MouseEvent<Element, MouseEvent>, targetPath: string) => {
+  const handleTabClick = (e: React.MouseEvent, targetPath: string) => {
     const message = isUploadingFiles
       ? "Some files are still uploading, please wait..."
       : isUploadingFilesOrImages
@@ -161,17 +161,26 @@ export const BundleEditLayout = ({
       >
         <Tabs style={{ gridColumn: 1 }}>
           <Tab asChild isSelected={tab === "product"}>
-            <Link href={Routes.edit_bundle_product_path(id)} onClick={(e) => handleTabClick(e, Routes.edit_bundle_product_path(id))}>
+            <Link
+              href={Routes.edit_bundle_product_path(id)}
+              onClick={(e) => handleTabClick(e, Routes.edit_bundle_product_path(id))}
+            >
               Product
             </Link>
           </Tab>
           <Tab asChild isSelected={tab === "content"}>
-            <Link href={Routes.edit_bundle_content_path(id)} onClick={(e) => handleTabClick(e, Routes.edit_bundle_content_path(id))}>
+            <Link
+              href={Routes.edit_bundle_content_path(id)}
+              onClick={(e) => handleTabClick(e, Routes.edit_bundle_content_path(id))}
+            >
               Content
             </Link>
           </Tab>
           <Tab asChild isSelected={tab === "share"}>
-            <Link href={Routes.edit_bundle_share_path(id)} onClick={(e) => handleTabClick(e, Routes.edit_bundle_share_path(id))}>
+            <Link
+              href={Routes.edit_bundle_share_path(id)}
+              onClick={(e) => handleTabClick(e, Routes.edit_bundle_share_path(id))}
+            >
               Share
             </Link>
           </Tab>
