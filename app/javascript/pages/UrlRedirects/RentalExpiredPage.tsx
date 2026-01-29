@@ -2,9 +2,12 @@ import { usePage } from "@inertiajs/react";
 import * as React from "react";
 import { cast } from "ts-safe-cast";
 
+import { Placeholder, PlaceholderImage } from "$app/components/ui/Placeholder";
 import { StandaloneLayout } from "$app/inertia/layout";
 
-import { RentalExpiredContent, UnavailablePageLayout, type UnavailablePageProps } from "./UnavailablePageLayout";
+import placeholderImage from "$assets/images/placeholders/comic-stars.png";
+
+import { UnavailablePageLayout, type UnavailablePageProps } from "./UnavailablePageLayout";
 
 type Props = UnavailablePageProps;
 
@@ -17,7 +20,11 @@ const RentalExpiredPage = () => {
       titleSuffix="Your rental has expired"
       contentUnavailabilityReasonCode="rental_expired"
     >
-      <RentalExpiredContent />
+      <Placeholder className="flex-1 content-center">
+        <PlaceholderImage src={placeholderImage} />
+        <h2>Your rental has expired</h2>
+        <p>Rentals expire 30 days after purchase or 72 hours after you've begun watching it.</p>
+      </Placeholder>
     </UnavailablePageLayout>
   );
 };
