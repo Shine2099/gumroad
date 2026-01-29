@@ -419,13 +419,14 @@ describe("Bundle edit page", type: :system, js: true) do
     expect(page.current_path).to eq(edit_bundle_content_path(bundle.external_id))
 
     select_tab "Share"
+    wait_for_ajax
     expect(page).to have_alert(text: "Not yet! You've got to publish your awesome product before you can share it with your audience and the world.")
 
     select_tab "Product"
-    fill_in "name", with: ""
     fill_in "Name", with: "New bundle"
-    select_tab "Content"
 
+    select_tab "Content"
+    wait_for_ajax
     click_on "Publish and continue"
     expect(page).to have_alert(text: "Published!")
     bundle.reload
