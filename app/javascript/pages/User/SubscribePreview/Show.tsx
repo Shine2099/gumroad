@@ -19,7 +19,7 @@ export default function Show() {
         <style>{custom_styles}</style>
       </Head>
 
-      <div className="override grid h-screen w-full grid-cols-[27.5%_1fr] items-center gap-6 p-6">
+      <div className="override grid h-full w-full grid-cols-[27.5%_1fr] items-center gap-6 p-6">
         <img className="user-avatar w-full!" src={avatar_url} />
         <section className="override grid gap-3">
           <span className="logo-full text-sm opacity-20" />

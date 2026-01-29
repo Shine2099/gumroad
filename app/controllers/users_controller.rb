@@ -56,7 +56,7 @@ class UsersController < ApplicationController
   end
 
   def subscribe_preview
-    render inertia: "SubscribePreview/Show", props: {
+    render inertia: "User/SubscribePreview/Show", props: {
       avatar_url: @user.resized_avatar_url(size: 240),
       title: @user.name_or_username,
       custom_styles: @user.seller_profile.custom_styles,
