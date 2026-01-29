@@ -1,47 +1,57 @@
+import { Head, usePage } from "@inertiajs/react";
 import * as React from "react";
+import { cast } from "ts-safe-cast";
+
+import { StandaloneLayout } from "$app/inertia/layout";
 
 import { Button } from "$app/components/Button";
-import { Layout } from "$app/components/server-components/DownloadPage/Layout";
+import { Layout, LayoutProps } from "$app/components/server-components/DownloadPage/Layout";
 import { Placeholder, PlaceholderImage } from "$app/components/ui/Placeholder";
 
 import placeholderImage from "$assets/images/placeholders/comic-stars.png";
 
-import { usePageTitle, useUnavailablePageProps, withStandaloneLayout } from "./UnavailablePageLayout";
+type PageProps = LayoutProps & {
+  product_name: string;
+};
 
 const TITLE_SUFFIX = "Your membership is inactive";
+const fullHeightPlaceholderClassName = "flex-1 content-center";
 
 function MembershipInactivePage() {
-  const pageProps = useUnavailablePageProps();
-  const { purchase } = pageProps;
-  usePageTitle(pageProps.product_name, TITLE_SUFFIX);
+  const pageProps = cast<PageProps>(usePage().props);
+  const { purchase, product_name } = pageProps;
 
   const isInstallmentPlan = purchase?.membership?.is_installment_plan;
+  const title = product_name ? `${product_name} - ${TITLE_SUFFIX}` : TITLE_SUFFIX;
 
   return (
-    <Layout {...pageProps}>
-      {isInstallmentPlan ? (
-        <InstallmentPlanFailedOrCancelled
-          product_name={purchase?.product_name ?? ""}
-          installment_plan={{
-            is_alive_or_restartable: purchase?.membership?.is_alive_or_restartable ?? null,
-            subscription_id: purchase?.membership?.subscription_id ?? "",
-          }}
-        />
-      ) : (
-        <MembershipInactiveContent
-          product_name={purchase?.product_name ?? ""}
-          product_long_url={purchase?.product_long_url ?? null}
-          membership={
-            purchase?.email && purchase.membership
-              ? {
-                  is_alive_or_restartable: purchase.membership.is_alive_or_restartable,
-                  subscription_id: purchase.membership.subscription_id,
-                }
-              : null
-          }
-        />
-      )}
-    </Layout>
+    <>
+      <Head title={title} />
+      <Layout {...pageProps}>
+        {isInstallmentPlan ? (
+          <InstallmentPlanFailedOrCancelled
+            product_name={purchase?.product_name ?? ""}
+            installment_plan={{
+              is_alive_or_restartable: purchase?.membership?.is_alive_or_restartable ?? null,
+              subscription_id: purchase?.membership?.subscription_id ?? "",
+            }}
+          />
+        ) : (
+          <MembershipInactiveContent
+            product_name={purchase?.product_name ?? ""}
+            product_long_url={purchase?.product_long_url ?? null}
+            membership={
+              purchase?.email && purchase.membership
+                ? {
+                    is_alive_or_restartable: purchase.membership.is_alive_or_restartable,
+                    subscription_id: purchase.membership.subscription_id,
+                  }
+                : null
+            }
+          />
+        )}
+      </Layout>
+    </>
   );
 }
 
@@ -57,7 +67,7 @@ const MembershipInactiveContent = ({
     subscription_id: string;
   } | null;
 }) => (
-  <Placeholder>
+  <Placeholder className={fullHeightPlaceholderClassName}>
     <PlaceholderImage src={placeholderImage} />
     <h2>Your membership is inactive</h2>
     <p>You cannot access the content of {product_name} because your membership is no longer active.</p>
@@ -85,7 +95,7 @@ const InstallmentPlanFailedOrCancelled = ({
     is_alive_or_restartable: boolean | null;
   };
 }) => (
-  <Placeholder>
+  <Placeholder className={fullHeightPlaceholderClassName}>
     <PlaceholderImage src={placeholderImage} />
     <h2>Your installment plan is inactive</h2>
     {installment_plan.is_alive_or_restartable ? (
@@ -101,6 +111,6 @@ const InstallmentPlanFailedOrCancelled = ({
   </Placeholder>
 );
 
-MembershipInactivePage.layout = withStandaloneLayout;
+MembershipInactivePage.layout = (page: React.ReactNode) => <StandaloneLayout>{page}</StandaloneLayout>;
 
 export default MembershipInactivePage;

@@ -1,4 +1,4 @@
-import { usePage } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 import * as React from "react";
 import { cast } from "ts-safe-cast";
 
@@ -15,29 +15,31 @@ export type UnavailablePageProps = LayoutProps & {
 
 export const useUnavailablePageProps = () => cast<UnavailablePageProps>(usePage().props);
 
-export const usePageTitle = (productName: string, titleSuffix: string) => {
-  React.useEffect(() => {
-    document.title = `${productName} - ${titleSuffix}`;
-  }, [productName, titleSuffix]);
-};
+const fullHeightPlaceholderClassName = "flex-1 content-center";
 
-export const UnavailablePageContent = ({ children }: { children: React.ReactNode }) => (
-  <Placeholder>
-    <PlaceholderImage src={placeholderImage} />
-    {children}
-  </Placeholder>
-);
-
-export const UnavailablePageWrapper = ({
+export const UnavailablePageLayout = ({
+  titleSuffix,
   pageProps,
   children,
 }: {
+  titleSuffix: string;
   pageProps: UnavailablePageProps;
   children: React.ReactNode;
-}) => (
-  <Layout {...pageProps}>
-    <UnavailablePageContent>{children}</UnavailablePageContent>
-  </Layout>
-);
+}) => {
+  const productName = pageProps.product_name ?? "";
+  const title = productName ? `${productName} - ${titleSuffix}` : titleSuffix;
+
+  return (
+    <>
+      <Head title={title} />
+      <Layout {...pageProps}>
+        <Placeholder className={fullHeightPlaceholderClassName}>
+          <PlaceholderImage src={placeholderImage} />
+          {children}
+        </Placeholder>
+      </Layout>
+    </>
+  );
+};
 
 export const withStandaloneLayout = (page: React.ReactNode) => <StandaloneLayout>{page}</StandaloneLayout>;
