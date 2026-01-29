@@ -157,7 +157,7 @@ export default function BundlesContentEdit() {
   const handlePreview = () => {
     window.open(url);
   };
-  const handleBeforeNavigate = (targetPath: string) => {
+  const saveBeforeNavigate = (targetPath: string) => {
     if (!form.isDirty) return false;
     submitForm({ redirect_to: targetPath });
     return true;
@@ -218,7 +218,7 @@ export default function BundlesContentEdit() {
       {...(!bundle.is_published && { onPublish: handlePublish })}
       {...(bundle.is_published && { onPreview: handlePreview })}
       isProcessing={form.processing}
-      onBeforeNavigate={handleBeforeNavigate}
+      onBeforeNavigate={saveBeforeNavigate}
     >
       <form onSubmit={(evt) => evt.preventDefault()} ref={formRef}>
         <section className="p-4! md:p-8!">

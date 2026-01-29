@@ -190,7 +190,7 @@ export default function BundlesProductEdit() {
       onSuccess: () => window.open(url),
     });
   };
-  const handleBeforeNavigate = (targetPath: string) => {
+  const saveBeforeNavigate = (targetPath: string) => {
     if (!form.isDirty) return false;
     submitForm({ redirect_to: targetPath });
     return true;
@@ -242,7 +242,7 @@ export default function BundlesProductEdit() {
       {...(bundle.is_published && { onUnpublish: handleUnpublish })}
       {...(!bundle.is_published && { onSaveAndContinue: handleSaveAndContinue })}
       onPreview={handlePreview}
-      onBeforeNavigate={handleBeforeNavigate}
+      onBeforeNavigate={saveBeforeNavigate}
     >
       <form>
         <section className="p-4! md:p-8!">
