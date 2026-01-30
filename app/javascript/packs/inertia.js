@@ -13,19 +13,6 @@ router.on("finish", () => {
   window.__activeRequests = Math.max((window.__activeRequests || 1) - 1, 0);
 });
 
-// Track active Inertia requests for wait_for_ajax helper in tests
-router.on("start", () => {
-  if (typeof globalThis.__activeRequests === "number") {
-    ++globalThis.__activeRequests;
-  }
-});
-
-router.on("finish", () => {
-  if (typeof globalThis.__activeRequests === "number") {
-    --globalThis.__activeRequests;
-  }
-});
-
 // Configure Inertia to send CSRF token with all requests
 router.on("before", (event) => {
   const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute("content");
