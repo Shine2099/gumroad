@@ -133,6 +133,9 @@ class Purchase::CreateService < Purchase::BaseService
       # Make sure the giftee purchase is created successfully before attempting a charge
       create_giftee_purchase if purchase.is_gift_sender_purchase
 
+      # Check for existing subscriptions and handle accordingly
+      validate_and_handle_existing_subscription
+
       # For bundle purchases we create a payment method and set up future charges for it,
       # then process all purchases off-session in order to avoid multiple SCA pop-ups.
       purchase.charge!(off_session: purchase_params[:is_multi_buy]) unless purchase.is_part_of_combined_charge?
@@ -376,6 +379,63 @@ class Purchase::CreateService < Purchase::BaseService
           RESERVED_URL_PARAMETERS.include?(parameter_name)
         end
       end
+    end
+
+    def validate_and_handle_existing_subscription
+      return unless product.is_recurring_billing
+      return if purchase.is_gift_sender_purchase
+      return if purchase.is_installment_payment
+
+      email = purchase.email
+      user = purchase.purchaser
+
+      active_subscription = find_truly_active_subscription(user, email)
+      if active_subscription
+        CustomerLowPriorityMailer.existing_active_subscription_notice(active_subscription.id).deliver_later(queue: "low")
+        raise Purchase::PurchaseInvalid, "You already have an active subscription to this membership. Visit your Library to manage your subscription."
+      end
+
+      pending_cancel_subscription = find_pending_cancellation_subscription(user, email)
+      if pending_cancel_subscription && !pending_cancel_subscription.overdue_for_charge?
+        purchase.is_subscription_restart_without_charge = true
+        purchase.existing_subscription_for_restart = pending_cancel_subscription
+      end
+    end
+
+    def find_truly_active_subscription(user, email)
+      base_scope = product.subscriptions
+        .not_is_test_subscription
+        .where(deactivated_at: nil, ended_at: nil, failed_at: nil)
+        .where(cancelled_at: nil)
+
+      subscription = base_scope.find_by(user: user) if user.present?
+      return subscription if subscription
+
+      return nil if email.blank?
+
+      original_purchase_flag = Purchase.flag_mapping["flags"][:is_original_subscription_purchase]
+      base_scope
+        .joins("INNER JOIN purchases ON purchases.subscription_id = subscriptions.id AND (purchases.flags & #{original_purchase_flag}) != 0")
+        .where("LOWER(purchases.email) = ?", email.downcase)
+        .first
+    end
+
+    def find_pending_cancellation_subscription(user, email)
+      base_scope = product.subscriptions
+        .not_is_test_subscription
+        .where(deactivated_at: nil, ended_at: nil, failed_at: nil)
+        .where("cancelled_at IS NOT NULL AND cancelled_at > ?", Time.current)
+
+      subscription = base_scope.find_by(user: user) if user.present?
+      return subscription if subscription
+
+      return nil if email.blank?
+
+      original_purchase_flag = Purchase.flag_mapping["flags"][:is_original_subscription_purchase]
+      base_scope
+        .joins("INNER JOIN purchases ON purchases.subscription_id = subscriptions.id AND (purchases.flags & #{original_purchase_flag}) != 0")
+        .where("LOWER(purchases.email) = ?", email.downcase)
+        .first
     end
 end
 

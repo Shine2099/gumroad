@@ -30,6 +30,11 @@ class Purchase::BaseService
     def create_subscription(giftee_purchase)
       return if purchase.subscription.present?
 
+      if purchase.existing_subscription_for_restart
+        restart_subscription_without_charge(purchase.existing_subscription_for_restart, giftee_purchase)
+        return
+      end
+
       active_subscription = find_active_subscription(giftee_purchase)
       if active_subscription
         handle_active_subscription_repurchase(active_subscription, giftee_purchase)
@@ -114,8 +119,46 @@ class Purchase::BaseService
 
       ActiveRecord::Base.transaction do
         subscription.credit_card = purchase.credit_card unless is_gift
+        handle_tier_change_on_restart(subscription)
         subscription.resubscribe!
         subscription.purchases << [purchase, giftee_purchase].compact
+      end
+    end
+
+    def restart_subscription_without_charge(subscription, giftee_purchase)
+      is_gift = purchase.is_gift_sender_purchase
+
+      ActiveRecord::Base.transaction do
+        subscription.credit_card = purchase.credit_card unless is_gift
+        handle_tier_change_on_restart(subscription)
+        subscription.cancelled_at = nil
+        subscription.user_requested_cancellation_at = nil
+        subscription.cancelled_by_buyer = false
+        subscription.save!
+        subscription.purchases << [purchase, giftee_purchase].compact
+      end
+    end
+
+    def handle_tier_change_on_restart(subscription)
+      return unless purchase.link.is_tiered_membership?
+
+      old_original = subscription.original_purchase
+      return unless old_original
+
+      old_variant_ids = old_original.variant_attributes.map(&:id).sort
+      new_variant_ids = purchase.variant_attributes.map(&:id).sort
+
+      tier_changed = old_variant_ids != new_variant_ids
+      price_changed = old_original.price_id != purchase.price_id
+
+      return unless tier_changed || price_changed
+
+      old_original.update!(is_archived_original_subscription_purchase: true)
+      purchase.is_original_subscription_purchase = true
+
+      if purchase.price.present?
+        payment_option = subscription.last_payment_option
+        payment_option.update!(price: purchase.price) if payment_option
       end
     end
 

@@ -470,5 +470,131 @@ describe Purchase::BaseService do
         expect(existing_subscription.reload.deactivated_at).to be_nil
       end
     end
+
+    describe "restart without charge (within billing period)" do
+      let!(:existing_purchase) { create(:membership_purchase, link: product, purchaser: buyer) }
+      let(:existing_subscription) { existing_purchase.subscription }
+
+      before do
+        existing_subscription.update!(
+          user: buyer,
+          cancelled_at: 1.week.from_now,
+          user_requested_cancellation_at: 1.day.ago,
+          cancelled_by_buyer: true
+        )
+      end
+
+      let(:new_purchase) do
+        purchase = build(:purchase, link: product, purchaser: buyer, email: buyer.email)
+        purchase.is_original_subscription_purchase = true
+        purchase.price = product.prices.first
+        purchase.existing_subscription_for_restart = existing_subscription
+        purchase.is_subscription_restart_without_charge = true
+        purchase.save!
+        purchase
+      end
+
+      it "restarts the subscription without charge and clears cancellation" do
+        initial_count = product.subscriptions.count
+
+        service_class.new(new_purchase).perform
+
+        expect(product.subscriptions.count).to eq(initial_count)
+        expect(new_purchase.reload.subscription).to eq(existing_subscription)
+        existing_subscription.reload
+        expect(existing_subscription.cancelled_at).to be_nil
+        expect(existing_subscription.user_requested_cancellation_at).to be_nil
+        expect(existing_subscription.cancelled_by_buyer).to eq(false)
+      end
+
+      it "associates the new purchase with the subscription" do
+        service_class.new(new_purchase).perform
+
+        expect(existing_subscription.reload.purchases).to include(new_purchase)
+      end
+    end
+
+    describe "tier change on restart" do
+      let(:tiered_product) { create(:membership_product_with_preset_tiered_pricing, user: seller) }
+      let(:tier1) { tiered_product.tiers.first }
+      let(:tier2) { tiered_product.tiers.second }
+
+      let!(:existing_purchase) do
+        purchase = create(:membership_purchase, link: tiered_product, purchaser: buyer, tier: tier1)
+        purchase
+      end
+      let(:existing_subscription) { existing_purchase.subscription }
+
+      before do
+        existing_subscription.update!(user: buyer, deactivated_at: 1.day.ago, failed_at: 1.day.ago)
+      end
+
+      let(:new_purchase) do
+        purchase = build(:purchase, link: tiered_product, purchaser: buyer, email: buyer.email)
+        purchase.is_original_subscription_purchase = true
+        purchase.price = tiered_product.prices.first
+        purchase.variant_attributes = [tier2]
+        purchase.save!
+        purchase
+      end
+
+      it "updates the subscription to use the new tier" do
+        service_class.new(new_purchase).perform
+
+        existing_subscription.reload
+        expect(existing_subscription.original_purchase).to eq(new_purchase)
+        expect(existing_purchase.reload.is_archived_original_subscription_purchase?).to eq(true)
+      end
+
+      it "keeps the same subscription (no new subscription created)" do
+        initial_count = tiered_product.subscriptions.count
+
+        service_class.new(new_purchase).perform
+
+        expect(tiered_product.subscriptions.count).to eq(initial_count)
+        expect(new_purchase.reload.subscription).to eq(existing_subscription)
+      end
+    end
+
+    describe "tier change on restart without charge" do
+      let(:tiered_product) { create(:membership_product_with_preset_tiered_pricing, user: seller) }
+      let(:tier1) { tiered_product.tiers.first }
+      let(:tier2) { tiered_product.tiers.second }
+
+      let!(:existing_purchase) do
+        purchase = create(:membership_purchase, link: tiered_product, purchaser: buyer, tier: tier1)
+        purchase
+      end
+      let(:existing_subscription) { existing_purchase.subscription }
+
+      before do
+        existing_subscription.update!(
+          user: buyer,
+          cancelled_at: 1.week.from_now,
+          user_requested_cancellation_at: 1.day.ago,
+          cancelled_by_buyer: true
+        )
+      end
+
+      let(:new_purchase) do
+        purchase = build(:purchase, link: tiered_product, purchaser: buyer, email: buyer.email)
+        purchase.is_original_subscription_purchase = true
+        purchase.price = tiered_product.prices.first
+        purchase.variant_attributes = [tier2]
+        purchase.existing_subscription_for_restart = existing_subscription
+        purchase.is_subscription_restart_without_charge = true
+        purchase.save!
+        purchase
+      end
+
+      it "updates the subscription tier and clears cancellation" do
+        service_class.new(new_purchase).perform
+
+        existing_subscription.reload
+        expect(existing_subscription.original_purchase).to eq(new_purchase)
+        expect(existing_subscription.cancelled_at).to be_nil
+        expect(existing_purchase.reload.is_archived_original_subscription_purchase?).to eq(true)
+      end
+    end
   end
 end

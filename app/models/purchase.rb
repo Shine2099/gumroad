@@ -425,7 +425,7 @@ class Purchase < ApplicationRecord
                 :save_shipping_address, :flow_of_funds, :prorated_discount_price_cents,
                 :original_variant_attributes, :original_price, :is_updated_original_subscription_purchase,
                 :is_applying_plan_change, :setup_intent, :charge_intent, :setup_future_charges, :skip_preparing_for_charge,
-                :installment_plan
+                :installment_plan, :is_subscription_restart_without_charge, :existing_subscription_for_restart
 
   delegate :email, :name, to: :seller, prefix: "seller"
   delegate :name, to: :link, prefix: "link", allow_nil: true
@@ -1703,7 +1703,7 @@ class Purchase < ApplicationRecord
     if is_test_purchase?
       set_succeeded_at
       mark_test_successful!
-    elsif is_free_trial_purchase?
+    elsif is_free_trial_purchase? || is_subscription_restart_without_charge
       mark_not_charged!
     elsif is_gift_receiver_purchase?
       mark_gift_receiver_purchase_successful!
@@ -2734,7 +2734,7 @@ class Purchase < ApplicationRecord
         validate_purchasing_power_parity
         return if errors.present?
 
-        if is_preorder_authorization || is_free_trial_purchase?
+        if is_preorder_authorization || is_free_trial_purchase? || is_subscription_restart_without_charge
           create_setup_intent(chargeable) if setup_future_charges
           return
         end

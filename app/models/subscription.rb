@@ -681,7 +681,7 @@ class Subscription < ApplicationRecord
       save!
       original_purchase&.add_to_audience_member_details
 
-      if is_deactivated
+      if is_deactivated && original_purchase.present?
         # Calculate by how much time do we need to delay the workflow installments
         send_delay = (now - last_deactivated_at).to_i
 
