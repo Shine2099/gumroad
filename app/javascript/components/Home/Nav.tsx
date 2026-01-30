@@ -1,17 +1,126 @@
 import { Link, usePage } from "@inertiajs/react";
 import * as React from "react";
 
+import { LoggedInUser } from "$app/types/user";
+import { classNames } from "$app/utils/classNames";
 import { request } from "$app/utils/request";
 
-import { classNames } from "$app/utils/classNames";
-import { LoggedInUser } from "$app/types/user";
-
 import arrowDiagonalIcon from "$assets/images/icons/arrow-diagonal-up-right.svg";
-import logoSvg from "$assets/images/logo.svg";
 import starIcon from "$assets/images/icons/solid-star.svg";
+import logoSvg from "$assets/images/logo.svg";
 
 type PageProps = {
   current_user?: LoggedInUser;
+};
+
+type GithubStarsResponse = {
+  stars?: number;
+};
+
+const NavLink = ({
+  href,
+  children,
+  onClick,
+  isActive,
+}: {
+  href: string;
+  children: React.ReactNode;
+  onClick?: ((event: React.MouseEvent) => void) | undefined;
+  isActive: boolean;
+}) => {
+  const className = classNames(
+    "flex w-full items-center justify-center border bg-black p-4 text-lg text-white no-underline transition-all duration-200 hover:border-black lg:w-auto lg:rounded-full lg:py-2 lg:px-4 dark:text-white lg:dark:hover:border-white/35 whitespace-nowrap",
+    isActive
+      ? "border-black lg:bg-black lg:text-white dark:lg:bg-white dark:lg:text-black"
+      : "border-transparent lg:bg-transparent lg:text-black dark:lg:text-white",
+  );
+
+  return (
+    <Link href={href} className={className} {...(onClick && { onClick })}>
+      {children}
+    </Link>
+  );
+};
+
+const NavButton = ({
+  href,
+  children,
+  context,
+  onClick,
+  external = false,
+}: {
+  href: string;
+  children: string;
+  context?: "primary" | undefined;
+  onClick?: ((event: React.MouseEvent) => void) | undefined;
+  external?: boolean | undefined;
+}) => {
+  // Logic from _nav.html.erb
+  let modifier1 = "";
+  if (children === "Dashboard") {
+    modifier1 = "lg:bg-black lg:text-white lg:hover:bg-pink dark:lg:bg-pink dark:lg:text-black dark:lg:hover:bg-white";
+  } else if (context !== "primary") {
+    // Secondary button (e.g. Log in)
+    modifier1 =
+      "lg:border-l-black lg:bg-white lg:text-black lg:hover:bg-pink dark:lg:border-l-white/35 dark:lg:bg-black dark:lg:text-white";
+  } else {
+    // Primary button (e.g. Start selling)
+    modifier1 = "lg:bg-black lg:text-white lg:hover:bg-pink";
+  }
+
+  let modifier2 = "";
+  if (context === "primary" && children !== "Dashboard") {
+    modifier2 = "dark:lg:bg-pink dark:lg:text-black dark:lg:hover:bg-white";
+  } else {
+    modifier2 = "dark:lg:hover:bg-white dark:lg:hover:text-black";
+  }
+
+  const className = classNames(
+    "flex w-full items-center justify-center h-full border-black bg-black p-4 text-lg text-white no-underline transition-colors duration-200 hover:bg-pink hover:text-black lg:w-auto lg:border-l lg:py-2 lg:px-6",
+    modifier1,
+    modifier2,
+  );
+
+  if (external) {
+    return (
+      <a href={href} className={className} {...(onClick && { onClick })}>
+        {children}
+      </a>
+    );
+  }
+
+  return (
+    <Link href={href} className={className} {...(onClick && { onClick })}>
+      {children}
+    </Link>
+  );
+};
+
+const AuthButtons = ({
+  user,
+  onClick,
+}: {
+  user?: LoggedInUser | undefined;
+  onClick?: ((event: React.MouseEvent) => void) | undefined;
+}) => {
+  if (user) {
+    return (
+      <NavButton href={Routes.dashboard_path()} context="primary" {...(onClick && { onClick })} external>
+        Dashboard
+      </NavButton>
+    );
+  }
+
+  return (
+    <>
+      <NavButton href={Routes.new_user_session_path()} {...(onClick && { onClick })}>
+        Log in
+      </NavButton>
+      <NavButton href={Routes.new_user_registration_path()} context="primary" {...(onClick && { onClick })}>
+        Start selling
+      </NavButton>
+    </>
+  );
 };
 
 export const BlogNav = () => {
@@ -24,10 +133,10 @@ export const BlogNav = () => {
   const closeMobileMenu = () => setMobileMenuOpen(false);
 
   React.useEffect(() => {
-    request({ method: "GET", accept: "json", url: "/github_stars" })
+    void request({ method: "GET", accept: "json", url: "/github_stars" })
       .then((response) => response.json())
-      .then((data) => {
-        if (data.stars) {
+      .then((data: GithubStarsResponse) => {
+        if (typeof data.stars === "number") {
           setStars(
             new Intl.NumberFormat("en-US", {
               notation: "compact",
@@ -35,6 +144,9 @@ export const BlogNav = () => {
           );
         }
       })
+      .catch((_error: unknown) => {
+        // failed to fetch stars
+      });
   }, []);
 
   const isCurrentPage = (path: string): boolean => {
@@ -42,85 +154,6 @@ export const BlogNav = () => {
       return url.startsWith(path);
     }
     return url === path;
-  };
-
-  const NavLink = ({
-    href,
-    children,
-    onClick,
-  }: {
-    href: string;
-    children: React.ReactNode;
-    onClick?: ((event: React.MouseEvent) => void) | undefined;
-  }) => {
-    const isCurrent = isCurrentPage(href);
-    const className = classNames(
-      "flex w-full items-center justify-center border bg-black p-4 text-lg text-white no-underline transition-all duration-200 hover:border-black lg:w-auto lg:rounded-full lg:py-2 lg:px-4 dark:text-white lg:dark:hover:border-white/35 whitespace-nowrap",
-      isCurrent
-        ? "border-black lg:bg-black lg:text-white dark:lg:bg-white dark:lg:text-black"
-        : "border-transparent lg:bg-transparent lg:text-black dark:lg:text-white",
-    );
-
-    return (
-      <Link href={href} className={className} {...(onClick && { onClick })}>
-        {children}
-      </Link>
-    );
-  };
-
-  const NavButton = ({
-    href,
-    children,
-    context,
-    onClick,
-    external = false,
-  }: {
-    href: string;
-    children: string;
-    context?: "primary" | undefined;
-    onClick?: ((event: React.MouseEvent) => void) | undefined;
-    external?: boolean | undefined;
-  }) => {
-    // Logic from _nav.html.erb
-    let modifier1 = "";
-    if (children === "Dashboard") {
-      modifier1 =
-        "lg:bg-black lg:text-white lg:hover:bg-pink dark:lg:bg-pink dark:lg:text-black dark:lg:hover:bg-white";
-    } else if (context !== "primary") {
-      // Secondary button (e.g. Log in)
-      modifier1 =
-        "lg:border-l-black lg:bg-white lg:text-black lg:hover:bg-pink dark:lg:border-l-white/35 dark:lg:bg-black dark:lg:text-white";
-    } else {
-      // Primary button (e.g. Start selling)
-      modifier1 = "lg:bg-black lg:text-white lg:hover:bg-pink";
-    }
-
-    let modifier2 = "";
-    if (context === "primary" && children !== "Dashboard") {
-      modifier2 = "dark:lg:bg-pink dark:lg:text-black dark:lg:hover:bg-white";
-    } else {
-      modifier2 = "dark:lg:hover:bg-white dark:lg:hover:text-black";
-    }
-
-    const className = classNames(
-      "flex w-full items-center justify-center h-full border-black bg-black p-4 text-lg text-white no-underline transition-colors duration-200 hover:bg-pink hover:text-black lg:w-auto lg:border-l lg:py-2 lg:px-6",
-      modifier1,
-      modifier2,
-    );
-
-    if (external) {
-      return (
-        <a href={href} className={className} {...(onClick && { onClick })}>
-          {children}
-        </a>
-      );
-    }
-
-    return (
-      <Link href={href} className={className} {...(onClick && { onClick })}>
-        {children}
-      </Link>
-    );
   };
 
   const LINKS = [
@@ -131,28 +164,9 @@ export const BlogNav = () => {
     { href: Routes.about_path(), label: "About" },
   ];
 
-  const AuthButtons = ({ onClick }: { onClick?: ((event: React.MouseEvent) => void) | undefined }) => (
-    <>
-      {user ? (
-        <NavButton href={Routes.dashboard_path()} context="primary" {...(onClick && { onClick })} external>
-          Dashboard
-        </NavButton>
-      ) : (
-        <>
-          <NavButton href={Routes.new_user_session_path()} {...(onClick && { onClick })}>
-            Log in
-          </NavButton>
-          <NavButton href={Routes.new_user_registration_path()} context="primary" {...(onClick && { onClick })}>
-            Start selling
-          </NavButton>
-        </>
-      )}
-    </>
-  );
-
   return (
     <>
-      <div className="justify-between bg-white border-b border-black top-0 left-0 right-0 z-50 pr-4 pl-4 h-20 sticky flex lg:pl-8 lg:pr-0 dark:bg-black dark:border-b-white/35">
+      <div className="sticky top-0 right-0 left-0 z-50 flex h-20 justify-between border-b border-black bg-white pr-4 pl-4 lg:pr-0 lg:pl-8 dark:border-b-white/35 dark:bg-black">
         <div className="flex items-center gap-2">
           <Link href={Routes.root_path()} className="flex items-center">
             <img src={logoSvg} loading="lazy" alt="" className="h-7 lg:h-8 dark:invert" />
@@ -162,17 +176,11 @@ export const BlogNav = () => {
             href="https://github.com/antiwork/gumroad"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex gap-1.5 rounded-full px-2 py-1 bg-black border border-black no-underline dark:border-white/35 hover:bg-gray-800 text-white transition-all duration-100 hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[3px_3px_0_0_#9c9c9c]"
+            className="flex gap-1.5 rounded-full border border-black bg-black px-2 py-1 text-white no-underline transition-all duration-100 hover:-translate-x-[2px] hover:-translate-y-[2px] hover:bg-gray-800 hover:shadow-[3px_3px_0_0_#9c9c9c] dark:border-white/35"
             aria-label="Visit Gumroad on GitHub"
             data-github-stars
           >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 98 96"
-              xmlns="http://www.w3.org/2000/svg"
-              className="fill-current"
-            >
+            <svg width="20" height="20" viewBox="0 0 98 96" xmlns="http://www.w3.org/2000/svg" className="fill-current">
               <path
                 fillRule="evenodd"
                 clipRule="evenodd"
@@ -181,7 +189,7 @@ export const BlogNav = () => {
               />
             </svg>
             {stars ? (
-              <div data-github-stars-count className="flex items-center gap-1.5 whitespace-nowrap px-1">
+              <div data-github-stars-count className="flex items-center gap-1.5 px-1 whitespace-nowrap">
                 <span className="text-base leading-none font-medium" data-github-stars-count-value>
                   {stars}
                 </span>
@@ -197,57 +205,57 @@ export const BlogNav = () => {
         </div>
 
         <div className="override hidden lg:flex lg:items-center">
-          <div className="flex flex-col justify-center items-center lg:flex-row lg:gap-1 lg:px-6">
+          <div className="flex flex-col items-center justify-center lg:flex-row lg:gap-1 lg:px-6">
             {LINKS.map(({ href, label }) => (
-              <NavLink key={href} href={href}>
+              <NavLink key={href} href={href} isActive={isCurrentPage(href)}>
                 {label}
               </NavLink>
             ))}
           </div>
-          <div className="flex flex-col lg:flex-row lg:h-full">
-            <AuthButtons />
+          <div className="flex flex-col lg:h-full lg:flex-row">
+            <AuthButtons user={user} />
           </div>
         </div>
 
         <div className="flex items-center lg:hidden">
           <button
-            className="relative flex h-8 w-8 flex-col all-unset items-center justify-center focus:outline-hidden"
+            className="relative flex h-8 w-8 flex-col items-center justify-center all-unset focus:outline-hidden"
             onClick={toggleMobileMenu}
             aria-label="Toggle navigation menu"
           >
             <div
               className={classNames(
                 "mb-1 h-0.5 w-8 origin-center bg-black transition-transform duration-200 dark:bg-white",
-                { "rotate-45 translate-y-1.5": mobileMenuOpen },
+                { "translate-y-1.5 rotate-45": mobileMenuOpen },
               )}
             />
             <div
               className={classNames(
                 "mt-1 h-0.5 w-8 origin-center bg-black transition-transform duration-200 dark:bg-white",
-                { "-rotate-45 -translate-y-1.5": mobileMenuOpen },
+                { "-translate-y-1.5 -rotate-45": mobileMenuOpen },
               )}
             />
           </button>
         </div>
       </div>
 
-      {mobileMenuOpen && (
+      {mobileMenuOpen ? (
         <div
-          className="override flex justify-between border-b border-black flex-col top-20 left-0 right-0 z-50 fixed bg-black dark:border-white/35"
+          className="override fixed top-20 right-0 left-0 z-50 flex flex-col justify-between border-b border-black bg-black dark:border-white/35"
           id="mobile-menu"
         >
-          <div className="flex flex-col justify-center items-center lg:flex-row lg:gap-1 lg:px-6">
+          <div className="flex flex-col items-center justify-center lg:flex-row lg:gap-1 lg:px-6">
             {LINKS.map(({ href, label }) => (
-              <NavLink key={href} href={href} onClick={closeMobileMenu}>
+              <NavLink key={href} href={href} onClick={closeMobileMenu} isActive={isCurrentPage(href)}>
                 {label}
               </NavLink>
             ))}
           </div>
-          <div className="flex flex-col lg:flex-row lg:h-full">
-            <AuthButtons onClick={closeMobileMenu} />
+          <div className="flex flex-col lg:h-full lg:flex-row">
+            <AuthButtons user={user} onClick={closeMobileMenu} />
           </div>
         </div>
-      )}
+      ) : null}
     </>
   );
 };
