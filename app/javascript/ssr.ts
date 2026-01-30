@@ -26,7 +26,6 @@ import ProfileCoffeePage from "$app/components/server-components/Profile/CoffeeP
 import ProfileProductPage from "$app/components/server-components/Profile/ProductPage";
 import ProfileWishlistPage from "$app/components/server-components/Profile/WishlistPage";
 import DisputeEvidencePage from "$app/components/server-components/Purchase/DisputeEvidencePage";
-import PurchaseProductPage from "$app/components/server-components/Purchase/ProductPage";
 import SubscribePage from "$app/components/server-components/SubscribePage";
 import SubscriptionManager from "$app/components/server-components/SubscriptionManager";
 import SubscriptionManagerMagicLink from "$app/components/server-components/SubscriptionManagerMagicLink";
