@@ -30,6 +30,12 @@ class Purchase::BaseService
     def create_subscription(giftee_purchase)
       return if purchase.subscription.present?
 
+      active_subscription = find_active_subscription(giftee_purchase)
+      if active_subscription
+        handle_active_subscription_repurchase(active_subscription, giftee_purchase)
+        return
+      end
+
       existing_subscription = find_restartable_subscription(giftee_purchase)
       if existing_subscription
         restart_existing_subscription(existing_subscription, giftee_purchase)
@@ -111,8 +117,49 @@ class Purchase::BaseService
         subscription.resubscribe!
         subscription.purchases << [purchase, giftee_purchase].compact
       end
+    end
 
-      subscription.send_restart_notifications!
+    def find_active_subscription(giftee_purchase)
+      return nil if purchase.is_installment_payment
+      return nil if purchase.is_test_purchase?
+      return nil if purchase.link.deleted?
+
+      is_gift = purchase.is_gift_sender_purchase
+      user = is_gift ? giftee_purchase&.purchaser : purchase.purchaser
+      email = is_gift ? giftee_purchase&.email : purchase.email
+
+      base_scope = purchase.link.subscriptions
+        .not_is_test_subscription
+        .where(deactivated_at: nil, ended_at: nil, failed_at: nil)
+        .where("cancelled_at IS NULL OR cancelled_at > ?", Time.current)
+
+      if user.present?
+        subscription = base_scope.find_by(user: user)
+        return subscription if subscription
+      end
+
+      return nil if email.blank?
+
+      original_purchase_flag = Purchase.flag_mapping["flags"][:is_original_subscription_purchase]
+      base_scope
+        .joins("INNER JOIN purchases ON purchases.subscription_id = subscriptions.id AND (purchases.flags & #{original_purchase_flag}) != 0")
+        .where("LOWER(purchases.email) = ?", email.downcase)
+        .first
+    end
+
+    def handle_active_subscription_repurchase(subscription, giftee_purchase)
+      is_gift = purchase.is_gift_sender_purchase
+
+      ActiveRecord::Base.transaction do
+        subscription.credit_card = purchase.credit_card unless is_gift
+        if subscription.cancelled_at.present? && subscription.cancelled_at > Time.current
+          subscription.cancelled_at = nil
+          subscription.user_requested_cancellation_at = nil
+          subscription.cancelled_by_buyer = false
+        end
+        subscription.save! if subscription.changed?
+        subscription.purchases << [purchase, giftee_purchase].compact
+      end
     end
 
     def handle_purchase_failure

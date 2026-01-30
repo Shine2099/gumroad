@@ -54,8 +54,8 @@ describe Purchase::BaseService do
         expect(existing_subscription.reload.purchases).to include(new_purchase)
       end
 
-      it "sends restart notifications" do
-        expect_any_instance_of(Subscription).to receive(:send_restart_notifications!)
+      it "does not send restart-specific notifications" do
+        expect_any_instance_of(Subscription).not_to receive(:send_restart_notifications!)
 
         service_class.new(new_purchase).perform
       end
@@ -308,6 +308,79 @@ describe Purchase::BaseService do
 
         expect(product.subscriptions.count).to eq(initial_count + 1)
         expect(new_purchase.reload.subscription).not_to eq(existing_subscription)
+      end
+    end
+
+    describe "when buyer has an active subscription" do
+      let!(:existing_purchase) { create(:membership_purchase, link: product, purchaser: buyer) }
+      let(:existing_subscription) { existing_purchase.subscription }
+
+      before do
+        existing_subscription.update!(user: buyer)
+      end
+
+      let(:new_purchase) do
+        purchase = build(:purchase, link: product, purchaser: buyer, email: buyer.email)
+        purchase.is_original_subscription_purchase = true
+        purchase.price = product.prices.first
+        purchase.save!
+        purchase
+      end
+
+      it "associates with existing subscription instead of creating new" do
+        initial_count = product.subscriptions.count
+
+        service_class.new(new_purchase).perform
+
+        expect(product.subscriptions.count).to eq(initial_count)
+        expect(new_purchase.reload.subscription).to eq(existing_subscription)
+      end
+
+      it "updates the credit card on the existing subscription" do
+        service_class.new(new_purchase).perform
+
+        expect(existing_subscription.reload.credit_card).to eq(new_purchase.credit_card)
+      end
+    end
+
+    describe "when subscription has pending cancellation" do
+      let!(:existing_purchase) { create(:membership_purchase, link: product, purchaser: buyer) }
+      let(:existing_subscription) { existing_purchase.subscription }
+
+      before do
+        existing_subscription.update!(
+          user: buyer,
+          cancelled_at: 1.week.from_now,
+          user_requested_cancellation_at: Time.current,
+          cancelled_by_buyer: true
+        )
+      end
+
+      let(:new_purchase) do
+        purchase = build(:purchase, link: product, purchaser: buyer, email: buyer.email)
+        purchase.is_original_subscription_purchase = true
+        purchase.price = product.prices.first
+        purchase.save!
+        purchase
+      end
+
+      it "clears the pending cancellation" do
+        expect(existing_subscription.cancelled_at).to be_present
+
+        service_class.new(new_purchase).perform
+
+        existing_subscription.reload
+        expect(existing_subscription.cancelled_at).to be_nil
+        expect(existing_subscription.user_requested_cancellation_at).to be_nil
+      end
+
+      it "associates the new purchase with existing subscription" do
+        initial_count = product.subscriptions.count
+
+        service_class.new(new_purchase).perform
+
+        expect(product.subscriptions.count).to eq(initial_count)
+        expect(new_purchase.reload.subscription).to eq(existing_subscription)
       end
     end
   end
