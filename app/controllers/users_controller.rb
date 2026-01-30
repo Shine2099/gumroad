@@ -39,15 +39,16 @@ class UsersController < ApplicationController
   end
 
   def coffee
+    if params[:purchase_email].present?
+      flash[:notice] = "Your purchase was successful! We sent a receipt to #{params[:purchase_email]}."
+      return redirect_to request.path
+    end
+
     set_favicon_meta_tags(@user)
     product = @user.products.visible_and_not_archived.find_by(native_type: Link::NATIVE_TYPE_COFFEE)
     e404 if product.nil?
 
     set_meta_tag(title: product.name)
-
-    if params[:purchase_email].present?
-      flash[:notice] = "Your purchase was successful! We sent a receipt to #{params[:purchase_email]}."
-    end
 
     profile_presenter = ProfilePresenter.new(pundit_user:, seller: @user)
     product_presenter = ProductPresenter.new(pundit_user:, product:, request:)
