@@ -46,14 +46,13 @@ class FollowersController < ApplicationController
 
   def create
     follower = create_follower(params)
-    followed_user = User.find_by_external_id(params[:seller_id])
-    return redirect_to followed_user.profile_url, alert: "Sorry, something went wrong.", allow_other_host: true if follower.nil?
-    return redirect_to followed_user.profile_url, alert: follower.errors.full_messages.to_sentence, allow_other_host: true if follower.errors.present?
+    return render json: { success: false, message: "Sorry, something went wrong." } if follower.nil?
+    return render json: { success: false, message: follower.errors.full_messages.to_sentence } if follower.errors.present?
 
     if follower.confirmed?
-      redirect_to followed_user.profile_url, notice: "You are now following #{follower.user.name_or_username}!", allow_other_host: true
+      render json: { success: true, message: "You are now following #{follower.user.name_or_username}!" }
     else
-      redirect_to followed_user.profile_url, notice: "Check your inbox to confirm your follow request.", allow_other_host: true
+      render json: { success: true, message: "Check your inbox to confirm your follow request." }
     end
   end
 
