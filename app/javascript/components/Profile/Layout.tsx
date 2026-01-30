@@ -66,7 +66,7 @@ export const Layout = ({ creatorProfile, hideFollowForm, children }: LayoutProps
           {isDesktop ? headerButtons : null}
         </div>
       </header>
-      <main className="flex flex-1 flex-col">
+      <main className="flex-1">
         {children}
         <PoweredByFooter className="mx-auto w-full max-w-6xl lg:py-6 lg:text-left" />
       </main>

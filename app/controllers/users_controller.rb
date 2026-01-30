@@ -18,7 +18,7 @@ class UsersController < ApplicationController
   before_action :check_if_needs_redirect, only: %i[show]
   before_action :set_affiliate_cookie, only: %i[show]
 
-  layout "inertia", only: [:coffee,:subscribe_preview]
+  layout "inertia", only: [:coffee, :subscribe_preview]
 
   def show
     format_search_params!
