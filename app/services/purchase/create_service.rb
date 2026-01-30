@@ -133,7 +133,6 @@ class Purchase::CreateService < Purchase::BaseService
       # Make sure the giftee purchase is created successfully before attempting a charge
       create_giftee_purchase if purchase.is_gift_sender_purchase
 
-      # Check for existing subscriptions and handle accordingly
       validate_and_handle_existing_subscription
 
       # For bundle purchases we create a payment method and set up future charges for it,
