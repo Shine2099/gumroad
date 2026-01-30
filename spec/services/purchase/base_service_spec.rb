@@ -383,5 +383,92 @@ describe Purchase::BaseService do
         expect(new_purchase.reload.subscription).to eq(existing_subscription)
       end
     end
+
+    describe "when active subscription matches by email only" do
+      let(:guest_email) { "guest@example.com" }
+      let!(:existing_purchase) { create(:membership_purchase, link: product, email: guest_email) }
+      let(:existing_subscription) { existing_purchase.subscription }
+
+      before do
+        existing_subscription.update!(user: nil)
+      end
+
+      let(:new_purchase) do
+        purchase = build(:purchase, link: product, purchaser: nil, email: guest_email)
+        purchase.is_original_subscription_purchase = true
+        purchase.price = product.prices.first
+        purchase.save!
+        purchase
+      end
+
+      it "associates with existing active subscription via email match" do
+        initial_count = product.subscriptions.count
+
+        service_class.new(new_purchase).perform
+
+        expect(product.subscriptions.count).to eq(initial_count)
+        expect(new_purchase.reload.subscription).to eq(existing_subscription)
+      end
+    end
+
+    describe "when multiple active subscriptions exist" do
+      let!(:older_purchase) { create(:membership_purchase, link: product, purchaser: buyer) }
+      let(:older_subscription) { older_purchase.subscription }
+      let!(:newer_purchase) { create(:membership_purchase, link: product, purchaser: buyer) }
+      let(:newer_subscription) { newer_purchase.subscription }
+
+      before do
+        older_subscription.update!(user: buyer, created_at: 5.days.ago)
+        newer_subscription.update!(user: buyer, created_at: 1.day.ago)
+      end
+
+      let(:new_purchase) do
+        purchase = build(:purchase, link: product, purchaser: buyer, email: buyer.email)
+        purchase.is_original_subscription_purchase = true
+        purchase.price = product.prices.first
+        purchase.save!
+        purchase
+      end
+
+      it "associates with one of the active subscriptions without creating new" do
+        initial_count = product.subscriptions.count
+
+        service_class.new(new_purchase).perform
+
+        expect(product.subscriptions.count).to eq(initial_count)
+        expect([older_subscription, newer_subscription]).to include(new_purchase.reload.subscription)
+      end
+    end
+
+    describe "when restarting a gift subscription" do
+      let(:gift_sender) { create(:user) }
+      let(:gift_recipient) { buyer }
+      let!(:gift_purchase) { create(:membership_purchase, link: product, purchaser: gift_sender, is_gift_sender_purchase: true) }
+      let!(:giftee_purchase) { create(:purchase, link: product, purchaser: gift_recipient, email: gift_recipient.email) }
+      let(:existing_subscription) { gift_purchase.subscription }
+
+      before do
+        existing_subscription.update!(user: gift_recipient, deactivated_at: 1.day.ago, failed_at: 1.day.ago)
+        existing_subscription.purchases << giftee_purchase
+      end
+
+      let(:new_purchase) do
+        purchase = build(:purchase, link: product, purchaser: gift_recipient, email: gift_recipient.email)
+        purchase.is_original_subscription_purchase = true
+        purchase.price = product.prices.first
+        purchase.save!
+        purchase
+      end
+
+      it "restarts the gift subscription for the recipient" do
+        initial_count = product.subscriptions.count
+
+        service_class.new(new_purchase).perform
+
+        expect(product.subscriptions.count).to eq(initial_count)
+        expect(new_purchase.reload.subscription).to eq(existing_subscription)
+        expect(existing_subscription.reload.deactivated_at).to be_nil
+      end
+    end
   end
 end
