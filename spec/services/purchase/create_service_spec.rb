@@ -3478,7 +3478,7 @@ describe Purchase::CreateService, :vcr do
       end
 
       it "prevents purchase with error message" do
-        purchase, error = Purchase::CreateService.new(product: membership_product, params: membership_params, buyer: buyer).perform
+        _, error = Purchase::CreateService.new(product: membership_product, params: membership_params, buyer: buyer).perform
 
         expect(error).to eq("You already have an active subscription to this membership. Visit your Library to manage your subscription.")
       end
