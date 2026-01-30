@@ -49,7 +49,6 @@ export const CoffeeProduct = ({
       />
     </>
   );
-
   return (
     <section className={classNames("grid grow content-center gap-12 px-4", className)}>
       <section className="grid gap-8">
