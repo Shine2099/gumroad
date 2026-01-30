@@ -315,12 +315,11 @@ describe UsersController do
         expect(inertia.props[:custom_styles]).to be_present
       end
 
-      it "sets the flash message when purchase_email is present" do
+      it "redirects and sets the flash message when purchase_email is present" do
         get :coffee, params: { username: seller.username, purchase_email: "buyer@example.com" }
 
-        expect(response).to be_successful
-        expect(inertia.component).to eq("Users/Coffee")
-        expect(inertia.props[:flash]).to eq({ message: "Your purchase was successful! We sent a receipt to buyer@example.com.", status: "success" })
+        expect(response).to redirect_to("/coffee")
+        expect(flash[:notice]).to eq("Your purchase was successful! We sent a receipt to buyer@example.com.")
       end
     end
 
