@@ -79,13 +79,14 @@ Rails.application.routes.draw do
   def purchases_invoice_routes
     scope module: :purchases do
       resources :purchases, only: [] do
-        resource :invoice, only: [:create], path: "generate_invoice" do
-          get :new
+        resource :invoice, only: [:create, :new] do
           get :confirm
           post :confirm, action: :confirm_email
         end
       end
     end
+
+    get "/purchases/:purchase_id/generate_invoice", to: redirect { |path_params, request| "/purchases/#{path_params[:purchase_id]}/invoice/new#{request.query_string.present? ? "?#{request.query_string}" : ""}" }
   end
 
   def product_tracking_routes(named_routes: true)
