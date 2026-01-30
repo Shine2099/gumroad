@@ -1,9 +1,7 @@
 import * as React from "react";
-import { createCast } from "ts-safe-cast";
 
 import { Tab } from "$app/parsers/profile";
 import GuidGenerator from "$app/utils/guid_generator";
-import { register } from "$app/utils/serverComponentUtil";
 
 import AutoLink from "$app/components/AutoLink";
 import { EditProfile, Props as EditProps } from "$app/components/Profile/EditPage";
@@ -99,4 +97,3 @@ export const Profile = (props: Props | EditProps) => (
   </Layout>
 );
 
-export default register({ component: Profile, propParser: createCast() });
