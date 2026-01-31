@@ -1,6 +1,6 @@
 import { reverse } from "lodash-es";
 import * as React from "react";
-import { createCast, cast } from "ts-safe-cast";
+import { cast, createCast } from "ts-safe-cast";
 
 import { SurchargesResponse } from "$app/data/customer_surcharge";
 import { startOrderCreation } from "$app/data/order";
@@ -25,23 +25,23 @@ import {
   CartItem,
   CartState,
   convertToUSD,
+  CrossSell,
   findCartItem,
   getDiscountedPrice,
-  Upsell,
-  ProductToAdd,
-  CrossSell,
-  saveCartState,
   newCartState,
+  ProductToAdd,
+  saveCartState,
+  Upsell,
 } from "$app/components/Checkout/cartState";
 import {
-  StateContext,
-  createReducer,
-  Product,
-  loadSurcharges,
-  requiresReusablePaymentMethod,
-  Gift,
-  getCustomFieldKey,
   computeTipForPrice,
+  createReducer,
+  getCustomFieldKey,
+  Gift,
+  loadSurcharges,
+  Product,
+  requiresReusablePaymentMethod,
+  StateContext,
 } from "$app/components/Checkout/payment";
 import { Receipt } from "$app/components/Checkout/Receipt";
 import { TemporaryLibrary } from "$app/components/Checkout/TemporaryLibrary";
@@ -49,10 +49,11 @@ import { useFeatureFlags } from "$app/components/FeatureFlags";
 import { useLoggedInUser } from "$app/components/LoggedInUser";
 import { Modal } from "$app/components/Modal";
 import { AuthorByline } from "$app/components/Product/AuthorByline";
-import { computeOptionPrice, OptionRadioButton, Option } from "$app/components/Product/ConfigurationSelector";
+import { computeOptionPrice, Option, OptionRadioButton } from "$app/components/Product/ConfigurationSelector";
 import { PriceTag } from "$app/components/Product/PriceTag";
 import { showAlert } from "$app/components/server-components/Alert";
-import { ProductCard, ProductCardFigure, ProductCardHeader, ProductCardFooter } from "$app/components/ui/ProductCard";
+import { ProductCard, ProductCardFigure, ProductCardFooter, ProductCardHeader } from "$app/components/ui/ProductCard";
+import { StretchedLink } from "$app/components/ui/StretchedLink";
 import { useAddThirdPartyAnalytics } from "$app/components/useAddThirdPartyAnalytics";
 import { useDebouncedCallback } from "$app/components/useDebouncedCallback";
 import { useOnChange, useOnChangeSync } from "$app/components/useOnChange";
@@ -680,9 +681,9 @@ export const CrossSellModal = ({
           </ProductCardFigure>
           <section className="flex flex-1 flex-col overflow-hidden lg:gap-8 lg:px-6 lg:py-4">
             <ProductCardHeader className="lg:border-b-0 lg:p-0">
-              <a className="stretched-link" href={product.url} target="_blank" rel="noreferrer">
+              <StretchedLink href={product.url} target="_blank" rel="noreferrer">
                 <h3 className="truncate">{option ? `${product.name} - ${option.name}` : product.name}</h3>
-              </a>
+              </StretchedLink>
               <AuthorByline
                 name={product.creator.name}
                 profileUrl={product.creator.profile_url}
