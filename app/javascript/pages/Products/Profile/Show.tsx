@@ -1,4 +1,4 @@
-import { usePage } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 
 import { CreatorProfile } from "$app/parsers/profile";
 
@@ -15,7 +15,9 @@ function ProfileProductShowPage() {
 
   return (
     <>
-      <style>{props.custom_styles}</style>
+      <Head>
+        <style>{props.custom_styles}</style>
+      </Head>
       <ProfileLayout creatorProfile={props.creator_profile}>
         <ProductLayout cart {...props} />
       </ProfileLayout>

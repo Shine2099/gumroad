@@ -1,4 +1,4 @@
-import { usePage } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 
 import { Taxonomy } from "$app/utils/discover";
 
@@ -16,7 +16,9 @@ function DiscoverProductShowPage() {
 
   return (
     <>
-      <style>{props.custom_styles}</style>
+      <Head>
+        <style>{props.custom_styles}</style>
+      </Head>
       <DiscoverLayout
         taxonomyPath={props.taxonomy_path ?? undefined}
         taxonomiesForNav={props.taxonomies_for_nav}

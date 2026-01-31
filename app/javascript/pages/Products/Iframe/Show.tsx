@@ -1,4 +1,4 @@
-import { usePage } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 import * as React from "react";
 
 import { PoweredByFooter } from "$app/components/PoweredByFooter";
@@ -27,7 +27,9 @@ function IframeProductShowPage() {
 
   return (
     <>
-      <style>{props.custom_styles}</style>
+      <Head>
+        <style>{props.custom_styles}</style>
+      </Head>
       <div>
         <div ref={mainRef}>
           <section>

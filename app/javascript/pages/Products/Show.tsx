@@ -1,4 +1,4 @@
-import { usePage } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 
 import { PoweredByFooter } from "$app/components/PoweredByFooter";
 import { Layout, Props } from "$app/components/Product/Layout";
@@ -12,7 +12,9 @@ function ProductShowPage() {
 
   return (
     <>
-      <style>{props.custom_styles}</style>
+      <Head>
+        <style>{props.custom_styles}</style>
+      </Head>
       <Layout {...props} />
       <PoweredByFooter />
     </>
