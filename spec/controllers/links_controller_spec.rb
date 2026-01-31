@@ -3246,9 +3246,8 @@ describe LinksController, :vcr, inertia: true do
           get :show, params: { id: product.to_param }
 
           expect(response).to be_successful
-          product_props = assigns(:product_props)
-          expect(product_props[:product][:id]).to eq(product.external_id)
-          expect(product_props[:purchase][:id]).to eq(purchase.external_id)
+          expect(inertia.props[:product][:id]).to eq(product.external_id)
+          expect(inertia.props[:purchase][:id]).to eq(purchase.external_id)
         end
       end
 
