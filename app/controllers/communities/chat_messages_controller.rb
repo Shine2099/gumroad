@@ -15,7 +15,9 @@ class Communities::ChatMessagesController < ApplicationController
       fetch_type: params[:fetch_type] || "older"
     )
 
-    render json: messages_presenter.props
+    render inertia: "Communities/Index", props: {
+      messages: messages_presenter.props
+    }
   end
 
   def create
@@ -28,7 +30,7 @@ class Communities::ChatMessagesController < ApplicationController
       broadcast_message(message, CommunityChannel::CREATE_CHAT_MESSAGE_TYPE)
       redirect_to community_redirect_path, status: :see_other
     else
-      redirect_to community_redirect_path, inertia: { errors: { message: message.errors.full_messages.first } }
+      redirect_to community_redirect_path, alert: message.errors.full_messages.first
     end
   end
 
@@ -37,7 +39,7 @@ class Communities::ChatMessagesController < ApplicationController
       broadcast_message(@message, CommunityChannel::UPDATE_CHAT_MESSAGE_TYPE)
       redirect_to community_redirect_path, status: :see_other
     else
-      redirect_to community_redirect_path, inertia: { errors: { message: @message.errors.full_messages.first } }
+      redirect_to community_redirect_path, alert: @message.errors.full_messages.first
     end
   end
 
