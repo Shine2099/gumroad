@@ -218,7 +218,6 @@ export const ChatMessage = ({
                     preserveScroll: true,
                     onSuccess: () => setDeleteConfirmation(null),
                     onError: () => {
-                      showAlert("Failed to delete message.", "error");
                       setDeleteConfirmation({ deleting: false });
                     },
                   });
