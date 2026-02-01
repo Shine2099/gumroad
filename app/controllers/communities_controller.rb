@@ -20,8 +20,6 @@ class CommunitiesController < ApplicationController
   end
 
   def show
-    authorize Community
-
     community = Community.find_by_external_id(params[:community_id])
     return e404 unless community
 

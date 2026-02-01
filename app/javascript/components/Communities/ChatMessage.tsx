@@ -3,7 +3,6 @@ import cx from "classnames";
 import React from "react";
 
 import { asyncVoid } from "$app/utils/promise";
-import * as Routes from "$app/utils/routes";
 
 import { Button } from "$app/components/Button";
 import { useCurrentSeller } from "$app/components/CurrentSeller";

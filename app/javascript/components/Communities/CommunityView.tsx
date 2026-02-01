@@ -814,6 +814,7 @@ export const CommunityView = ({
                       data={selectedCommunityChat}
                       setStickyDate={setStickyDate}
                       unreadSeparatorVisibility={showScrollToBottomButton}
+                      markMessageAsRead={markMessageAsRead}
                     />
                   ) : null}
                   {showScrollToBottomButton ? (
