@@ -1,7 +1,6 @@
 import cx from "classnames";
 import React from "react";
 
-import { CommunityChatMessage } from "$app/data/communities";
 import { asyncVoid } from "$app/utils/promise";
 
 import { Button } from "$app/components/Button";
@@ -15,9 +14,27 @@ import { useUserAgentInfo } from "$app/components/UserAgent";
 import { useRunOnce } from "$app/components/useRunOnce";
 import { WithTooltip } from "$app/components/WithTooltip";
 
-import { CommunityViewContext, MAX_MESSAGE_LENGTH, MIN_MESSAGE_LENGTH } from "./CommunityView";
+import { CommunityChatMessage } from "./types";
 import { UserAvatar } from "./UserAvatar";
 
+export type CommunityViewContextType = {
+  markMessageAsRead: (message: CommunityChatMessage) => void;
+  updateMessage: (
+    messageId: string,
+    communityId: string,
+    message: string,
+  ) => Promise<{ message: CommunityChatMessage }>;
+  deleteMessage: (messageId: string, communityId: string) => Promise<void>;
+};
+
+export const CommunityViewContext = React.createContext<CommunityViewContextType>({
+  markMessageAsRead: () => {},
+  updateMessage: () => Promise.reject(new Error("Not implemented")),
+  deleteMessage: () => Promise.reject(new Error("Not implemented")),
+});
+
+export const MIN_MESSAGE_LENGTH = 1;
+export const MAX_MESSAGE_LENGTH = 20_000;
 const MAX_TEXTAREA_HEIGHT = 300;
 
 export const ChatMessage = ({

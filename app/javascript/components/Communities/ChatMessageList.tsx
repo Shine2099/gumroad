@@ -1,12 +1,10 @@
 import cx from "classnames";
 import React from "react";
 
-import { Community, CommunityChatMessage } from "$app/data/communities";
-
 import { ChatMessage } from "./ChatMessage";
-import { scrollTo } from "./CommunityView";
+import { scrollTo } from "./scrollUtils";
 import { DateSeparator, UnreadSeparator } from "./Separator";
-import { CommunityChat } from "./useCommunities";
+import { Community, CommunityChatMessage, CommunityChat } from "./types";
 
 type ChatMessageListProps = {
   community: Community;
