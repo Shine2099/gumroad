@@ -11,6 +11,7 @@ type ChatMessageListProps = {
   data: CommunityChat;
   setStickyDate: (date: string | null) => void;
   unreadSeparatorVisibility: boolean;
+  markMessageAsRead: (message: CommunityChatMessage) => void;
 };
 
 export const ChatMessageList = ({
@@ -18,6 +19,7 @@ export const ChatMessageList = ({
   data,
   setStickyDate,
   unreadSeparatorVisibility,
+  markMessageAsRead,
 }: ChatMessageListProps) => {
   const [isVisible, setIsVisible] = React.useState(false);
   const [initialScrollDone, setInitialScrollDone] = React.useState(false);
@@ -168,6 +170,7 @@ export const ChatMessageList = ({
                     message={message}
                     isLast={message.id === lastMessageId}
                     communitySellerId={community.seller.id}
+                    markMessageAsRead={markMessageAsRead}
                   />
                   {isLastReadMessage && community.unread_count > 0 ? (
                     <UnreadSeparator visible={unreadSeparatorVisibility} />

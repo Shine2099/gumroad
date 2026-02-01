@@ -23,7 +23,6 @@ import { useDebouncedCallback } from "$app/components/useDebouncedCallback";
 import { useIsAboveBreakpoint } from "$app/components/useIsAboveBreakpoint";
 import { useRunOnce } from "$app/components/useRunOnce";
 
-import { CommunityViewContext, CommunityViewContextType } from "./ChatMessage";
 import { ChatMessageInput } from "./ChatMessageInput";
 import { ChatMessageList } from "./ChatMessageList";
 import { CommunityList } from "./CommunityList";
@@ -504,49 +503,6 @@ export const CommunityView = ({
     );
   };
 
-  // Update message using Inertia
-  const updateMessage = async (
-    messageId: string,
-    communityId: string,
-    content: string,
-  ): Promise<{ message: CommunityChatMessage }> => {
-    return new Promise((resolve, reject) => {
-      router.put(
-        Routes.chat_message_path(communityId, messageId),
-        {
-          community_chat_message: { content },
-        },
-        {
-          preserveState: true,
-          preserveScroll: true,
-          onSuccess: () => {
-            // Message will be updated via WebSocket
-            resolve({ message: { id: messageId, community_id: communityId, content } as CommunityChatMessage });
-          },
-          onError: () => {
-            reject(new Error("Failed to update message"));
-          },
-        },
-      );
-    });
-  };
-
-  // Delete message using Inertia
-  const deleteMessage = async (messageId: string, communityId: string): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      router.delete(Routes.chat_message_path(communityId, messageId), {
-        preserveState: true,
-        preserveScroll: true,
-        onSuccess: () => {
-          resolve();
-        },
-        onError: () => {
-          reject(new Error("Failed to delete message"));
-        },
-      });
-    });
-  };
-
   const loggedInUser = assertDefined(useCurrentSeller());
 
   // User channel WebSocket subscription
@@ -734,11 +690,6 @@ export const CommunityView = ({
     });
   };
 
-  const contextValue: CommunityViewContextType = React.useMemo(
-    () => ({ markMessageAsRead, updateMessage, deleteMessage }),
-    [markMessageAsRead, updateMessage, deleteMessage],
-  );
-
   const scrollToBottom = () => {
     if (selectedCommunity && selectedCommunity.unread_count > 0) {
       fetchMessages(selectedCommunity.id, { fetchType: "older", timestamp: new Date().toISOString() }, true).catch(
@@ -753,7 +704,7 @@ export const CommunityView = ({
   };
 
   return (
-    <CommunityViewContext.Provider value={contextValue}>
+    <>
       <div className="flex h-screen flex-col">
         <GoBackHeader />
 
@@ -896,7 +847,7 @@ export const CommunityView = ({
           onSave={(settings) => saveNotificationsSettings(selectedCommunity, settings)}
         />
       ) : null}
-    </CommunityViewContext.Provider>
+    </>
   );
 };
 
