@@ -6,8 +6,7 @@ class Communities::LastReadChatMessagesController < ApplicationController
   after_action :verify_authorized
 
   def create
-    message = @community.community_chat_messages.find_by_external_id(params[:message_id])
-    return e404_json unless message
+    message = @community.community_chat_messages.find_by_external_id!(params[:message_id])
 
     params = { user_id: current_seller.id, community_id: @community.id, community_chat_message_id: message.id }
     last_read_message = LastReadCommunityChatMessage.set!(**params)
@@ -18,9 +17,7 @@ class Communities::LastReadChatMessagesController < ApplicationController
   private
 
   def set_community
-    @community = Community.find_by_external_id(params[:community_id])
-    return e404_json unless @community
-
+    @community = Community.find_by_external_id!(params[:community_id])
     authorize @community, :show?
   end
 end

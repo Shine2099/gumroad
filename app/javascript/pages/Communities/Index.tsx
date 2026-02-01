@@ -1,5 +1,5 @@
 import { Channel } from "@anycable/web";
-import { router, useForm } from "@inertiajs/react";
+import { router, useForm, usePage } from "@inertiajs/react";
 import cx from "classnames";
 import { debounce } from "lodash-es";
 import * as React from "react";
@@ -22,10 +22,11 @@ import { useCurrentSeller } from "$app/components/CurrentSeller";
 import { Icon } from "$app/components/Icons";
 import { Modal } from "$app/components/Modal";
 import { Popover } from "$app/components/Popover";
-import { showAlert } from "$app/components/server-components/Alert";
+import { showAlert, type AlertPayload } from "$app/components/server-components/Alert";
 import { ToggleSettingRow } from "$app/components/SettingRow";
 import { Placeholder, PlaceholderImage } from "$app/components/ui/Placeholder";
 import { useDebouncedCallback } from "$app/components/useDebouncedCallback";
+import { useFlashMessage } from "$app/components/useFlashMessage";
 import { useIsAboveBreakpoint } from "$app/components/useIsAboveBreakpoint";
 import { useRunOnce } from "$app/components/useRunOnce";
 
@@ -108,7 +109,10 @@ const getComparedTimestamp = (
 
 function CommunitiesIndex() {
   const currentSeller = useCurrentSeller();
+  const { flash } = usePage<{ flash?: AlertPayload | null }>().props;
   const isAboveBreakpoint = useIsAboveBreakpoint("lg");
+  
+  useFlashMessage(flash);
   const {
     hasProducts,
     communities,
