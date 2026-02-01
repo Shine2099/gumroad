@@ -11,7 +11,7 @@ class Communities::NotificationSettingsController < ApplicationController
     settings = current_user.community_notification_settings.find_or_initialize_by(seller: @community.seller)
     settings.update!(permitted_params)
 
-    render json: { settings: CommunityNotificationSettingPresenter.new(settings: settings).props }
+    redirect_to community_path(@community.seller.external_id, @community.external_id), status: :see_other
   end
 
   private
