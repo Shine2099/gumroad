@@ -8,7 +8,6 @@ import { is } from "ts-safe-cast";
 import cable from "$app/channels/consumer";
 import { assertDefined } from "$app/utils/assert";
 import { asyncVoid } from "$app/utils/promise";
-import * as Routes from "$app/utils/routes";
 
 import { Button, NavigationButton } from "$app/components/Button";
 import { useCurrentSeller } from "$app/components/CurrentSeller";
@@ -29,13 +28,13 @@ import { scrollTo } from "./scrollUtils";
 import { ScrollToBottomButton } from "./ScrollToBottomButton";
 import { DateSeparator } from "./Separator";
 import {
-  Community,
-  CommunityChatMessage,
-  CommunityDraft,
-  CommunityNotificationSettings,
-  CommunitiesPageProps,
-  NotificationSettings,
-  Seller,
+  type Community,
+  type CommunityChatMessage,
+  type CommunityDraft,
+  type CommunityNotificationSettings,
+  type CommunitiesPageProps,
+  type NotificationSettings,
+  type Seller,
 } from "./types";
 import { UserAvatar } from "./UserAvatar";
 
@@ -59,7 +58,7 @@ const sortByCreatedAt = <T extends { created_at: string }>(items: readonly T[]) 
 const sortByName = <T extends { name: string }>(items: readonly T[]) =>
   [...items].sort((a, b) => a.name.localeCompare(b.name));
 
-export const CommunityView = ({
+export const CommunityView = () => ({
   hasProducts,
   communities: initialCommunities,
   notificationSettings: initialNotificationSettings,
@@ -179,9 +178,6 @@ export const CommunityView = ({
                 unread_count: 0,
                 last_read_community_chat_message_created_at: messageCreatedAt,
               });
-            },
-            onError: () => {
-              showAlert("Failed to mark the message as read. Please try again later.", "error");
             },
           },
         );
@@ -413,7 +409,10 @@ export const CommunityView = ({
 
     const community = communities.find((community) => community.id === communityId);
     if (!community) return;
-    window.location.replace(Routes.community_path(community.seller.id, community.id));
+    router.visit(Routes.community_path(community.seller.id, community.id), {
+      preserveState: true,
+      preserveScroll: true,
+    });
   });
 
   const sellers = React.useMemo(() => {
@@ -577,7 +576,32 @@ export const CommunityView = ({
 
               <div className="flex flex-1 overflow-auto">
                 <div ref={chatContainerRef} className="relative flex-1 overflow-y-auto">
-                  <InfiniteScroll data="messages" reverse buffer={100}>
+                  <InfiniteScroll data="messages"
+                    reverse
+                    preserveUrl
+                    next={({ hasMore, loading }) =>
+                      hasMore ? (
+                        loading ? (
+                          <div className="flex justify-center py-4">
+                            <div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-black dark:border-t-white" />
+                          </div>
+                        ) : null
+                      ) : (
+                        <div className="px-6 pt-8">
+                          <div className="mb-2 text-3xl">👋</div>
+                          <h2 className="mb-2 text-xl font-bold">Welcome to {selectedCommunity.name}</h2>
+                          <p className="text-sm text-gray-500">This is the start of this community chat.</p>
+                        </div>
+                      )
+                    }
+                    previous={({ hasMore, loading }) =>
+                      hasMore && loading ? (
+                        <div className="flex justify-center py-4">
+                          <div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-black dark:border-t-white" />
+                        </div>
+                      ) : null
+                    }
+                  >
                     <div
                       className={cx("sticky top-0 z-20 flex justify-center transition-opacity duration-300", {
                         "opacity-100": stickyDate,
