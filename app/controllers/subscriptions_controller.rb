@@ -41,7 +41,7 @@ class SubscriptionsController < ApplicationController
     set_subscription_confirmed_redirect_cookie
 
     render inertia: "Subscriptions/Manage",
-           props: CheckoutPresenter.new(logged_in_user: logged_in_user, ip: request.remote_ip)
+           props: CheckoutPresenter.new(logged_in_user:, ip: request.remote_ip)
                     .subscription_manager_props(subscription: @subscription)
   end
 
