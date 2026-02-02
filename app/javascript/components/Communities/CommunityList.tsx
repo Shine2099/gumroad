@@ -2,7 +2,6 @@ import { Link } from "@inertiajs/react";
 import cx from "classnames";
 import * as React from "react";
 
-
 import { scrollTo } from "./scrollUtils";
 import { Community } from "./types";
 

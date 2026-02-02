@@ -1,6 +1,6 @@
+import { InfiniteScroll } from "@inertiajs/react";
 import cx from "classnames";
 import React from "react";
-import { InfiniteScroll } from "@inertiajs/react";
 
 import { ChatMessage } from "./ChatMessage";
 import { scrollTo } from "./scrollUtils";
@@ -160,35 +160,30 @@ export const ChatMessageList = ({
         {community.unread_count > 0 && lastReadMessageIndex === -1 && messages.length > 0 && (
           <UnreadSeparator visible={unreadSeparatorVisibility} />
         )}
-      <InfiniteScroll
-        data="messages"
-        reverse
-        previous={hasOlderMessages ? undefined : null}
-        >
-
-        {sortedDates.map((date) => (
-          <div className="flex flex-col gap-4" key={date} ref={(el) => el && dateElementsRef.current.set(date, el)}>
-            <DateSeparator date={date} />
-            {messagesByDate[date]?.map((message) => {
-              const isLastReadMessage = lastReadMessageCreatedAt
-                ? message.created_at === lastReadMessageCreatedAt
-                : false;
-              return (
-                <React.Fragment key={message.id}>
-                  <ChatMessage
-                    message={message}
-                    isLast={message.id === lastMessageId}
-                    communitySellerId={community.seller.id}
-                    markMessageAsRead={markMessageAsRead}
-                  />
-                  {isLastReadMessage && community.unread_count > 0 ? (
-                    <UnreadSeparator visible={unreadSeparatorVisibility} />
-                  ) : null}
-                </React.Fragment>
-              );
-            })}
-          </div>
-        ))}
+        <InfiniteScroll data="messages" reverse previous={hasOlderMessages ? undefined : null}>
+          {sortedDates.map((date) => (
+            <div className="flex flex-col gap-4" key={date} ref={(el) => el && dateElementsRef.current.set(date, el)}>
+              <DateSeparator date={date} />
+              {messagesByDate[date]?.map((message) => {
+                const isLastReadMessage = lastReadMessageCreatedAt
+                  ? message.created_at === lastReadMessageCreatedAt
+                  : false;
+                return (
+                  <React.Fragment key={message.id}>
+                    <ChatMessage
+                      message={message}
+                      isLast={message.id === lastMessageId}
+                      communitySellerId={community.seller.id}
+                      markMessageAsRead={markMessageAsRead}
+                    />
+                    {isLastReadMessage && community.unread_count > 0 ? (
+                      <UnreadSeparator visible={unreadSeparatorVisibility} />
+                    ) : null}
+                  </React.Fragment>
+                );
+              })}
+            </div>
+          ))}
         </InfiniteScroll>
       </div>
       <div data-id="bottom"></div>
