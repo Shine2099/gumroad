@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "spec_helper"
+require "shared_examples/authorize_called"
 
 describe Communities::NotificationSettingsController do
   let(:seller) { create(:user) }
@@ -12,6 +13,41 @@ describe Communities::NotificationSettingsController do
   end
 
   describe "PUT #update" do
+    context "when feature flag is disabled" do
+      let(:buyer) { create(:user) }
+      let!(:purchase) { create(:free_purchase, seller: seller, purchaser: buyer, link: product) }
+
+      before do
+        Feature.deactivate_user(:communities, seller)
+        sign_in(buyer)
+      end
+
+      it "redirects to dashboard with alert" do
+        put :update, params: {
+          community_id: community.external_id,
+          settings: { recap_frequency: "weekly" }
+        }
+
+        expect(response).to redirect_to dashboard_path
+        expect(flash[:alert]).to eq("You are not allowed to perform this action.")
+      end
+    end
+
+    context "when community not found" do
+      before do
+        sign_in(seller)
+      end
+
+      it "returns 404" do
+        put :update, params: {
+          community_id: "nonexistent",
+          settings: { recap_frequency: "weekly" }
+        }
+
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
     context "when logged in as a user with access" do
       let(:buyer) { create(:user) }
       let!(:purchase) { create(:free_purchase, seller: seller, purchaser: buyer, link: product) }
@@ -62,6 +98,40 @@ describe Communities::NotificationSettingsController do
       end
     end
 
+    context "when logged in as the seller" do
+      before do
+        sign_in(seller)
+      end
+
+      it "creates notification settings for seller" do
+        expect do
+          put :update, params: {
+            community_id: community.external_id,
+            settings: { recap_frequency: "daily" }
+          }
+        end.to change(CommunityNotificationSetting, :count).by(1)
+
+        expect(response).to redirect_to(community_path(seller.external_id, community.external_id))
+        expect(response).to have_http_status(:see_other)
+
+        settings = seller.community_notification_settings.find_by(seller: seller)
+        expect(settings.recap_frequency).to eq("daily")
+      end
+
+      it "updates existing notification settings" do
+        settings = create(:community_notification_setting, seller: community.seller, user: seller, recap_frequency: "daily")
+
+        put :update, params: {
+          community_id: community.external_id,
+          settings: { recap_frequency: "weekly" }
+        }
+
+        expect(response).to redirect_to(community_path(seller.external_id, community.external_id))
+        expect(response).to have_http_status(:see_other)
+        expect(settings.reload.recap_frequency).to eq("weekly")
+      end
+    end
+
     context "when logged in as a user without access" do
       let(:other_user) { create(:user) }
 
@@ -75,7 +145,6 @@ describe Communities::NotificationSettingsController do
           settings: { recap_frequency: "weekly" }
         }
 
-        # Pundit redirects unauthorized users
         expect(response).to have_http_status(:redirect)
       end
     end

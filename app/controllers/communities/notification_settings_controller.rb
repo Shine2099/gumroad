@@ -17,7 +17,7 @@ class Communities::NotificationSettingsController < ApplicationController
   private
     def set_community
       @community = Community.find_by_external_id(params[:community_id])
-      e404 unless @community
+      head :not_found unless @community
     end
 
     def permitted_params

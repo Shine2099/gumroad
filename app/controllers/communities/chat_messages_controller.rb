@@ -3,8 +3,6 @@
 class Communities::ChatMessagesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_community
-  before_action :set_message, only: [:update, :destroy]
-  after_action :verify_authorized
 
   def create
     authorize @community, :show?
@@ -21,25 +19,41 @@ class Communities::ChatMessagesController < ApplicationController
   end
 
   def update
-    if @message.update(permitted_params)
+    @message = @community.community_chat_messages.find_by_external_id(params[:id])
+    if @message
+      authorize @message
+    end
+
+    if @message.nil?
+      head :not_found
+    elsif !@message.update(permitted_params)
+      redirect_to community_redirect_path, alert: @message.errors.full_messages.first
+    else
       broadcast_message(@message, CommunityChannel::UPDATE_CHAT_MESSAGE_TYPE)
       redirect_to community_redirect_path, status: :see_other
-    else
-      redirect_to community_redirect_path, alert: @message.errors.full_messages.first
     end
   end
 
   def destroy
-    @message.mark_deleted!
-    broadcast_message(@message, CommunityChannel::DELETE_CHAT_MESSAGE_TYPE)
-    redirect_to community_redirect_path, status: :see_other
+    @message = @community.community_chat_messages.find_by_external_id(params[:id])
+    if @message
+      authorize @message
+    end
+
+    if @message.nil?
+      head :not_found
+    else
+      @message.mark_deleted!
+      broadcast_message(@message, CommunityChannel::DELETE_CHAT_MESSAGE_TYPE)
+      redirect_to community_redirect_path, status: :see_other
+    end
   end
 
   def mark_read
     authorize @community, :show?
 
     message = @community.community_chat_messages.find_by_external_id(params[:message_id])
-    return e404 unless message
+    return head :not_found unless message
 
     mark_read_params = { user_id: current_user.id, community_id: @community.id, community_chat_message_id: message.id }
     LastReadCommunityChatMessage.set!(**mark_read_params)
@@ -50,13 +64,7 @@ class Communities::ChatMessagesController < ApplicationController
   private
     def set_community
       @community = Community.find_by_external_id(params[:community_id])
-      e404 unless @community
-    end
-
-    def set_message
-      @message = @community.community_chat_messages.find_by_external_id(params[:id])
-      return e404 unless @message
-      authorize @message
+      head :not_found unless @community
     end
 
     def permitted_params
