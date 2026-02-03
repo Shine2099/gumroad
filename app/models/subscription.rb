@@ -700,7 +700,6 @@ class Subscription < ApplicationRecord
     update!(business_vat_id: vat_id) if vat_id.present? && business_vat_id.blank?
   end
 
-
   def last_resubscribed_at
     if defined?(@_last_resubscribed_at)
       @_last_resubscribed_at
