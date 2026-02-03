@@ -19,7 +19,7 @@ class Products::Edit::BasePresenter
       id: product.external_id,
       unique_permalink: product.unique_permalink,
       seller: UserPresenter.new(user: product.user).author_byline_props,
-      existing_files: legacy_presenter.existing_files,
+      existing_files: existing_files_data,
       ai_generated: false,
       currency_type: product.price_currency_type,
       taxonomies: Discover::TaxonomyPresenter.new.taxonomies_for_nav,
@@ -59,12 +59,29 @@ class Products::Edit::BasePresenter
   end
 
   private
-    def legacy_presenter
-      @legacy_presenter ||= ::ProductPresenter.new(product:, pundit_user:)
+    def existing_files_data
+      product.user.alive_product_files_preferred_for_product(product)
+        .limit($redis.get(RedisKey.product_presenter_existing_product_files_limit))
+        .order(id: :desc)
+        .includes(:alive_subtitle_files).map { _1.as_json(existing_product_file: true) }
     end
 
     def custom_domain_verification_status
-      legacy_presenter.send(:custom_domain_verification_status)
+      custom_domain = product.custom_domain
+      return if custom_domain.blank?
+
+      domain = custom_domain.domain
+      if custom_domain.verified?
+        {
+          success: true,
+          message: "#{domain} domain is correctly configured!",
+        }
+      else
+        {
+          success: false,
+          message: "Domain verification failed. Please make sure you have correctly configured the DNS record for #{domain}.",
+        }
+      end
     end
 
     def collaborating_user_props
