@@ -113,12 +113,10 @@ function CommunitiesIndex() {
   const [localMessages, setLocalMessages] = React.useState<Record<string, CommunityChatMessage[]>>({});
   const [deletedMessageIds, setDeletedMessageIds] = React.useState<Set<string>>(new Set());
 
-  // Get messages from Inertia page props
   const pageProps = usePage().props as PageProps;
   const pageMessages = pageProps.messages ?? [];
   const localMsgs = localMessages[selectedCommunity?.id ?? ""] ?? [];
 
-  // Merge page messages with local (ActionCable) messages, excluding deleted ones
   const allMessages = React.useMemo(() => {
     const map = new Map<string, CommunityChatMessage>();
     pageMessages.forEach((m) => {
@@ -139,9 +137,17 @@ function CommunitiesIndex() {
     );
   }, [pageMessages, localMsgs, deletedMessageIds]);
 
-  // Get scroll metadata from Inertia
   const scrollMeta = (usePage() as { scrollProps?: { messages?: ScrollMeta } }).scrollProps?.messages;
   const hasOlderMessages = scrollMeta ? scrollMeta.nextPage != null : true;
+
+  const sendMessageToUserChannel = useDebouncedCallback((msg: OutgoingUserChannelMessage) => {
+    const userChannelState = userChannelRef.current?.state;
+    if (userChannelState === "connected" || userChannelState === "idle") {
+      userChannelRef.current?.send(msg).catch((e: unknown) => {
+        console.error(e);
+      });
+    }
+  }, 100);
 
   React.useEffect(() => {
     if (selectedCommunity) {
@@ -178,10 +184,9 @@ function CommunitiesIndex() {
           },
         );
       }, 500),
-    [updateCommunity],
+    [updateCommunity, sendMessageToUserChannel],
   );
 
-  // Cleanup debounced function on unmount
   React.useEffect(() => {
     return () => {
       debouncedMarkAsRead.cancel();
@@ -192,7 +197,6 @@ function CommunitiesIndex() {
     (message: CommunityChatMessage) => {
       if (!selectedCommunity) return;
 
-      // Only mark as read if the message is newer than the last read message
       if (new Date(message.created_at) <= new Date(selectedCommunity.last_read_community_chat_message_created_at ?? 0))
         return;
 
@@ -239,7 +243,6 @@ function CommunitiesIndex() {
 
     if (selectedCommunityRef.current?.id !== message.community_id || isUpdate) return;
 
-    // Scroll to new message if user is near bottom
     if (chatContainerRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
       if (scrollHeight - scrollTop - clientHeight < 200) {
@@ -272,7 +275,6 @@ function CommunitiesIndex() {
         preserveScroll: true,
         only: [],
         onSuccess: (page) => {
-          // Check for validation errors in page props
           const errors = (page.props as { errors?: Record<string, string> }).errors;
           if (errors && Object.keys(errors).length > 0) {
             const errorMessage = Object.values(errors)[0];
@@ -281,7 +283,6 @@ function CommunitiesIndex() {
             return;
           }
           updateCommunityDraft(selectedCommunity.id, { content: "", isSending: false });
-          // Message arrives via ActionCable broadcast — no JSON fetch needed
         },
         onError: () => {
           updateCommunityDraft(selectedCommunity.id, { isSending: false });
@@ -313,15 +314,6 @@ function CommunitiesIndex() {
 
     return () => channel.disconnect();
   }, [cable, loggedInUser]);
-
-  const sendMessageToUserChannel = useDebouncedCallback((msg: OutgoingUserChannelMessage) => {
-    const userChannelState = userChannelRef.current?.state;
-    if (userChannelState === "connected" || userChannelState === "idle") {
-      userChannelRef.current?.send(msg).catch((e: unknown) => {
-        console.error(e);
-      });
-    }
-  }, 100);
 
 
   React.useEffect(() => {
@@ -364,7 +356,6 @@ function CommunitiesIndex() {
 
   React.useEffect(() => {
     chatMessageInputRef.current?.focus();
-    // Clear deleted message IDs when switching communities to prevent memory leak
     setDeletedMessageIds(new Set());
   }, [selectedCommunity?.id]);
 
