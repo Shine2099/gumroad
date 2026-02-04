@@ -61,7 +61,7 @@ class Api::Internal::CartsController < Api::Internal::BaseController
         :email, :returnUrl, :rejectPppDiscount,
         discountCodes: [:code, :fromUrl],
         items: [
-          :option_id, :affilate_id, :price, :quantity, :recurrence, :recommended_by, :rent,
+          :option_id, :affiliate_id, :price, :quantity, :recurrence, :recommended_by, :rent,
           :referrer, :recommender_model_name, :call_start_time, :pay_in_installments,
           url_parameters: {}, product: [:id], accepted_offer: [:id, :original_product_id, :original_variant_id],
         ]
