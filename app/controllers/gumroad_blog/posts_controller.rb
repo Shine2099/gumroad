@@ -31,15 +31,11 @@ class GumroadBlog::PostsController < GumroadBlog::BaseController
   def show
     authorize @post, policy_class: GumroadBlog::PostsPolicy
 
-    post_props = PostPresenter.new(pundit_user: pundit_user, post: @post, purchase_id_param: nil).post_component_props
-
-    render inertia: "GumroadBlog/Posts/Show", props: {
-      external_id: post_props[:external_id],
-      subject: post_props[:subject],
-      published_at: post_props[:published_at],
-      message: post_props[:message],
-      call_to_action: post_props[:call_to_action],
-    }
+    render inertia: "GumroadBlog/Posts/Show", props: PostPresenter.new(
+      pundit_user: pundit_user,
+      post: @post,
+      purchase_id_param: nil
+    ).post_component_props
   end
 
   private

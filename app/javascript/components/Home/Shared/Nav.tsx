@@ -22,11 +22,13 @@ const NavLink = ({
   children,
   onClick,
   isActive,
+  isInertia = false,
 }: {
   href: string;
   children: React.ReactNode;
   onClick?: ((event: React.MouseEvent) => void) | undefined;
   isActive: boolean;
+  isInertia?: boolean;
 }) => {
   const className = classNames(
     "flex w-full items-center justify-center border bg-black p-4 text-lg text-white no-underline transition-all duration-200 hover:border-black lg:w-auto lg:rounded-full lg:py-2 lg:px-4 dark:text-white lg:dark:hover:border-white/35 whitespace-nowrap",
@@ -35,10 +37,18 @@ const NavLink = ({
       : "border-transparent lg:bg-transparent lg:text-black dark:lg:text-white",
   );
 
+  if (isInertia) {
+    return (
+      <Link href={href} className={className} {...(onClick && { onClick })}>
+        {children}
+      </Link>
+    );
+  }
+
   return (
-    <Link href={href} className={className} {...(onClick && { onClick })}>
+    <a href={href} className={className} {...(onClick && { onClick })}>
       {children}
-    </Link>
+    </a>
   );
 };
 
@@ -55,16 +65,13 @@ const NavButton = ({
   onClick?: ((event: React.MouseEvent) => void) | undefined;
   external?: boolean | undefined;
 }) => {
-  // Logic from _nav.html.erb
   let modifier1 = "";
   if (children === "Dashboard") {
     modifier1 = "lg:bg-black lg:text-white lg:hover:bg-pink dark:lg:bg-pink dark:lg:text-black dark:lg:hover:bg-white";
   } else if (context !== "primary") {
-    // Secondary button (e.g. Log in)
     modifier1 =
       "lg:border-l-black lg:bg-white lg:text-black lg:hover:bg-pink dark:lg:border-l-white/35 dark:lg:bg-black dark:lg:text-white";
   } else {
-    // Primary button (e.g. Start selling)
     modifier1 = "lg:bg-black lg:text-white lg:hover:bg-pink";
   }
 
@@ -105,7 +112,7 @@ const AuthButtons = ({
 }) => {
   if (user) {
     return (
-      <NavButton href={Routes.dashboard_path()} context="primary" {...(onClick && { onClick })} external>
+      <NavButton href={Routes.dashboard_url()} context="primary" {...(onClick && { onClick })} external>
         Dashboard
       </NavButton>
     );
@@ -144,8 +151,8 @@ export const HomeNav = () => {
           );
         }
       })
-      .catch((_error: unknown) => {
-        // failed to fetch stars
+      .catch((error: unknown) => {
+        console.error('Error fetching GitHub stars:', error);
       });
   }, []);
 
@@ -158,7 +165,7 @@ export const HomeNav = () => {
 
   const LINKS = [
     { href: Routes.discover_path(), label: "Discover" },
-    { href: Routes.gumroad_blog_root_path(), label: "Blog" },
+    { href: Routes.gumroad_blog_root_path(), label: "Blog", isInertia: true },
     { href: Routes.pricing_path(), label: "Pricing" },
     { href: Routes.features_path(), label: "Features" },
     { href: Routes.about_path(), label: "About" },
@@ -176,7 +183,7 @@ export const HomeNav = () => {
             href="https://github.com/antiwork/gumroad"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex gap-1.5 rounded-full border border-black bg-black px-2 py-1 text-white no-underline transition-all duration-100 hover:-translate-x-[2px] hover:-translate-y-[2px] hover:bg-gray-800 hover:shadow-[3px_3px_0_0_#9c9c9c] dark:border-white/35"
+            className="flex gap-1.5 rounded-full p-1.5 border border-black no-underline dark:border-white/35 hover:bg-gray-100 dark:hover:bg-gray-700 text-black dark:text-white hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0_0_rgba(255,255,255,0.35)] transition-all duration-100"
             aria-label="Visit Gumroad on GitHub"
             data-github-stars
           >
@@ -189,16 +196,16 @@ export const HomeNav = () => {
               />
             </svg>
             {stars ? (
-              <div data-github-stars-count className="flex items-center gap-1.5 px-1 whitespace-nowrap">
+              <div data-github-stars-count className="flex items-center gap-1.5 whitespace-nowrap">
                 <span className="text-base leading-none font-medium" data-github-stars-count-value>
                   {stars}
                 </span>
-                <img src={starIcon} className="invert" width="18" height="18" alt="" />
+                <img src={starIcon} className="dark:invert" width="18" height="18" alt="" />
               </div>
             ) : (
-              <div data-github-stars-arrow className="flex items-center gap-1.5 px-1">
+              <div data-github-stars-arrow className="flex items-center gap-1.5">
                 <span className="text-base leading-none font-medium">GitHub</span>
-                <img src={arrowDiagonalIcon} className="invert" width="14" height="14" alt="" />
+                <img src={arrowDiagonalIcon} className="dark:invert" width="14" height="14" alt="" />
               </div>
             )}
           </a>
@@ -206,8 +213,8 @@ export const HomeNav = () => {
 
         <div className="override hidden lg:flex lg:items-center">
           <div className="flex flex-col items-center justify-center lg:flex-row lg:gap-1 lg:px-6">
-            {LINKS.map(({ href, label }) => (
-              <NavLink key={href} href={href} isActive={isCurrentPage(href)}>
+            {LINKS.map(({ href, label, isInertia }) => (
+              <NavLink key={href} href={href} isActive={isCurrentPage(href)} isInertia={!!isInertia}>
                 {label}
               </NavLink>
             ))}
@@ -245,8 +252,8 @@ export const HomeNav = () => {
           id="mobile-menu"
         >
           <div className="flex flex-col items-center justify-center lg:flex-row lg:gap-1 lg:px-6">
-            {LINKS.map(({ href, label }) => (
-              <NavLink key={href} href={href} onClick={closeMobileMenu} isActive={isCurrentPage(href)}>
+            {LINKS.map(({ href, label, isInertia }) => (
+              <NavLink key={href} href={href} onClick={closeMobileMenu} isActive={isCurrentPage(href)} isInertia={!!isInertia}>
                 {label}
               </NavLink>
             ))}

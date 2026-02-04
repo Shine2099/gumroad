@@ -19,18 +19,16 @@ type ShowPageProps = {
   published_at: string;
   message: string;
   call_to_action: { url: string; text: string } | null;
-}
+};
 
 const BackToBlog = () => (
-  <div className="scoped-tailwind-preflight">
-    <Link
-      href={Routes.gumroad_blog_root_path()}
-      className="mt-4 flex items-center font-medium text-pink-600 hover:text-pink-800"
-    >
-      <Icon name="arrow-left" className="mr-1.5" style={{ width: 18, height: 18 }} />
-      Back to Blog
-    </Link>
-  </div>
+  <Link
+    href={Routes.gumroad_blog_root_path()}
+    className="mt-4 flex items-center font-medium text-pink-600 hover:text-pink-800"
+  >
+    <Icon name="arrow-left" className="mr-1.5" style={{ width: 18, height: 18 }} />
+    Back to Blog
+  </Link>
 );
 
 function ShowPage() {

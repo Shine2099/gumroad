@@ -3,11 +3,23 @@ import * as React from "react";
 
 import logoG from "$assets/images/logo-g.svg";
 
-const FooterLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
-  <Link href={href} className="no-underline hover:text-pink">
-    {children}
-  </Link>
-);
+const FooterLink = ({ href, children, isInertia = false }: { href: string; children: React.ReactNode; isInertia?: boolean }) => {
+  const className = "no-underline hover:text-pink";
+
+  if (isInertia) {
+    return (
+      <Link href={href} className={className}>
+        {children}
+      </Link>
+    );
+  }
+
+  return (
+    <a href={href} className={className}>
+      {children}
+    </a>
+  );
+};
 
 const SocialLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
   <a href={href} className="hover:text-pink">
@@ -26,12 +38,16 @@ export const HomeFooter = () => {
             <div className="lg:flex-1">
               <input name="email" placeholder="Your email address" type="email" />
             </div>
-            <button
-              type="submit"
-              className="flex w-full items-center justify-center h-full border-black bg-pink text-black p-4 text-lg no-underline transition-colors duration-200 hover:bg-white lg:w-auto lg:py-2 lg:px-6"
-            >
-              →
-            </button>
+            <div className="relative inline-block group">
+              <div className="absolute inset-0 rounded-sm bg-yellow border border-black transition-transform duration-150 z-[2]" />
+              <div className="absolute inset-0 rounded-sm bg-red border border-black transition-transform duration-150 group-hover:translate-x-2 group-hover:translate-y-2 z-[1]" />
+              <button
+                type="submit"
+                className="relative inline-flex rounded-sm no-underline items-center justify-center border border-black transition-all duration-150 group-hover:-translate-x-2 group-hover:-translate-y-2 z-[3] w-full lg:w-auto cursor-pointer h-12 px-3 text-base lg:h-12 lg:px-6 lg:text-base bg-pink text-black"
+              >
+                →
+              </button>
+            </div>
           </form>
         </div>
         <div className="flex items-center gap-2">
@@ -43,14 +59,18 @@ export const HomeFooter = () => {
         <div className="flex-1 flex gap-16">
           <div className="flex-1 flex flex-col gap-3">
             <FooterLink href={Routes.discover_path()}>Discover</FooterLink>
-            <FooterLink href={Routes.gumroad_blog_root_path()}>Blog</FooterLink>
+            <FooterLink href={Routes.gumroad_blog_root_path()} isInertia>
+              Blog
+            </FooterLink>
             <FooterLink href={Routes.pricing_path()}>Pricing</FooterLink>
             <FooterLink href={Routes.features_path()}>Features</FooterLink>
             <FooterLink href={Routes.about_path()}>About</FooterLink>
             <FooterLink href={Routes.small_bets_path()}>Small Bets</FooterLink>
           </div>
           <div className="flex-1 flex flex-col gap-3">
-            <FooterLink href={Routes.help_center_root_path()}>Help</FooterLink>
+            <FooterLink href={Routes.help_center_root_path()} isInertia>
+              Help
+            </FooterLink>
             <a
               href="https://www.youtube.com/playlist?list=PL_DfN-mKCGNuswqERc6sIA8urYAKARc6s"
               className="no-underline hover:text-pink"
