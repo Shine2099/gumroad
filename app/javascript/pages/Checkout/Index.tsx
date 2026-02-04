@@ -13,7 +13,6 @@ import { assert } from "$app/utils/assert";
 import { getIsSingleUnitCurrency } from "$app/utils/currency";
 import { isValidEmail } from "$app/utils/email";
 import { calculateFirstInstallmentPaymentPriceCents } from "$app/utils/price";
-import { asyncVoid } from "$app/utils/promise";
 import { assertResponseError } from "$app/utils/request";
 import { startTrackingForSeller, trackProductEvent } from "$app/utils/user_analytics";
 
