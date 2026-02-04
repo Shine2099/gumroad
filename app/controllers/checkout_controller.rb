@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 class CheckoutController < ApplicationController
+  layout "inertia"
   before_action :process_cart_id_param
 
   def index
-    @hide_layouts = true
-    @checkout_presenter = CheckoutPresenter.new(logged_in_user:, ip: request.remote_ip)
+    checkout_presenter = CheckoutPresenter.new(logged_in_user:, ip: request.remote_ip)
+    render inertia: "Checkout/Index",
+           props: checkout_presenter.checkout_props(params:, browser_guid: cookies[:_gumroad_guid])
   end
 
   private

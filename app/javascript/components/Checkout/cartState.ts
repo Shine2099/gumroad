@@ -5,7 +5,7 @@ import { AnalyticsData, CustomFieldDescriptor, FreeTrial, ProductNativeType } fr
 import { CurrencyCode } from "$app/utils/currency";
 import { applyOfferCodeToCents } from "$app/utils/offer-code";
 import { RecurrenceId } from "$app/utils/recurringPricing";
-import { ResponseError, request } from "$app/utils/request";
+import { ResponseError } from "$app/utils/request";
 
 import {
   Rental,
@@ -176,18 +176,4 @@ export function getDiscountedPrice(cart: CartState, item: CartItem): DiscountedP
 
 export function newCartState(): CartState {
   return { items: [], discountCodes: [] };
-}
-
-export async function saveCartState(cart: CartState) {
-  const response = await request({
-    method: "PUT",
-    url: Routes.internal_cart_path(),
-    accept: "json",
-    data: { cart },
-  });
-
-  if (!response.ok) {
-    const data = cast<{ error?: string }>(await response.json());
-    throw new ResponseError(data.error);
-  }
 }

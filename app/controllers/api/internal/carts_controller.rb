@@ -3,7 +3,7 @@
 class Api::Internal::CartsController < Api::Internal::BaseController
   def update
     if permitted_cart_params[:items].length > Cart::MAX_ALLOWED_CART_PRODUCTS
-      return render json: { error: "You cannot add more than #{Cart::MAX_ALLOWED_CART_PRODUCTS} products to the cart." }, status: :unprocessable_entity
+      return redirect_to checkout_index_path, alert: "You cannot add more than #{Cart::MAX_ALLOWED_CART_PRODUCTS} products to the cart."
     end
 
     ActiveRecord::Base.transaction do
@@ -48,11 +48,11 @@ class Api::Internal::CartsController < Api::Internal::BaseController
       cart.alive_cart_products.where.not(id: updated_cart_products.map(&:id)).find_each(&:mark_deleted!)
     end
 
-    head :no_content
+    redirect_to checkout_index_path, status: :see_other
   rescue ActiveRecord::RecordInvalid => e
     Bugsnag.notify(e)
     Rails.logger.error(e.full_message) if Rails.env.development?
-    render json: { error: "Sorry, something went wrong. Please try again." }, status: :unprocessable_entity
+    redirect_to checkout_index_path, alert: "Sorry, something went wrong. Please try again."
   end
 
   private
@@ -61,7 +61,7 @@ class Api::Internal::CartsController < Api::Internal::BaseController
         :email, :returnUrl, :rejectPppDiscount,
         discountCodes: [:code, :fromUrl],
         items: [
-          :option_id, :affiliate_id, :price, :quantity, :recurrence, :recommended_by, :rent,
+          :option_id, :affilate_id, :price, :quantity, :recurrence, :recommended_by, :rent,
           :referrer, :recommender_model_name, :call_start_time, :pay_in_installments,
           url_parameters: {}, product: [:id], accepted_offer: [:id, :original_product_id, :original_variant_id],
         ]

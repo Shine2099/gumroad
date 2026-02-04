@@ -1,45 +1,41 @@
+import { router, usePage } from "@inertiajs/react";
 import { reverse } from "lodash-es";
 import * as React from "react";
-import { createCast, cast } from "ts-safe-cast";
+import { cast } from "ts-safe-cast";
 
-import { SurchargesResponse } from "$app/data/customer_surcharge";
+import { type SurchargesResponse } from "$app/data/customer_surcharge";
 import { startOrderCreation } from "$app/data/order";
-import { LineItemResult } from "$app/data/purchase";
 import { getPlugins, trackUserActionEvent, trackUserProductAction } from "$app/data/user_action_event";
-import { SavedCreditCard } from "$app/parsers/card";
-import { CardProduct, COMMISSION_DEPOSIT_PROPORTION, CustomFieldDescriptor } from "$app/parsers/product";
+import { type SavedCreditCard } from "$app/parsers/card";
+import { type CardProduct, COMMISSION_DEPOSIT_PROPORTION, type CustomFieldDescriptor } from "$app/parsers/product";
 import { isOpenTuple } from "$app/utils/array";
 import { assert } from "$app/utils/assert";
 import { getIsSingleUnitCurrency } from "$app/utils/currency";
 import { isValidEmail } from "$app/utils/email";
-import { formatOrderOfMagnitude } from "$app/utils/formatOrderOfMagnitude";
 import { calculateFirstInstallmentPaymentPriceCents } from "$app/utils/price";
 import { asyncVoid } from "$app/utils/promise";
 import { assertResponseError } from "$app/utils/request";
-import { register } from "$app/utils/serverComponentUtil";
 import { startTrackingForSeller, trackProductEvent } from "$app/utils/user_analytics";
 
-import { Button } from "$app/components/Button";
 import { Checkout } from "$app/components/Checkout";
 import {
-  CartItem,
-  CartState,
+  type CartItem,
+  type CartState,
   convertToUSD,
   findCartItem,
   getDiscountedPrice,
-  Upsell,
-  ProductToAdd,
-  CrossSell,
-  saveCartState,
+  type ProductToAdd,
+  type CrossSell,
   newCartState,
 } from "$app/components/Checkout/cartState";
+import { CrossSellModal, UpsellModal, type Result, type OfferedUpsell } from "$app/components/Checkout/Modals";
 import {
   StateContext,
   createReducer,
-  Product,
+  type Product,
   loadSurcharges,
   requiresReusablePaymentMethod,
-  Gift,
+  type Gift,
   getCustomFieldKey,
   computeTipForPrice,
 } from "$app/components/Checkout/payment";
@@ -48,11 +44,8 @@ import { TemporaryLibrary } from "$app/components/Checkout/TemporaryLibrary";
 import { useFeatureFlags } from "$app/components/FeatureFlags";
 import { useLoggedInUser } from "$app/components/LoggedInUser";
 import { Modal } from "$app/components/Modal";
-import { AuthorByline } from "$app/components/Product/AuthorByline";
-import { computeOptionPrice, OptionRadioButton, Option } from "$app/components/Product/ConfigurationSelector";
-import { PriceTag } from "$app/components/Product/PriceTag";
+import { computeOptionPrice } from "$app/components/Product/ConfigurationSelector";
 import { showAlert } from "$app/components/server-components/Alert";
-import { ProductCard, ProductCardFigure, ProductCardHeader, ProductCardFooter } from "$app/components/ui/ProductCard";
 import { useAddThirdPartyAnalytics } from "$app/components/useAddThirdPartyAnalytics";
 import { useDebouncedCallback } from "$app/components/useDebouncedCallback";
 import { useOnChange, useOnChangeSync } from "$app/components/useOnChange";
@@ -91,8 +84,6 @@ type Props = {
   tip_options: number[];
   default_tip_option: number;
 };
-
-export type Result = { item: CartItem; result: LineItemResult };
 
 function getCartItemUid(item: CartItem) {
   return `${item.product.permalink} ${item.option_id ?? ""}`;
@@ -139,25 +130,27 @@ const addProduct = ({
   else cart.items.unshift(newItem);
 };
 
-export const CheckoutPage = ({
-  discover_url,
-  countries,
-  us_states,
-  ca_provinces,
-  country,
-  state: addressState,
-  address,
-  clear_cart,
-  add_products,
-  gift,
-  saved_credit_card,
-  recaptcha_key,
-  paypal_client_id,
-  max_allowed_cart_products,
-  tip_options,
-  default_tip_option,
-  ...props
-}: Props) => {
+const CheckoutPage = () => {
+  const {
+    discover_url,
+    countries,
+    us_states,
+    ca_provinces,
+    country,
+    state: addressState,
+    address,
+    clear_cart,
+    add_products,
+    gift,
+    saved_credit_card,
+    recaptcha_key,
+    paypal_client_id,
+    max_allowed_cart_products,
+    tip_options,
+    default_tip_option,
+    ...props
+  } = cast<Props>(usePage().props);
+
   const user = useLoggedInUser();
   const email = props.cart?.email ?? user?.email ?? "";
   const [cart, setCart] = React.useState<CartState>(() => {
@@ -538,14 +531,17 @@ export const CheckoutPage = ({
   React.useEffect(() => void pay(), [state.status]);
 
   const debouncedSaveCartState = useDebouncedCallback(
-    asyncVoid(async () => {
-      try {
-        await saveCartState(cart);
-      } catch (e) {
-        assertResponseError(e);
-        showAlert("Sorry, something went wrong. Please try again.", "error");
-      }
-    }),
+    () =>
+      router.put(
+        Routes.internal_cart_path(),
+        { cart },
+        {
+          preserveState: true,
+          preserveScroll: true,
+          replace: true,
+          onError: () => showAlert("Sorry, something went wrong. Please try again.", "error"),
+        },
+      ),
     100,
   );
   React.useEffect(() => {
@@ -646,134 +642,5 @@ export const CheckoutPage = ({
   );
 };
 
-export const CrossSellModal = ({
-  crossSell,
-  decline,
-  accept,
-  cart,
-}: {
-  crossSell: CrossSell;
-  accept: () => void;
-  decline: () => void;
-  cart: CartState;
-}) => {
-  const product = crossSell.offered_product.product;
-  const option = product.options.find(({ id }) => id === crossSell.offered_product.option_id);
-
-  const crossSellCartItem: CartItem = {
-    ...crossSell.offered_product,
-    quantity: crossSell.offered_product.quantity || 1,
-    url_parameters: {},
-    referrer: "",
-    recommender_model_name: null,
-    accepted_offer: crossSell.discount ? { id: crossSell.id, discount: crossSell.discount } : null,
-  };
-  const { price: discountedPrice } = getDiscountedPrice(cart, crossSellCartItem);
-
-  return (
-    <>
-      <div className="grid gap-4">
-        <h4 dangerouslySetInnerHTML={{ __html: crossSell.description }} />
-        <ProductCard className="lg:flex-row">
-          <ProductCardFigure className="lg:w-56 lg:rounded-l lg:rounded-tr-none lg:border-r lg:border-b-0">
-            {product.thumbnail_url ? <img src={product.thumbnail_url} /> : null}
-          </ProductCardFigure>
-          <section className="flex flex-1 flex-col overflow-hidden lg:gap-8 lg:px-6 lg:py-4">
-            <ProductCardHeader className="lg:border-b-0 lg:p-0">
-              <a className="stretched-link" href={product.url} target="_blank" rel="noreferrer">
-                <h3 className="truncate">{option ? `${product.name} - ${option.name}` : product.name}</h3>
-              </a>
-              <AuthorByline
-                name={product.creator.name}
-                profileUrl={product.creator.profile_url}
-                avatarUrl={product.creator.avatar_url}
-              />
-            </ProductCardHeader>
-            <ProductCardFooter className="lg:divide-x-0">
-              {crossSell.ratings ? (
-                <div className="flex flex-[1_0_max-content] items-center gap-1 p-4 lg:p-0">
-                  <span className="rating-average">{crossSell.ratings.average.toFixed(1)}</span>
-                  <span>{`(${formatOrderOfMagnitude(crossSell.ratings.count, 1)})`}</span>
-                </div>
-              ) : null}
-              <div className="p-4 lg:p-0">
-                <PriceTag
-                  currencyCode={product.currency_code}
-                  oldPrice={
-                    discountedPrice < crossSell.offered_product.price ? crossSell.offered_product.price : undefined
-                  }
-                  price={discountedPrice}
-                  recurrence={
-                    product.recurrences
-                      ? {
-                          id: product.recurrences.default,
-                          duration_in_months: product.duration_in_months,
-                        }
-                      : undefined
-                  }
-                  isPayWhatYouWant={product.is_tiered_membership ? !!option?.is_pwyw : !!product.pwyw}
-                  isSalesLimited={false}
-                  creatorName={product.creator.name}
-                  tooltipPosition="top"
-                />
-              </div>
-            </ProductCardFooter>
-          </section>
-        </ProductCard>
-      </div>
-      <footer style={{ display: "grid", gap: "var(--spacer-4)", gridTemplateColumns: "1fr 1fr" }}>
-        <Button onClick={decline}>
-          {crossSell.replace_selected_products ? "Don't upgrade" : "Continue without adding"}
-        </Button>
-        <Button color="primary" onClick={accept}>
-          {crossSell.replace_selected_products ? "Upgrade" : "Add to cart"}
-        </Button>
-      </footer>
-    </>
-  );
-};
-
-type OfferedUpsell = Upsell & { item: CartItem; offeredOption: Option };
-export const UpsellModal = ({
-  upsell,
-  accept,
-  decline,
-  cart,
-}: {
-  upsell: OfferedUpsell;
-  accept: () => void;
-  decline: () => void;
-  cart: CartState;
-}) => {
-  const { item, offeredOption } = upsell;
-  const product = item.product;
-  const { discount } = getDiscountedPrice(cart, { ...item, option_id: offeredOption.id });
-  return (
-    <>
-      <div className="flex flex-col gap-4">
-        <h4 dangerouslySetInnerHTML={{ __html: upsell.description }} />
-        <div className="radio-buttons" role="radiogroup">
-          <OptionRadioButton
-            selected
-            priceCents={product.price_cents + computeOptionPrice(offeredOption, item.recurrence)}
-            name={offeredOption.name}
-            description={offeredOption.description}
-            currencyCode={product.currency_code}
-            isPWYW={product.is_tiered_membership ? offeredOption.is_pwyw : !!item.product.pwyw}
-            discount={discount && discount.type !== "ppp" ? discount.value : null}
-            recurrence={item.recurrence}
-            product={product}
-          />
-        </div>
-      </div>
-      <footer style={{ display: "grid", gap: "var(--spacer-4)", gridTemplateColumns: "1fr 1fr" }}>
-        <Button onClick={decline}>Don't upgrade</Button>
-        <Button color="primary" onClick={accept}>
-          Upgrade
-        </Button>
-      </footer>
-    </>
-  );
-};
-
-export default register({ component: CheckoutPage, propParser: createCast() });
+CheckoutPage.loggedInUserLayout = true;
+export default CheckoutPage;

@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { computeOfferDiscount } from "$app/data/offer_code";
 import { getRecommendedProducts } from "$app/data/recommended_products";
-import { CardProduct, COMMISSION_DEPOSIT_PROPORTION } from "$app/parsers/product";
+import { type CardProduct, COMMISSION_DEPOSIT_PROPORTION } from "$app/parsers/product";
 import { isOpenTuple } from "$app/utils/array";
 import { classNames } from "$app/utils/classNames";
 import { formatUSDCentsWithExpandedCurrencySymbol } from "$app/utils/currency";
@@ -50,11 +50,11 @@ import { useRunOnce } from "$app/components/useRunOnce";
 import { WithTooltip } from "$app/components/WithTooltip";
 
 import {
-  CartState,
+  type CartState,
   convertToUSD,
   hasFreeTrial,
   getDiscountedPrice,
-  CartItem as CartItemProps,
+  type CartItem as CartItemProps,
   findCartItem,
 } from "./cartState";
 import {
