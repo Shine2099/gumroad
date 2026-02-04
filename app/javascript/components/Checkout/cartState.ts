@@ -1,4 +1,3 @@
-
 import { Discount } from "$app/parsers/checkout";
 import { AnalyticsData, CustomFieldDescriptor, FreeTrial, ProductNativeType } from "$app/parsers/product";
 import { CurrencyCode } from "$app/utils/currency";
