@@ -1548,6 +1548,11 @@ describe UrlRedirectsController do
           expect(inertia.props[:url]).to include("X-Amz-Signature=")
           expect(inertia.props[:url]).to include(S3_BUCKET)
           expect(inertia.props[:title]).to eq("The Works of Edgar Gumstein")
+          expect(inertia.props[:read_id]).to eq(@product.product_files.first.external_id)
+          expect(inertia.props[:url_redirect_id]).to eq(@url_redirect.external_id)
+          expect(inertia.props[:purchase_id]).to eq(@purchase.external_id)
+          expect(inertia.props[:product_file_id]).to eq(@product.product_files.first.external_id)
+          expect(inertia.props[:latest_media_location]).to be_nil
         end
 
         it "creates the proper consumption event" do
@@ -1602,7 +1607,8 @@ describe UrlRedirectsController do
         follower = create(:user)
         creator = create(:follower, follower_user_id: follower.id).user
         @post = create(:follower_installment, seller: creator)
-        @token = create(:installment_url_redirect, installment: @post).token
+        @url_redirect = create(:installment_url_redirect, installment: @post)
+        @token = @url_redirect.token
         sign_in(follower)
         # TODO: Uncomment after removing the :custom_domain_download feature flag (curtiseinsmann)
         # @request.host = URI.parse(creator.subdomain_with_protocol).host
@@ -1618,6 +1624,11 @@ describe UrlRedirectsController do
         get :read, params: { id: @token, product_file_id: @post.product_files.first.external_id }
         expect_inertia.to render_component("UrlRedirects/Read")
         expect(inertia.props[:title]).to eq("A new file!")
+        expect(inertia.props[:read_id]).to eq(@post.product_files.first.external_id)
+        expect(inertia.props[:url_redirect_id]).to eq(@url_redirect.external_id)
+        expect(inertia.props[:purchase_id]).to be_nil
+        expect(inertia.props[:product_file_id]).to eq(@post.product_files.first.external_id)
+        expect(inertia.props[:latest_media_location]).to be_nil
       end
     end
   end
