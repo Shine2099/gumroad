@@ -92,7 +92,6 @@ const EmailConfirmation = ({
           type="text"
           name="email"
           placeholder="Email address"
-          value={data.email}
           onChange={(e) => setData("email", e.target.value)}
           defaultValue={confirmation_info.email ?? ""}
         />
