@@ -538,7 +538,6 @@ const CheckoutPage = () => {
           preserveState: true,
           preserveScroll: true,
           replace: true,
-          onError: () => showAlert("Sorry, something went wrong. Please try again.", "error"),
         },
       ),
     100,
