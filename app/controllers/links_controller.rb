@@ -24,7 +24,6 @@ class LinksController < ApplicationController
 
   before_action :set_affiliate_cookie, only: [:show]
 
-  before_action :hide_layouts, only: %i[show]
   before_action :fetch_product, only: %i[increment_views track_user_action]
   before_action :ensure_seller_is_not_deleted, only: [:show]
   before_action :check_if_needs_redirect, only: [:show]
@@ -156,7 +155,6 @@ class LinksController < ApplicationController
     end
 
     set_noindex_header if !@product.alive?
-    set_meta_tag(tag_name: "style", inner_content: @user&.seller_profile&.custom_styles.to_s)
 
     respond_to do |format|
       format.html { render_product_inertia_page }
@@ -560,6 +558,7 @@ class LinksController < ApplicationController
       @user                  = @product.user
       set_meta_tag(title: @product.name)
       set_product_page_meta(@product)
+      set_meta_tag(tag_name: "style", inner_content: @product.user.seller_profile.custom_styles.to_s, head_key: "custom_styles")
       @body_id               = "product_page"
       @is_on_product_page    = true
       @debug                 = params[:debug] && !Rails.env.production?
