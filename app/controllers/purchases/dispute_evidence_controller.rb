@@ -33,7 +33,7 @@ class Purchases::DisputeEvidenceController < ApplicationController
     @dispute_evidence.update_as_seller_submitted!
 
     FightDisputeJob.perform_async(@dispute_evidence.dispute.id)
-    redirect_to success_purchase_dispute_evidence_path(@purchase.external_id)
+    redirect_to success_purchase_dispute_evidence_path(@purchase.external_id), status: :see_other
   rescue ActiveRecord::RecordInvalid
     redirect_to purchase_dispute_evidence_path(@purchase.external_id), alert: @dispute_evidence.errors.full_messages.to_sentence
   end
