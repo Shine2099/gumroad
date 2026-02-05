@@ -16,9 +16,9 @@ import { useLoggedInUser } from "$app/components/LoggedInUser";
 import { WithPreviewSidebar } from "$app/components/PreviewSidebar";
 import { Select } from "$app/components/Select";
 import { showAlert } from "$app/components/server-components/Alert";
-import { Toggle } from "$app/components/Toggle";
 import { TypeSafeOptionSelect } from "$app/components/TypeSafeOptionSelect";
 import { Card, CardContent } from "$app/components/ui/Card";
+import { Switch } from "$app/components/ui/Switch";
 
 export type SimpleProduct = { id: string; name: string; archived: boolean };
 
@@ -399,9 +399,11 @@ const FormPage = ({
                 Learn more
               </a>
             </header>
-            <Toggle value={tippingEnabled} onChange={(value) => updateUserData({ tipping_enabled: value })}>
-              Allow customers to add tips to their orders
-            </Toggle>
+            <Switch
+              checked={tippingEnabled}
+              onChange={(e) => updateUserData({ tipping_enabled: e.target.checked })}
+              label="Allow customers to add tips to their orders"
+            />
           </section>
         </div>
         <CheckoutPreview
