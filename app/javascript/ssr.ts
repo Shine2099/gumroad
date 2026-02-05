@@ -9,7 +9,6 @@ import CommunitiesPage from "$app/components/server-components/CommunitiesPage";
 import CustomersDownloadPopover from "$app/components/server-components/CustomersPage/DownloadPopover";
 import CustomersFilterPopover from "$app/components/server-components/CustomersPage/FilterPopover";
 import Discover from "$app/components/server-components/Discover";
-import DiscoverWishlistPage from "$app/components/server-components/Discover/WishlistPage";
 import DownloadPageWithContent from "$app/components/server-components/DownloadPage/WithContent";
 import DownloadPageWithoutContent from "$app/components/server-components/DownloadPage/WithoutContent";
 import GenerateInvoiceConfirmationPage from "$app/components/server-components/GenerateInvoiceConfirmationPage";
@@ -21,12 +20,6 @@ import PdfReaderPage from "$app/components/server-components/PdfReaderPage";
 import ProductEditPage from "$app/components/server-components/ProductEditPage";
 import Profile from "$app/components/server-components/Profile";
 import ProfileCoffeePage from "$app/components/server-components/Profile/CoffeePage";
-import ProfilePostPage from "$app/components/server-components/Profile/PostPage";
-import ProfileWishlistPage from "$app/components/server-components/Profile/WishlistPage";
-import DisputeEvidencePage from "$app/components/server-components/Purchase/DisputeEvidencePage";
-import PurchaseProductPage from "$app/components/server-components/Purchase/ProductPage";
-import SubscribeReviewReminders from "$app/components/server-components/ReviewReminders/SubscribeReviewReminders";
-import UnsubscribeReviewReminders from "$app/components/server-components/ReviewReminders/UnsubscribeReviewReminders";
 import SecureRedirectPage from "$app/components/server-components/SecureRedirectPage";
 import SubscribePage from "$app/components/server-components/SubscribePage";
 import SubscriptionManager from "$app/components/server-components/SubscriptionManager";
@@ -46,8 +39,6 @@ ReactOnRails.register({
   CustomersDownloadPopover,
   CustomersFilterPopover,
   Discover,
-  DiscoverWishlistPage,
-  DisputeEvidencePage,
   DownloadPageWithContent,
   DownloadPageWithoutContent,
   GenerateInvoiceConfirmationPage,
@@ -58,17 +49,12 @@ ReactOnRails.register({
   PdfReaderPage,
   Pill,
   ProductEditPage,
-  PurchaseProductPage,
   Profile,
   ProfileCoffeePage,
-  ProfilePostPage,
-  ProfileWishlistPage,
   SecureRedirectPage,
   SubscribePage,
-  SubscribeReviewReminders,
   SubscriptionManager,
   SubscriptionManagerMagicLink,
   TaxesCollectionModal,
-  UnsubscribeReviewReminders,
   VideoStreamPlayer,
 });

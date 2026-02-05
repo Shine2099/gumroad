@@ -155,15 +155,11 @@ class LinksController < ApplicationController
       )
     end
 
-    if params[:layout] == Product::Layout::DISCOVER
-      @discover_props = { taxonomy_path: @product.taxonomy&.ancestry_path&.join("/"), taxonomies_for_nav: }
-    end
-
     set_noindex_header if !@product.alive?
-    @hide_layouts = false
+    set_meta_tag(tag_name: "style", inner_content: @user&.seller_profile&.custom_styles.to_s)
 
     respond_to do |format|
-      format.html { render inertia: product_inertia_template, props: product_inertia_props }
+      format.html { render_product_inertia_page }
       format.json { render json: @product.as_json }
       format.any { e404 }
     end
@@ -569,26 +565,24 @@ class LinksController < ApplicationController
       @debug                 = params[:debug] && !Rails.env.production?
     end
 
-    def product_inertia_template
-      if params[:layout] == Product::Layout::PROFILE
-        "Products/Profile/Show"
-      elsif params[:layout] == Product::Layout::DISCOVER
-        "Products/Discover/Show"
-      elsif params[:embed] || params[:overlay]
-        "Products/Iframe/Show"
+    def render_product_inertia_page
+      case params[:layout]
+      when Product::Layout::PROFILE
+        @product_props = { product: @presenter.profile_product_props(**@presenter_props) }
+        render inertia: "Products/Profile/Show", props: @product_props
+      when Product::Layout::DISCOVER
+        discover_props = { taxonomy_path: @product.taxonomy&.ancestry_path&.join("/"), taxonomies_for_nav: }
+        @product_props = { product: @presenter.discover_product_props(discover_props:, **@presenter_props) }
+        render inertia: "Products/Discover/Show", props: @product_props
       else
-        "Products/Show"
+        if params[:embed] || params[:overlay]
+          @product_props = { product: @presenter.iframe_product_props(**@presenter_props) }
+          render inertia: "Products/Iframe/Show", props: @product_props
+        else
+          @product_props = { product: @presenter.default_product_props(**@presenter_props) }
+          render inertia: "Products/Show", props: @product_props
+        end
       end
-    end
-
-    def product_inertia_props
-      is_embed = params[:embed] || params[:overlay]
-      {
-        product: @presenter.inertia_page_props(layout: params[:layout], is_embed:, discover_props: @discover_props, **@presenter_props),
-        meta: {
-          custom_styles: @user&.seller_profile&.custom_styles.to_s
-        }
-      }
     end
 
     def link_params

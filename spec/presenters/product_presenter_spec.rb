@@ -194,6 +194,69 @@ describe ProductPresenter do
     end
   end
 
+  describe "#default_product_props" do
+    let(:request) { ActionDispatch::TestRequest.create }
+    let(:pundit_user) { SellerContext.new(user: nil, seller: nil) }
+    let(:seller) { create(:user) }
+    let(:product) { create(:product, user: seller) }
+
+    it "returns product_page_props" do
+      presenter = described_class.new(product:, request:, pundit_user:)
+
+      expect(presenter.default_product_props(seller_custom_domain_url: nil)).to eq(
+        presenter.product_page_props(seller_custom_domain_url: nil)
+      )
+    end
+  end
+
+  describe "#profile_product_props" do
+    let(:request) { ActionDispatch::TestRequest.create }
+    let(:pundit_user) { SellerContext.new(user: nil, seller: nil) }
+    let(:seller) { create(:user) }
+    let(:product) { create(:product, user: seller) }
+
+    it "returns product_page_props merged with creator_profile" do
+      presenter = described_class.new(product:, request:, pundit_user:)
+      props = presenter.profile_product_props(seller_custom_domain_url: nil)
+
+      expect(props).to include(presenter.product_page_props(seller_custom_domain_url: nil))
+      expect(props[:creator_profile]).to be_present
+      expect(props[:creator_profile]).to eq(ProfilePresenter.new(pundit_user:, seller:).creator_profile)
+    end
+  end
+
+  describe "#discover_product_props" do
+    let(:request) { ActionDispatch::TestRequest.create }
+    let(:pundit_user) { SellerContext.new(user: nil, seller: nil) }
+    let(:seller) { create(:user) }
+    let(:product) { create(:product, user: seller) }
+
+    it "returns product_page_props merged with discover_props" do
+      presenter = described_class.new(product:, request:, pundit_user:)
+      discover_props = { taxonomy_path: "design/graphics", taxonomies_for_nav: [] }
+      props = presenter.discover_product_props(discover_props:, seller_custom_domain_url: nil)
+
+      expect(props).to include(presenter.product_page_props(seller_custom_domain_url: nil))
+      expect(props[:taxonomy_path]).to eq("design/graphics")
+      expect(props[:taxonomies_for_nav]).to eq([])
+    end
+  end
+
+  describe "#iframe_product_props" do
+    let(:request) { ActionDispatch::TestRequest.create }
+    let(:pundit_user) { SellerContext.new(user: nil, seller: nil) }
+    let(:seller) { create(:user) }
+    let(:product) { create(:product, user: seller) }
+
+    it "returns product_props (not product_page_props)" do
+      presenter = described_class.new(product:, request:, pundit_user:)
+
+      expect(presenter.iframe_product_props(seller_custom_domain_url: nil)).to eq(
+        presenter.product_props(seller_custom_domain_url: nil)
+      )
+    end
+  end
+
   describe "#edit_props" do
     let(:request) { instance_double(ActionDispatch::Request, host: "test.gumroad.com", host_with_port: "test.gumroad.com:1234", protocol: "http") }
     let(:circle_integration) { create(:circle_integration) }
