@@ -107,7 +107,10 @@ const ContentTabContent = ({
   const { id, seller, existingFiles, setExistingFiles, uniquePermalink } = useProductEditContext();
   const { product, updateProduct } = useProductFormContext();
   // Compute filesById from form state to include newly uploaded files
-  const filesById = React.useMemo(() => new Map(product.files.map((f) => [f.id, f])), [product.files]);
+  // Note: Don't use useMemo here - upload progress callbacks mutate fileStatus objects directly
+  // and call updateProduct({}) to trigger re-renders. Using useMemo([product.files]) would not
+  // recompute the Map since the array reference stays the same, causing progress to not update.
+  const filesById = new Map(product.files.map((f) => [f.id, f]));
   const uid = React.useId();
   const isDesktop = useIsAboveBreakpoint("lg");
   const imageSettings = useImageUploadSettings();
@@ -204,12 +207,20 @@ const ContentTabContent = ({
         file,
         mimeType,
         onComplete: () => {
-          fileStatus.uploadStatus = { type: "uploaded" };
-          updateProduct({});
+          updateProduct((draft) => {
+            const fileEntry = draft.files.find((f) => f.id === id);
+            if (fileEntry?.status.type === "unsaved") {
+              fileEntry.status.uploadStatus = { type: "uploaded" };
+            }
+          });
         },
         onProgress: (progress) => {
-          fileStatus.uploadStatus = { type: "uploading", progress };
-          updateProduct({});
+          updateProduct((draft) => {
+            const fileEntry = draft.files.find((f) => f.id === id);
+            if (fileEntry?.status.type === "unsaved") {
+              fileEntry.status.uploadStatus = { type: "uploading", progress };
+            }
+          });
         },
       });
       if (typeof status === "string") {

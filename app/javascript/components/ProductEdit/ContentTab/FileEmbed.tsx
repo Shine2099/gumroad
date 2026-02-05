@@ -58,7 +58,10 @@ const FileEmbedNodeView = ({ node, editor, getPos, updateAttributes }: NodeViewP
   const { id } = useProductEditContext();
   const { product, updateProduct } = useProductFormContext();
   // Compute filesById from form state to include newly uploaded files
-  const filesById = React.useMemo(() => new Map(product.files.map((f) => [f.id, f])), [product.files]);
+  // Note: Don't use useMemo here - upload progress callbacks mutate fileStatus objects directly
+  // and call updateProduct({}) to trigger re-renders. Using useMemo([product.files]) would not
+  // recompute the Map since the array reference stays the same, causing progress to not update.
+  const filesById = new Map(product.files.map((f) => [f.id, f]));
   const uid = React.useId();
   const ref = React.useRef<HTMLDivElement>(null);
   const [expanded, setExpanded] = React.useState(false);
@@ -258,18 +261,29 @@ const FileEmbedNodeView = ({ node, editor, getPos, updateAttributes }: NodeViewP
 
       updateFile({ subtitle_files: [...file.subtitle_files, subtitleEntry] });
 
+      const subtitleUrl = subtitleEntry.url;
       const status = uploader.scheduleUpload({
         cancellationKey: `subtitles_for_${file.id}__${subtitleEntry.url}`,
         name: s3key,
         file: subtitleFile,
         mimeType,
         onComplete: () => {
-          subtitleEntry.status = { type: "unsaved", uploadStatus: { type: "uploaded" } };
-          updateFile({});
+          updateProduct((draft) => {
+            const fileEntry = draft.files.find((f) => f.id === file.id);
+            const subtitle = fileEntry?.subtitle_files.find((s) => s.url === subtitleUrl);
+            if (subtitle) {
+              subtitle.status = { type: "unsaved", uploadStatus: { type: "uploaded" } };
+            }
+          });
         },
         onProgress: (progress) => {
-          subtitleEntry.status = { type: "unsaved", uploadStatus: { type: "uploading", progress } };
-          updateFile({});
+          updateProduct((draft) => {
+            const fileEntry = draft.files.find((f) => f.id === file.id);
+            const subtitle = fileEntry?.subtitle_files.find((s) => s.url === subtitleUrl);
+            if (subtitle) {
+              subtitle.status = { type: "unsaved", uploadStatus: { type: "uploading", progress } };
+            }
+          });
         },
       });
 
