@@ -106,6 +106,16 @@ function CommunitiesIndex() {
   const [showScrollToBottomButton, setShowScrollToBottomButton] = React.useState(false);
   const communityChannelsRef = React.useRef<Record<string, Channel>>({});
   const userChannelRef = React.useRef<Channel | null>(null);
+  const loadOlderRef = React.useRef<{ loading: boolean; hasMore: boolean; fetch: () => void }>({
+    loading: false,
+    hasMore: false,
+    fetch: () => {},
+  });
+  const loadNewerRef = React.useRef<{ loading: boolean; hasMore: boolean; fetch: () => void }>({
+    loading: false,
+    hasMore: false,
+    fetch: () => {},
+  });
   const selectedCommunityRef = React.useRef(selectedCommunity);
   selectedCommunityRef.current = selectedCommunity;
   const [chatMessageInputHeight, setChatMessageInputHeight] = React.useState(0);
@@ -139,6 +149,23 @@ function CommunitiesIndex() {
 
   const scrollMeta = (usePage() as { scrollProps?: { messages?: ScrollMeta } }).scrollProps?.messages;
   const hasOlderMessages = scrollMeta ? scrollMeta.nextPage != null : true;
+
+  const prevFirstMessageIdRef = React.useRef<string | null>(null);
+  const prevMessagesLengthRef = React.useRef(0);
+
+  React.useEffect(() => {
+    const prevLength = prevMessagesLengthRef.current;
+    const prevFirstId = prevFirstMessageIdRef.current;
+    const currentLength = allMessages.length;
+    const currentFirstId = allMessages[0]?.id ?? null;
+
+    prevMessagesLengthRef.current = currentLength;
+    prevFirstMessageIdRef.current = currentFirstId;
+
+    if (currentLength > prevLength && prevFirstId && currentFirstId !== prevFirstId) {
+      setScrollToMessage({ id: prevFirstId, position: "start" });
+    }
+  }, [allMessages]);
 
   const sendMessageToUserChannel = useDebouncedCallback((msg: OutgoingUserChannelMessage) => {
     const userChannelState = userChannelRef.current?.state;
@@ -246,7 +273,7 @@ function CommunitiesIndex() {
     if (chatContainerRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
       if (scrollHeight - scrollTop - clientHeight < 200) {
-        setScrollToMessage({ id: message.id, position: "start" });
+        setScrollToMessage({ id: message.id, position: "end" });
       }
     }
   }, []);
@@ -581,11 +608,30 @@ function CommunitiesIndex() {
                       reverse
                       preserveUrl
                       as="div"
-                      loading={
-                        <div className="flex justify-center py-4">
-                          <div className="text-sm text-muted">Loading messages...</div>
-                        </div>
-                      }
+                      next={(slot) => {
+                        loadOlderRef.current = {
+                          loading: slot.loading,
+                          hasMore: slot.hasMore,
+                          fetch: slot.fetch,
+                        };
+                        return slot.loading ? (
+                          <div className="flex justify-center py-4">
+                            <div className="text-sm text-muted">Loading older messages...</div>
+                          </div>
+                        ) : null;
+                      }}
+                      previous={(slot) => {
+                        loadNewerRef.current = {
+                          loading: slot.loading,
+                          hasMore: slot.hasMore,
+                          fetch: slot.fetch,
+                        };
+                        return slot.loading ? (
+                          <div className="flex justify-center py-4">
+                            <div className="text-sm text-muted">Loading newer messages...</div>
+                          </div>
+                        ) : null;
+                      }}
                     >
                       <ChatMessageList
                         community={selectedCommunity}

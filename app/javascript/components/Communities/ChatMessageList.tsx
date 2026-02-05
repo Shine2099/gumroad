@@ -13,6 +13,7 @@ type ChatMessageListProps = {
   hasOlderMessages: boolean;
   setStickyDate: (date: string | null) => void;
   unreadSeparatorVisibility: boolean;
+  messagesContainerRef?: React.RefObject<HTMLDivElement>;
 };
 
 export const ChatMessageList = ({
@@ -21,6 +22,7 @@ export const ChatMessageList = ({
   hasOlderMessages,
   setStickyDate,
   unreadSeparatorVisibility,
+  messagesContainerRef,
 }: ChatMessageListProps) => {
   const [isVisible, setIsVisible] = React.useState(false);
   const [initialScrollDone, setInitialScrollDone] = React.useState(false);
@@ -140,6 +142,7 @@ export const ChatMessageList = ({
     <div className="flex min-h-full w-full flex-col" aria-label="Chat messages">
       <div data-id="top"></div>
       <div
+        ref={messagesContainerRef}
         className={cx(
           "flex flex-1 flex-col justify-end gap-4 pb-4 opacity-0 transition-opacity delay-150 duration-300 ease-in-out",
           {
