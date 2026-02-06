@@ -123,9 +123,9 @@ describe Subscription::RestartAtCheckoutService do
         updater_service = instance_double(Subscription::UpdaterService)
         allow(Subscription::UpdaterService).to receive(:new).and_return(updater_service)
         allow(updater_service).to receive(:perform).and_return({
-          success: true,
-          success_message: "Membership restarted"
-        })
+                                                                 success: true,
+                                                                 success_message: "Membership restarted"
+                                                               })
 
         result = described_class.new(
           subscription: subscription,
@@ -144,9 +144,9 @@ describe Subscription::RestartAtCheckoutService do
         updater_service = instance_double(Subscription::UpdaterService)
         allow(Subscription::UpdaterService).to receive(:new).and_return(updater_service)
         allow(updater_service).to receive(:perform).and_return({
-          success: false,
-          error_message: "Something went wrong"
-        })
+                                                                 success: false,
+                                                                 error_message: "Something went wrong"
+                                                               })
 
         result = described_class.new(
           subscription: subscription,
@@ -163,10 +163,10 @@ describe Subscription::RestartAtCheckoutService do
         updater_service = instance_double(Subscription::UpdaterService)
         allow(Subscription::UpdaterService).to receive(:new).and_return(updater_service)
         allow(updater_service).to receive(:perform).and_return({
-          success: true,
-          requires_card_action: true,
-          client_secret: "secret_123"
-        })
+                                                                 success: true,
+                                                                 requires_card_action: true,
+                                                                 client_secret: "secret_123"
+                                                               })
 
         result = described_class.new(
           subscription: subscription,

@@ -28,7 +28,6 @@ class Subscription::RestartAtCheckoutService
   end
 
   private
-
     def updater_service_params
       perceived_price_cents = params.dig(:purchase, :perceived_price_cents)&.to_i ||
                               subscription.current_subscription_price_cents
