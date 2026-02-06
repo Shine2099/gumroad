@@ -1,3 +1,4 @@
+import * as React from "react";
 import { usePage } from "@inertiajs/react";
 
 import { Taxonomy } from "$app/utils/discover";
