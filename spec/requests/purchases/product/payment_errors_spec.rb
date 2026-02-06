@@ -49,6 +49,7 @@ describe("Purchase from a product page", type: :system, js: true) do
 
     add_to_cart(@product)
     check_out(@product, credit_card: { number: "4000000000009995" }, error: "Your card has insufficient funds.")
+    wait_until_true { Cart.alive.where(email: "test@gumroad.com").exists? }
 
     expect(Purchase.last.stripe_error_code).to eq("card_declined_insufficient_funds")
 

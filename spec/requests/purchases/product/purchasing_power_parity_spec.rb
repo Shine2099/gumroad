@@ -57,6 +57,7 @@ describe "Purchasing power parity", type: :system, js: true do
         expect(page).to have_selector("[role='status']", text: "This product supports purchasing power parity. Because you're located in Latvia, the price has been discounted by 51% to $4.90.")
         add_to_cart(@product)
         check_out(@product, zip_code: nil, error: "In order to apply a purchasing power parity discount, you must use a card issued in the country you are in. Please try again with a local card, or remove the discount during checkout.")
+        wait_until_true { Cart.alive.where(email: "test@gumroad.com").exists? }
         visit checkout_path
         ppp_pill = find_button("Purchasing power parity discount")
         ppp_pill.hover
