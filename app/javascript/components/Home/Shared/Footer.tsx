@@ -6,6 +6,8 @@ import logoG from "$assets/images/logo-g.svg";
 const FooterLink = ({ href, children, isInertia = false }: { href: string; children: React.ReactNode; isInertia?: boolean }) => {
   const className = "no-underline hover:text-pink";
 
+  // Implemented conditional rendering for links to use standard <a> tags for non-Inertia routes.
+  // This avoids the suboptimal double request (XHR failure + full reload) that occurs when an Inertia Link is used for a non-Inertia destination.
   if (isInertia) {
     return (
       <Link href={href} className={className}>

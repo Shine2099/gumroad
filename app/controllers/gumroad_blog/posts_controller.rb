@@ -17,7 +17,7 @@ class GumroadBlog::PostsController < GumroadBlog::BaseController
     render inertia: "GumroadBlog/Posts/Index", props: {
       posts: posts.map do |post|
         {
-          url: gumroad_blog_post_path(post.slug),
+          slug: post.slug,
           subject: post.subject,
           published_at: post.published_at,
           featured_image_url: post.featured_image_url,

@@ -61,7 +61,7 @@ describe GumroadBlog::PostsController, inertia: true do
       expect(inertia.props[:posts]).to eq(
         [
           {
-            url: gumroad_blog_post_path(published_post_2.slug),
+            slug: published_post_2.slug,
             subject: published_post_2.subject,
             published_at: published_post_2.published_at,
             featured_image_url: published_post_2.featured_image_url,
@@ -69,7 +69,7 @@ describe GumroadBlog::PostsController, inertia: true do
             tags: published_post_2.tags,
           },
           {
-            url: gumroad_blog_post_path(published_post_1.slug),
+            slug: published_post_1.slug,
             subject: published_post_1.subject,
             published_at: published_post_1.published_at,
             featured_image_url: published_post_1.featured_image_url,

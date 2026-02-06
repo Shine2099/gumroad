@@ -37,6 +37,8 @@ const NavLink = ({
       : "border-transparent lg:bg-transparent lg:text-black dark:lg:text-white",
   );
 
+  // Implemented conditional rendering for links to use standard <a> tags for non-Inertia routes.
+  // This avoids the suboptimal double request (XHR failure + full reload) that occurs when an Inertia Link is used for a non-Inertia destination.
   if (isInertia) {
     return (
       <Link href={href} className={className} {...(onClick && { onClick })}>

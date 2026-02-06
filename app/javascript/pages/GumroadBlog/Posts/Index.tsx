@@ -8,6 +8,7 @@ import { formatPostDate } from "$app/utils/date";
 
 import { Tabs, Tab } from "$app/components/ui/Tabs";
 import { BlogLayout } from "$app/components/GumroadBlog/Layout";
+import { gumroad_blog_post_path } from "$app/utils/routes";
 
 import placeholderFeatureImage from "../../../../assets/images/blog/post-placeholder.jpg";
 
@@ -36,7 +37,7 @@ const Tag = ({ name, count, showCount = false, active = false, size = "sm" }: Ta
 };
 
 interface Post {
-  url: string;
+  slug: string;
   subject: string;
   published_at: string;
   featured_image_url: string | null;
@@ -93,7 +94,7 @@ const PostCard = ({
   return (
     <article className="h-full">
       <Link
-        href={post.url}
+        href={gumroad_blog_post_path(post.slug)}
         className={cx(
           "override grid h-full overflow-hidden rounded-lg border border-black bg-white text-black no-underline transition-all duration-200 ease-in-out hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[3px_3px_#000]",
           { "grid-rows-[auto_1fr]": !!featureImageUrl },
@@ -141,7 +142,7 @@ const PostCard = ({
 
 const CompactPostItem = ({ post }: { post: Post }) => (
   <li className="border-gray-300 py-4 first:pt-0">
-    <Link href={post.url} className="group flex items-end justify-between text-black no-underline hover:text-pink-600">
+    <Link href={gumroad_blog_post_path(post.slug)} className="group flex items-end justify-between text-black no-underline hover:text-pink-600">
       <div className="grid grid-cols-1 gap-1">
         <h4 className="mb-0.5 text-2xl font-normal">{post.subject}</h4>
         <p className="pb-0.5 text-base text-gray-500">{formatPostDate(post.published_at, "en-US")}</p>
@@ -161,7 +162,7 @@ const CompactPostSection = ({ product_updates }: { product_updates: Post[] }) =>
       {product_updates.length > 0 ? (
         <ul className="grow divide-y overflow-y-auto">
           {product_updates.map((post) => (
-            <CompactPostItem key={post.url} post={post} />
+            <CompactPostItem key={post.slug} post={post} />
           ))}
         </ul>
       ) : (
@@ -176,7 +177,7 @@ const PostsGrid = ({ posts }: { posts: Post[] }) => (
     {posts.length > 0 ? (
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
         {posts.map((post) => (
-          <PostCard key={post.url} post={post} />
+          <PostCard key={post.slug} post={post} />
         ))}
       </div>
     ) : (
