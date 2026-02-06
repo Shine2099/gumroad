@@ -48,11 +48,11 @@ class Api::Internal::CartsController < Api::Internal::BaseController
       cart.alive_cart_products.where.not(id: updated_cart_products.map(&:id)).find_each(&:mark_deleted!)
     end
 
-    redirect_to checkout_index_path, status: :see_other
+    redirect_to checkout_index_path(request.query_parameters), status: :see_other
   rescue ActiveRecord::RecordInvalid => e
     Bugsnag.notify(e)
     Rails.logger.error(e.full_message) if Rails.env.development?
-    redirect_to checkout_index_path, alert: "Sorry, something went wrong. Please try again."
+    redirect_to checkout_index_path(request.query_parameters), alert: "Sorry, something went wrong. Please try again."
   end
 
   private

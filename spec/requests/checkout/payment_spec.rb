@@ -14,7 +14,9 @@ describe "Checkout payment", :js, type: :system do
     add_to_cart(@product)
     select_tab "PayPal"
     if PAYPAL_PARTNER_CLIENT_ID.blank? || PAYPAL_PARTNER_CLIENT_ID.start_with?("test-")
-      supports_paypal = page.evaluate_script("JSON.parse(document.querySelector('script.js-react-on-rails-component[data-component-name=\"CheckoutPage\"]').textContent).add_products[0].product.supports_paypal")
+      supports_paypal = page.evaluate_script(
+        "JSON.parse(document.querySelector('[data-page]').getAttribute('data-page')).props.add_products[0].product.supports_paypal",
+      )
       expect(supports_paypal).to eq("native")
     else
       expect(page).to have_selector("iframe[title=PayPal]")

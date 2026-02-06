@@ -70,7 +70,7 @@ describe "Wishlist show page", :js, type: :system do
       expect(page).to have_text("Qty: 2")
     end
 
-    page.go_back
+    visit wishlist_url(wishlist.external_id_numeric, host: wishlist.user.subdomain_with_protocol)
 
     within find_product_card(versioned_product) do
       click_on "Add to cart"
@@ -80,7 +80,7 @@ describe "Wishlist show page", :js, type: :system do
       expect(page).to have_text("Version: Untitled 1")
     end
 
-    page.go_back
+    visit wishlist_url(wishlist.external_id_numeric, host: wishlist.user.subdomain_with_protocol)
 
     within find_product_card(membership_product) do
       click_on "Add to cart"
@@ -91,7 +91,7 @@ describe "Wishlist show page", :js, type: :system do
       expect(page).to have_text("Yearly")
     end
 
-    page.go_back
+    visit wishlist_url(wishlist.external_id_numeric, host: wishlist.user.subdomain_with_protocol)
 
     within find_product_card(rental_product) do
       click_on "Add to cart"

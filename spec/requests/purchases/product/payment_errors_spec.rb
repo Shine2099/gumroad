@@ -85,6 +85,7 @@ describe("Purchase from a product page", type: :system, js: true) do
       add_to_cart(@product)
       @product.price_cents += 100
       check_out(@product, error: "The price just changed! Refresh the page for the updated price.")
+      wait_until_true { Cart.alive.where(email: "test@gumroad.com").exists? }
       visit checkout_index_path
       check_out(@product)
 

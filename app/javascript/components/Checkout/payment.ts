@@ -15,7 +15,6 @@ import { Creator } from "$app/components/Checkout/cartState";
 import { showAlert } from "$app/components/server-components/Alert";
 import { useDebouncedCallback } from "$app/components/useDebouncedCallback";
 import { useOriginalLocation } from "$app/components/useOriginalLocation";
-import { useRunOnce } from "$app/components/useRunOnce";
 
 enableMapSet();
 
@@ -403,12 +402,6 @@ export function createReducer(initial: {
     },
   );
   const [state, dispatch] = reducer;
-  useRunOnce(() => {
-    const url = new URL(window.location.href);
-    const searchParams = new URLSearchParams([...url.searchParams].filter(([key]) => key === "_gl"));
-    url.search = searchParams.toString();
-    window.history.replaceState(window.history.state, "", url.toString());
-  });
 
   const updateSurcharges = useDebouncedCallback(
     asyncVoid(async () => {

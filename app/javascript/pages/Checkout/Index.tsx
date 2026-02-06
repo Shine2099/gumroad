@@ -532,12 +532,21 @@ const CheckoutPage = () => {
   const debouncedSaveCartState = useDebouncedCallback(
     () =>
       router.put(
-        Routes.internal_cart_path(),
+        `${Routes.internal_cart_path()}${window.location.search}`,
         { cart },
         {
           preserveState: true,
           preserveScroll: true,
           replace: true,
+          onSuccess: () => {
+            const url = new URL(window.location.href);
+            const searchParams = new URLSearchParams([...url.searchParams].filter(([key]) => key === "_gl"));
+            const nextSearch = searchParams.toString();
+            if (url.search.replace(/^\?/, "") !== nextSearch) {
+              url.search = nextSearch;
+              window.history.replaceState(window.history.state, "", url.toString());
+            }
+          },
         },
       ),
     100,

@@ -593,12 +593,12 @@ describe("Product checkout with upsells", type: :system, js: true) do
       add_to_cart(selected_product)
 
       fill_checkout_form(selected_product)
+      wait_until_true { Cart.alive.where(email: "test@gumroad.com").exists? }
       click_on "Pay"
       within_modal "Cross-sell" do
         click_on "Add to cart"
       end
 
-      visit checkout_index_path
       expect(page).to have_text("Discounts US$-1", normalize_ws: true)
       within_cart_item "Product" do
         click_on "Remove"
