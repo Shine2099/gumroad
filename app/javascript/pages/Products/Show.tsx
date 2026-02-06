@@ -1,5 +1,5 @@
-import * as React from "react";
 import { usePage } from "@inertiajs/react";
+import * as React from "react";
 
 import { PoweredByFooter } from "$app/components/PoweredByFooter";
 import { Layout, Props } from "$app/components/Product/Layout";
