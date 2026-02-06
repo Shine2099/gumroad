@@ -180,6 +180,43 @@ describe Subscription::RestartAtCheckoutService do
       end
     end
 
+    describe "recurrence change (issue #117)" do
+      let!(:subscription) do
+        create_subscription_for_product(
+          product: product,
+          purchaser: buyer,
+          email: email,
+          cancelled_at: 1.day.ago,
+          cancelled_by_buyer: true,
+          deactivated_at: 1.day.ago
+        )
+      end
+
+      let(:yearly_price) { create(:price, link: product, recurrence: "yearly", price_cents: 100_00) }
+
+      it "passes the new price_id to UpdaterService when changing recurrence" do
+        params_with_yearly = base_params.merge(price_id: yearly_price.external_id)
+
+        updater_service = instance_double(Subscription::UpdaterService)
+        expect(Subscription::UpdaterService).to receive(:new).with(
+          subscription: subscription,
+          params: hash_including(price_id: yearly_price.external_id),
+          logged_in_user: buyer,
+          gumroad_guid: browser_guid,
+          remote_ip: "127.0.0.1"
+        ).and_return(updater_service)
+
+        expect(updater_service).to receive(:perform).and_return({ success: true })
+
+        described_class.new(
+          subscription: subscription,
+          product: product,
+          params: params_with_yearly,
+          buyer: buyer
+        ).perform
+      end
+    end
+
     # Integration tests - verify error handling works correctly
     # Success cases are covered by UpdaterService specs; we just verify delegation
     describe "integration behavior" do
