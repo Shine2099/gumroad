@@ -3478,6 +3478,19 @@ describe LinksController, :vcr, inertia: true do
           expect(inertia.props[:product]).to be_present
           expect(inertia.props[:product][:name]).to eq(product.name)
         end
+
+        it "renders seller custom_styles in the head as a style tag" do
+          @user.seller_profile.update!(highlight_color: "#00ff00", background_color: "#0000ff")
+          product = create(:product, user: @user)
+
+          get :show, params: { id: product.unique_permalink }
+
+          expect(response).to be_successful
+          html_doc = Nokogiri::HTML(response.body)
+          style_tags = html_doc.css("head style")
+          # Custom styles include CSS variables and background-color from seller profile
+          expect(style_tags.any? { |tag| tag.text.include?("--accent:") && tag.text.include?("background-color:") }).to be(true)
+        end
       end
 
       it "does not set no index header by default" do

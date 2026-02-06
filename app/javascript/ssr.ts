@@ -20,7 +20,6 @@ import PdfReaderPage from "$app/components/server-components/PdfReaderPage";
 import ProductEditPage from "$app/components/server-components/ProductEditPage";
 import Profile from "$app/components/server-components/Profile";
 import ProfileCoffeePage from "$app/components/server-components/Profile/CoffeePage";
-import DisputeEvidencePage from "$app/components/server-components/Purchase/DisputeEvidencePage";
 import SecureRedirectPage from "$app/components/server-components/SecureRedirectPage";
 import SubscribePage from "$app/components/server-components/SubscribePage";
 import SubscriptionManager from "$app/components/server-components/SubscriptionManager";
@@ -40,7 +39,6 @@ ReactOnRails.register({
   CustomersDownloadPopover,
   CustomersFilterPopover,
   Discover,
-  DisputeEvidencePage,
   DownloadPageWithContent,
   DownloadPageWithoutContent,
   GenerateInvoiceConfirmationPage,
