@@ -601,6 +601,7 @@ describe("Product checkout with upsells", type: :system, js: true) do
 
       wait_until_true { Cart.alive.last&.cart_products&.alive&.count == 2 }
       visit checkout_path
+      expect(page).to have_text("Discounts US$-1", normalize_ws: true)
       within_cart_item "Product" do
         click_on "Remove"
       end
