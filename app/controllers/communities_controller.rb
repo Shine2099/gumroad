@@ -3,7 +3,7 @@
 class CommunitiesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_default_page_title
-  before_action :set_community, only: [:show, :update_notification_settings]
+  before_action :set_community, only: [:show]
   after_action :verify_authorized
 
   layout "inertia"
@@ -35,17 +35,6 @@ class CommunitiesController < ApplicationController
     }
   end
 
-  def update_notification_settings
-    authorize @community, :show?
-
-    settings = current_seller.community_notification_settings.find_or_initialize_by(seller: @community.seller)
-    settings.update!(permitted_notification_params)
-
-    redirect_to community_path(@community.seller.external_id, @community.external_id),
-                notice: "Changes saved!",
-                status: :see_other
-  end
-
   private
 
   def set_default_page_title
@@ -61,10 +50,6 @@ class CommunitiesController < ApplicationController
     @community = Community.alive.find_by_external_id!(params[:community_id])
 
     raise ActiveRecord::RecordNotFound unless @community.seller_id == seller.id
-  end
-
-  def permitted_notification_params
-    params.permit(:recap_frequency)
   end
 
   def messages_scroll_prop

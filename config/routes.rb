@@ -793,7 +793,9 @@ Rails.application.routes.draw do
     # communities
     get "/communities", to: "communities#index", as: :communities
     get "/communities/:seller_id/:community_id", to: "communities#show", as: :community
-    put "/communities/:seller_id/:community_id/notification_settings", to: "communities#update_notification_settings", as: :community_notification_settings
+    scope "/communities/:seller_id/:community_id", as: :community do
+      resource :notification_settings, only: [:update], controller: "communities/notification_settings"
+    end
     scope "/communities/:community_id", as: :community do
       resources :chat_messages, only: [:create, :update, :destroy], controller: "communities/chat_messages"
       resource :last_read_chat_message, only: [:create], controller: "communities/last_read_chat_messages"

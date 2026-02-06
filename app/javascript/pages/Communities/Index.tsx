@@ -95,7 +95,8 @@ function CommunitiesIndex() {
     updateCommunityDraft,
   } = useCommunities();
   const [switcherOpen, setSwitcherOpen] = React.useState(false);
-  const [sidebarOpen, setSidebarOpen] = React.useState(true);
+  const [sidebarOpen, setSidebarOpen] = React.useState(false);
+
   const chatContainerRef = React.useRef<HTMLDivElement>(null);
   const [scrollToMessage, setScrollToMessage] = React.useState<{
     id: string;
@@ -106,16 +107,6 @@ function CommunitiesIndex() {
   const [showScrollToBottomButton, setShowScrollToBottomButton] = React.useState(false);
   const communityChannelsRef = React.useRef<Record<string, Channel>>({});
   const userChannelRef = React.useRef<Channel | null>(null);
-  const loadOlderRef = React.useRef<{ loading: boolean; hasMore: boolean; fetch: () => void }>({
-    loading: false,
-    hasMore: false,
-    fetch: () => {},
-  });
-  const loadNewerRef = React.useRef<{ loading: boolean; hasMore: boolean; fetch: () => void }>({
-    loading: false,
-    hasMore: false,
-    fetch: () => {},
-  });
   const selectedCommunityRef = React.useRef(selectedCommunity);
   selectedCommunityRef.current = selectedCommunity;
   const [chatMessageInputHeight, setChatMessageInputHeight] = React.useState(0);
@@ -162,7 +153,7 @@ function CommunitiesIndex() {
     prevMessagesLengthRef.current = currentLength;
     prevFirstMessageIdRef.current = currentFirstId;
 
-    if (currentLength > prevLength && prevFirstId && currentFirstId !== prevFirstId) {
+    if (prevLength > 0 && currentLength > prevLength && prevFirstId && currentFirstId !== prevFirstId) {
       setScrollToMessage({ id: prevFirstId, position: "start" });
     }
   }, [allMessages]);
@@ -273,7 +264,7 @@ function CommunitiesIndex() {
     if (chatContainerRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
       if (scrollHeight - scrollTop - clientHeight < 200) {
-        setScrollToMessage({ id: message.id, position: "end" });
+        setScrollToMessage({ id: message.id, position: "start" });
       }
     }
   }, []);
@@ -384,6 +375,8 @@ function CommunitiesIndex() {
   React.useEffect(() => {
     chatMessageInputRef.current?.focus();
     setDeletedMessageIds(new Set());
+    prevFirstMessageIdRef.current = null;
+    prevMessagesLengthRef.current = 0;
   }, [selectedCommunity?.id]);
 
   const switchSeller = (sellerId: string) => {
@@ -565,7 +558,9 @@ function CommunitiesIndex() {
                 </div>
 
                 <button
-                  onClick={() => setSidebarOpen(false)}
+                  onClick={() => {
+                    setSidebarOpen(false);
+                  }}
                   className={cx("flex h-8 w-8 cursor-pointer justify-center all-unset", {
                     hidden: isAboveBreakpoint,
                   })}
@@ -608,30 +603,20 @@ function CommunitiesIndex() {
                       reverse
                       preserveUrl
                       as="div"
-                      next={(slot) => {
-                        loadOlderRef.current = {
-                          loading: slot.loading,
-                          hasMore: slot.hasMore,
-                          fetch: slot.fetch,
-                        };
-                        return slot.loading ? (
+                      next={({ loading }) =>
+                        loading ? (
                           <div className="flex justify-center py-4">
                             <div className="text-sm text-muted">Loading older messages...</div>
                           </div>
-                        ) : null;
-                      }}
-                      previous={(slot) => {
-                        loadNewerRef.current = {
-                          loading: slot.loading,
-                          hasMore: slot.hasMore,
-                          fetch: slot.fetch,
-                        };
-                        return slot.loading ? (
+                        ) : null
+                      }
+                      previous={({ loading }) =>
+                        loading ? (
                           <div className="flex justify-center py-4">
                             <div className="text-sm text-muted">Loading newer messages...</div>
                           </div>
-                        ) : null;
-                      }}
+                        ) : null
+                      }
                     >
                       <ChatMessageList
                         community={selectedCommunity}
@@ -772,7 +757,9 @@ const CommunityChatHeader = ({
     <button
       className={cx("shrink-0 cursor-pointer all-unset", { hidden: isAboveBreakpoint })}
       aria-label="Open sidebar"
-      onClick={() => setSidebarOpen(true)}
+      onClick={() => {
+        setSidebarOpen(true);
+      }}
     >
       <Icon name="outline-cheveron-left" className="text-sm" />
     </button>
