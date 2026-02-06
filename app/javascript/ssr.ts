@@ -16,7 +16,6 @@ import Nav from "$app/components/server-components/Nav";
 import PdfReaderPage from "$app/components/server-components/PdfReaderPage";
 import ProductEditPage from "$app/components/server-components/ProductEditPage";
 import Profile from "$app/components/server-components/Profile";
-import ProfileCoffeePage from "$app/components/server-components/Profile/CoffeePage";
 import SubscribePage from "$app/components/server-components/SubscribePage";
 import SubscriptionManager from "$app/components/server-components/SubscriptionManager";
 import SubscriptionManagerMagicLink from "$app/components/server-components/SubscriptionManagerMagicLink";
@@ -43,7 +42,6 @@ ReactOnRails.register({
   Pill,
   ProductEditPage,
   Profile,
-  ProfileCoffeePage,
   SubscribePage,
   SubscriptionManager,
   SubscriptionManagerMagicLink,
