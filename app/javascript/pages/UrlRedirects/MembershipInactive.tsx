@@ -24,10 +24,10 @@ function MembershipInactivePage() {
     <Layout {...pageProps}>
       {isInstallmentPlan ? (
         <InstallmentPlanFailedOrCancelled
-          product_name={purchase?.product_name ?? ""}
+          product_name={purchase.product_name ?? ""}
           installment_plan={{
-            is_alive_or_restartable: purchase?.membership?.is_alive_or_restartable ?? null,
-            subscription_id: purchase?.membership?.subscription_id ?? "",
+            is_alive_or_restartable: purchase.membership?.is_alive_or_restartable ?? null,
+            subscription_id: purchase.membership?.subscription_id ?? "",
           }}
         />
       ) : (
