@@ -1,5 +1,4 @@
 import { useForm } from "@inertiajs/react";
-import cx from "classnames";
 import * as React from "react";
 
 import { CreatorProfile } from "$app/parsers/profile";
@@ -8,8 +7,8 @@ import { isValidEmail } from "$app/utils/email";
 
 import { Button } from "$app/components/Button";
 import { ButtonColor } from "$app/components/design";
-import Errors from "$app/components/Form/Errors";
 import { useLoggedInUser } from "$app/components/LoggedInUser";
+import { showAlert } from "$app/components/server-components/Alert";
 
 type FormData = {
   email: string;
@@ -44,11 +43,15 @@ export const FollowForm = ({
         "email",
         form.data.email.trim() === "" ? "Please enter your email address." : "Please enter a valid email address.",
       );
-      return;
+      showAlert(
+        form.data.email.trim() === "" ? "Please enter your email address." : "Please enter a valid email address.",
+        "error",
+      );return;
     }
 
     if (isOwnProfile) {
       form.setError("email", "As the creator of this profile, you can't follow yourself!");
+      showAlert("As the creator of this profile, you can't follow yourself!", "warning");
       return;
     }
 
@@ -57,7 +60,7 @@ export const FollowForm = ({
 
   return (
     <form onSubmit={(e) => void submit(e)} style={{ flexGrow: 1 }} noValidate>
-      <fieldset className={cx({ danger: form.errors.email })}>
+      <fieldset className={classNames({ danger: form.errors.email })}>
         <div className="flex gap-2">
           <input
             ref={emailInputRef}
@@ -80,7 +83,6 @@ export const FollowForm = ({
                   : "Subscribe"}
               </Button>
             </div>
-            <Errors errors={form.errors.email} label="" />
           </fieldset>
         </form>
       );
