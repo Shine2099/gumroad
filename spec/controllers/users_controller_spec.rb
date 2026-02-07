@@ -298,6 +298,19 @@ describe UsersController do
       get :show, params: { username: seller.username }
       expect(response.body).to have_selector("meta[name='description'][content='#{"f" * 300}']", visible: false)
     end
+
+    it "renders seller custom_styles in the head as a style tag" do
+      creator.seller_profile.update!(highlight_color: "#00ff00", background_color: "#0000ff")
+      create(:product, user: creator)
+      @request.host = "#{creator.username}.test.gumroad.com"
+
+      get :show, params: { username: creator.username }
+
+      expect(response).to be_successful
+      html_doc = Nokogiri::HTML(response.body)
+      style_tags = html_doc.css("head style")
+      expect(style_tags.any? { |tag| tag.text.include?("--accent:") && tag.text.include?("background-color:") }).to be(true)
+    end
   end
 
   describe "GET coffee", inertia: true do
@@ -690,6 +703,18 @@ describe UsersController do
         expect(inertia.component).to eq("Users/Subscribe")
         expect(inertia.props[:creator_profile][:external_id]).to eq(creator.external_id)
         expect(controller.send(:page_title)).to eq("Subscribe to creator")
+      end
+
+      it "renders seller custom_styles in the head as a style tag" do
+        creator.seller_profile.update!(highlight_color: "#00ff00", background_color: "#0000ff")
+        @request.host = "#{creator.username}.test.gumroad.com"
+
+        get :subscribe
+
+        expect(response).to be_successful
+        html_doc = Nokogiri::HTML(response.body)
+        style_tags = html_doc.css("head style")
+        expect(style_tags.any? { |tag| tag.text.include?("--accent:") && tag.text.include?("background-color:") }).to be(true)
       end
     end
   end
