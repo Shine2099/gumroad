@@ -33,7 +33,7 @@ export const FollowForm = ({
   const emailInputRef = React.useRef<HTMLInputElement>(null);
   const isSubmittedSuccessfully = form.wasSuccessful && !form.isDirty;
 
-  const submit = async (e: React.FormEvent) => {
+  const submit = (e: React.FormEvent) => {
     e.preventDefault();
     form.clearErrors("email");
 
@@ -46,7 +46,8 @@ export const FollowForm = ({
       showAlert(
         form.data.email.trim() === "" ? "Please enter your email address." : "Please enter a valid email address.",
         "error",
-      );return;
+      );
+      return;
     }
 
     if (isOwnProfile) {
@@ -59,7 +60,7 @@ export const FollowForm = ({
   };
 
   return (
-    <form onSubmit={(e) => void submit(e)} style={{ flexGrow: 1 }} noValidate>
+    <form onSubmit={(e) => submit(e)} style={{ flexGrow: 1 }} noValidate>
       <fieldset className={classNames({ danger: form.errors.email })}>
         <div className="flex gap-2">
           <input
@@ -73,7 +74,7 @@ export const FollowForm = ({
             }}
             placeholder="Your email address"
           />
-              <Button color={buttonColor} disabled={form.processing || isSubmittedSuccessfully} type="submit">
+          <Button color={buttonColor} disabled={form.processing || isSubmittedSuccessfully} type="submit">
             {buttonLabel && buttonLabel !== "Subscribe"
               ? buttonLabel
               : isSubmittedSuccessfully
@@ -81,11 +82,11 @@ export const FollowForm = ({
                 : form.processing
                   ? "Subscribing..."
                   : "Subscribe"}
-              </Button>
-            </div>
-          </fieldset>
-        </form>
-      );
+          </Button>
+        </div>
+      </fieldset>
+    </form>
+  );
 };
 
 export const FollowFormBlock = ({
