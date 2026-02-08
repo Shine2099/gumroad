@@ -6,6 +6,10 @@ class StampPdfForPurchaseJob
   sidekiq_options queue: :default, retry: 5, lock: :until_executed
 
   def perform(purchase_id, notify_buyer = false)
+    if Feature.active?(:skip_pdf_stamping_jobs)
+      raise "PDF stamping jobs are disabled"
+    end
+
     purchase = Purchase.find(purchase_id)
     PdfStampingService.stamp_for_purchase!(purchase)
 

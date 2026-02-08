@@ -11,6 +11,17 @@ describe StampPdfForPurchaseJob do
     allow(PdfStampingService).to receive(:stamp_for_purchase!)
   end
 
+  context "when skip_pdf_stamping_jobs feature is active" do
+    before do
+      allow(Feature).to receive(:active?).with(:skip_pdf_stamping_jobs).and_return(true)
+    end
+
+    it "raises and does not stamp PDFs" do
+      expect { described_class.new.perform(purchase.id) }.to raise_error("PDF stamping jobs are disabled")
+      expect(PdfStampingService).not_to have_received(:stamp_for_purchase!)
+    end
+  end
+
   it "performs the job" do
     described_class.new.perform(purchase.id)
     expect(PdfStampingService).to have_received(:stamp_for_purchase!).with(purchase)
