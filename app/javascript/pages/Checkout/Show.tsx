@@ -538,6 +538,7 @@ const CheckoutPage = () => {
         {
           preserveScroll: true,
           replace: true,
+          async: true,
           onSuccess: () => {
             const url = new URL(window.location.href);
             const searchParams = new URLSearchParams([...url.searchParams].filter(([key]) => key === "_gl"));
