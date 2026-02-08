@@ -348,6 +348,7 @@ const CheckoutPage = () => {
       }
       const requestData = {
         email: state.email,
+        fullName: state.fullName,
         zipCode: state.zipCode,
         state: state.state,
         paymentMethod: state.status.paymentMethod,
