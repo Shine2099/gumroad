@@ -5,6 +5,10 @@ class Iffy::Product::IngestJob
   sidekiq_options queue: :default, retry: 3
 
   def perform(product_id)
+    if Feature.active?(:skip_iffy_ingest_jobs)
+      raise "Iffy ingest jobs are disabled"
+    end
+
     product = Link.find(product_id)
 
     Iffy::Product::IngestService.new(product).perform
