@@ -216,29 +216,24 @@ function CommunitiesIndex() {
 
   const debouncedMarkAsRead = React.useMemo(
     () =>
-      debounce(async (communityId: string, messageId: string, messageCreatedAt: string) => {
+      debounce((communityId: string, messageId: string, messageCreatedAt: string) => {
         if (!communityId || !messageId) return;
-        try {
-          const csrfToken =
-            document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") ?? "";
-          const response = await fetch(Routes.community_last_read_chat_message_path(communityId), {
-            method: "POST",
-            redirect: "manual",
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRF-Token": csrfToken,
+        router.post(
+          Routes.community_last_read_chat_message_path(communityId),
+          { message_id: messageId },
+          {
+            preserveScroll: true,
+            preserveState: true,
+            async: true,
+            only: [],
+            onSuccess: () => {
+              updateCommunity(communityId, {
+                last_read_community_chat_message_created_at: messageCreatedAt,
+              });
+              sendMessageToUserChannel({ type: "latest_community_info", community_id: communityId });
             },
-            body: JSON.stringify({ message_id: messageId }),
-          });
-          if (response.type === "opaqueredirect" || response.ok) {
-            updateCommunity(communityId, {
-              last_read_community_chat_message_created_at: messageCreatedAt,
-            });
-            sendMessageToUserChannel({ type: "latest_community_info", community_id: communityId });
-          }
-        } catch {
-          // Silently fail, marking as read is a background operation
-        }
+          },
+        );
       }, 500),
     [updateCommunity, sendMessageToUserChannel],
   );
