@@ -4034,6 +4034,7 @@ describe("Product Page - Tax Scenarios", type: :system, js: true) do
         expect(page).to have_text("Subtotal US$100", normalize_ws: true)
         expect(page).to have_text("Tax US$14.98", normalize_ws: true)
       end
+      wait_until_true { Cart.alive.where(email: "test@gumroad.com").exists? }
 
       purchase = Purchase.last
       expect(purchase.country).to eq("Canada")
