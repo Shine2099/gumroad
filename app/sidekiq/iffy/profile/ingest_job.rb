@@ -5,8 +5,8 @@ class Iffy::Profile::IngestJob
   sidekiq_options queue: :long, retry: 3
 
   def perform(user_id)
-    if Feature.active?(:skip_iffy_ingest_jobs)
-      raise "Iffy ingest jobs are disabled"
+    if Sidekiq::Context.current[:queue] != "long" && Feature.active?(:skip_iffy_ingest_jobs)
+      raise "Iffy ingest jobs are disabled outside of long queue"
     end
 
     user = User.find(user_id)
