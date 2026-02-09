@@ -2,7 +2,7 @@
 
 class Iffy::Post::IngestJob
   include Sidekiq::Job
-  sidekiq_options queue: :default, retry: 3
+  sidekiq_options queue: :long, retry: 3
 
   def perform(post_id)
     if Feature.active?(:skip_iffy_ingest_jobs)
