@@ -2600,6 +2600,15 @@ describe Purchase, :vcr do
         expect(purchase.fee_cents).to be > 0
         expect(purchase.fee_cents).to be < purchase.price_cents
       end
+
+      it "does not cap fees when affiliate_credit_cents is negative" do
+        purchase.price_cents = 50
+        allow(purchase).to receive(:determine_affiliate_balance_cents).and_return(-23)
+        purchase.send(:calculate_fees)
+
+        expect(purchase.affiliate_credit_cents).to eq(-23)
+        expect(purchase.fee_cents + purchase.affiliate_credit_cents).to be >= purchase.price_cents
+      end
     end
   end
 

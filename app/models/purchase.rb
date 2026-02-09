@@ -3198,7 +3198,7 @@ class Purchase < ApplicationRecord
       self.fee_cents = variable_fee_cents + fixed_fee_cents
       self.affiliate_credit_cents = determine_affiliate_balance_cents
 
-      if fee_cents + affiliate_credit_cents >= price_cents
+      if fee_cents + affiliate_credit_cents >= price_cents && affiliate_credit_cents >= 0
         self.fee_cents = [price_cents - affiliate_credit_cents - 1, 0].max
       end
     end

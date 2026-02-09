@@ -538,6 +538,22 @@ describe "Purchase Process", :vcr do
           expect(affiliate_purchase.payment_cents).to eq(affiliate_purchase.price_cents - affiliate_purchase.fee_cents)
         end
       end
+
+      context "when affiliate credit is negative (fee share exceeds commission)" do
+        let(:affiliate_purchase) { build(:purchase, link: product, seller: product.user, affiliate:, save_card: false, ip_address:) }
+
+        before do
+          allow_any_instance_of(Purchase).to receive(:determine_affiliate_balance_cents).and_return(-23)
+          affiliate_purchase.price_cents = 50
+        end
+
+        it "does not cap fees when affiliate credit is negative" do
+          affiliate_purchase.send(:calculate_fees)
+
+          expect(affiliate_purchase.affiliate_credit_cents).to eq(-23)
+          expect(affiliate_purchase.fee_cents + affiliate_purchase.affiliate_credit_cents).to be >= affiliate_purchase.price_cents
+        end
+      end
     end
 
     describe "purchase of product with customizable price and offer codes" do
