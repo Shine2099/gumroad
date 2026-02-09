@@ -180,5 +180,116 @@ describe Order::CreateService, :vcr do
         end.not_to change { Charge.count }
       end.to change { Purchase.count }.by 5
     end
+
+    context "when a line item has a restartable subscription" do
+      let(:membership_product) { create(:membership_product, user: seller_1, price_cents: price_1) }
+      let(:buyer) { create(:user, email: "buyer@gumroad.com") }
+      let!(:subscription) do
+        sub = create(:subscription, link: membership_product, user: buyer)
+        create(:purchase,
+               link: membership_product,
+               purchaser: buyer,
+               email: buyer.email,
+               subscription: sub,
+               is_original_subscription_purchase: true,
+               price_cents: membership_product.price_cents,
+               variant_attributes: membership_product.tiers.to_a
+        )
+        sub.update!(cancelled_at: 1.day.ago, cancelled_by_buyer: true, deactivated_at: 1.day.ago)
+        sub
+      end
+
+      let(:params_with_membership) do
+        {
+          line_items: [
+            {
+              uid: "unique-id-0",
+              permalink: membership_product.unique_permalink,
+              perceived_price_cents: membership_product.price_cents,
+              quantity: 1,
+              price_id: membership_product.prices.alive.first.external_id
+            },
+            {
+              uid: "unique-id-1",
+              permalink: product_2.unique_permalink,
+              perceived_price_cents: product_2.price_cents,
+              quantity: 1
+            }
+          ]
+        }.merge(common_order_params_without_payment)
+      end
+
+      it "does not add the restarted subscription's original purchase to the order" do
+        updater_service = instance_double(Subscription::UpdaterService)
+        allow(Subscription::UpdaterService).to receive(:new).and_return(updater_service)
+        allow(updater_service).to receive(:perform).and_return({ success: true, success_message: "Membership restarted" })
+
+        order, purchase_responses, _ = Order::CreateService.new(params: params_with_membership, buyer:).perform
+
+        # The restarted subscription's purchase should NOT be in the order
+        expect(order.purchases.map(&:id)).not_to include(subscription.original_purchase.id)
+        # But we should have a success response for the membership line item
+        expect(purchase_responses["unique-id-0"]).to include(success: true)
+        # The regular product should still be in the order
+        expect(order.purchases.in_progress.count).to eq(1)
+      end
+
+      it "includes the regular purchase in the order" do
+        updater_service = instance_double(Subscription::UpdaterService)
+        allow(Subscription::UpdaterService).to receive(:new).and_return(updater_service)
+        allow(updater_service).to receive(:perform).and_return({ success: true, success_message: "Membership restarted" })
+
+        order, _, _ = Order::CreateService.new(params: params_with_membership, buyer:).perform
+
+        expect(order.purchases.count).to eq(1)
+        expect(order.purchases.first.link).to eq(product_2)
+      end
+    end
+
+    context "when a line item has an active subscription" do
+      let(:membership_product) { create(:membership_product, user: seller_1, price_cents: price_1) }
+      let(:buyer) { create(:user, email: "buyer@gumroad.com") }
+      let!(:subscription) do
+        sub = create(:subscription, link: membership_product, user: buyer)
+        create(:purchase,
+               link: membership_product,
+               purchaser: buyer,
+               email: buyer.email,
+               subscription: sub,
+               is_original_subscription_purchase: true,
+               price_cents: membership_product.price_cents,
+               variant_attributes: membership_product.tiers.to_a
+        )
+        sub
+      end
+
+      let(:params_with_active_membership) do
+        {
+          line_items: [
+            {
+              uid: "unique-id-0",
+              permalink: membership_product.unique_permalink,
+              perceived_price_cents: membership_product.price_cents,
+              quantity: 1,
+              price_id: membership_product.prices.alive.first.external_id
+            },
+            {
+              uid: "unique-id-1",
+              permalink: product_2.unique_permalink,
+              perceived_price_cents: product_2.price_cents,
+              quantity: 1
+            }
+          ]
+        }.merge(common_order_params_without_payment)
+      end
+
+      it "returns an error for the membership line item" do
+        order, purchase_responses, _ = Order::CreateService.new(params: params_with_active_membership, buyer:).perform
+
+        expect(purchase_responses["unique-id-0"]).to include(success: false)
+        # The regular product should still be in the order
+        expect(order.purchases.in_progress.count).to eq(1)
+      end
+    end
   end
 end

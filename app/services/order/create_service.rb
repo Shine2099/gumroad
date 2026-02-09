@@ -68,8 +68,13 @@ class Order::CreateService
         end
 
         if purchase&.persisted?
-          order.purchases << purchase
-          order.save!
+          if Purchase::ALL_SUCCESS_STATES.include?(purchase.purchase_state)
+            # Pre-existing purchase from subscription restart — don't add to order
+            purchase_responses[line_item_uid] = purchase.purchase_response
+          else
+            order.purchases << purchase
+            order.save!
+          end
           if buyer.present? && buyer.email.blank? && !User.where(email: purchase.email).or(User.where(unconfirmed_email: purchase.email)).exists?
             buyer.update!(email: purchase.email)
           end
