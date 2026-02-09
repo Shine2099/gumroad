@@ -3528,11 +3528,11 @@ describe Purchase::CreateService, :vcr do
         updater_service = instance_double(Subscription::UpdaterService)
         allow(Subscription::UpdaterService).to receive(:new).and_return(updater_service)
         allow(updater_service).to receive(:perform).and_return({
-          success: true,
-          requires_card_action: true,
-          client_secret: "pi_123_secret_456",
-          purchase: { id: "ext_id", stripe_connect_account_id: "acct_123" }
-        })
+                                                                 success: true,
+                                                                 requires_card_action: true,
+                                                                 client_secret: "pi_123_secret_456",
+                                                                 purchase: { id: "ext_id", stripe_connect_account_id: "acct_123" }
+                                                               })
 
         purchase, error, sca_response = Purchase::CreateService.new(product: membership_product, params: membership_params, buyer:).perform
 

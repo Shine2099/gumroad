@@ -269,11 +269,11 @@ describe Order::CreateService, :vcr do
         updater_service = instance_double(Subscription::UpdaterService)
         allow(Subscription::UpdaterService).to receive(:new).and_return(updater_service)
         allow(updater_service).to receive(:perform).and_return({
-          success: true,
-          requires_card_action: true,
-          client_secret: "pi_123_secret_456",
-          purchase: { id: "upgrade_ext_id", stripe_connect_account_id: merchant_account.charge_processor_merchant_id }
-        })
+                                                                 success: true,
+                                                                 requires_card_action: true,
+                                                                 client_secret: "pi_123_secret_456",
+                                                                 purchase: { id: "upgrade_ext_id", stripe_connect_account_id: merchant_account.charge_processor_merchant_id }
+                                                               })
 
         order, purchase_responses, _ = Order::CreateService.new(params: params_with_membership, buyer:).perform
 
