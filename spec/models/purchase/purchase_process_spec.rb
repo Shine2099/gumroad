@@ -505,16 +505,38 @@ describe "Purchase Process", :vcr do
     describe "purchase with negative seller revenue" do
       let(:product) { create(:product, price_cents: 100) }
       let(:affiliate) { create(:direct_affiliate, affiliate_basis_points: 7500, products: [product]) }
-      let(:affiliate_purchase) { create(:purchase, link: product, seller: product.user, affiliate:, save_card: false, ip_address:, chargeable:) }
 
       before do
-        allow_any_instance_of(Purchase).to receive(:determine_affiliate_balance_cents).and_return(90)
-        affiliate_purchase.process!
+        MerchantAccount.find_or_create_by!(user_id: nil, charge_processor_id: StripeChargeProcessor.charge_processor_id)
       end
 
-      it "creates a purchase object with the correct error code" do
-        expect(affiliate_purchase.error_code).to eq "net_negative_seller_revenue"
-        expect(affiliate_purchase.errors.to_a).to eq(["Your purchase failed because the product is not correctly set up. Please contact the creator for more information."])
+      context "when affiliate commission alone exceeds the price" do
+        let(:affiliate_purchase) { create(:purchase, link: product, seller: product.user, affiliate:, save_card: false, ip_address:) }
+
+        before do
+          allow_any_instance_of(Purchase).to receive(:determine_affiliate_balance_cents).and_return(100)
+          affiliate_purchase.skip_preparing_for_charge = true
+          affiliate_purchase.process!
+        end
+
+        it "blocks the purchase" do
+          expect(affiliate_purchase.error_code).to eq "net_negative_seller_revenue"
+          expect(affiliate_purchase.errors.to_a).to eq(["This product's price is too low to process. Please contact the creator for more information."])
+        end
+      end
+
+      context "when fees exceed the price but affiliate commission does not" do
+        let(:affiliate_purchase) { build(:purchase, link: product, seller: product.user, affiliate:, save_card: false, ip_address:) }
+
+        before do
+          allow_any_instance_of(Purchase).to receive(:determine_affiliate_balance_cents).and_return(90)
+        end
+
+        it "caps fees so the seller nets at least 1 cent" do
+          affiliate_purchase.send(:calculate_fees)
+          expect(affiliate_purchase.fee_cents).to eq(100 - 90 - 1)
+          expect(affiliate_purchase.payment_cents).to eq(affiliate_purchase.price_cents - affiliate_purchase.fee_cents)
+        end
       end
     end
 

@@ -2800,7 +2800,7 @@ class Purchase < ApplicationRecord
       return if price_cents > fee_cents + affiliate_credit_cents
 
       self.error_code = PurchaseErrorCode::NET_NEGATIVE_SELLER_REVENUE
-      errors.add(:base, "Your purchase failed because the product is not correctly set up. Please contact the creator for more information.")
+      errors.add(:base, "This product's price is too low to process. Please contact the creator for more information.")
     end
 
     # Private: Prepare for charging the chargeable and retrieve any information about the chargeable that's needed
@@ -3197,6 +3197,10 @@ class Purchase < ApplicationRecord
 
       self.fee_cents = variable_fee_cents + fixed_fee_cents
       self.affiliate_credit_cents = determine_affiliate_balance_cents
+
+      if fee_cents + affiliate_credit_cents >= price_cents
+        self.fee_cents = [price_cents - affiliate_credit_cents - 1, 0].max
+      end
     end
 
     def calculate_additional_discover_fee_per_thousand

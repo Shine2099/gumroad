@@ -2560,6 +2560,49 @@ describe Purchase, :vcr do
     end
   end
 
+  describe "calculate_fees" do
+    describe "fee capping" do
+      let(:seller) { create(:named_seller) }
+      let(:product) { create(:product, user: seller, price_cents: 1_00) }
+      let(:purchase) { build(:purchase, link: product, seller:, price_cents: 1_00) }
+
+      it "caps fees on a low-price purchase so the seller nets at least 1 cent" do
+        purchase.price_cents = 50
+        allow(purchase).to receive(:determine_affiliate_balance_cents).and_return(0)
+        purchase.send(:calculate_fees)
+
+        expect(purchase.fee_cents).to eq(49)
+        expect(purchase.price_cents - purchase.fee_cents).to eq(1)
+      end
+
+      it "caps fees accounting for affiliate credit" do
+        purchase.price_cents = 50
+        allow(purchase).to receive(:determine_affiliate_balance_cents).and_return(20)
+        purchase.send(:calculate_fees)
+
+        expect(purchase.fee_cents).to eq(29)
+        expect(purchase.price_cents - purchase.fee_cents - purchase.affiliate_credit_cents).to eq(1)
+      end
+
+      it "floors fee_cents at 0 when affiliate credit alone exceeds the price" do
+        purchase.price_cents = 50
+        allow(purchase).to receive(:determine_affiliate_balance_cents).and_return(60)
+        purchase.send(:calculate_fees)
+
+        expect(purchase.fee_cents).to eq(0)
+      end
+
+      it "does not cap fees when they are below the price" do
+        purchase.price_cents = 10_00
+        allow(purchase).to receive(:determine_affiliate_balance_cents).and_return(0)
+        purchase.send(:calculate_fees)
+
+        expect(purchase.fee_cents).to be > 0
+        expect(purchase.fee_cents).to be < purchase.price_cents
+      end
+    end
+  end
+
   describe "total_transaction_amount_for_gumroad_cents" do
     let(:seller) { create(:named_seller) }
     let(:link) { create(:product, user: seller, price_cents: 4_00) }
