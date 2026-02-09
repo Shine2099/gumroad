@@ -166,6 +166,24 @@ describe Order::CreateService, :vcr do
                                                                     error_code: nil)
     end
 
+    it "does not delete the cart when all line items fail" do
+      failed_params = {
+        line_items: [
+          { uid: "unique-id-0", permalink: "non-existent", perceived_price_cents: 500, quantity: 1 },
+          { uid: "unique-id-1", permalink: "also-non-existent", perceived_price_cents: 500, quantity: 1 }
+        ]
+      }.merge(common_order_params_without_payment)
+
+      buyer = create(:user, email: "buyer@gumroad.com")
+      cart = create(:cart, user: buyer, browser_guid:)
+
+      order, purchase_responses, _ = Order::CreateService.new(params: failed_params, buyer:).perform
+
+      expect(order).not_to be_persisted
+      expect(purchase_responses.values).to all(include(success: false))
+      expect(cart.reload).to be_alive
+    end
+
     it "creates an order along with the associated purchases in progress when merchant account is a Brazilian Stripe Connect account" do
       seller_2.update!(check_merchant_account_is_linked: true)
       create(:merchant_account_stripe_connect, charge_processor_merchant_id: "acct_1QADdCGy0w4tFIUe", country: "BR", user: seller_2)
@@ -243,6 +261,32 @@ describe Order::CreateService, :vcr do
 
         expect(order.purchases.count).to eq(1)
         expect(order.purchases.first.link).to eq(product_2)
+      end
+
+      it "cleans up the cart when all line items are subscription restarts" do
+        restart_only_params = {
+          line_items: [
+            {
+              uid: "unique-id-0",
+              permalink: membership_product.unique_permalink,
+              perceived_price_cents: membership_product.price_cents,
+              quantity: 1,
+              price_id: membership_product.prices.alive.first.external_id
+            }
+          ]
+        }.merge(common_order_params_without_payment)
+
+        cart = create(:cart, user: buyer, browser_guid:)
+
+        updater_service = instance_double(Subscription::UpdaterService)
+        allow(Subscription::UpdaterService).to receive(:new).and_return(updater_service)
+        allow(updater_service).to receive(:perform).and_return({ success: true, success_message: "Membership restarted" })
+
+        order, purchase_responses, _ = Order::CreateService.new(params: restart_only_params, buyer:).perform
+
+        expect(order).not_to be_persisted
+        expect(purchase_responses["unique-id-0"]).to include(success: true)
+        expect(cart.reload).to be_deleted
       end
     end
 

@@ -82,9 +82,15 @@ class Order::CreateService
       end
     end
 
-    if order.persisted? && (cart = Cart.fetch_by(user: buyer, browser_guid: params[:browser_guid]))
-      cart.order = order
-      cart.mark_deleted!
+    if (cart = Cart.fetch_by(user: buyer, browser_guid: params[:browser_guid]))
+      all_items_handled = purchase_responses.any? && purchase_responses.values.all? { _1[:success] }
+
+      if order.persisted?
+        cart.order = order
+        cart.mark_deleted!
+      elsif all_items_handled
+        cart.mark_deleted!
+      end
     end
 
     offer_codes = offer_codes
