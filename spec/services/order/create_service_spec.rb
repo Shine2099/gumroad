@@ -263,6 +263,54 @@ describe Order::CreateService, :vcr do
         expect(order.purchases.first.link).to eq(product_2)
       end
 
+      it "passes through SCA data when the restart requires card action" do
+        merchant_account = create(:merchant_account_stripe_connect, user: membership_product.user)
+
+        updater_service = instance_double(Subscription::UpdaterService)
+        allow(Subscription::UpdaterService).to receive(:new).and_return(updater_service)
+        allow(updater_service).to receive(:perform).and_return({
+          success: true,
+          requires_card_action: true,
+          client_secret: "pi_123_secret_456",
+          purchase: { id: "upgrade_ext_id", stripe_connect_account_id: merchant_account.charge_processor_merchant_id }
+        })
+
+        order, purchase_responses, _ = Order::CreateService.new(params: params_with_membership, buyer:).perform
+
+        sca_response = purchase_responses["unique-id-0"]
+        expect(sca_response).to include(
+          requires_card_action: true,
+          client_secret: "pi_123_secret_456"
+        )
+        expect(sca_response[:purchase][:id]).to eq("upgrade_ext_id")
+        expect(sca_response[:purchase][:stripe_connect_account_id]).to eq(merchant_account.charge_processor_merchant_id)
+        # The SCA line item is not added to the order; the regular product still is
+        expect(order.purchases.in_progress.count).to eq(1)
+        expect(order.purchases.first.link).to eq(product_2)
+      end
+
+      it "SCA response can be confirmed via Purchase::ConfirmService" do
+        # Simulate the state after UpdaterService ran: subscription alive but pending SCA confirmation
+        subscription.update!(cancelled_at: nil, deactivated_at: nil)
+        subscription.update_flag!(:cancelled_by_buyer, false, true)
+        subscription.update_flag!(:is_resubscription_pending_confirmation, true, true)
+
+        upgrade_purchase = create(:purchase_in_progress,
+                                  link: membership_product,
+                                  purchaser: buyer,
+                                  email: buyer.email,
+                                  subscription: subscription,
+                                  price_cents: membership_product.price_cents)
+
+        allow(upgrade_purchase).to receive(:confirm_charge_intent!)
+
+        error = Purchase::ConfirmService.new(purchase: upgrade_purchase, params: {}).perform
+
+        expect(error).to be_nil
+        expect(upgrade_purchase.reload).to be_successful
+        expect(subscription.reload).not_to be_is_resubscription_pending_confirmation
+      end
+
       it "cleans up the cart when all line items are subscription restarts" do
         restart_only_params = {
           line_items: [

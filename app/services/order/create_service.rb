@@ -53,11 +53,16 @@ class Order::CreateService
             .merge({ cart_items: })
         )
 
-        purchase, error = Purchase::CreateService.new(
+        purchase, error, sca_response = Purchase::CreateService.new(
           product:,
           params: purchase_params.merge(is_part_of_combined_charge: true),
           buyer:
         ).perform
+
+        if sca_response
+          purchase_responses[line_item_uid] = sca_response
+          next
+        end
 
         if error
           purchase_responses[line_item_uid] = error_response(error, purchase:)

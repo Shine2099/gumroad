@@ -80,7 +80,8 @@ class Purchase::CreateService < Purchase::BaseService
 
         # Check for existing subscriptions (active or restartable)
         if should_check_for_restartable_subscription?
-          existing_purchase, error = handle_existing_subscription
+          existing_purchase, error, sca_response = handle_existing_subscription
+          return nil, nil, sca_response if sca_response.present?
           return existing_purchase, error if existing_purchase.present? || error.present?
         end
       end
@@ -223,6 +224,10 @@ class Purchase::CreateService < Purchase::BaseService
       ).perform
 
       if result[:success]
+        if result[:requires_card_action]
+          return nil, nil, result.slice(:requires_card_action, :client_secret, :purchase)
+        end
+
         purchase = result[:purchase] || restartable_subscription.original_purchase
         self.purchase = purchase
         Rails.logger.info("Subscription #{restartable_subscription.external_id} restarted during checkout for product #{product.id}")

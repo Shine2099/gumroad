@@ -3523,6 +3523,27 @@ describe Purchase::CreateService, :vcr do
         expect(error).to be_nil
         expect(purchase).to eq(subscription.original_purchase)
       end
+
+      it "returns SCA data when the restart requires card action" do
+        updater_service = instance_double(Subscription::UpdaterService)
+        allow(Subscription::UpdaterService).to receive(:new).and_return(updater_service)
+        allow(updater_service).to receive(:perform).and_return({
+          success: true,
+          requires_card_action: true,
+          client_secret: "pi_123_secret_456",
+          purchase: { id: "ext_id", stripe_connect_account_id: "acct_123" }
+        })
+
+        purchase, error, sca_response = Purchase::CreateService.new(product: membership_product, params: membership_params, buyer:).perform
+
+        expect(purchase).to be_nil
+        expect(error).to be_nil
+        expect(sca_response).to include(
+          requires_card_action: true,
+          client_secret: "pi_123_secret_456",
+          purchase: { id: "ext_id", stripe_connect_account_id: "acct_123" }
+        )
+      end
     end
 
     context "when purchase is a gift" do
