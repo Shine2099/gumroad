@@ -16,6 +16,8 @@ import { createInsertCommand } from "$app/components/TiptapExtensions/utils";
 import { ProductCard, ProductCardFigure, ProductCardFooter, ProductCardHeader } from "$app/components/ui/ProductCard";
 import { useRunOnce } from "$app/components/useRunOnce";
 
+import { Skeleton } from "../Skeleton";
+
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     upsellCard: {

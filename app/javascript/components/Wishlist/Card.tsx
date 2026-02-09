@@ -12,6 +12,8 @@ import { AuthorByline } from "$app/components/Product/AuthorByline";
 import { ProductCard, ProductCardFigure, ProductCardHeader } from "$app/components/ui/ProductCard";
 import { useFollowWishlist } from "$app/components/Wishlist/FollowButton";
 
+import { Skeleton } from "../Skeleton";
+
 const nativeTypeThumbnails = require.context("$assets/images/native_types/thumbnails/");
 
 export type CardWishlist = {

@@ -11,6 +11,8 @@ import { Review } from "$app/components/Review";
 import { showAlert } from "$app/components/server-components/Alert";
 import { createInsertCommand } from "$app/components/TiptapExtensions/utils";
 
+import { Skeleton } from "../Skeleton";
+
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     reviewCard: {

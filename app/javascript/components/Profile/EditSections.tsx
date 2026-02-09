@@ -36,6 +36,8 @@ import { Row, RowActions, RowContent, RowDragHandle, Rows } from "$app/component
 import { useOnChange } from "$app/components/useOnChange";
 import { useRefToLatest } from "$app/components/useRefToLatest";
 
+import { Skeleton } from "../Skeleton";
+
 import { PageProps as BasePageProps, FeaturedProductView, Post, PostsView, SubscribeView } from "./Sections";
 
 type ProductsSection = SavedProductsSection & { search_results: SearchResults };

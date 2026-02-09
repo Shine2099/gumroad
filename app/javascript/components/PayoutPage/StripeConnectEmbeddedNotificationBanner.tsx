@@ -6,6 +6,8 @@ import { getStripeConnectInstance } from "$app/utils/stripe_loader";
 
 import { useRunOnce } from "$app/components/useRunOnce";
 
+import { Skeleton } from "../Skeleton";
+
 export const StripeConnectEmbeddedNotificationBanner = () => {
   const [connectInstance, setConnectInstance] = React.useState<null | StripeConnectInstance>(null);
 

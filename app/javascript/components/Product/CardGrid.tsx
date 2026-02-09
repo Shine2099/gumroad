@@ -18,6 +18,8 @@ import { ProductCardGrid } from "$app/components/ui/ProductCardGrid";
 import { useDebouncedCallback } from "$app/components/useDebouncedCallback";
 import { useOnChange } from "$app/components/useOnChange";
 
+import { Skeleton } from "../Skeleton";
+
 import { Card } from "./Card";
 
 export const SORT_BY_LABELS = {

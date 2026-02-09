@@ -13,6 +13,8 @@ import { NodeActionsMenu } from "$app/components/TiptapExtensions/NodeActionsMen
 import { Placeholder } from "$app/components/ui/Placeholder";
 import { ProductCardGrid } from "$app/components/ui/ProductCardGrid";
 
+import { Skeleton } from "../Skeleton";
+
 export const MoreLikeThis = TiptapNode.create<{ productId: string }>({
   name: "moreLikeThis",
   group: "block",
