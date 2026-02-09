@@ -378,7 +378,7 @@ export const CardGrid = ({
             {results?.products.map((result, idx) => <Card key={result.permalink} product={result} eager={idx < 4} />) ??
               Array(6)
                 .fill(0)
-                .map((_, i) => <Skeleton key={i} />)}
+                .map((_, i) => <Skeleton key={i} className="h-75 sm:h-95" />)}
           </ProductCardGrid>
           {pagination === "button" &&
           !((state.results?.total ?? 0) < (state.offset ?? 1) + (state.results?.products.length ?? 0)) ? (
