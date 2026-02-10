@@ -107,7 +107,7 @@ describe "Subscription restart at checkout", :js, type: :system do
 
       expect(page).to have_cart_item(@product.name)
       fill_checkout_form(@product, logged_in_user: @buyer, email: @buyer.email,
-                         credit_card: { number: "4000002500003155" })
+                                   credit_card: { number: "4000002500003155" })
 
       click_on "Pay", exact: true
       within_sca_frame { click_on "Complete" }
