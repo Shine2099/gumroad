@@ -131,6 +131,8 @@ describe Order::ChargeService, :vcr do
     end
 
     it "charges all purchases in the order with the payment method provided in params" do
+      create(:merchant_account, user: seller_1, charge_processor_merchant_id: create_verified_stripe_account(country: "US").id)
+
       params = line_items_params.merge!(common_order_params_without_payment).merge!(successful_payment_params)
 
       order, _ = Order::CreateService.new(params:).perform
