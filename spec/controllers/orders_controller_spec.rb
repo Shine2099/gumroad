@@ -8,6 +8,9 @@ include CurrencyHelper
 describe OrdersController, :vcr do
   before do
     cookies[:_gumroad_guid] = SecureRandom.uuid
+    MerchantAccount.find_or_create_by!(user_id: nil, charge_processor_id: StripeChargeProcessor.charge_processor_id) do |ma|
+      ma.charge_processor_alive_at = Time.current
+    end
   end
 
   describe "POST create" do
@@ -376,12 +379,6 @@ describe OrdersController, :vcr do
 
     context "multiple purchases" do
       let(:payment_params) { StripePaymentMethodHelper.success.to_stripejs_params(prepare_future_payments: true) }
-
-      before do
-        MerchantAccount.find_or_create_by!(user_id: nil, charge_processor_id: StripeChargeProcessor.charge_processor_id) do |ma|
-          ma.charge_processor_alive_at = Time.current
-        end
-      end
       let(:multiple_purchase_params) do
         {
           line_items: [

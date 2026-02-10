@@ -21,7 +21,7 @@ class Order::ChargeService
     # i.e. one charge per seller
     # Exclude purchases that already have a payment intent (e.g. subscription restarts
     # requiring SCA — they are confirmed later via Order::ConfirmService)
-    purchases_by_seller = order.purchases.where.missing(:processor_payment_intent).group_by(&:seller_id)
+    purchases_by_seller = order.purchases.reject { _1.processor_payment_intent.present? }.group_by(&:seller_id)
 
     purchases_by_seller.each do |seller_id, seller_purchases|
       charge = order.charges.create!(seller_id:)
@@ -79,9 +79,6 @@ class Order::ChargeService
       # and each line item has a response
       ensure_all_purchases_processed(non_free_seller_purchases)
     end
-
-    # Reset cached association so callers see updated purchase states
-    order.purchases.reset
 
     charge_responses
   end
