@@ -53,13 +53,31 @@ class Order::CreateService
             .merge({ cart_items: })
         )
 
+        # Card params are excluded from build_purchase_params (charging is handled by
+        # Charge::CreateService), but RestartAtCheckoutService needs them for UpdaterService
+        card_params = common_params.slice(
+          :card_data_handling_mode, :stripe_payment_method_id, :paypal_order_id
+        ).compact
+
         purchase, error, sca_response = Purchase::CreateService.new(
           product:,
-          params: purchase_params.merge(is_part_of_combined_charge: true),
+          params: purchase_params.merge(is_part_of_combined_charge: true).merge(card_params),
           buyer:
         ).perform
 
         if sca_response
+          # Subscription restart SCA: add the upgrade purchase to the order so the
+          # confirm endpoint can find it, and use the `order` key the frontend expects
+          if sca_response[:purchase].is_a?(Hash) && (upgrade_purchase = Purchase.find_by_external_id(sca_response[:purchase][:id]))
+            order.purchases << upgrade_purchase
+            order.save!
+            sca_response = sca_response.except(:purchase).merge(
+              order: {
+                id: order.external_id,
+                stripe_connect_account_id: sca_response.dig(:purchase, :stripe_connect_account_id)
+              }
+            )
+          end
           purchase_responses[line_item_uid] = sca_response
           next
         end

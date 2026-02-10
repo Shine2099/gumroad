@@ -19,7 +19,9 @@ class Order::ChargeService
     # All remaining purchases need to be charged that are still in progress
     # Create a combined charge for all purchases belonging to the same seller
     # i.e. one charge per seller
-    purchases_by_seller = order.purchases.group_by(&:seller_id)
+    # Exclude purchases that already have a payment intent (e.g. subscription restarts
+    # requiring SCA — they are confirmed later via Order::ConfirmService)
+    purchases_by_seller = order.purchases.where.missing(:processor_payment_intent).group_by(&:seller_id)
 
     purchases_by_seller.each do |seller_id, seller_purchases|
       charge = order.charges.create!(seller_id:)

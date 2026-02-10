@@ -225,7 +225,7 @@ class Purchase::CreateService < Purchase::BaseService
 
       if result[:success]
         if result[:requires_card_action]
-          return nil, nil, result.slice(:requires_card_action, :client_secret, :purchase)
+          return nil, nil, result.slice(:success, :requires_card_action, :client_secret, :purchase)
         end
 
         purchase = result[:purchase] || restartable_subscription.original_purchase
