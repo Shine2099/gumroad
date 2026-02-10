@@ -80,6 +80,9 @@ class Order::ChargeService
       ensure_all_purchases_processed(non_free_seller_purchases)
     end
 
+    # Reset cached association so callers see updated purchase states
+    order.purchases.reset
+
     charge_responses
   end
 
