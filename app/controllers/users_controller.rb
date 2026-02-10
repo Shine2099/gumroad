@@ -19,23 +19,18 @@ class UsersController < ApplicationController
 
   layout "inertia", only: [:coffee, :subscribe_preview, :show, :subscribe]
 
-
   def show
-    format_search_params!
-    set_user_page_meta(@user)
-    set_favicon_meta_tags(@user)
-    set_meta_tag(tag_name: "style", inner_content: @user.seller_profile.custom_styles.to_s, head_key: "custom_styles")
-
-    profile_props = ProfilePresenter.new(pundit_user:, seller: @user).profile_props(seller_custom_domain_url:, request:)
-    card_data_handling_mode = CardDataHandlingMode.get_card_data_handling_mode(@user)
-    paypal_merchant_currency = @user.native_paypal_payment_enabled? ?
-                                  @user.merchant_account_currency(PaypalChargeProcessor.charge_processor_id) :
-                                  ChargeProcessor::DEFAULT_CURRENCY_CODE
-
-    render inertia: "Users/Show", props: profile_props.merge(
-      card_data_handling_mode:,
-      paypal_merchant_currency:,
-    )
+    respond_to do |format|
+      format.html do
+        set_user_page_meta(@user)
+        set_favicon_meta_tags(@user)
+        set_meta_tag(tag_name: "style", inner_content: @user.seller_profile.custom_styles.to_s, head_key: "custom_styles")
+        profile_props = ProfilePresenter.new(pundit_user:, seller: @user).profile_props(seller_custom_domain_url:, request:)
+        render inertia: "Users/Show", props: profile_props
+      end
+      format.json { render json: @user.as_json }
+      format.any { e404 }
+    end
   end
 
   def coffee
@@ -65,12 +60,11 @@ class UsersController < ApplicationController
     set_meta_tag(title: "Subscribe to #{@user.name.presence || @user.username}")
     set_meta_tag(tag_name: "style", inner_content: @user.seller_profile.custom_styles.to_s, head_key: "custom_styles")
 
-    profile_presenter = ProfilePresenter.new(
-      pundit_user:,
-      seller: @user
-    )
     render inertia: "Users/Subscribe", props: {
-      creator_profile: profile_presenter.creator_profile,
+      creator_profile: ProfilePresenter.new(
+        pundit_user:,
+        seller: @user
+      ).creator_profile,
     }
   end
 

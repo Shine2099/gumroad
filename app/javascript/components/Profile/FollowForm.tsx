@@ -33,7 +33,7 @@ export const FollowForm = ({
   const emailInputRef = React.useRef<HTMLInputElement>(null);
   const isSubmittedSuccessfully = form.wasSuccessful && !form.isDirty;
 
-  const submit = (e: React.FormEvent) => {
+  const followUser = (e: React.FormEvent) => {
     e.preventDefault();
     form.clearErrors("email");
 
@@ -60,7 +60,7 @@ export const FollowForm = ({
   };
 
   return (
-    <form onSubmit={(e) => submit(e)} style={{ flexGrow: 1 }} noValidate>
+    <form onSubmit={(e) => followUser(e)} style={{ flexGrow: 1 }} noValidate>
       <fieldset className={classNames({ danger: form.errors.email })}>
         <div className="flex gap-2">
           <input

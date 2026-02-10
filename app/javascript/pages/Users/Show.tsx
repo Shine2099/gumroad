@@ -1,15 +1,11 @@
 import { usePage } from "@inertiajs/react";
 import * as React from "react";
+import { cast } from "ts-safe-cast";
 
-import { Profile, Props as ProfileProps } from "$app/components/Profile";
-
-type Props = ProfileProps & {
-  card_data_handling_mode: string;
-  paypal_merchant_currency: string;
-};
+import { Profile, type Props } from "$app/components/Profile";
 
 export default function UserShowPage() {
-  const props = usePage<Props>().props;
+  const props = cast<Props>(usePage().props);
 
   return (
     <div className="flex h-screen flex-col overflow-y-auto">
