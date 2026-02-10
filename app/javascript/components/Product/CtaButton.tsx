@@ -7,6 +7,7 @@ import { assertResponseError } from "$app/utils/request";
 import { trackProductEvent } from "$app/utils/user_analytics";
 
 import { NavigationButton } from "$app/components/Button";
+import { useDomains } from "$app/components/DomainSettings";
 import { getNotForSaleMessage, Product, ProductDiscount, Purchase } from "$app/components/Product";
 import {
   applySelection,
@@ -84,13 +85,15 @@ export const CtaButton = React.forwardRef<HTMLAnchorElement, Props>(
     const [referrer, setReferrer] = React.useState("");
     useRunOnce(() => setReferrer(document.referrer));
 
+    const { scheme, appDomain } = useDomains();
+
     const { selectedOption, pppDiscounted, discountedPriceCents } = applySelection(
       product,
       discountCode?.valid ? discountCode.discount : null,
       selection,
     );
 
-    const url = new URL(Routes.checkout_index_url());
+    const url = new URL(Routes.checkout_index_url({ protocol: scheme, host: appDomain }));
 
     const transformations: Record<string, string> = { a: "affiliate_id" };
 
