@@ -40,7 +40,7 @@ class UsersController < ApplicationController
     end
 
     set_favicon_meta_tags(@user)
-    set_user_custom_styles_meta(@user)
+    set_user_page_meta(@user)
     product = @user.products.visible_and_not_archived.find_by(native_type: Link::NATIVE_TYPE_COFFEE)
     e404 if product.nil?
 
@@ -57,16 +57,16 @@ class UsersController < ApplicationController
   end
 
   def subscribe
+    set_user_page_meta(@user)
     set_meta_tag(title: "Subscribe to #{@user.name.presence || @user.username}")
-    set_user_custom_styles_meta(@user)
-    profile_presenter = ProfilePresenter.new(pundit_user:, seller: @user)
     render inertia: "Users/Subscribe", props: {
-      creator_profile: profile_presenter.creator_profile
+      creator_profile: ProfilePresenter.new(pundit_user:, seller: @user).creator_profile
     }
   end
 
   def subscribe_preview
-    set_user_custom_styles_meta(@user)
+    set_user_page_meta(@user)
+
     render inertia: "Users/SubscribePreview", props: {
       avatar_url: @user.resized_avatar_url(size: 240),
       title: @user.name_or_username,

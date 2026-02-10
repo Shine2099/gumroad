@@ -35,12 +35,8 @@ module PageMeta::User
         end
       end
 
-      set_user_custom_styles_meta(user)
-    end
-
-    def set_user_custom_styles_meta(user)
-      return if user.seller_profile.custom_styles.blank?
-
-      set_meta_tag(tag_name: "style", inner_content: user.seller_profile.custom_styles.to_s, head_key: "custom_styles")
+      if user.seller_profile.custom_styles.present?
+        set_meta_tag(tag_name: "style", inner_content: user.seller_profile.custom_styles.to_s, head_key: "custom_styles")
+      end
     end
 end

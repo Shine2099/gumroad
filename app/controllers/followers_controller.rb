@@ -47,23 +47,14 @@ class FollowersController < ApplicationController
   def create
     follower = create_follower(params)
 
-    if follower.nil?
-      return redirect_back fallback_location: custom_domain_subscribe_path,
-                           alert: "Sorry, something went wrong."
-    end
-
-    if follower.errors.present?
-      return redirect_back fallback_location: custom_domain_subscribe_path,
-                           alert: follower.errors.full_messages.to_sentence
-    end
+    return redirect_to custom_domain_subscribe_path, alert: "Sorry, something went wrong." if follower.nil?
+    return redirect_to custom_domain_subscribe_path, alert: follower.errors.full_messages.to_sentence if follower.errors.present?
 
     message = follower.confirmed? ?
       "You are now following #{follower.user.name_or_username}!" :
       "Check your inbox to confirm your follow request."
 
-    redirect_back fallback_location: custom_domain_subscribe_path,
-                  notice: message,
-                  status: :see_other
+    redirect_to custom_domain_subscribe_path, notice: message, status: :see_other
   end
 
   def new
@@ -75,13 +66,12 @@ class FollowersController < ApplicationController
     @hide_layouts = true
 
     if @follower.nil? || @follower.errors.present?
-      flash[:warning] = "Something went wrong. Please try to follow the creator again."
       user = User.find_by_external_id(params[:seller_id])
       e404 unless user.try(:username)
-      redirect_to user.profile_url, allow_other_host: true
-    else
-      redirect_to @follower.user.profile_url, notice: "Followed!", allow_other_host: true
+      return redirect_to user.profile_url, alert: "Something went wrong. Please try to follow the creator again.", allow_other_host: true
     end
+
+    redirect_to @follower.user.profile_url, notice: "Followed!", allow_other_host: true, status: :see_other
   end
 
   def confirm

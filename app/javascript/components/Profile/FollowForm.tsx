@@ -29,55 +29,45 @@ export const FollowForm = ({
     seller_id: creatorProfile.external_id,
   });
 
-  const isSubmitting = form.processing;
-  const isSuccess = form.recentlySuccessful;
-  const isInvalid = form.errors.email != null;
 
-  React.useEffect(() => {
-    if (form.errors.email) {
-      emailInputRef.current?.focus();
-      showAlert(form.errors.email, "error");
-    }
-  }, [form.errors.email]);
-
-  const submit = (e: React.FormEvent) => {
+  const followUser = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isValidEmail(form.data.email)) {
+      const message =
+        form.data.email.trim() === "" ? "Please enter your email address." : "Please enter a valid email address.";
+      form.setError("email", message);
       emailInputRef.current?.focus();
-      showAlert(
-        form.data.email.trim() === "" ? "Please enter your email address." : "Please enter a valid email address.",
-        "error",
-      );
+      showAlert(message, "error");
       return;
     }
     if (isOwnProfile) {
       showAlert("As the creator of this profile, you can't follow yourself!", "warning");
       return;
     }
-    form.post(Routes.follow_user_path(), {
-      preserveScroll: true,
-      forceFormData: true,
-    });
+    form.post(Routes.follow_user_path());
   };
 
   return (
-    <form onSubmit={submit} style={{ flexGrow: 1 }} noValidate>
-      <fieldset className={cx({ danger: isInvalid })} disabled={isSubmitting}>
+    <form onSubmit={followUser} style={{ flexGrow: 1 }} noValidate>
+      <fieldset className={cx({ danger: form.errors.email != null })}>
         <div className="flex gap-2">
           <input
             ref={emailInputRef}
             type="email"
             value={form.data.email}
             className="flex-1"
-            onChange={(e) => form.setData("email", e.target.value)}
+            onChange={(e) => {
+              form.setData("email", e.target.value);
+              form.clearErrors("email");
+            }}
             placeholder="Your email address"
           />
-          <Button color={buttonColor} disabled={isSubmitting || isSuccess} type="submit">
+          <Button color={buttonColor} disabled={form.processing || form.recentlySuccessful} type="submit">
             {buttonLabel && buttonLabel !== "Subscribe"
               ? buttonLabel
-              : isSuccess
+              : form.recentlySuccessful
                 ? "Subscribed"
-                : isSubmitting
+                : form.processing
                   ? "Subscribing..."
                   : "Subscribe"}
           </Button>
