@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-describe Subscription, "finder methods", :sidekiq_inline do
+describe Subscription::Restartable, :sidekiq_inline do
   let(:seller) { create(:user) }
   let(:product) { create(:membership_product, user: seller) }
   let(:buyer) { create(:user) }

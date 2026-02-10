@@ -15,6 +15,7 @@ class Subscription < ApplicationRecord
   include Subscription::PingNotification
   include Purchase::Searchable::SubscriptionCallbacks
   include AfterCommitEverywhere
+  extend Restartable
 
   # time allowed after card declined for buyer to have a successful charge before ending the subscription
   ALLOWED_TIME_BEFORE_FAIL_AND_UNSUBSCRIBE = 5.days
@@ -861,56 +862,6 @@ class Subscription < ApplicationRecord
 
   def alive_or_restartable?
     !ended? && !cancelled_by_seller?
-  end
-
-  def self.restartable_for_product_and_buyer(product:, buyer:)
-    return nil unless product.is_recurring_billing
-
-    where(link_id: product.id)
-      .where(ended_at: nil)
-      .where(user_id: buyer.id)
-      .where.not(deactivated_at: nil)
-      .not_cancelled_by_admin
-      .order(created_at: :desc)
-      .first
-  end
-
-  def self.restartable_for_product_and_email(product:, email:)
-    return nil unless product.is_recurring_billing
-
-    where(link_id: product.id)
-      .where(ended_at: nil)
-      .joins(:original_purchase)
-      .where(purchases: { email: email.to_s.downcase.strip })
-      .where.not(deactivated_at: nil)
-      .not_cancelled_by_admin
-      .order(created_at: :desc)
-      .first
-  end
-
-  def self.active_for_product_and_buyer(product:, buyer:)
-    return nil unless product.is_recurring_billing
-
-    where(link_id: product.id)
-      .where(ended_at: nil)
-      .where(failed_at: nil)
-      .where("cancelled_at IS NULL OR cancelled_at > ?", Time.current)
-      .where(user_id: buyer.id)
-      .lock
-      .first
-  end
-
-  def self.active_for_product_and_email(product:, email:)
-    return nil unless product.is_recurring_billing
-
-    where(link_id: product.id)
-      .where(ended_at: nil)
-      .where(failed_at: nil)
-      .where("cancelled_at IS NULL OR cancelled_at > ?", Time.current)
-      .joins(:original_purchase)
-      .where(purchases: { email: email.to_s.downcase.strip })
-      .lock
-      .first
   end
 
   def discount_applies_to_next_charge?
