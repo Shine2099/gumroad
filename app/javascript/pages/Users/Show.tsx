@@ -2,7 +2,9 @@ import { usePage } from "@inertiajs/react";
 import * as React from "react";
 import { cast } from "ts-safe-cast";
 
-import { Profile, type Props } from "$app/components/Profile";
+import { Profile } from "$app/components/Profile";
+
+type Props = React.ComponentProps<typeof Profile>;
 
 export default function UserShowPage() {
   const props = cast<Props>(usePage().props);

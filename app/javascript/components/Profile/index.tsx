@@ -4,7 +4,7 @@ import { Tab } from "$app/parsers/profile";
 import GuidGenerator from "$app/utils/guid_generator";
 
 import AutoLink from "$app/components/AutoLink";
-import { EditProfile, Props as EditProps } from "$app/components/Profile/EditPage";
+import { EditProfile, type Props as EditProps } from "$app/components/Profile/EditPage";
 import { FollowFormBlock } from "$app/components/Profile/FollowForm";
 import { Layout } from "$app/components/Profile/Layout";
 import { PageProps as SectionsProps, Section, SectionLayout } from "$app/components/Profile/Sections";
