@@ -522,7 +522,7 @@ const AccountDetailsSection = ({
                 <Input
                   id={`${uid}-business-name-kana`}
                   type="text"
-                  placeholder="Business Name (Kana)"
+                  placeholder="カタカナ"
                   value={complianceInfo.business_name_kana || ""}
                   disabled={isFormDisabled}
                   aria-invalid={errorFieldNames.has("business_name_kana")}
@@ -840,7 +840,7 @@ const AccountDetailsSection = ({
                 <Input
                   id={`${uid}-creator-first-name-kana`}
                   type="text"
-                  placeholder="First name (Kana)"
+                  placeholder="カタカナ"
                   value={complianceInfo.first_name_kana || ""}
                   disabled={isFormDisabled}
                   aria-invalid={errorFieldNames.has("first_name_kana")}
@@ -855,7 +855,7 @@ const AccountDetailsSection = ({
                 <Input
                   id={`${uid}-creator-last-name-kana`}
                   type="text"
-                  placeholder="Last name (Kana)"
+                  placeholder="カタカナ"
                   value={complianceInfo.last_name_kana || ""}
                   disabled={isFormDisabled}
                   aria-invalid={errorFieldNames.has("last_name_kana")}

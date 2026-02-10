@@ -3756,6 +3756,35 @@ describe("Payments Settings Scenario", type: :system, js: true) do
         end
       end
 
+      it "rejects invalid kana characters" do
+        visit settings_payments_path
+
+        fill_in("First name", with: "japanese")
+        fill_in("Last name", with: "creator")
+        fill_in("First name (Kanji)", with: "日本語")
+        fill_in("Last name (Kanji)", with: "創造者")
+        fill_in("First name (Kana)", with: "ニホンゴ")
+        fill_in("Last name (Kana)", with: "ソウゾウシャ）")
+        fill_in("Block / Building number", with: "1-1")
+        fill_in("Block / Building number (Kana)", with: "イチノイチ")
+        fill_in("Town/Cho-me (Kanji)", with: "日本語")
+        fill_in("Town/Cho-me (Kana)", with: "ニホンゴ")
+        select("東京都", from: "Prefecture")
+        fill_in("Phone number", with: "987654321")
+        fill_in("Postal code", with: "100-0000")
+        select("1", from: "Day")
+        select("January", from: "Month")
+        select("1980", from: "Year")
+        fill_in("Pay to the order of", with: "japanese creator")
+        fill_in("Bank code", with: "1100")
+        fill_in("Branch code", with: "000")
+        fill_in("Account #", with: "0001234")
+        fill_in("Confirm account #", with: "0001234")
+
+        click_on("Update settings")
+        expect(page).to have_status(text: "Last name (Kana) may only contain katakana characters, spaces, dashes, and dots.")
+      end
+
       it "allows to enter bank account details" do
         visit settings_payments_path
 

@@ -41,6 +41,12 @@ import { WithTooltip } from "$app/components/WithTooltip";
 
 import logo from "$assets/images/logo-g.svg";
 
+const KANA_NAME_REGEX = /^[\u30A0-\u30FF\u31F0-\u31FF\uFF65-\uFF9F\s\-\.]*$/;
+const KANA_ADDRESS_REGEX = /^[\u30A0-\u30FF\u31F0-\u31FF\uFF65-\uFF9F\p{Script=Latin}\d\s\-\.]*$/u;
+
+const KANA_NAME_ERROR = "may only contain katakana characters, spaces, dashes, and dots.";
+const KANA_ADDRESS_ERROR = "may only contain katakana, latin characters, digits, spaces, dashes, and dots.";
+
 const PAYOUT_FREQUENCIES = ["daily", "weekly", "monthly", "quarterly"] as const;
 type PayoutFrequency = (typeof PAYOUT_FREQUENCIES)[number];
 
@@ -230,6 +236,13 @@ export default function PaymentsPage() {
   const validatePhoneNumber = (input: string | null, country_code: string | null) => {
     const countryCode: CountryCode = cast(country_code);
     return input && parsePhoneNumberFromString(input, countryCode)?.isValid();
+  };
+
+  const validateKanaField = (fieldName: FormFieldName, value: string | null, regex: RegExp, label: string, errorSuffix: string) => {
+    if (value && !regex.test(value)) {
+      markFieldInvalid(fieldName);
+      setClientErrorMessage({ message: `${label} ${errorSuffix}` });
+    }
   };
 
   const validateBankAccountFields = () => {
@@ -517,6 +530,10 @@ export default function PaymentsPage() {
       if (!form.data.user.street_address_kana) {
         markFieldInvalid("street_address_kana");
       }
+      validateKanaField("first_name_kana", form.data.user.first_name_kana, KANA_NAME_REGEX, "First name (Kana)", KANA_NAME_ERROR);
+      validateKanaField("last_name_kana", form.data.user.last_name_kana, KANA_NAME_REGEX, "Last name (Kana)", KANA_NAME_ERROR);
+      validateKanaField("building_number_kana", form.data.user.building_number_kana, KANA_ADDRESS_REGEX, "Building number (Kana)", KANA_ADDRESS_ERROR);
+      validateKanaField("street_address_kana", form.data.user.street_address_kana, KANA_ADDRESS_REGEX, "Street address (Kana)", KANA_ADDRESS_ERROR);
     } else if (
       !form.data.user.street_address ||
       (form.data.user.country === "US" && isStreetAddressPOBox(form.data.user.street_address))
@@ -593,6 +610,9 @@ export default function PaymentsPage() {
         if (!form.data.user.business_street_address_kana) {
           markFieldInvalid("business_street_address_kana");
         }
+        validateKanaField("business_name_kana", form.data.user.business_name_kana, KANA_NAME_REGEX, "Business name (Kana)", KANA_NAME_ERROR);
+        validateKanaField("business_building_number_kana", form.data.user.business_building_number_kana, KANA_ADDRESS_REGEX, "Business building number (Kana)", KANA_ADDRESS_ERROR);
+        validateKanaField("business_street_address_kana", form.data.user.business_street_address_kana, KANA_ADDRESS_REGEX, "Business street address (Kana)", KANA_ADDRESS_ERROR);
       } else if (
         !form.data.user.business_street_address ||
         (form.data.user.business_country === "US" && isStreetAddressPOBox(form.data.user.business_street_address))
