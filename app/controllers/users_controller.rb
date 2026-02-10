@@ -148,17 +148,7 @@ class UsersController < ApplicationController
 
   private
     def show_page_props
-      profile_props = ProfilePresenter.new(pundit_user:, seller: @user).profile_props(seller_custom_domain_url:, request:)
-      profile_props.merge(
-        card_data_handling_mode: CardDataHandlingMode.get_card_data_handling_mode(@user),
-        paypal_merchant_currency: paypal_merchant_currency_for(@user)
-      )
-    end
-
-    def paypal_merchant_currency_for(user)
-      user.native_paypal_payment_enabled? ?
-        user.merchant_account_currency(PaypalChargeProcessor.charge_processor_id) :
-        ChargeProcessor::DEFAULT_CURRENCY_CODE
+      ProfilePresenter.new(pundit_user:, seller: @user).profile_props(seller_custom_domain_url:, request:)
     end
 
     def check_if_needs_redirect

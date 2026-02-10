@@ -242,20 +242,6 @@ describe UsersController do
       end
     end
 
-    it "sets paypal_merchant_currency as merchant account's currency if native paypal payments are enabled else as usd", inertia: true do
-      stub_const("ROOT_DOMAIN", "test.gumroad.com")
-      creator = create(:named_user)
-      create(:product, user: creator)
-
-      @request.host = "#{creator.username}.test.gumroad.com"
-      get :show, params: { username: creator.username }
-      expect(inertia.props[:paypal_merchant_currency]).to eq "USD"
-
-      create(:merchant_account_paypal, user: creator, currency: "GBP")
-      get :show, params: { username: creator.username }
-      expect(inertia.props[:paypal_merchant_currency]).to eq "GBP"
-    end
-
     context "with user signed in as admin for seller", inertia: true do
       let(:seller) { create(:named_seller) }
       let(:creator) { create(:user, username: "creator") }
