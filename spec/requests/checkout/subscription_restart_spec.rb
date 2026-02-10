@@ -74,12 +74,14 @@ describe "Subscription restart at checkout", :js, type: :system do
         { stripe_account: @merchant_account.charge_processor_merchant_id }
       )
 
+      tier_price_cents = @product.read_attribute(:price_cents)
       @upgrade_purchase = create(:purchase_in_progress,
                                  link: @product,
                                  purchaser: @buyer,
                                  email: @buyer.email,
                                  subscription: @subscription,
-                                 price_cents: @product.price_cents,
+                                 price_cents: tier_price_cents,
+                                 variant_attributes: [@tier],
                                  merchant_account: @merchant_account)
       @upgrade_purchase.create_processor_payment_intent!(intent_id: @payment_intent.id)
 
