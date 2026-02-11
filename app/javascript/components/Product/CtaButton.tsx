@@ -7,7 +7,6 @@ import { assertResponseError } from "$app/utils/request";
 import { trackProductEvent } from "$app/utils/user_analytics";
 
 import { NavigationButton } from "$app/components/Button";
-import { useDomains } from "$app/components/DomainSettings";
 import { getNotForSaleMessage, Product, ProductDiscount, Purchase } from "$app/components/Product";
 import {
   applySelection,
