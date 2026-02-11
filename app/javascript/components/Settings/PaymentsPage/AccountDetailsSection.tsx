@@ -447,7 +447,9 @@ const AccountDetailsSection = ({
           >
             <Fieldset state={errorFieldNames.has("business_name") ? "danger" : undefined}>
               <FieldsetTitle>
-                <Label htmlFor={`${uid}-business-legal-name`}>Legal business name</Label>
+                <Label htmlFor={`${uid}-business-legal-name`}>
+                  {complianceInfo.business_country === "JP" ? "Legal business name (Romaji)" : "Legal business name"}
+                </Label>
               </FieldsetTitle>
               <Input
                 id={`${uid}-business-legal-name`}

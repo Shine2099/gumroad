@@ -3837,6 +3837,61 @@ describe("Payments Settings Scenario", type: :system, js: true) do
       end
     end
 
+    describe "Japanese business creator" do
+      before do
+        old_user_compliance_info = @user.alive_user_compliance_info
+        new_user_compliance_info = old_user_compliance_info.dup
+        new_user_compliance_info.country = "Japan"
+        ActiveRecord::Base.transaction do
+          old_user_compliance_info.mark_deleted!
+          new_user_compliance_info.save!
+        end
+      end
+
+      it "rejects Japanese characters in legal business name" do
+        visit settings_payments_path
+
+        fill_in("First name", with: "japanese")
+        fill_in("Last name", with: "creator")
+        fill_in("First name (Kanji)", with: "日本語")
+        fill_in("Last name (Kanji)", with: "創造者")
+        fill_in("First name (Kana)", with: "ニホンゴ")
+        fill_in("Last name (Kana)", with: "ソウゾウシャ")
+        fill_in("Block / Building number", with: "1-1")
+        fill_in("Block / Building number (Kana)", with: "イチノイチ")
+        fill_in("Town/Cho-me (Kanji)", with: "日本語")
+        fill_in("Town/Cho-me (Kana)", with: "ニホンゴ")
+        select("東京都", from: "Prefecture")
+        fill_in("Phone number", with: "987654321")
+        fill_in("Postal code", with: "100-0000")
+        select("1", from: "Day")
+        select("January", from: "Month")
+        select("1980", from: "Year")
+
+        choose "Business"
+
+        fill_in("Legal business name", with: "サクラショウテン", match: :first)
+        select("LLC", from: "Type")
+        fill_in("Business Name (Kanji)", with: "桜商店株式会社")
+        fill_in("Legal Business Name (Kana)", with: "サクラショウテン")
+        find(:fillable_field, id: /business-building-number$/).set("1-1")
+        find(:fillable_field, id: /business-building-number-kana$/).set("イチノイチ")
+        fill_in("Business town/Cho-me (Kanji)", with: "日本語")
+        fill_in("Business town/Cho-me (Kana)", with: "ニホンゴ")
+        find(:select, id: /business-prefecture/).select("東京都")
+        fill_in("Business phone number", with: "987654321")
+
+        fill_in("Pay to the order of", with: "japanese creator")
+        fill_in("Bank code", with: "1100")
+        fill_in("Branch code", with: "000")
+        fill_in("Account #", with: "0001234")
+        fill_in("Confirm account #", with: "0001234")
+
+        click_on("Update settings")
+        expect(page).to have_status(text: "Legal business name must be in romaji (latin characters) for Japanese accounts")
+      end
+    end
+
     describe "GI creator" do
       before do
         old_user_compliance_info = @user.alive_user_compliance_info

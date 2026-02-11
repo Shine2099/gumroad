@@ -47,6 +47,8 @@ const KANA_ADDRESS_REGEX = /^[\u30A0-\u30FF\u31F0-\u31FF\uFF65-\uFF9F\p{Script=L
 const KANA_NAME_ERROR = "may only contain katakana characters, spaces, dashes, and dots.";
 const KANA_ADDRESS_ERROR = "may only contain katakana, latin characters, digits, spaces, dashes, and dots.";
 
+const HAS_JAPANESE_CHARS = /[\u3000-\u303F\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF\uFF65-\uFF9F]/;
+
 const PAYOUT_FREQUENCIES = ["daily", "weekly", "monthly", "quarterly"] as const;
 type PayoutFrequency = (typeof PAYOUT_FREQUENCIES)[number];
 
@@ -613,6 +615,10 @@ export default function PaymentsPage() {
         validateKanaField("business_name_kana", form.data.user.business_name_kana, KANA_NAME_REGEX, "Business name (Kana)", KANA_NAME_ERROR);
         validateKanaField("business_building_number_kana", form.data.user.business_building_number_kana, KANA_ADDRESS_REGEX, "Business building number (Kana)", KANA_ADDRESS_ERROR);
         validateKanaField("business_street_address_kana", form.data.user.business_street_address_kana, KANA_ADDRESS_REGEX, "Business street address (Kana)", KANA_ADDRESS_ERROR);
+        if (form.data.user.business_name && HAS_JAPANESE_CHARS.test(form.data.user.business_name)) {
+          markFieldInvalid("business_name");
+          setClientErrorMessage({ message: "Legal business name must be in romaji (latin characters) for Japanese accounts." });
+        }
       } else if (
         !form.data.user.business_street_address ||
         (form.data.user.business_country === "US" && isStreetAddressPOBox(form.data.user.business_street_address))

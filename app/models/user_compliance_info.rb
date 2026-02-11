@@ -13,6 +13,7 @@ class UserComplianceInfo < ApplicationRecord
   MINIMUM_DATE_OF_BIRTH_AGE = 13
   KANA_NAME_REGEX = /\A[\p{Katakana}\s\-\.]*\z/
   KANA_ADDRESS_REGEX = /\A[\p{Katakana}\p{Latin}\d\s\-\.]*\z/
+  ROMAJI_REGEX = /\A[^\p{Han}\p{Hiragana}\p{Katakana}]*\z/
 
   belongs_to :user, optional: true
   validates_presence_of :user
@@ -31,6 +32,7 @@ class UserComplianceInfo < ApplicationRecord
 
   validate :birthday_is_over_minimum_age
   validate :kana_fields_format
+  validate :business_name_romaji_format
 
   after_create_commit :handle_stripe_compliance_info
   after_create_commit :handle_compliance_info_request
@@ -210,10 +212,18 @@ class UserComplianceInfo < ApplicationRecord
       fields.each do |field, label|
         value = send(field)
         next if value.blank?
-        if !value.match?(regex)
-          errors.add(:base, "#{label} may only contain #{allowed_description}")
-        end
+        next if value.match?(regex)
+        errors.add(:base, "#{label} may only contain #{allowed_description}")
       end
+    end
+
+    def business_name_romaji_format
+      return if country_code != Compliance::Countries::JPN.alpha2
+      return if !is_business?
+      return if business_name.blank?
+      return if business_name.match?(ROMAJI_REGEX)
+
+      errors.add(:base, "Legal business name must be in romaji (latin characters) for Japanese accounts")
     end
 
     def birthday_is_over_minimum_age
