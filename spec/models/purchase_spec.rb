@@ -2622,7 +2622,9 @@ describe Purchase, :vcr do
 
       it "caps fees on a recurring subscription charge" do
         purchase.price_cents = 50
-        purchase.subscription = create(:subscription, link: product, user: create(:user))
+        subscription = create(:subscription, link: product, user: create(:user))
+        create(:purchase, link: product, subscription:, is_original_subscription_purchase: true)
+        purchase.subscription = subscription
         purchase.is_original_subscription_purchase = false
         allow(purchase).to receive(:determine_affiliate_balance_cents).and_return(0)
         purchase.send(:calculate_fees)

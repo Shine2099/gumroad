@@ -540,8 +540,8 @@ describe "Purchase Process", :vcr do
       end
 
       context "when fees are capped during the full checkout flow" do
-        let(:low_price_product) { create(:product, price_cents: 50) }
-        let(:purchase) { create(:purchase, link: low_price_product, seller: low_price_product.user, save_card: false, ip_address:) }
+        let(:low_price_product) { create(:product, price_cents: 100).tap { |p| p.update_column(:price_cents, 50) } }
+        let(:purchase) { create(:purchase, link: low_price_product, seller: low_price_product.user, price_cents: 50, save_card: false, ip_address:) }
 
         before do
           purchase.skip_preparing_for_charge = true
