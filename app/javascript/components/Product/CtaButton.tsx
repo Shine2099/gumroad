@@ -93,7 +93,7 @@ export const CtaButton = React.forwardRef<HTMLAnchorElement, Props>(
       selection,
     );
 
-    const url = new URL(Routes.checkout_index_url({ protocol: scheme, host: appDomain }));
+    const url = new URL(Routes.checkout_url());
 
     const transformations: Record<string, string> = { a: "affiliate_id" };
 
