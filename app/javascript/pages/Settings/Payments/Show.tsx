@@ -240,7 +240,7 @@ export default function PaymentsPage() {
     return input && parsePhoneNumberFromString(input, countryCode)?.isValid();
   };
 
-  const validateKanaField = (fieldName: FormFieldName, value: string | null, regex: RegExp, label: string, errorSuffix: string) => {
+  const validateKanaField = (fieldName: FormFieldName, value: string | null | undefined, regex: RegExp, label: string, errorSuffix: string) => {
     if (value && !regex.test(value)) {
       markFieldInvalid(fieldName);
       setClientErrorMessage({ message: `${label} ${errorSuffix}` });
