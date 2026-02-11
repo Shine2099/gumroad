@@ -3871,6 +3871,29 @@ describe Subscription, :vcr do
         end
       end
 
+      context "when offer code is deleted after initial purchase" do
+        it "does not count subsequent installments towards max purchases" do
+          offer_code.update!(max_purchase_count: 1)
+          purchase = create(:installment_plan_purchase, link: product, offer_code: offer_code, purchaser: buyer)
+          subscription = purchase.subscription
+
+          new_purchase = subscription.build_purchase
+          expect(new_purchase.does_not_count_towards_max_purchases).to be true
+        end
+
+        it "passes offer code validation for subsequent installments" do
+          offer_code.update!(max_purchase_count: 1)
+          purchase = create(:installment_plan_purchase, link: product, offer_code: offer_code, purchaser: buyer)
+          subscription = purchase.subscription
+
+          offer_code.mark_deleted!
+
+          new_purchase = subscription.build_purchase
+          new_purchase.valid?
+          expect(new_purchase.errors[:base]).to be_empty
+        end
+      end
+
       context "with percentage discount" do
         let!(:percent_offer_code) { create(:offer_code, products: [product], amount_percentage: 25, code: "PERCENT25") }
 
