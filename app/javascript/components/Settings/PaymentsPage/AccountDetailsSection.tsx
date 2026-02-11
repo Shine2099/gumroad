@@ -129,7 +129,12 @@ const AccountDetailsSection = ({
 
   const getBusinessTaxIdConfig = (): TaxIdConfig => {
     const configs: Record<string, { label: string; placeholder: string; minLength?: number; maxLength?: number }> = {
-      US: { label: "Business Tax ID (EIN, or SSN for sole proprietors)", placeholder: "12-3456789", minLength: 9, maxLength: 10 },
+      US: {
+        label: "Business Tax ID (EIN, or SSN for sole proprietors)",
+        placeholder: "12-3456789",
+        minLength: 9,
+        maxLength: 10,
+      },
       CA: { label: "Business Number (BN)", placeholder: "123456789" },
       AU: { label: "Australian Business Number (ABN)", placeholder: "12 123 456 789" },
       GB: { label: "Company Number (CRN)", placeholder: "12345678" },
