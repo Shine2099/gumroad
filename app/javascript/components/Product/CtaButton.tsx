@@ -85,8 +85,6 @@ export const CtaButton = React.forwardRef<HTMLAnchorElement, Props>(
     const [referrer, setReferrer] = React.useState("");
     useRunOnce(() => setReferrer(document.referrer));
 
-    const { scheme, appDomain } = useDomains();
-
     const { selectedOption, pppDiscounted, discountedPriceCents } = applySelection(
       product,
       discountCode?.valid ? discountCode.discount : null,
