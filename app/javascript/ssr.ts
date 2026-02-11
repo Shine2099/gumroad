@@ -5,6 +5,7 @@ import ReactOnRails from "react-on-rails";
 
 import Alert from "$app/components/server-components/Alert";
 import CheckoutPage from "$app/components/server-components/CheckoutPage";
+import CommunitiesPage from "$app/components/server-components/CommunitiesPage";
 import CustomersDownloadPopover from "$app/components/server-components/CustomersPage/DownloadPopover";
 import CustomersFilterPopover from "$app/components/server-components/CustomersPage/FilterPopover";
 import Discover from "$app/components/server-components/Discover";
@@ -30,7 +31,6 @@ import { Pill } from "$app/components/ui/Pill";
 ReactOnRails.register({
   Alert,
   SupportHeader,
-  CheckoutPage,
   CodeSnippet,
   CustomersDownloadPopover,
   CustomersFilterPopover,
