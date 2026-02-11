@@ -68,10 +68,14 @@ class FollowersController < ApplicationController
     if @follower.nil? || @follower.errors.present?
       user = User.find_by_external_id(params[:seller_id])
       e404 unless user.try(:username)
-      return redirect_to user.profile_url, alert: "Something went wrong. Please try to follow the creator again.", allow_other_host: true
+      message = @follower&.errors&.full_messages&.to_sentence || "Something went wrong. Please try to follow the creator again."
+      return render inertia: "Followers/FromEmbedForm", props: { success: false, message: }
     end
 
-    redirect_to @follower.user.profile_url, notice: "Followed!", allow_other_host: true, status: :see_other
+    message = @follower.confirmed? ?
+      "You are now following #{@follower.user.name_or_username}!" :
+      "Check your inbox to confirm your follow request."
+    render inertia: "Followers/FromEmbedForm", props: { success: true, message: }
   end
 
   def confirm

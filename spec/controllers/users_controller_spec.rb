@@ -314,9 +314,11 @@ describe UsersController do
       it "sets custom styles in page meta when user has custom_styles" do
         get :coffee, params: { username: seller.username }
 
-        custom_style_tag = controller.send(:meta_tags)["custom_styles"]
-        expect(custom_style_tag).to be_present
-        expect(custom_style_tag[:inner_content]).to eq(seller.seller_profile.custom_styles.to_s)
+        html = Nokogiri::HTML.parse(response.body)
+        style_tag = html.at_css('style[inertia="custom_styles"]')
+        expect(style_tag).to be_present
+        decoded_content = CGI.unescapeHTML(style_tag.text)
+        expect(decoded_content).to include(seller.seller_profile.custom_styles.to_s)
       end
     end
 
@@ -692,9 +694,11 @@ describe UsersController do
     it "sets custom styles in page meta when user has custom_styles" do
       get :subscribe
 
-      custom_style_tag = controller.send(:meta_tags)["custom_styles"]
-      expect(custom_style_tag).to be_present
-      expect(custom_style_tag[:inner_content]).to eq(creator.seller_profile.custom_styles.to_s)
+      html = Nokogiri::HTML.parse(response.body)
+      style_tag = html.at_css('style[inertia="custom_styles"]')
+      expect(style_tag).to be_present
+      decoded_content = CGI.unescapeHTML(style_tag.text)
+      expect(decoded_content).to include(creator.seller_profile.custom_styles.to_s)
     end
 
     it "does not set custom_styles meta when user has no custom_styles" do
@@ -702,7 +706,9 @@ describe UsersController do
 
       get :subscribe
 
-      expect(controller.send(:meta_tags)["custom_styles"]).to be_nil
+      html = Nokogiri::HTML.parse(response.body)
+      style_tag = html.at_css('style[inertia="custom_styles"]')
+      expect(style_tag).to be_nil
     end
 
     context "with user signed in as admin for seller" do
@@ -729,9 +735,11 @@ describe UsersController do
     it "sets custom styles in page meta when user has custom_styles" do
       get :subscribe_preview, params: { username: creator.username }
 
-      custom_style_tag = controller.send(:meta_tags)["custom_styles"]
-      expect(custom_style_tag).to be_present
-      expect(custom_style_tag[:inner_content]).to eq(creator.seller_profile.custom_styles.to_s)
+      html = Nokogiri::HTML.parse(response.body)
+      style_tag = html.at_css('style[inertia="custom_styles"]')
+      expect(style_tag).to be_present
+      decoded_content = CGI.unescapeHTML(style_tag.text)
+      expect(decoded_content).to include(creator.seller_profile.custom_styles.to_s)
     end
   end
 end
