@@ -661,6 +661,8 @@ export default function PaymentsPage() {
   };
 
   const validateForm = () => {
+    setClientErrorMessage(null);
+
     if (isUpdateCountryConfirmed) {
       return true;
     }
