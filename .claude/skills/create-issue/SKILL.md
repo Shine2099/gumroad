@@ -16,6 +16,7 @@ Draft well-structured GitHub issues. Output to an unstaged `.md` file — never 
 ### 1. Understand the Problem
 
 Gather context from the user. Ask clarifying questions if needed:
+
 - What's happening vs what should happen?
 - Who's affected and how often?
 - Any workarounds in use?
@@ -28,11 +29,13 @@ If the user points to code, trace the relevant paths to understand the root caus
 Before writing, assess the scope:
 
 **Single issue** when:
+
 - One clear problem with one solution path
 - The fix would be one PR (~100 LOC per CONTRIBUTING.md)
 - No independent workstreams
 
 **Parent + sub-issues** when:
+
 - The solution has multiple independently shippable parts
 - Different parts could be worked on in parallel or by different people
 - The total scope would exceed one reasonably-sized PR
@@ -46,6 +49,7 @@ Structure:
 
 **## What**
 The problem, concretely. Include:
+
 - What's happening and what the impact is
 - Who's affected (users, sellers, internal team)
 - Quantify with data when possible (error rates, support ticket counts)
@@ -57,6 +61,7 @@ The root cause. Explain the technical reason the problem exists — not just sym
 
 **## Proposed solution**
 High-level direction that's technically sound but not overly prescriptive. Give enough guidance that someone can start working without a long investigation phase, while leaving room for implementation decisions:
+
 - Name the approach and why it's the right one
 - If there are API constraints or non-obvious technical details, explain them (link to external docs when relevant)
 - Number the parts if the solution has multiple steps
@@ -65,6 +70,7 @@ High-level direction that's technically sound but not overly prescriptive. Give 
 
 **## Acceptance criteria**
 Checkboxes. Each one should be independently testable. Cover:
+
 - The happy path
 - Key edge cases
 - Things that should NOT change (e.g., "Stripe behavior is unchanged")

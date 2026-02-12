@@ -13,7 +13,7 @@ description: >
 
 Review pull requests for code quality, correctness, and CONTRIBUTING.md compliance.
 
-**Scope boundary**: This skill evaluates *how the code is written*. For evaluating *whether the PR solves the right problem*, use the `issue-detective` skill instead.
+**Scope boundary**: This skill evaluates _how the code is written_. For evaluating _whether the PR solves the right problem_, use the `issue-detective` skill instead.
 
 ## Workflow
 
@@ -33,6 +33,7 @@ Note PR status (draft, closed, merged). Skip review if merged or closed unless u
 ### 2. Understand the Change
 
 From the diff and description, determine:
+
 - What changed and why (read the linked issue if referenced)
 - Bug fix, feature, refactor, or chore
 - Which layers are affected (frontend, backend, both, tests only)
@@ -54,7 +55,7 @@ Check the diff against every applicable rule in CONTRIBUTING.md (code standards,
 Evaluate readability and maintainability of new/modified code. See [references/review-guidance.md](references/review-guidance.md) for what to flag vs what to leave alone. The goal is clear, explicit code — not clever or compact code.
 
 **Pass 4 — PR Structure**
-AI disclosure, description quality (explains *why*), before/after for UI changes, test results, appropriate size — all per CONTRIBUTING.md.
+AI disclosure, description quality (explains _why_), before/after for UI changes, test results, appropriate size — all per CONTRIBUTING.md.
 
 ### 4. Score and Filter
 
@@ -107,7 +108,7 @@ Focus on what changed since the last review. Don't repeat prior findings unless 
 ## Important
 
 - Use `gh` read-only only. Never approve, comment on, or request changes via CLI.
-- Review what the PR *introduces* — not pre-existing code.
+- Review what the PR _introduces_ — not pre-existing code.
 - Be direct and concise. No filler praise.
 - Prioritize substantive issues over cosmetic ones.
 - When unsure, state uncertainty rather than false confidence.

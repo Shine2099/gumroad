@@ -7,6 +7,7 @@ Supplementary review guidance beyond what CONTRIBUTING.md already covers. Read C
 Evaluate readability and maintainability of new/modified code. The goal is clear, explicit code — not clever or compact code.
 
 Flag:
+
 - Unnecessary nesting that could be flattened (early returns, guard clauses)
 - Redundant code that could be consolidated without premature abstraction
 - Unclear variable/method names that require mental decoding
@@ -14,6 +15,7 @@ Flag:
 - Overly dense one-liners that sacrifice readability for brevity
 
 Do NOT flag:
+
 - Code that's already clear enough — don't suggest changes for marginal improvement
 - Three similar lines that could theoretically be abstracted — duplication is fine if the cases are independent
 - Missing type annotations or docstrings on code that's self-explanatory

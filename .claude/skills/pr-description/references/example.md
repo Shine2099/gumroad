@@ -18,6 +18,7 @@ Created a `useFlashMessage` hook that displays the flash and clears it from cach
 ### Why This Approach
 
 Other open PRs for this issue:
+
 - **#2655** uses server-side ID generation + sessionStorage tracking (adds backend changes and storage management)
 - **#2614** removes flash from Inertia props entirely (invasive restructure)
 - **#2613** uses `router.replace({ props: ... })` (similar concept, older API)
@@ -33,10 +34,10 @@ After:
 https://github.com/user-attachments/assets/23efb2b5-c533-4ec4-9a29-59ee7a07c1cd
 
 ## Test Results
+
 <img width="602" height="141" alt="Screenshot 2026-01-06 at 23 10 31" src="https://github.com/user-attachments/assets/d7b2ba00-5007-4100-bb0a-85b6fb04d87f" />
 
 ---
 
 This PR was implemented with AI assistance using Claude Code for code generation. All code was self-reviewed.
 ```
-

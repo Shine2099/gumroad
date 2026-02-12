@@ -56,8 +56,9 @@ Read key changed files if the diff alone doesn't make the approach clear.
 Use the template below. Adapt sections based on what's relevant — not every section is needed for every PR.
 
 **Style rules:**
+
 - Write in simple, direct language. Avoid jargon.
-- Focus on *why* and *how at a high level* — not what files changed.
+- Focus on _why_ and _how at a high level_ — not what files changed.
 - No file change summaries or lists of modified files.
 - No checklists.
 - Succinct PR title: no "feat:" prefix, but "Fix:" is fine for bug fixes.
@@ -85,6 +86,7 @@ Before:
 <!-- screenshot or video -->
 
 After:
+
 <!-- screenshot or video -->
 
 Include: Desktop (light + dark) and Mobile (light + dark) if applicable.
@@ -94,6 +96,7 @@ Include: Desktop (light + dark) and Mobile (light + dark) if applicable.
 ## Test Results
 
 <!-- screenshot -->
+
 -->
 
 ---
