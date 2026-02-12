@@ -13,7 +13,7 @@ type Props = {
   updateDraftMessage: (content: string) => void;
   onSend: () => void;
   onHeightChange: (height: number) => void;
-  errors: FormDataErrors<{ community_chat_message: { content: string } }>;
+  errors: FormDataErrors<{ community_chat_message: { content: string } }> | undefined;
 };
 
 export const ChatMessageInput = React.forwardRef<HTMLTextAreaElement, Props>(
