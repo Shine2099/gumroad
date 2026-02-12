@@ -703,7 +703,7 @@ const NotificationsSettingsModal = ({
   });
 
   const saveNotificationSettings = () => {
-    form.put(Routes.community_notification_settings_path(community.seller.id, community.id), {
+    form.put(Routes.community_notification_settings_path(community.id), {
       preserveState: true,
       preserveScroll: true,
       onSuccess: () => {

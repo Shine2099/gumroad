@@ -20,13 +20,13 @@ describe Communities::NotificationSettingsController do
     it_behaves_like "authorize called for action", :put, :update do
       let(:record) { community }
       let(:policy_method) { :show? }
-      let(:request_params) { { seller_id: seller.external_id, community_id: community.external_id } }
+      let(:request_params) { { community_id: community.external_id } }
     end
 
     it "returns unauthorized response if the :communities feature flag is disabled" do
       Feature.deactivate_user(:communities, seller)
 
-      put :update, params: { seller_id: seller.external_id, community_id: community.external_id }
+      put :update, params: { community_id: community.external_id }
 
       expect(response).to redirect_to dashboard_path
       expect(flash[:alert]).to eq("Your current role as Admin cannot perform this action.")
@@ -36,7 +36,7 @@ describe Communities::NotificationSettingsController do
       sign_in seller
 
       expect do
-        put :update, params: { seller_id: seller.external_id, community_id: "nonexistent" }
+        put :update, params: { community_id: "nonexistent" }
       end.to raise_error(ActiveRecord::RecordNotFound)
     end
 
@@ -48,7 +48,6 @@ describe Communities::NotificationSettingsController do
       it "creates notification settings when they don't exist" do
         expect do
           put :update, params: {
-            seller_id: seller.external_id,
             community_id: community.external_id,
             recap_frequency: "daily"
           }
@@ -66,7 +65,6 @@ describe Communities::NotificationSettingsController do
         settings = create(:community_notification_setting, seller: community.seller, user: seller)
         expect do
           put :update, params: {
-            seller_id: seller.external_id,
             community_id: community.external_id,
             recap_frequency: "weekly"
           }
@@ -90,7 +88,6 @@ describe Communities::NotificationSettingsController do
       it "creates notification settings when they don't exist" do
         expect do
           put :update, params: {
-            seller_id: seller.external_id,
             community_id: community.external_id,
             recap_frequency: "daily"
           }
@@ -108,7 +105,6 @@ describe Communities::NotificationSettingsController do
         settings = create(:community_notification_setting, seller: community.seller, user: buyer)
         expect do
           put :update, params: {
-            seller_id: seller.external_id,
             community_id: community.external_id,
             recap_frequency: "weekly"
           }

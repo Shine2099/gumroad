@@ -17,8 +17,7 @@ class Communities::ChatMessagesController < ApplicationController
                   status: :see_other
     else
       redirect_to community_path(@community.seller.external_id, @community.external_id),
-                  inertia: { errors: { "community_chat_message.content" => message.errors.full_messages.first } },
-                  status: :see_other
+                  inertia: { errors: { "community_chat_message.content" => message.errors.full_messages.first } }
     end
   end
 
@@ -30,8 +29,7 @@ class Communities::ChatMessagesController < ApplicationController
                   status: :see_other
     else
       redirect_to community_path(@community.seller.external_id, @community.external_id),
-                  inertia: { errors: { "community_chat_message.content" => @message.errors.full_messages.first } },
-                  status: :see_other
+                  inertia: { errors: { "community_chat_message.content" => @message.errors.full_messages.first } }
     end
   end
 
