@@ -10,9 +10,7 @@ import { useLoggedInUser } from "$app/components/LoggedInUser";
 import { PoweredByFooter } from "$app/components/PoweredByFooter";
 import { useIsAboveBreakpoint } from "$app/components/useIsAboveBreakpoint";
 
-const FollowForm = React.lazy(() =>
-  import("./FollowForm").then((m) => ({ default: m.FollowForm })),
-);
+const FollowForm = React.lazy(() => import("./FollowForm").then((m) => ({ default: m.FollowForm })));
 
 type LayoutProps = {
   creatorProfile: CreatorProfile;
