@@ -169,7 +169,19 @@ class LinksController < ApplicationController
         when Product::Layout::PROFILE
           render inertia: "Products/Profile/Show", props: presenter.profile_product_props(**presenter_props)
         when Product::Layout::DISCOVER
-          discover_props = { taxonomy_path: @product.taxonomy&.ancestry_path&.join("/"), taxonomies_for_nav: }
+          discover_props = {
+            taxonomy_path: @product.taxonomy&.ancestry_path&.join("/"),
+            taxonomies_for_nav:,
+            autocomplete_results: -> {
+              if params.key?(:autocomplete_query)
+                Discover::AutocompletePresenter.new(
+                  query: params[:autocomplete_query],
+                  user: logged_in_user,
+                  browser_guid: cookies[:_gumroad_guid]
+                ).props
+              end
+            },
+          }
           render inertia: "Products/Discover/Show", props: presenter.discover_product_props(discover_props:, **presenter_props)
         else
           if params[:embed] || params[:overlay]

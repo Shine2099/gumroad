@@ -12,6 +12,13 @@ class DiscoverController < ApplicationController
   before_action :set_affiliate_cookie, only: [:index]
 
   def index
+    if autocomplete_only_request?
+      render inertia: "Discover/Index", props: {
+        autocomplete_results: -> { autocomplete_data },
+      }
+      return
+    end
+
     format_search_params!
 
     if params[:sort].blank? && curated_products.present?
@@ -60,6 +67,7 @@ class DiscoverController < ApplicationController
       is_black_friday_page: params[:offer_code] == SearchProducts::BLACK_FRIDAY_CODE,
       black_friday_offer_code: SearchProducts::BLACK_FRIDAY_CODE,
       black_friday_stats: -> { black_friday_feature_active? ? BlackFridayStatsService.fetch_stats : nil },
+      autocomplete_results: -> { autocomplete_data },
     }
   end
 
@@ -162,6 +170,20 @@ class DiscoverController < ApplicationController
         set_meta_tag(name: "description", content: description)
         set_meta_tag(property: "og:description", content: description)
       end
+    end
+
+    def autocomplete_only_request?
+      request.headers["X-Inertia-Partial-Data"]&.strip == "autocomplete_results"
+    end
+
+    def autocomplete_data
+      return nil unless params.key?(:autocomplete_query)
+      create_discover_search!(query: params[:autocomplete_query], autocomplete: true) if params[:autocomplete_query].present?
+      Discover::AutocompletePresenter.new(
+        query: params[:autocomplete_query],
+        user: logged_in_user,
+        browser_guid: cookies[:_gumroad_guid]
+      ).props
     end
 
     def black_friday_feature_active?

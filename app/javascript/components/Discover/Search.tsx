@@ -1,14 +1,12 @@
+import { router, usePage } from "@inertiajs/react";
 import cx from "classnames";
 import * as React from "react";
 
-import { AutocompleteSearchResults, deleteAutocompleteSearch, getAutocompleteSearchResults } from "$app/data/discover";
+import { AutocompleteSearchResults, deleteAutocompleteSearch } from "$app/data/discover";
 import { escapeRegExp } from "$app/utils";
-import { asyncVoid } from "$app/utils/promise";
-import { assertResponseError } from "$app/utils/request";
 
 import { ComboBox } from "$app/components/ComboBox";
 import { Icon } from "$app/components/Icons";
-import { showAlert } from "$app/components/server-components/Alert";
 import { useDebouncedCallback } from "$app/components/useDebouncedCallback";
 import { useOnChange } from "$app/components/useOnChange";
 
@@ -18,21 +16,17 @@ export const Search = ({ query, setQuery }: { query?: string | undefined; setQue
   const [enteredQuery, setEnteredQuery] = React.useState(query ?? "");
   useOnChange(() => setEnteredQuery(query ?? ""), [query]);
 
-  const cancelAutocomplete = React.useRef<() => void>();
-  const fetchAutocomplete = useDebouncedCallback(
-    asyncVoid(async () => {
-      try {
-        const abortController = new AbortController();
-        cancelAutocomplete.current = () => abortController.abort();
-        setResults(await getAutocompleteSearchResults({ query: enteredQuery }, abortController.signal));
-      } catch (e) {
-        assertResponseError(e);
-        showAlert("Sorry, something went wrong. Please try again.", "error");
-      }
-    }),
-    300,
-  );
-  const [results, setResults] = React.useState<AutocompleteSearchResults | null>(null);
+  const { autocomplete_results } = usePage<{ autocomplete_results: AutocompleteSearchResults | null }>().props;
+  const [results, setResults] = React.useState<AutocompleteSearchResults | null>(autocomplete_results);
+  useOnChange(() => setResults(autocomplete_results), [autocomplete_results]);
+
+  const fetchAutocomplete = useDebouncedCallback(() => {
+    router.reload({
+      data: { autocomplete_query: enteredQuery },
+      only: ["autocomplete_results"],
+      preserveUrl: true,
+    });
+  }, 300);
   const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
 
   useOnChange(() => fetchAutocomplete(), [enteredQuery]);
@@ -79,7 +73,6 @@ export const Search = ({ query, setQuery }: { query?: string | undefined; setQue
               if (e.key === "Enter") {
                 setQuery(enteredQuery);
                 fetchAutocomplete.cancel();
-                cancelAutocomplete.current?.();
               }
             }}
             onChange={(e) => {

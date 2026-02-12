@@ -118,6 +118,68 @@ describe DiscoverController, inertia: true do
     end
   end
 
+  describe "#index autocomplete_results" do
+    def set_inertia_partial_headers!
+      request.headers["X-Inertia"] = "true"
+      request.headers["X-Inertia-Partial-Data"] = "autocomplete_results"
+      request.headers["X-Inertia-Partial-Component"] = "Discover/Index"
+    end
+
+    it "returns nil when autocomplete_query param is absent" do
+      get :index
+
+      expect(inertia.props[:autocomplete_results]).to be_nil
+    end
+
+    it "returns autocomplete results via partial reload" do
+      user = create(:recommendable_user, name: "Sample User")
+      create(:product, :recommendable, name: "Sample Product", user:)
+      Link.import(refresh: true, force: true)
+
+      set_inertia_partial_headers!
+      get :index, params: { autocomplete_query: "prod" }
+
+      expect(response).to be_successful
+      body = response.parsed_body
+      expect(body.dig("props", "autocomplete_results", "products").first).to include(
+        "name" => "Sample Product",
+        "seller_name" => "Sample User",
+      )
+    end
+
+    it "returns recent searches for autocomplete" do
+      create(:discover_search_suggestion, discover_search: create(:discover_search, user: @buyer, query: "recent search"))
+
+      set_inertia_partial_headers!
+      get :index, params: { autocomplete_query: "" }
+
+      expect(response).to be_successful
+      body = response.parsed_body
+      expect(body.dig("props", "autocomplete_results", "recent_searches")).to eq(["recent search"])
+    end
+
+    it "stores the autocomplete search query" do
+      cookies[:_gumroad_guid] = "custom_guid"
+
+      set_inertia_partial_headers!
+      expect do
+        get :index, params: { autocomplete_query: "prod" }
+      end.to change(DiscoverSearch, :count).by(1)
+
+      expect(DiscoverSearch.last!.attributes).to include(
+        "query" => "prod",
+        "autocomplete" => true
+      )
+    end
+
+    it "does not store the search query when autocomplete_query is blank" do
+      set_inertia_partial_headers!
+      expect do
+        get :index, params: { autocomplete_query: "" }
+      end.to not_change(DiscoverSearch, :count)
+    end
+  end
+
   describe "#recommended_products" do
     it "returns recommended products when taxonomy is blank" do
       cart = create(:cart, user: @buyer)
