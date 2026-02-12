@@ -7,22 +7,22 @@ import { getRecommendedProducts } from "$app/data/discover";
 import { SearchResults, SearchRequest } from "$app/data/search";
 import { useScrollToElement } from "$app/hooks/useScrollToElement";
 import { CardProduct } from "$app/parsers/product";
-import { CardWishlist } from "$app/components/Wishlist/Card";
 import { last } from "$app/utils/array";
 import { classNames } from "$app/utils/classNames";
 import { CurrencyCode, formatPriceCentsWithCurrencySymbol } from "$app/utils/currency";
 import { discoverTitleGenerator, Taxonomy } from "$app/utils/discover";
 
-import { Footer } from "$app/components/Shared/Footer";
 import { Layout } from "$app/components/Discover/Layout";
 import { RecommendedWishlists } from "$app/components/Discover/RecommendedWishlists";
 import { Icon } from "$app/components/Icons";
 import { HorizontalCard } from "$app/components/Product/Card";
 import { CardGrid, useSearchReducer } from "$app/components/Product/CardGrid";
 import { RatingStars } from "$app/components/RatingStars";
+import { Footer } from "$app/components/Shared/Footer";
 import { CardContent } from "$app/components/ui/Card";
 import { Tabs, Tab } from "$app/components/ui/Tabs";
 import { useScrollableCarousel } from "$app/components/useScrollableCarousel";
+import { CardWishlist } from "$app/components/Wishlist/Card";
 
 import blackFridayImage from "$assets/images/illustrations/black_friday.svg";
 import saleImage from "$assets/images/illustrations/sale.svg";

@@ -161,4 +161,3 @@ export const fetchWishlists = async (ids: string[]) => {
   if (!response.ok) throw new ResponseError();
   return cast<CardWishlist[]>(await response.json());
 };
-
