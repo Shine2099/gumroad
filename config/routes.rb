@@ -806,13 +806,14 @@ Rails.application.routes.draw do
     post "/posts/:id/send_for_purchase/:purchase_id", to: "posts#send_for_purchase", as: :send_for_purchase
 
     # communities
-    get "/communities", to: "communities#index", as: :communities
-    get "/communities/:seller_id/:community_id", to: "communities#show", as: :community
-    scope "/communities/:community_id" do
-      resources :chat_messages, only: [:create, :update, :destroy], controller: "communities/chat_messages", as: :community_chat_messages
-      resource :last_read_chat_message, only: [:create], controller: "communities/last_read_chat_messages", as: :community_last_read_chat_message
-      resource :notification_settings, only: [:update], controller: "communities/notification_settings", as: :community_notification_settings
+    resources :communities, only: %i[index] do
+      scope module: "communities" do
+        resources :chat_messages, only: [:create, :update, :destroy]
+        resource :last_read_chat_message, only: [:create]
+        resource :notification_settings, only: [:update]
+      end
     end
+    get "/communities/:seller_id/:community_id", to: "communities#show", as: :community
 
     # emails
     resources :emails, only: [:index, :new, :create, :edit, :update, :destroy] do
