@@ -287,7 +287,7 @@ const MenubarItem = ({
               if (newSelectedItem === selectedItem) handleToggleMenu(false);
               onSelectItem?.(newSelectedItem, e);
             }}
-            className="flex h-full w-48 flex-col bg-white dark:bg-dark-gray"
+            className="flex h-full w-48 flex-col bg-white dark:bg-dark-gray max-h-[80vh] overflow-y-auto"
           />
         </PopoverContent>
       </Popover>
