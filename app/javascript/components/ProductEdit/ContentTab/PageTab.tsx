@@ -95,7 +95,7 @@ export const PageTab = ({
             <PopoverTrigger>
               <Icon name="three-dots" />
             </PopoverTrigger>
-            <PopoverContent className="border-0 p-0 shadow-none">
+            <PopoverContent className="border-0 p-0 shadow-none z-50">
               <div role="menu">
                 <div role="menuitem" onClick={() => setRenaming(true)}>
                   <Icon name="pencil" /> Rename
