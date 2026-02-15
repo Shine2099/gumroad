@@ -1,6 +1,7 @@
 import * as React from "react";
 
 const Y_OFFSET = 16;
+const TOOLTIP_WIDTH = 150; // approximate tooltip width in pixels
 
 const useChartTooltip = () => {
   const [tooltipState, setTooltipState] = React.useState<{ x: number; y: number; index: number } | null>(null);
@@ -35,8 +36,18 @@ const useChartTooltip = () => {
           setTooltipState(null);
           return;
         }
-        const x = dotRect.x - containerRect.x + dotRect.width / 2;
-        const y = dotRect.y - containerRect.y + dotRect.height / 2;
+        let x = dotRect.x - containerRect.x + dotRect.width / 2;
+        let y = dotRect.y - containerRect.y + dotRect.height / 2;
+        
+        // Prevent tooltip from overflowing on the right edge
+        if (x + TOOLTIP_WIDTH / 2 > containerRect.width) {
+          x = containerRect.width - TOOLTIP_WIDTH / 2 - 8;
+        }
+        // Prevent tooltip from overflowing on the left edge
+        if (x - TOOLTIP_WIDTH / 2 < 0) {
+          x = TOOLTIP_WIDTH / 2 + 8;
+        }
+        
         setTooltipState({ x, y, index: e.activeTooltipIndex });
       },
       onMouseLeave: () => setTooltipState(null),
