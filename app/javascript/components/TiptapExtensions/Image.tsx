@@ -8,6 +8,7 @@ import { cast } from "ts-safe-cast";
 import { assertDefined } from "$app/utils/assert";
 
 import { LoadingSpinner } from "$app/components/LoadingSpinner";
+import { RemoveButton } from "$app/components/RemoveButton";
 import {
   getInsertAtFromSelection,
   ImageUploadSettings,
@@ -79,6 +80,12 @@ const ImageNodeView = ({ node, editor, getPos }: NodeViewProps) => {
     }
   }, [editor, getPos]);
 
+  const handleDelete = React.useCallback(() => {
+    if (getPos !== undefined) {
+      deleteImageInView(editor.view, attrs.src);
+    }
+  }, [editor, getPos, attrs.src]);
+
   useOnOutsideClick([nodeRef], () => setHasFocus(false));
 
   const [isImageLoaded, setIsImageLoaded] = React.useState(false);
@@ -100,6 +107,12 @@ const ImageNodeView = ({ node, editor, getPos }: NodeViewProps) => {
         data-has-focus={hasFocus || undefined}
         style={isUploading ? { position: "relative" } : undefined}
       >
+        {hasFocus && editor.isEditable && (
+          <RemoveButton
+            onClick={handleDelete}
+            style={{ position: "absolute", top: "-8px", right: "-8px", zIndex: 1 }}
+          />
+        )}
         {attrs.link ? (
           <a href={cast(attrs.link)} target="_blank" rel="noopener noreferrer nofollow">
             {imageMarkup}
