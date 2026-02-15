@@ -40,7 +40,7 @@ function ReportBugButton() {
       rel="noopener noreferrer"
       className="flex items-center gap-2"
     >
-      <img src={githubIcon} alt="" className="h-4 w-4" />
+      <img src={githubIcon} alt="" className="h-4 w-4 invert" />
       Report a bug
     </NavigationButton>
   );
@@ -95,7 +95,7 @@ function HelpCenterHeader({
     if (showSearchButton) {
       return (
         <Link href={Routes.help_center_root_path()} className="button" aria-label="Search" title="Search">
-          <Icon name="solid-search" />
+          <Icon name="solid-search" className="w-5 h-5" />
         </Link>
       );
     }
