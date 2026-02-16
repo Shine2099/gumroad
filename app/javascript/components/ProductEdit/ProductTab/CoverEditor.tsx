@@ -169,6 +169,9 @@ const CoverUploader = ({
                 onChange={asyncVoid(async (event) => {
                   if (!event.target.files?.length) return;
 
+                  // Show loading indicator immediately when user selects files
+                  setIsUploading(true);
+
                   for (const file of event.target.files) {
                     if (!FileUtils.isFileNameExtensionAllowed(file.name, ALLOWED_EXTENSIONS)) {
                       showAlert("Invalid file type.", "error");
