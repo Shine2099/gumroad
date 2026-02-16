@@ -34,7 +34,7 @@ export const Chart = ({
       className="block"
       position="top"
       tooltipProps={{
-        style: { left: tooltipPosition?.left, top: tooltipPosition?.top, bottom: "unset" },
+        style: { left: tooltipPosition?.left, top: tooltipPosition?.top, bottom: "unset", transform: "translateX(-50%)" },
         className: "-translate-y-full",
       }}
     >
