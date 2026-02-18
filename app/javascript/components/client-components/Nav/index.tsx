@@ -156,7 +156,7 @@ export const Nav = (props: Props) => {
         ) : null}
       </NavSection>
       <NavSection>
-        <NavLink text="Discover" icon="solid-search" href={discoverUrl} exactHrefMatch />
+        <ClientNavLink text="Discover" icon="solid-search" href={discoverUrl} exactHrefMatch />
         {currentSeller?.id === loggedInUser?.id ? (
           <ClientNavLink
             text="Library"
