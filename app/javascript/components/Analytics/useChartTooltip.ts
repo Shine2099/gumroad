@@ -1,9 +1,11 @@
 import * as React from "react";
 
 const Y_OFFSET = 16;
+const TOOLTIP_WIDTH = 160; // w-40 = 160px
+const EDGE_THRESHOLD = 80; // distance from right edge to trigger flip
 
 const useChartTooltip = () => {
-  const [tooltipState, setTooltipState] = React.useState<{ x: number; y: number; index: number } | null>(null);
+  const [tooltipState, setTooltipState] = React.useState<{ x: number; y: number; index: number; flipX?: boolean } | null>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   const dots: SVGCircleElement[] = [];
@@ -13,7 +15,7 @@ const useChartTooltip = () => {
       ? {
           index: tooltipState.index,
           position: {
-            left: tooltipState.x,
+            left: tooltipState.flipX ? tooltipState.x - TOOLTIP_WIDTH : tooltipState.x,
             top: tooltipState.y - Y_OFFSET,
           },
         }
@@ -37,7 +39,13 @@ const useChartTooltip = () => {
         }
         const x = dotRect.x - containerRect.x + dotRect.width / 2;
         const y = dotRect.y - containerRect.y + dotRect.height / 2;
-        setTooltipState({ x, y, index: e.activeTooltipIndex });
+        
+        // Check if tooltip would overflow right edge
+        const containerWidth = containerRect.width;
+        const distanceFromRight = containerWidth - x;
+        const flipX = distanceFromRight < EDGE_THRESHOLD;
+        
+        setTooltipState({ x, y, index: e.activeTooltipIndex, flipX });
       },
       onMouseLeave: () => setTooltipState(null),
     },
