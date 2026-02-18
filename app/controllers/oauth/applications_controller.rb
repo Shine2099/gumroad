@@ -37,7 +37,9 @@ class Oauth::ApplicationsController < Doorkeeper::ApplicationsController
     if @application.save
       redirect_to edit_oauth_application_path(@application.external_id), notice: "Application created."
     else
-      redirect_to settings_advanced_path, alert: @application.errors.full_messages.to_sentence
+      redirect_to settings_advanced_path,
+                  inertia: { errors: @application.errors.full_messages },
+                  alert: @application.errors.full_messages.to_sentence
     end
   end
 
@@ -67,6 +69,7 @@ class Oauth::ApplicationsController < Doorkeeper::ApplicationsController
       redirect_to edit_oauth_application_path(@application.external_id), notice: "Application updated."
     else
       redirect_to edit_oauth_application_path(@application.external_id),
+                  inertia: { errors: @application.errors.full_messages },
                   alert: @application.errors.full_messages.to_sentence
     end
   end
