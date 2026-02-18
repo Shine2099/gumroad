@@ -74,6 +74,30 @@ describe Oauth::ApplicationsController, type: :controller, inertia: true do
       expect(OauthApplication.last.affiliate_basis_points).to eq nil
     end
 
+    context "with an icon" do
+      let(:blob) do
+        ActiveStorage::Blob.create_and_upload!(
+          io: fixture_file_upload("smilie.png"),
+          filename: "smilie.png",
+        )
+      end
+      let(:params) do {
+        oauth_application: {
+          name: "appname",
+          redirect_uri: "http://hi"
+        },
+        signed_blob_id: blob.signed_id
+      } end
+
+      it "attaches the icon to the application" do
+        post(:create, params:)
+
+        application = OauthApplication.last
+        expect(application.file.attached?).to be(true)
+        expect(response).to redirect_to(edit_oauth_application_path(application.external_id))
+      end
+    end
+
     describe "bad create params" do
       let(:params) do {
         oauth_application: {
@@ -213,6 +237,45 @@ describe Oauth::ApplicationsController, type: :controller, inertia: true do
 
           expect(response).to redirect_to(edit_oauth_application_path(app.external_id))
           expect(session[:inertia_errors][:base]).to eq(["Redirect URI must be an absolute URI."])
+        end
+      end
+
+      context "with icon management" do
+        let(:blob) do
+          ActiveStorage::Blob.create_and_upload!(
+            io: fixture_file_upload("smilie.png"),
+            filename: "smilie.png",
+          )
+        end
+
+        it "attaches an icon when signed_blob_id is provided" do
+          put(:update, params: { id: app.external_id, signed_blob_id: blob.signed_id })
+
+          expect(app.reload.file.attached?).to be(true)
+          expect(response).to redirect_to(edit_oauth_application_path(app.external_id))
+          expect(flash[:notice]).to eq("Application updated.")
+        end
+
+        it "removes the icon when signed_blob_id is null" do
+          app.file.attach(fixture_file_upload("smilie.png"))
+          expect(app.file.attached?).to be(true)
+
+          allow_any_instance_of(ActiveStorage::Blob).to receive(:purge).and_return(nil)
+
+          put(:update, params: { id: app.external_id, signed_blob_id: nil })
+
+          expect(response).to redirect_to(edit_oauth_application_path(app.external_id))
+          expect(flash[:notice]).to eq("Application updated.")
+        end
+
+        it "does not change the icon when signed_blob_id is not included in params" do
+          app.file.attach(fixture_file_upload("smilie.png"))
+          expect(app.file.attached?).to be(true)
+
+          put(:update, params: { id: app.external_id, oauth_application: { name: "newname" } })
+
+          expect(app.reload.file.attached?).to be(true)
+          expect(app.name).to eq("newname")
         end
       end
     end

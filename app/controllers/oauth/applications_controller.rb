@@ -32,6 +32,8 @@ class Oauth::ApplicationsController < Doorkeeper::ApplicationsController
 
     if params[:signed_blob_id].present?
       @application.file.attach(params[:signed_blob_id])
+    elsif params.has_key?(:signed_blob_id) && @application.file.attached?
+      @application.file.purge
     end
 
     if @application.save
@@ -61,6 +63,8 @@ class Oauth::ApplicationsController < Doorkeeper::ApplicationsController
     @application.redirect_uri = @application_params[:redirect_uri] if @application_params[:redirect_uri].present?
     if params[:signed_blob_id].present?
       @application.file.attach(params[:signed_blob_id])
+    elsif params.has_key?(:signed_blob_id) && @application.file.attached?
+      @application.file.purge
     end
 
     if @application.save
