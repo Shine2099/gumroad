@@ -79,8 +79,9 @@ const ApplicationForm = ({ application }: { application?: Application }) => {
           showAlert("Application updated.", "success");
           setIsSubmitting(false);
         },
-        onError: () => {
-          showAlert("Sorry, something went wrong. Please try again.", "error");
+        onError: (errors) => {
+          const errorMessage = Object.values(errors).flat().join(", ");
+          showAlert(errorMessage || "Sorry, something went wrong. Please try again.", "error");
           setIsSubmitting(false);
         },
       });
@@ -90,8 +91,9 @@ const ApplicationForm = ({ application }: { application?: Application }) => {
           showAlert("Application created.", "success");
           setIsSubmitting(false);
         },
-        onError: () => {
-          showAlert("Sorry, something went wrong. Please try again.", "error");
+        onError: (errors) => {
+          const errorMessage = Object.values(errors).flat().join(", ");
+          showAlert(errorMessage || "Sorry, something went wrong. Please try again.", "error");
           setIsSubmitting(false);
         },
       });
