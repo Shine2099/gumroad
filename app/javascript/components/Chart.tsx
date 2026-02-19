@@ -27,23 +27,41 @@ export const Chart = ({
   containerRef: React.RefObject<HTMLDivElement>;
   tooltipPosition: { left: number; top: number } | null;
   tooltip: React.ReactNode;
-} & React.ComponentPropsWithoutRef<typeof ComposedChart>) => (
-  <section className="rounded border border-border bg-background p-6 text-foreground">
-    <WithTooltip
-      tip={tooltip}
-      className="block"
-      position="top"
-      tooltipProps={{
-        style: { left: tooltipPosition?.left, top: tooltipPosition?.top, bottom: "unset" },
-        className: "-translate-y-full",
-      }}
-    >
-      <ResponsiveContainer aspect={aspect ?? 1092 / 450} maxHeight={650} ref={containerRef}>
-        <ComposedChart margin={{ top: 32, right: 0, bottom: 16, left: 0 }} data-testid="chart" {...props} />
-      </ResponsiveContainer>
-    </WithTooltip>
-  </section>
-);
+} & React.ComponentPropsWithoutRef<typeof ComposedChart>) => {
+  const [tooltipClassName, setTooltipClassName] = React.useState<string>("-translate-y-full");
+
+  React.useEffect(() => {
+    if (containerRef.current && tooltipPosition) {
+      const containerWidth = containerRef.current.offsetWidth;
+      const tooltipWidth = 160; // w-40 = 160px
+      const padding = 16;
+      // If tooltip would overflow right edge, flip to show below
+      if (tooltipPosition.left > containerWidth - tooltipWidth - padding) {
+        setTooltipClassName("translate-y-2");
+      } else {
+        setTooltipClassName("-translate-y-full");
+      }
+    }
+  }, [tooltipPosition, containerRef]);
+
+  return (
+    <section className="rounded border border-border bg-background p-6 text-foreground overflow-visible">
+      <WithTooltip
+        tip={tooltip}
+        className="block"
+        position="top"
+        tooltipProps={{
+          style: { left: tooltipPosition?.left, top: tooltipPosition?.top, bottom: "unset" },
+          className: tooltipClassName,
+        }}
+      >
+        <ResponsiveContainer aspect={aspect ?? 1092 / 450} maxHeight={650} ref={containerRef}>
+          <ComposedChart margin={{ top: 32, right: 0, bottom: 16, left: 0 }} data-testid="chart" {...props} />
+        </ResponsiveContainer>
+      </WithTooltip>
+    </section>
+  );
+};
 
 export const xAxisProps: XAxisProps = {
   tick: ({ x, y, payload }: TickProps) => (
