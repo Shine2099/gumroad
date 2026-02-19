@@ -438,8 +438,8 @@ const EmailRow = ({
 
     const { fieldName } = focusedFieldInfo;
     if (fieldName === "name") nameInputRef.current?.focus();
-    // Use auto behavior to avoid unexpected smooth scrolling when user is editing
-    if (fieldName !== "message" && fieldName !== "stream_only") selfRef.current?.scrollIntoView({ behavior: "auto" });
+    // Disable auto-scroll when user is editing to prevent unexpected page scrolling
+    if (fieldName !== "message" && fieldName !== "stream_only") {}
   }, [focusedFieldInfo]);
   React.useEffect(() => {
     if (expanded) setEditorContent(email.message);
@@ -578,9 +578,8 @@ const EmailPreview = ({
   const selfRef = React.useRef<HTMLDivElement>(null);
   const emailFiles = useFiles((files) => files.filter(({ email_id }) => email_id === email.id));
 
-  React.useEffect(() => {
-    if (isEditing) setTimeout(() => selfRef.current?.scrollIntoView({ behavior: "auto" }), 500);
-  }, [isEditing]);
+  // Disable auto-scroll when editing to prevent unexpected page scrolling
+  // if (isEditing) setTimeout(() => selfRef.current?.scrollIntoView({ behavior: "auto" }), 500);
 
   return (
     <section className="flex flex-col gap-4" ref={selfRef}>
