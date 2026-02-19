@@ -195,7 +195,7 @@ const WorkflowForm = ({ context, workflow }: WorkflowFormProps) => {
 
     setInvalidFields(invalidFieldNames);
 
-    invalidFieldRefs[0]?.current?.focus();
+    if (invalidFieldRefs[0]?.current) { const { scrollX, scrollY } = window; invalidFieldRefs[0].current.focus(); window.scrollTo(scrollX, scrollY); }
 
     return invalidFieldNames.size === 0;
   };
@@ -647,3 +647,4 @@ const WorkflowForm = ({ context, workflow }: WorkflowFormProps) => {
 };
 
 export default WorkflowForm;
+
